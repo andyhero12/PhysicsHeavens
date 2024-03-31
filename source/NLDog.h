@@ -1,5 +1,5 @@
 //
-//  RDRocketModel.h
+//  Dog.h
 //  Rocket Demo
 //
 //  This encapsulates all of the information for the rocket demo.  Note how this
@@ -36,9 +36,10 @@
 #ifndef __NL_ROCKET_MODEL_H__
 #define __NL_ROCKET_MODEL_H__
 #include <cugl/cugl.h>
+#include "NLInput.h"
 
 /** The thrust factor to convert player input into thrust */
-#define DEFAULT_THRUST 30.0f
+#define DEFAULT_THRUST 5.0f
 
 /**
  * This class is the player avatar for the rocket lander game.
@@ -48,10 +49,10 @@
  * The other way is to create a subclass of a physics object and have it track
  * its own scene graph node.  This class is an example of the latter.
  */
-class RocketModel : public cugl::physics2::BoxObstacle {
+class Dog : public cugl::physics2::BoxObstacle {
 private:
     /** This macro disables the copy constructor (not allowed on scene graphs) */
-    CU_DISALLOW_COPY_AND_ASSIGN(RocketModel);
+    CU_DISALLOW_COPY_AND_ASSIGN(Dog);
 
 protected:
     /** The force to apply to this rocket */
@@ -106,12 +107,12 @@ public:
      * NEVER USE A CONSTRUCTOR WITH NEW. If you want to allocate a model on
      * the heap, use one of the static constructors instead.
      */
-    RocketModel(void) : BoxObstacle(), _drawscale(1.0f), _mainCycle(false), _leftCycle(false), _rghtCycle(false) { }
+    Dog(void) : BoxObstacle(), _drawscale(1.0f), _mainCycle(false), _leftCycle(false), _rghtCycle(false) { }
     
     /**
      * Destroys this rocket, releasing all resources.
      */
-    virtual ~RocketModel(void) { dispose(); }
+    virtual ~Dog(void) { dispose(); }
     
     /**
      * Disposes all resources and assets of this rocket
@@ -185,8 +186,8 @@ public:
      *
      * @return a newly allocate rocket at the origin.
      */
-    static std::shared_ptr<RocketModel> alloc() {
-        std::shared_ptr<RocketModel> result = std::make_shared<RocketModel>();
+    static std::shared_ptr<Dog> alloc() {
+        std::shared_ptr<Dog> result = std::make_shared<Dog>();
         return (result->init() ? result : nullptr);
     }
     
@@ -205,8 +206,8 @@ public:
      *
      * @return a newly allocated rocket with the given position
      */
-    static std::shared_ptr<RocketModel> alloc(const cugl::Vec2& pos) {
-        std::shared_ptr<RocketModel> result = std::make_shared<RocketModel>();
+    static std::shared_ptr<Dog> alloc(const cugl::Vec2& pos) {
+        std::shared_ptr<Dog> result = std::make_shared<Dog>();
         return (result->init(pos) ? result : nullptr);
     }
     
@@ -225,8 +226,8 @@ public:
      *
      * @return a newly allocated rocket with the given position
      */
-    static std::shared_ptr<RocketModel> alloc(const cugl::Vec2& pos, const cugl::Size& size) {
-        std::shared_ptr<RocketModel> result = std::make_shared<RocketModel>();
+    static std::shared_ptr<Dog> alloc(const cugl::Vec2& pos, const cugl::Size& size) {
+        std::shared_ptr<Dog> result = std::make_shared<Dog>();
         return (result->init(pos,size) ? result : nullptr);
     }
     
@@ -418,13 +419,12 @@ public:
     
 #pragma mark -
 #pragma mark Physics
-    /**
-     * Applies the force to the body of this ship
-     *
-     * This method should be called after the force attribute is set.
-     */
-    void applyForce();
 
+    /**
+     * Applies the Velocity Movement for the Physics Engine
+     *
+     */
+    void moveOnInput(NetLabInput& _input);
     /**
      * Updates the object's physics state (NOT GAME LOGIC).
      *

@@ -17,7 +17,7 @@
 #define __NL_GAME_SCENE_H__
 #include <cugl/cugl.h>
 #include <box2d/b2_world_callbacks.h>
-#include "NLRocketModel.h"
+#include "NLDog.h"
 #include <vector>
 #include <format>
 #include <string>
@@ -123,7 +123,7 @@ protected:
     std::shared_ptr<cugl::scene2::SceneNode> _cannon2Node;
     std::shared_ptr<cugl::physics2::BoxObstacle> _cannon2;
     
-    std::shared_ptr<RocketModel> _rocket;
+    std::shared_ptr<Dog> _dog1;
     /** Host is by default the left cannon */
     bool _isHost;
 
@@ -319,6 +319,24 @@ public:
      * @param value whether the level is completed.
      */
     void setComplete(bool value) { _complete = value; _winnode->setVisible(value); }
+    
+    /**
+     * Draws all of the children in this scene with the given SpriteBatch.
+     *
+     * This method assumes that the sprite batch is not actively drawing.
+     * It will call both begin() and end().
+     *
+     * Rendering happens by traversing the the scene graph using an "Pre-Order"
+     * tree traversal algorithm ( https://en.wikipedia.org/wiki/Tree_traversal#Pre-order ).
+     * That means that parents are always draw before (and behind children).
+     * To override this draw order, you should place an {@link scene2::OrderedNode}
+     * in the scene graph to specify an alternative order.
+     *
+     * @param batch     The SpriteBatch to draw with.
+     */
+    virtual void render(const std::shared_ptr<SpriteBatch>& batch);
+    
+
 #pragma mark -
 #pragma mark Gameplay Handling
 

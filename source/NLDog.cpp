@@ -1,5 +1,5 @@
 //
-//  RDRocketModel.cpp
+//  Dog.cpp
 //  Rocket Demo
 //
 //  This encapsulates all of the information for the rocket demo.  Note how this
@@ -33,7 +33,7 @@
 //  Author: Walker White
 //  Version: 1/10/17
 //
-#include "NLRocketModel.h"
+#include "NLDog.h"
 
 using namespace cugl;
 
@@ -72,7 +72,7 @@ using namespace cugl;
  *
  * @return  true if the obstacle is initialized properly, false otherwise.
  */
-bool RocketModel::init(const Vec2 pos, const Size size) {
+bool Dog::init(const Vec2 pos, const Size size) {
     physics2::BoxObstacle::init(pos,size);
     std::string name("rocket");
     setName(name);
@@ -106,7 +106,7 @@ bool RocketModel::init(const Vec2 pos, const Size size) {
  * Any assets owned by this object will be immediately released.  Once
  * disposed, a rocket may not be used until it is initialized again.
  */
-void RocketModel::dispose() {
+void Dog::dispose() {
     _shipNode = nullptr;
     _mainBurner = nullptr;
     _leftBurner = nullptr;
@@ -117,22 +117,12 @@ void RocketModel::dispose() {
 #pragma mark -
 #pragma mark Physics
 /**
- * Applies the force to the body of this ship
+ * Applies the Velocity Movement for the Physics Engine
  *
- * This method should be called after the force attribute is set.
  */
-void RocketModel::applyForce() {
-    if (!isEnabled()) {
-        return;
-    }
-    
-    // Orient the force with rotation.
-    Vec4 netforce(_force.x,_force.y,0.0f,1.0f);
-    Mat4::createRotationZ(getAngle(),&_affine);
-    netforce *= _affine;
-    
-    // Apply force to the rocket BODY, not the rocket
-    _body->ApplyForceToCenter(b2Vec2(netforce.x,netforce.y), true);
+void Dog::moveOnInput(NetLabInput& _input){
+    setVX(_input.getHorizontal()*getThrust());
+    setVY(_input.getVertical()*getThrust());
 }
 
 /**
@@ -148,7 +138,7 @@ void RocketModel::applyForce() {
  *
  * @param delta Timing values from parent loop
  */
-void RocketModel::update(float delta) {
+void Dog::update(float delta) {
     Obstacle::update(delta);
     if (_shipNode != nullptr) {
         _shipNode->setPosition(getPosition()*_drawscale);
@@ -171,7 +161,7 @@ void RocketModel::update(float delta) {
  *
  * @param node  The scene graph node representing this rocket.
  */
-void RocketModel::setShipNode(const std::shared_ptr<scene2::SceneNode>& node) {
+void Dog::setShipNode(const std::shared_ptr<scene2::SceneNode>& node) {
     if (_shipNode != nullptr) {
         if (_mainBurner != nullptr) {
             _shipNode->removeChild(_mainBurner);
@@ -212,7 +202,7 @@ void RocketModel::setShipNode(const std::shared_ptr<scene2::SceneNode>& node) {
  *
  * @return the animation node for the given afterburner
  */
-const std::shared_ptr<scene2::SpriteNode>& RocketModel::getBurnerStrip(Burner burner) const {
+const std::shared_ptr<scene2::SpriteNode>& Dog::getBurnerStrip(Burner burner) const {
     switch (burner) {
         case Burner::MAIN:
             return _mainBurner;
@@ -234,7 +224,7 @@ const std::shared_ptr<scene2::SpriteNode>& RocketModel::getBurnerStrip(Burner bu
  * @param burner    The enumeration to identify the afterburner
  * @param strip     The animation node for the given afterburner
  */
-void RocketModel::setBurnerStrip(Burner burner, const std::shared_ptr<cugl::Texture>& strip) {
+void Dog::setBurnerStrip(Burner burner, const std::shared_ptr<cugl::Texture>& strip) {
     switch (burner) {
         case Burner::MAIN:
             _mainBurner = scene2::SpriteNode::allocWithSheet(strip, 1, FIRE_FRAMES, FIRE_FRAMES);
@@ -274,7 +264,7 @@ void RocketModel::setBurnerStrip(Burner burner, const std::shared_ptr<cugl::Text
  *
  * @return the key for the sound to accompany the given afterburner
  */
-const std::string& RocketModel::getBurnerSound(Burner burner) const {
+const std::string& Dog::getBurnerSound(Burner burner) const {
     switch (burner) {
         case Burner::MAIN:
             return _mainSound;
@@ -296,7 +286,7 @@ const std::string& RocketModel::getBurnerSound(Burner burner) const {
  * @param burner    The enumeration to identify the afterburner
  * @param key       The key for the sound to accompany the main afterburner
  */
-void RocketModel::setBurnerSound(Burner burner, const std::string& key) {
+void Dog::setBurnerSound(Burner burner, const std::string& key) {
     switch (burner) {
         case Burner::MAIN:
             _mainSound = key;
@@ -320,7 +310,7 @@ void RocketModel::setBurnerSound(Burner burner, const std::string& key) {
  * @param burner    The reference to the rocket burner
  * @param on        Whether the animation is active
  */
-void RocketModel::animateBurner(Burner burner, bool on) {
+void Dog::animateBurner(Burner burner, bool on) {
     scene2::SpriteNode* node;
     bool*  cycle;
 
@@ -370,7 +360,7 @@ void RocketModel::animateBurner(Burner burner, bool on) {
  *
  * @param scale The ratio of the ship sprite to the physics body
  */
-void RocketModel::setDrawScale(float scale) {
+void Dog::setDrawScale(float scale) {
     _drawscale = scale;
     if (_shipNode != nullptr) {
         _shipNode->setPosition(getPosition()*_drawscale);

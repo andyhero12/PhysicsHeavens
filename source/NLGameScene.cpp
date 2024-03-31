@@ -47,7 +47,7 @@ using namespace cugl::physics2::net;
 /** Height of the game world in Box2d units */
 #define DEFAULT_HEIGHT  18.0f
 /** The default value of gravity (going down) */
-#define DEFAULT_GRAVITY -4.9f
+#define DEFAULT_GRAVITY -0.0f
 
 #define DEFAULT_TURN_RATE 0.05f
 
@@ -80,16 +80,12 @@ float BOXES[] = { 14.5f, 14.25f,
 /** The initial cannon position */
 float CAN1_POS[] = { 2, 9 };
 float CAN2_POS[] = { 30,9 };
-/** The goal door position */
-float GOAL_POS[] = { 6, 12};
 
 #pragma mark Assset Constants
 /** The key for the earth texture in the asset manager */
 #define EARTH_TEXTURE       "earth"
 /** The key for the cannon texture in the asset manager */
 #define CANNON_TEXTURE        "rocket"
-/** The key for the win door texture in the asset manager */
-#define GOAL_TEXTURE        "goal"
 /** The key prefix for the multiple crate assets */
 #define CRATE_PREFIX        "crate"
 /** The key for the fire textures in the asset manager */
@@ -311,8 +307,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     _chargeBar = std::dynamic_pointer_cast<scene2::ProgressBar>(assets->get<scene2::SceneNode>("load_bar"));
     _chargeBar->setPosition(Vec2(dimen.width/2.0f,dimen.height*0.9f));
     
-    addChild(_worldnode);
     addChild(_debugnode);
+    addChild(_worldnode);
     addChild(_chargeBar);
     
     _world = physics2::net::NetWorld::alloc(Rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),Vec2(0,DEFAULT_GRAVITY));
@@ -578,26 +574,22 @@ void GameScene::populate() {
     image  = _assets->get<Texture>(CANNON_TEXTURE);
     Size dogSize(image->getSize()/_scale);
     
-    _rocket = RocketModel::alloc(dogPos,dogSize);
-    _rocket->setDrawScale(_scale);
-    _rocket->setDebugColor(DYNAMIC_COLOR);
+    _dog1 = Dog::alloc(dogPos,dogSize);
+    _dog1->setDrawScale(_scale);
+    _dog1->setDebugColor(DYNAMIC_COLOR);
     
     auto rocketNode = scene2::PolygonNode::allocWithTexture(image);
     rocketNode->setAnchor(Vec2::ANCHOR_CENTER);
-    _rocket->setShipNode(rocketNode);
+    _dog1->setShipNode(rocketNode);
     
     // These will attach them to the ship node
-    _rocket->setBurnerStrip(RocketModel::Burner::MAIN, _assets->get<Texture>(MAIN_FIRE_TEXTURE));
-    _rocket->setBurnerStrip(RocketModel::Burner::LEFT, _assets->get<Texture>(LEFT_FIRE_TEXTURE));
-    _rocket->setBurnerStrip(RocketModel::Burner::RIGHT,_assets->get<Texture>(RGHT_FIRE_TEXTURE));
+    _dog1->setBurnerStrip(Dog::Burner::MAIN, _assets->get<Texture>(MAIN_FIRE_TEXTURE));
+    _dog1->setBurnerStrip(Dog::Burner::LEFT, _assets->get<Texture>(LEFT_FIRE_TEXTURE));
+    _dog1->setBurnerStrip(Dog::Burner::RIGHT,_assets->get<Texture>(RGHT_FIRE_TEXTURE));
     
-    // This just stores the keys
-    _rocket->setBurnerSound(RocketModel::Burner::MAIN,  MAIN_FIRE_SOUND);
-    _rocket->setBurnerSound(RocketModel::Burner::LEFT,  LEFT_FIRE_SOUND);
-    _rocket->setBurnerSound(RocketModel::Burner::RIGHT, RGHT_FIRE_SOUND);
 
     // Create the polygon node (empty, as the model will initialize)
-    addInitObstacle(_rocket, rocketNode);
+    addInitObstacle(_dog1, rocketNode);
 }
 
 void GameScene::linkSceneToObs(const std::shared_ptr<physics2::Obstacle>& obj,
@@ -668,9 +660,7 @@ void GameScene::preUpdate(float dt) {
     }
     
     // Apply the force to the rocket (but run physics in fixedUpdate)
-    _rocket->setFX(_input.getHorizontal() * _rocket->getThrust());
-    _rocket->setFY(_input.getVertical() * _rocket->getThrust());
-    _rocket->applyForce();
+    _dog1->moveOnInput(_input);
     
 //TODO: if _input.didBigCrate(), allocate a crate event for the center of the screen(use DEFAULT_WIDTH/2 and DEFAULT_HEIGHT/2) and send it using the pushOutEvent() method in the network controller.
 #pragma mark BEGIN SOLUTION
@@ -793,4 +783,33 @@ Size GameScene::computeActiveSize() const {
         dimen *= SCENE_HEIGHT/dimen.height;
     }
     return dimen;
+}
+
+#pragma mark -
+#pragma mark Rendering
+/**
+ * Draws all of the children in this scene with the given SpriteBatch.
+ *
+ * This method assumes that the sprite batch is not actively drawing.
+ * It will call both begin() and end().
+ *
+ * Rendering happens by traversing the the scene graph using an "Pre-Order"
+ * tree traversal algorithm ( https://en.wikipedia.org/wiki/Tree_traversal#Pre-order ).
+ * That means that parents are always draw before (and behind children).
+ * To override this draw order, you should place an {@link OrderedNode}
+ * in the scene graph to specify an alternative order.
+ *
+ * @param batch     The SpriteBatch to draw with.
+ */
+void GameScene::render(const std::shared_ptr<SpriteBatch>& batch) {
+    batch->begin(_camera->getCombined());
+    batch->setSrcBlendFunc(_srcFactor);
+    batch->setDstBlendFunc(_dstFactor);
+    batch->setBlendEquation(_blendEquation);
+
+    for(auto it = _children.begin(); it != _children.end(); ++it) {
+        (*it)->render(batch, Affine2::IDENTITY, _color);
+    }
+
+    batch->end();
 }
