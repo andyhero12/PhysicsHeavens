@@ -32,12 +32,7 @@ void NetApp::onStartup() {
     _assets = AssetManager::alloc();
     _batch  = SpriteBatch::alloc();
     
-    // Start-up basic input
-#ifdef CU_TOUCH_SCREEN
-    Input::activate<Touchscreen>();
-#else
     Input::activate<Mouse>();
-#endif
     
     Input::activate<Keyboard>();
     Input::activate<TextInput>();
@@ -149,11 +144,6 @@ void NetApp::preUpdate(float timestep){
         updateClientScene(timestep);
     }
     else if (_status == GAME){
-        if(_gameplay.isComplete()){
-            _gameplay.reset();
-            _status = MENU;
-            _mainmenu.setActive(true);
-        }
         _gameplay.preUpdate(timestep);
     }
 }

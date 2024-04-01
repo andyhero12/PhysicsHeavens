@@ -19,7 +19,9 @@ using namespace cugl;
 #pragma mark Input Constants
 
 /** The key to use for sending a big crate in the game */
-#define RESET_KEY KeyCode::B
+#define RESET_KEY KeyCode::R
+/** The key to use for sending a big crate in the game */
+#define BIG_CRATE_KEY KeyCode::B
 /** The key for toggling the debug display */
 #define DEBUG_KEY KeyCode::D
 /** The key for exitting the game */
@@ -52,6 +54,7 @@ using namespace cugl;
 NetLabInput::NetLabInput() :
 _active(false),
 _resetPressed(false),
+_bigCratePressed(false),
 _debugPressed(false),
 _exitPressed(false),
 _keyUp(false),
@@ -73,14 +76,7 @@ _vertical(0.0f) {
  */
 void NetLabInput::dispose() {
     if (_active) {
-#ifndef CU_TOUCH_SCREEN
         Input::deactivate<Keyboard>();
-#else
-        Input::deactivate<Accelerometer>();
-        Touchscreen* touch = Input::get<Touchscreen>();
-        touch->removeBeginListener(LISTENER_KEY);
-        touch->removeEndListener(LISTENER_KEY);
-#endif
         _active = false;
     }
 }
@@ -123,9 +119,10 @@ void NetLabInput::update(float dt) {
     Keyboard* keys = Input::get<Keyboard>();
 
     // Map "keyboard" events to the current frame boundary
-    _keyReset  = keys->keyPressed(RESET_KEY);
-    _keyDebug  = keys->keyPressed(DEBUG_KEY);
-    _keyExit   = keys->keyPressed(EXIT_KEY);
+    _keyReset     = keys->keyPressed(RESET_KEY);
+    _keyBigCrate  = keys->keyPressed(BIG_CRATE_KEY);
+    _keyDebug     = keys->keyPressed(DEBUG_KEY);
+    _keyExit      = keys->keyPressed(EXIT_KEY);
     
     if(keys->keyPressed(FIRE_KEY)){
         _timestamp.mark();
@@ -149,10 +146,11 @@ void NetLabInput::update(float dt) {
     up   = keys->keyDown(KeyCode::ARROW_UP);
     down = keys->keyDown(KeyCode::ARROW_DOWN);
     
-    _resetPressed = _keyReset;
-    _debugPressed = _keyDebug;
-    _exitPressed  = _keyExit;
-    _fired        = _keyFired;
+    _resetPressed    = _keyReset;
+    _bigCratePressed = _keyBigCrate;
+    _debugPressed    = _keyDebug;
+    _exitPressed     = _keyExit;
+    _fired           = _keyFired;
     
     // Directional controls
     _horizontal = 0.0f;

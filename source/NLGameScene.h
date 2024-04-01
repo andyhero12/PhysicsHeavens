@@ -24,6 +24,7 @@
 #include <random>
 #include "NLInput.h"
 #include "NLCrateEvent.h"
+#include "NLResetEvent.h"
 
 using namespace cugl::physics2::net;
 using namespace cugl;
@@ -100,8 +101,6 @@ protected:
     std::shared_ptr<cugl::scene2::SceneNode> _worldnode;
     /** Reference to the debug root of the scene graph */
     std::shared_ptr<cugl::scene2::SceneNode> _debugnode;
-    /** Reference to the win message label */
-    std::shared_ptr<cugl::scene2::Label> _winnode;
     
     std::shared_ptr<cugl::scene2::ProgressBar> _chargeBar;
 
@@ -126,9 +125,8 @@ protected:
     std::shared_ptr<Dog> _dog1;
     /** Host is by default the left cannon */
     bool _isHost;
-
-    /** Whether we have completed this "game" */
-    bool _complete;
+    
+    bool _todoReset;
     /** Whether or not debug mode is active */
     bool _debug;
     
@@ -285,6 +283,20 @@ public:
     bool isActive( ) const { return _active; }
 
     /**
+     * Returns true if the gameplay controller is currently active
+     *
+     * @return true if the gameplay controller is currently active
+     */
+    bool needToReset( ) const { return _todoReset; }
+
+    /**
+     * Returns true if the gameplay controller is currently active
+     *
+     * @return true if the gameplay controller is currently active
+     */
+    void setToDoReset(bool value) { _todoReset = value; }
+
+    /**
      * Returns true if debug mode is active.
      *
      * If true, all objects will display their physics bodies.
@@ -301,24 +313,6 @@ public:
      * @param value whether debug mode is active.
      */
     void setDebug(bool value) { _debug = value; _debugnode->setVisible(value); }
-    
-    /**
-     * Returns true if the level is completed.
-     *
-     * If true, the level will advance after a countdown
-     *
-     * @return true if the level is completed.
-     */
-    bool isComplete( ) const { return _complete; }
-    
-    /**
-     * Sets whether the level is completed.
-     *
-     * If true, the level will advance after a countdown
-     *
-     * @param value whether the level is completed.
-     */
-    void setComplete(bool value) { _complete = value; _winnode->setVisible(value); }
     
     /**
      * Draws all of the children in this scene with the given SpriteBatch.

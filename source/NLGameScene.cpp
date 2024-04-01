@@ -205,10 +205,10 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
  * This allows us to use a controller without a heap pointer.
  */
 GameScene::GameScene() : cugl::Scene2(),
-_complete(false),
 _debug(false),
-_isHost(false)
-{    
+_isHost(false),
+_todoReset(false)
+{
 }
 
 /**
@@ -278,7 +278,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     _isHost = isHost;
 
     _network = network;
-    
+    _todoReset = false;
     // Start up the input handler
     _assets = assets;
     _input.init();
@@ -307,8 +307,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     _chargeBar = std::dynamic_pointer_cast<scene2::ProgressBar>(assets->get<scene2::SceneNode>("load_bar"));
     _chargeBar->setPosition(Vec2(dimen.width/2.0f,dimen.height*0.9f));
     
-    addChild(_debugnode);
     addChild(_worldnode);
+    addChild(_debugnode);
     addChild(_chargeBar);
     
     _world = physics2::net::NetWorld::alloc(Rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),Vec2(0,DEFAULT_GRAVITY));
@@ -319,7 +319,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     
     populate();
     _active = true;
-    _complete = false;
     setDebug(false);
 
     //Make a std::function reference of the linkSceneToObs function in game scene for network controller
@@ -345,6 +344,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
 //TODO: For task 5, attach CrateEvent to the network controller
 #pragma mark BEGIN SOLUTION
     _network->attachEventType<CrateEvent>();
+    _network->attachEventType<ResetEvent>();
 #pragma mark END SOLUTION
     
     // XNA nostalgia
@@ -362,8 +362,6 @@ void GameScene::dispose() {
         _world = nullptr;
         _worldnode = nullptr;
         _debugnode = nullptr;
-        _winnode = nullptr;
-        _complete = false;
         _debug = false;
         Scene2::dispose();
     }
@@ -386,9 +384,10 @@ std::vector<std::shared_ptr<scene2::PolygonNode>> nodes;
  * This method disposes of the world and creates a new one.
  */
 void GameScene::reset() {
+    _todoReset = false;
+    _rand.seed(0xdeadbeef);
     _worldnode->removeAllChildren();
     _debugnode->removeAllChildren();
-    setComplete(false);
     populate();
     Application::get()->resetFixedRemainder();
 }
@@ -633,7 +632,7 @@ void GameScene::addInitObstacle(const std::shared_ptr<physics2::Obstacle>& obj,
 }
 
 
-#pragma mark -
+#pragma mark
 #pragma mark Physics Handling
 
 void GameScene::preUpdate(float dt) {
@@ -654,6 +653,10 @@ void GameScene::preUpdate(float dt) {
         CULog("Shutting down");
         Application::get()->quit();
     }
+    if (needToReset()){
+        CULog("Reseting\n");
+        reset();
+    }
     
     if (_input.didFire()) {
         fireCrate();
@@ -667,6 +670,10 @@ void GameScene::preUpdate(float dt) {
     if (_input.didBigCrate()){
         CULog("BIG CRATE COMING");
         _network->pushOutEvent(CrateEvent::allocCrateEvent(Vec2(DEFAULT_WIDTH/2,DEFAULT_HEIGHT/2)));
+    }
+    if (_input.didReset()){
+        CULog("RESET COMING");
+        _network->pushOutEvent(ResetEvent::allocResetEvent());
     }
 #pragma mark END SOLUTION
     
@@ -690,6 +697,10 @@ void GameScene::fixedUpdate() {
         if(auto crateEvent = std::dynamic_pointer_cast<CrateEvent>(e)){
             CULog("BIG CRATE GOT");
             processCrateEvent(crateEvent);
+        }
+        if (auto crateEvent = std::dynamic_pointer_cast<ResetEvent>(e)){
+            CULog("RESET EVENT GOT");
+            setToDoReset(true);
         }
     }
 #pragma mark END SOLUTION

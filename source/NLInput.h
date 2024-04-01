@@ -43,6 +43,8 @@ private:
     bool  _keyDown;
     /** Whether the reset key is down */
     bool  _keyReset;
+    /** Whether the reset key is down */
+    bool  _keyBigCrate;
     /** Whether the debug key is down */
     bool  _keyDebug;
     /** Whether the exit key is down */
@@ -59,6 +61,8 @@ protected:
     // INPUT RESULTS
     /** Whether the reset action was chosen. */
     bool _resetPressed;
+    /** Whether the reset action was chosen. */
+    bool _bigCratePressed;
     /** Whether the debug toggle was chosen. */
     bool _debugPressed;
     /** Whether the exit action was chosen. */
@@ -153,7 +157,14 @@ public:
      *
      * @return true if the reset button was pressed.
      */
-    bool didBigCrate() const { return _resetPressed; }
+    bool didBigCrate() const { return _bigCratePressed; }
+    
+    /**
+     * Returns true if the reset button was pressed.
+     *
+     * @return true if the reset button was pressed.
+     */
+    bool didReset() const { return _resetPressed; }
     
     /**
      * Returns true if the player wants to go toggle the debug mode.
