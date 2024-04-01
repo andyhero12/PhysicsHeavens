@@ -4,3 +4,7 @@ build
 .vs
 assets/log_host.txt
 assets/log_client.txt
+
+
+cugl/__pycache__
+cugl/scripts/__pycache__
