@@ -13,7 +13,7 @@ using namespace cugl;
 
 cugl::Size size(1,1);
 
-World::World (cugl::Vec2 bottomleft, 
+World::World (cugl::Vec2 bottomleft, float _scale, 
               const std::vector<std::vector<int>> &map,
               const std::vector<std::vector<int>> &passable, std::shared_ptr<cugl::Texture> tileset):start(bottomleft), tile(tileset){
     tileWorld.resize(map.size());
@@ -26,12 +26,14 @@ World::World (cugl::Vec2 bottomleft,
     for (int j =0; j< originalCols; j++){
         int printIndexI = 0;
         for (int i = originalRows -1; i > -1; i--){
-            Rect temp = Rect(Vec2(printIndexJ,printIndexI), Size(1,1));
+            std::shared_ptr<Texture> subTexture = getBox(map.at(i).at(j));
+            
+            Rect temp = Rect(Vec2(printIndexJ,printIndexI), size);
             if (i == 0 || j == 0 || i == originalRows -1 || j == originalCols -1){
                 tileWorld.at(i).at(j) = TileInfo::alloc(temp.origin, size, Terrain::IMPASSIBLE, getBox(map.at(i).at(j)));
                 
             }else{
-                tileWorld.at(i).at(j) = TileInfo::alloc(temp.origin, size, Terrain::PASSABLE, getBox(map.at(i).at(j)));
+                tileWorld.at(i).at(j) = TileInfo::alloc(temp.origin, subTexture->getSize()/_scale, Terrain::PASSABLE, getBox(map.at(i).at(j)));
             }
             tileWorld.at(i).at(j)->setName(std::string(TILE_NAME) +cugl::strtool::to_string(i * originalRows+ j));
             printIndexI++;

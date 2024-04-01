@@ -208,7 +208,7 @@ void GameScene::reset() {
     _worldnode->removeAllChildren();
     _debugnode->removeAllChildren();
     
-    _backgroundWrapper = std::make_shared<World>(Vec2(0, 0),_level->getTiles(), _level->getBoundaries(), _assets->get<cugl::Texture>("tile"));
+    _backgroundWrapper = std::make_shared<World>(Vec2(0, 0),_scale, _level->getTiles(), _level->getBoundaries(), _assets->get<cugl::Texture>("tile"));
     
     populate();
     std::function<void(const std::shared_ptr<physics2::Obstacle>&,const std::shared_ptr<scene2::SceneNode>&)> linkSceneToObsFunc = [=](const std::shared_ptr<physics2::Obstacle>& obs, const std::shared_ptr<scene2::SceneNode>& node) {
@@ -323,7 +323,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
 
     _crateFact = CrateFactory::alloc(_assets);
 
-    _backgroundWrapper = std::make_shared<World>(Vec2(0, 0),_level->getTiles(), _level->getBoundaries(), assets->get<Texture>("tile"));
+    _backgroundWrapper = std::make_shared<World>(Vec2(0, 0),_scale, _level->getTiles(), _level->getBoundaries(), assets->get<Texture>("tile"));
     // IMPORTANT: SCALING MUST BE UNIFORM
     // This means that we cannot change the aspect ratio of the physics world
     // Shift to center if a bad fit
@@ -447,7 +447,7 @@ void GameScene::processCrateEvent(const std::shared_ptr<CrateEvent>& event){
     std::string name = (CRATE_PREFIX "0") + std::to_string(indx);
     auto image = _assets->get<Texture>(name);
     Size boxSize(image->getSize() / _scale);
-    
+    CULog("big box size %f %f", boxSize.width, boxSize.height);
     auto crate = physics2::BoxObstacle::alloc(Vec2(event->getPos().x,event->getPos().y), boxSize);
     
     crate->setDebugColor(DYNAMIC_COLOR);
@@ -589,7 +589,7 @@ void GameScene::populate() {
     addInitObstacle(_cannon2, _cannon2Node);
     
 #pragma mark : Rocket
-    Vec2 dogPos = ((Vec2)CAN1_POS);
+    Vec2 dogPos = ((Vec2)CAN1_POS) + Vec2(1,-2);
     image  = _assets->get<Texture>(CANNON_TEXTURE);
     Size dogSize(image->getSize()/_scale);
     
@@ -685,7 +685,7 @@ void GameScene::preUpdate(float dt) {
     
     // Apply the force to the rocket (but run physics in fixedUpdate)
 //    _camera.setZoom(SCENE_HEIGHT/CANVAS_TILE_HEIGHT);
-    _camera.setZoom(2);
+//    _camera.setZoom(2);
     _camera.update();
     _dog1->moveOnInput(_input);
     
