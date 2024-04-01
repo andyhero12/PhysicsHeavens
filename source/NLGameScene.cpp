@@ -195,6 +195,31 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
 #pragma mark END SOLUTION
 }
 
+/**
+ * Resets the status of the game so that we can play again.
+ *
+ * This method disposes of the world and creates a new one.
+ */
+void GameScene::reset() {
+    _todoReset = false;
+    _rand.seed(0xdeadbeef);
+    _worldnode->removeAllChildren();
+    _debugnode->removeAllChildren();
+    
+    populate();
+    //Make a std::function reference of the linkSceneToObs function in game scene for network controller
+    std::function<void(const std::shared_ptr<physics2::Obstacle>&,const std::shared_ptr<scene2::SceneNode>&)> linkSceneToObsFunc = [=](const std::shared_ptr<physics2::Obstacle>& obs, const std::shared_ptr<scene2::SceneNode>& node) {
+        this->linkSceneToObs(obs,node);
+    };
+    _network->enablePhysics(_world, linkSceneToObsFunc);
+    
+    if(!_isHost){
+        _network->getPhysController()->acquireObs(_cannon2, 0);
+    }
+
+    _factId = _network->getPhysController()->attachFactory(_crateFact);
+    Application::get()->resetFixedRemainder();
+}
 
 #pragma mark -
 #pragma mark Constructors
@@ -310,12 +335,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     addChild(_worldnode);
     addChild(_debugnode);
     addChild(_chargeBar);
-    
-    _world = physics2::net::NetWorld::alloc(Rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),Vec2(0,DEFAULT_GRAVITY));
-    _world->onBeginContact = [this](b2Contact* contact) {
-            beginContact(contact);
-        };
-    _world->update(FIXED_TIMESTEP_S);
     
     populate();
     _active = true;
@@ -622,6 +641,14 @@ void GameScene::addInitObstacle(const std::shared_ptr<physics2::Obstacle>& obj,
 #pragma mark Physics Handling
 
 void GameScene::preUpdate(float dt) {
+    if (needToReset()){
+         CULog("Reseting\n");
+         reset();
+    }
+    if (_input.didExit()) {
+        CULog("Shutting down");
+        Application::get()->quit();
+    }
     _input.update(dt);
     
     if(_input.getFirePower()>0.f){
@@ -635,11 +662,6 @@ void GameScene::preUpdate(float dt) {
     // Process the toggled key commands
     if (_input.didDebug()) { setDebug(!isDebug()); }
 
-    if (_input.didExit()) {
-        CULog("Shutting down");
-        Application::get()->quit();
-    }
-    
     if (_input.didFire()) {
         fireCrate();
     }
