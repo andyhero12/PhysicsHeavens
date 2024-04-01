@@ -32,7 +32,12 @@ void NetApp::onStartup() {
     _assets = AssetManager::alloc();
     _batch  = SpriteBatch::alloc();
     
+    // Start-up basic input
+#ifdef CU_TOUCH_SCREEN
+    Input::activate<Touchscreen>();
+#else
     Input::activate<Mouse>();
+#endif
     
     Input::activate<Keyboard>();
     Input::activate<TextInput>();
