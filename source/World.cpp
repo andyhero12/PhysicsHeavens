@@ -13,32 +13,27 @@ using namespace cugl;
 
 cugl::Size size(1,1);
 
-World::World (cugl::Vec2 bottomleft,
+World::World (cugl::Vec2 bottomleft, 
               const std::vector<std::vector<int>> &map,
-              const std::vector<std::vector<int>> &passable, std::shared_ptr<cugl::AssetManager> assets)
-    : start(bottomleft)
-{
-    
-    tile = assets->get<Texture>("tile");
-        
-    backgroundWorld.resize(map.size());
+              const std::vector<std::vector<int>> &passable, std::shared_ptr<cugl::Texture> tileset):start(bottomleft), tile(tileset){
+    tileWorld.resize(map.size());
     for(int i = 0; i < map.size(); i++){
-        backgroundWorld.at(i).resize(map[0].size());
+        tileWorld.at(i).resize(map[0].size());
     }
-    int originalRows = (int) backgroundWorld.size();
-    int originalCols = (int) backgroundWorld.at(0).size();
+    int originalRows = (int) tileWorld.size();
+    int originalCols = (int) tileWorld.at(0).size();
     int printIndexJ = 0;
     for (int j =0; j< originalCols; j++){
         int printIndexI = 0;
         for (int i = originalRows -1; i > -1; i--){
             Rect temp = Rect(Vec2(printIndexJ,printIndexI), Size(1,1));
             if (i == 0 || j == 0 || i == originalRows -1 || j == originalCols -1){
-                backgroundWorld.at(i).at(j) = TileInfo::alloc(temp.origin, size, Terrain::IMPASSIBLE, getBox(map.at(i).at(j))); 
+                tileWorld.at(i).at(j) = TileInfo::alloc(temp.origin, size, Terrain::IMPASSIBLE, getBox(map.at(i).at(j)));
                 
             }else{
-                backgroundWorld.at(i).at(j) = TileInfo::alloc(temp.origin, size, Terrain::PASSABLE, getBox(map.at(i).at(j)));
+                tileWorld.at(i).at(j) = TileInfo::alloc(temp.origin, size, Terrain::PASSABLE, getBox(map.at(i).at(j)));
             }
-            backgroundWorld.at(i).at(j)->_tileObstacle->setName(std::string(TILE_NAME) +cugl::strtool::to_string(i * originalRows+ j));
+            tileWorld.at(i).at(j)->setName(std::string(TILE_NAME) +cugl::strtool::to_string(i * originalRows+ j));
             printIndexI++;
         }
         printIndexJ++;
@@ -47,17 +42,34 @@ World::World (cugl::Vec2 bottomleft,
 
 bool TileInfo::init(const cugl::Vec2& pos, const cugl::Size& size,Terrain m_type, std::shared_ptr<cugl::Texture> m_texture)
 {
-    _tileObstacle = cugl::physics2::BoxObstacle::alloc(pos,size);
-    if (_tileObstacle == nullptr){
-        return false;
+    if (BoxObstacle::init(pos,size)){
+        setBodyType(b2_staticBody);
+        setDensity(10.0f);
+        setFriction(0.4f);
+        setRestitution(0.1);
+        type = m_type;
+        texture = m_texture;
+        return true;
     }
-    _tileObstacle->setBodyType(b2_staticBody);
-    _tileObstacle->setDensity(10.0f);
-    _tileObstacle->setFriction(0.4f);
-    _tileObstacle->setRestitution(0.1);
-    return true;
+    return false;
 }
 
+void World::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
+    int originalRows = (int) tileWorld.size();
+    int originalCols = (int) tileWorld.at(0).size();
+    int printIndexJ = 0;
+    for (int j =0  ;j< originalCols; j++){
+        int printIndexI = 0;
+        for (int i = originalRows -1; i > -1; i--){
+            Color4 tint = cugl::Color4("white");
+            std::shared_ptr<TileInfo> t = tileWorld.at(i).at(j);
+            batch->draw(t->texture, tint, Rect(t->getPosition(), t->getDimension()));
+            printIndexI++;
+        }
+        printIndexJ++;
+    }
+    
+}
 std::shared_ptr<cugl::Texture> World::getBox(int position){
     int boxSize = 32;  // Each box is 32x32 pixels
     float textureWidth = tile->getWidth();

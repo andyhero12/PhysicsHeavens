@@ -31,28 +31,27 @@ void CameraController::update() {
 }
 
 void CameraController::setZoom(float zoom) {
-    float originalZoom = _camera->getZoom();
+//    float originalZoom = _camera->getZoom();
     // Don't let it be greater than max zoom
-    if (zoom > _maxZoom) return;
-    _camera->setZoom(zoom);
-    // If this causes the camera to go out of bounds, revert the change
-    if (_root->getSize().width < _camera->getViewport().getMaxX() / _camera->getZoom() || _root->getSize().height < _camera->getViewport().getMaxY() / _camera->getZoom()) {
-        _camera->setZoom(originalZoom);
+//    std::cout << originalZoom <<' ' << zoom <<' ' << _maxZoom <<'\n';
+    if (zoom > _maxZoom){
+        CULog("ZOOM TOO FAR");
+        return;
     }
+    _camera->setZoom(zoom);
     // Scale the UI so that it always looks the same size
-    _ui->setScale(1 / _camera->getZoom());
+//    _ui->setScale(1 / _camera->getZoom());
 }
 
 void CameraController::addZoom(float zoom) {
     float originalZoom = _camera->getZoom();
     // Don't let it be greater than max zoom
-    if (originalZoom + zoom > _maxZoom) return;
+    if (originalZoom + zoom > _maxZoom){
+        CULog("ZOOM TOO FAR");
+        return;
+    }
     float truezoom = std::max(originalZoom + zoom, 0.01f);
     _camera->setZoom(truezoom);
-    // If this causes the camera to go out of bounds, revert the change
-    if (_root->getSize().width < _camera->getViewport().getMaxX() / _camera->getZoom() || _root->getSize().height < _camera->getViewport().getMaxY() / _camera->getZoom()) {
-        _camera->setZoom(originalZoom);
-    }
     // Scale the UI so that it always looks the same size
     _ui->setScale(1 / _camera->getZoom());
 }

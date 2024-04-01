@@ -19,7 +19,7 @@ enum Terrain {
     IMPASSIBLE
 };
 // Information for a tile, add to this later since idk what this will include
-class TileInfo{
+class TileInfo : public cugl::physics2::BoxObstacle{
 public:
 #pragma mark Static Constructors
     
@@ -45,15 +45,14 @@ public:
     }
 #pragma mark Constructors
     
-    bool init(const cugl::Vec2& pos, const cugl::Size& size,Terrain m_type, std::shared_ptr<cugl::Texture> m_texture);
+    virtual bool init(const cugl::Vec2& pos, const cugl::Size& size,Terrain m_type, std::shared_ptr<cugl::Texture> m_texture);
     std::shared_ptr<cugl::Texture> texture;
     Terrain type;
-    std::shared_ptr<cugl::physics2::BoxObstacle> _tileObstacle;
     TileInfo(){
         
     }
     ~TileInfo(){
-//        std::cout <<"TODO DISPOSE\n";
+        std::cout <<"TODO DISPOSE\n";
     }
 private:
 };
@@ -67,18 +66,17 @@ private:
     cugl::Vec2 start;
     
 public:
-    std::vector<std::vector<std::shared_ptr<TileInfo>>> backgroundWorld;
+    std::vector<std::vector<std::shared_ptr<TileInfo>>> tileWorld;
     World () {};
     World (cugl::Vec2 bottomleft,
            const std::vector<std::vector<int>> &map,
-           const std::vector<std::vector<int>> &passable, 
-           std::shared_ptr<cugl::AssetManager> assets);
+           const std::vector<std::vector<int>> &passable, std::shared_ptr<cugl::Texture> tileset);
+    void draw(const std::shared_ptr<cugl::SpriteBatch>& batch);
     std::shared_ptr<cugl::Texture> getBox(int position);
-    
-    const std::vector<std::vector<std::shared_ptr<TileInfo>>>& getWorld(){
-        return backgroundWorld;
+
+    const std::vector<std::vector<std::shared_ptr<TileInfo>>>& getTileWorld(){
+        return tileWorld;
     }
-    
 };
 
 #endif /* World_hpp */

@@ -39,8 +39,10 @@ using namespace cugl::physics2::net;
 #pragma mark Level Geography
 
 /** This is the size of the active portion of the screen */
-#define SCENE_WIDTH 1024
-#define SCENE_HEIGHT 576
+#define SCENE_WIDTH 1200
+#define SCENE_HEIGHT 800
+
+#define CANVAS_TILE_HEIGHT 8
 
 /** Width of the game world in Box2d units */
 #define DEFAULT_WIDTH   32.0f
@@ -206,7 +208,7 @@ void GameScene::reset() {
     _worldnode->removeAllChildren();
     _debugnode->removeAllChildren();
     
-    _backgroundWrapper = std::make_shared<World>(Vec2(0, 0),_level->getTiles(), _level->getBoundaries(), _assets);
+    _backgroundWrapper = std::make_shared<World>(Vec2(0, 0),_level->getTiles(), _level->getBoundaries(), _assets->get<cugl::Texture>("tile"));
     
     populate();
     std::function<void(const std::shared_ptr<physics2::Obstacle>&,const std::shared_ptr<scene2::SceneNode>&)> linkSceneToObsFunc = [=](const std::shared_ptr<physics2::Obstacle>& obs, const std::shared_ptr<scene2::SceneNode>& node) {
@@ -321,7 +323,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
 
     _crateFact = CrateFactory::alloc(_assets);
 
-    _backgroundWrapper = std::make_shared<World>(Vec2(0, 0),_level->getTiles(), _level->getBoundaries(), assets);
+    _backgroundWrapper = std::make_shared<World>(Vec2(0, 0),_level->getTiles(), _level->getBoundaries(), assets->get<Texture>("tile"));
     // IMPORTANT: SCALING MUST BE UNIFORM
     // This means that we cannot change the aspect ratio of the physics world
     // Shift to center if a bad fit
@@ -496,7 +498,7 @@ void GameScene::populate() {
         
     
 #pragma mark : Background
-//    addChildBackground();
+    addChildBackground();
 #pragma mark : Wall polygon 1
         
     // Create ground pieces
@@ -608,7 +610,7 @@ void GameScene::populate() {
     // Create the polygon node (empty, as the model will initialize)
     addInitObstacle(_dog1, rocketNode);
     
-    _camera.init(rocketNode, _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), _chargeBar, 2.0f);
+    _camera.init(rocketNode, _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), _chargeBar, 1000.0f);
 }
 
 void GameScene::linkSceneToObs(const std::shared_ptr<physics2::Obstacle>& obj,
@@ -682,6 +684,8 @@ void GameScene::preUpdate(float dt) {
     }
     
     // Apply the force to the rocket (but run physics in fixedUpdate)
+//    _camera.setZoom(SCENE_HEIGHT/CANVAS_TILE_HEIGHT);
+    _camera.setZoom(2);
     _camera.update();
     _dog1->moveOnInput(_input);
     
@@ -818,7 +822,7 @@ Size GameScene::computeActiveSize() const {
 
 
 void GameScene::addChildBackground(){
-    const std::vector<std::vector<std::shared_ptr<TileInfo>>>& currentBackground = _backgroundWrapper->getWorld();
+    const std::vector<std::vector<std::shared_ptr<TileInfo>>>& currentBackground = _backgroundWrapper->getTileWorld();
     int originalRows = (int) currentBackground.size();
     int originalCols = (int) currentBackground.at(0).size();
     for (int j =0  ;j< originalCols; j++){
@@ -827,8 +831,18 @@ void GameScene::addChildBackground(){
             auto image  = t->texture;
             auto sprite = scene2::PolygonNode::allocWithTexture(image);
             sprite->setAnchor(Vec2::ANCHOR_CENTER);
+            if (image != nullptr){
+                CULog("Rocket Size: %f %f", image->getSize().width, image->getSize().height);
+            }else{
+                CULog("IMAGE IS NULL?");
+            }
+//            CULog("Child Size: %f %f", image->getSize().width, image->getSize().height);
             if (i == 0 || j == 0 || i == originalRows -1 || j == originalCols - 1){
-                addInitObstacle(t->_tileObstacle, sprite);
+                t->setDebugColor(DYNAMIC_COLOR);
+                addInitObstacle(t, sprite);
+            }else{
+                sprite->setPosition(t->getPosition() * _scale);
+                _worldnode->addChild(sprite);
             }
         }
     }
