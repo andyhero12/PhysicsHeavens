@@ -207,7 +207,6 @@ void GameScene::reset() {
     _debugnode->removeAllChildren();
     
     populate();
-    //Make a std::function reference of the linkSceneToObs function in game scene for network controller
     std::function<void(const std::shared_ptr<physics2::Obstacle>&,const std::shared_ptr<scene2::SceneNode>&)> linkSceneToObsFunc = [=](const std::shared_ptr<physics2::Obstacle>& obs, const std::shared_ptr<scene2::SceneNode>& node) {
         this->linkSceneToObs(obs,node);
     };
@@ -337,6 +336,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     addChild(_chargeBar);
     
     populate();
+    
+    
     _active = true;
     setDebug(false);
 
@@ -594,6 +595,8 @@ void GameScene::populate() {
 
     // Create the polygon node (empty, as the model will initialize)
     addInitObstacle(_dog1, rocketNode);
+    
+    _camera.init(rocketNode, _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), _chargeBar, 2.0f);
 }
 
 void GameScene::linkSceneToObs(const std::shared_ptr<physics2::Obstacle>& obj,
@@ -667,6 +670,7 @@ void GameScene::preUpdate(float dt) {
     }
     
     // Apply the force to the rocket (but run physics in fixedUpdate)
+    _camera.update();
     _dog1->moveOnInput(_input);
     
 //TODO: if _input.didBigCrate(), allocate a crate event for the center of the screen(use DEFAULT_WIDTH/2 and DEFAULT_HEIGHT/2) and send it using the pushOutEvent() method in the network controller.
@@ -798,33 +802,4 @@ Size GameScene::computeActiveSize() const {
         dimen *= SCENE_HEIGHT/dimen.height;
     }
     return dimen;
-}
-
-#pragma mark -
-#pragma mark Rendering
-/**
- * Draws all of the children in this scene with the given SpriteBatch.
- *
- * This method assumes that the sprite batch is not actively drawing.
- * It will call both begin() and end().
- *
- * Rendering happens by traversing the the scene graph using an "Pre-Order"
- * tree traversal algorithm ( https://en.wikipedia.org/wiki/Tree_traversal#Pre-order ).
- * That means that parents are always draw before (and behind children).
- * To override this draw order, you should place an {@link OrderedNode}
- * in the scene graph to specify an alternative order.
- *
- * @param batch     The SpriteBatch to draw with.
- */
-void GameScene::render(const std::shared_ptr<SpriteBatch>& batch) {
-    batch->begin(_camera->getCombined());
-    batch->setSrcBlendFunc(_srcFactor);
-    batch->setDstBlendFunc(_dstFactor);
-    batch->setBlendEquation(_blendEquation);
-
-    for(auto it = _children.begin(); it != _children.end(); ++it) {
-        (*it)->render(batch, Affine2::IDENTITY, _color);
-    }
-
-    batch->end();
 }

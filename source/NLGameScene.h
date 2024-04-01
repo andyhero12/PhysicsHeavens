@@ -25,6 +25,7 @@
 #include "NLInput.h"
 #include "NLCrateEvent.h"
 #include "NLResetEvent.h"
+#include "NLCameraController.h"
 
 using namespace cugl::physics2::net;
 using namespace cugl;
@@ -95,6 +96,7 @@ protected:
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
     NetLabInput _input;
+    CameraController _camera;
     
     // VIEW
     /** Reference to the physics root of the scene graph */
@@ -313,23 +315,6 @@ public:
      * @param value whether debug mode is active.
      */
     void setDebug(bool value) { _debug = value; _debugnode->setVisible(value); }
-    
-    /**
-     * Draws all of the children in this scene with the given SpriteBatch.
-     *
-     * This method assumes that the sprite batch is not actively drawing.
-     * It will call both begin() and end().
-     *
-     * Rendering happens by traversing the the scene graph using an "Pre-Order"
-     * tree traversal algorithm ( https://en.wikipedia.org/wiki/Tree_traversal#Pre-order ).
-     * That means that parents are always draw before (and behind children).
-     * To override this draw order, you should place an {@link scene2::OrderedNode}
-     * in the scene graph to specify an alternative order.
-     *
-     * @param batch     The SpriteBatch to draw with.
-     */
-    virtual void render(const std::shared_ptr<SpriteBatch>& batch);
-    
 
 #pragma mark -
 #pragma mark Gameplay Handling
