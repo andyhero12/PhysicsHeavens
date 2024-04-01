@@ -54,6 +54,9 @@ private:
     
     float _firePower;
 
+    // TOUCH SUPPORT
+    /** The initial touch location for the current gesture */
+    cugl::Vec2 _dtouch;
     /** The timestamp for the beginning of the current gesture */
     cugl::Timestamp _timestamp;
 
@@ -189,6 +192,24 @@ public:
     bool didFire() const { return _fired; }
     
     float getFirePower() const { return _firePower; }
+    
+#pragma mark -
+#pragma mark Touch Callbacks
+    /**
+     * Callback for the beginning of a touch event
+     *
+     * @param t     The touch information
+     * @param event The associated event
+     */
+    void touchBeganCB(const cugl::TouchEvent& event, bool focus);
+    
+    /**
+     * Callback for the end of a touch event
+     *
+     * @param t     The touch information
+     * @param event The associated event
+     */
+    void touchEndedCB(const cugl::TouchEvent& event, bool focus);
 
 };
 
