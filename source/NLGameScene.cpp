@@ -329,7 +329,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     _debugnode->setPosition(offset);
     
     _chargeBar = std::dynamic_pointer_cast<scene2::ProgressBar>(assets->get<scene2::SceneNode>("load_bar"));
-    _chargeBar->setPosition(Vec2(dimen.width/2.0f,dimen.height*0.9f));
     
     addChild(_worldnode);
     addChild(_debugnode);
