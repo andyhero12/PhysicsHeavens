@@ -379,20 +379,6 @@ std::vector<std::shared_ptr<physics2::BoxObstacle>> boxes;
 std::vector<std::shared_ptr<scene2::PolygonNode>> nodes;
 
 /**
- * Resets the status of the game so that we can play again.
- *
- * This method disposes of the world and creates a new one.
- */
-void GameScene::reset() {
-    _todoReset = false;
-    _rand.seed(0xdeadbeef);
-    _worldnode->removeAllChildren();
-    _debugnode->removeAllChildren();
-    populate();
-    Application::get()->resetFixedRemainder();
-}
-
-/**
  * This method adds a crate at the given position during the init process.
  */
 std::shared_ptr<physics2::Obstacle> GameScene::addInitCrate(cugl::Vec2 pos) {
@@ -652,10 +638,6 @@ void GameScene::preUpdate(float dt) {
     if (_input.didExit()) {
         CULog("Shutting down");
         Application::get()->quit();
-    }
-    if (needToReset()){
-        CULog("Reseting\n");
-        reset();
     }
     
     if (_input.didFire()) {

@@ -61,6 +61,7 @@ _keyUp(false),
 _keyDown(false),
 _keyReset(false),
 _keyDebug(false),
+_keyBigCrate(false),
 _keyExit(false),
 _fired(false),
 _firePower(0.0f),
@@ -76,7 +77,14 @@ _vertical(0.0f) {
  */
 void NetLabInput::dispose() {
     if (_active) {
+#ifndef CU_TOUCH_SCREEN
         Input::deactivate<Keyboard>();
+#else
+        Input::deactivate<Accelerometer>();
+        Touchscreen* touch = Input::get<Touchscreen>();
+        touch->removeBeginListener(LISTENER_KEY);
+        touch->removeEndListener(LISTENER_KEY);
+#endif
         _active = false;
     }
 }
@@ -94,7 +102,19 @@ bool NetLabInput::init() {
     _timestamp.mark();
     bool success = true;
     
+    // Only process keyboard on desktop
+#ifndef CU_TOUCH_SCREEN
     success = Input::activate<Keyboard>();
+#else
+    success = Input::activate<Accelerometer>();
+    Touchscreen* touch = Input::get<Touchscreen>();
+    touch->addBeginListener(LISTENER_KEY,[=](const cugl::TouchEvent& event, bool focus) {
+        this->touchBeganCB(event,focus);
+    });
+    touch->addEndListener(LISTENER_KEY,[=](const cugl::TouchEvent& event, bool focus) {
+        this->touchEndedCB(event,focus);
+    });
+#endif
     _active = success;
     return success;
 }
@@ -115,6 +135,8 @@ void NetLabInput::update(float dt) {
     int rght = false;
     int up   = false;
     int down = false;
+
+#ifndef CU_TOUCH_SCREEN
     // DESKTOP CONTROLS
     Keyboard* keys = Input::get<Keyboard>();
 
@@ -145,7 +167,26 @@ void NetLabInput::update(float dt) {
     rght = keys->keyDown(KeyCode::ARROW_RIGHT);
     up   = keys->keyDown(KeyCode::ARROW_UP);
     down = keys->keyDown(KeyCode::ARROW_DOWN);
+#else
+    // MOBILE CONTROLS
+    Vec3 acc = Input::get<Accelerometer>()->getAcceleration();
     
+    // Measure the "steering wheel" tilt of the device
+    float pitch = atan2(-acc.x, sqrt(acc.y*acc.y + acc.z*acc.z));
+    
+    // Check if we turned left or right
+    up   |= (pitch > EVENT_ACCEL_THRESH);
+    down |= (pitch < -EVENT_ACCEL_THRESH);
+    
+    Timestamp curr;
+    if(_keyUp){
+        _firePower = SDL_min(1.0f,curr.ellapsedMillis(_timestamp)/FIRE_CHARGE_TIME);
+    }
+    if(_fired){
+        _firePower = 0.f;
+    }
+#endif
+
     _resetPressed    = _keyReset;
     _bigCratePressed = _keyBigCrate;
     _debugPressed    = _keyDebug;
@@ -171,6 +212,12 @@ void NetLabInput::update(float dt) {
     
     _keyFired = false;
 
+// If it does not support keyboard, we must reset "virtual" keyboard
+#ifdef CU_TOUCH_SCREEN
+    _keyDebug = false;
+    _keyReset = false;
+    _keyDebug = false;
+#endif
 }
 
 /**
@@ -184,5 +231,45 @@ void NetLabInput::clear() {
     
     _horizontal = 0.0f;
     _vertical   = 0.0f;
+    
+    _dtouch = Vec2::ZERO;
     _timestamp.mark();
+}
+
+#pragma mark -
+#pragma mark Touch Callbacks
+/**
+ * Callback for the beginning of a touch event
+ *
+ * @param t     The touch information
+ * @param event The associated event
+ */
+void NetLabInput::touchBeganCB(const cugl::TouchEvent& event, bool focus) {
+    // All touches correspond to key up
+    _keyUp = true;
+    _keyFired = false;
+    // Update the touch location for later gestures
+    _timestamp = event.timestamp;
+    _dtouch = event.position;
+}
+ 
+/**
+ * Callback for the end of a touch event
+ *
+ * @param t     The touch information
+ * @param event The associated event
+ */
+void NetLabInput::touchEndedCB(const cugl::TouchEvent& event, bool focus) {
+    // Gesture has ended.  Give it meaning.
+    Vec2 diff = event.position-_dtouch;
+    bool fast = (event.timestamp.ellapsedMillis(_timestamp) < EVENT_SWIPE_TIME);
+    if(abs(diff.x)>EVENT_SWIPE_LENGTH || abs(diff.y)>EVENT_SWIPE_LENGTH){
+        _keyReset = fast && diff.x < -EVENT_SWIPE_LENGTH;
+        _keyExit  = fast && diff.x > EVENT_SWIPE_LENGTH;
+        _keyDebug = fast && diff.y > EVENT_SWIPE_LENGTH;
+    }
+    else{
+        _keyFired = true;
+    }
+    _keyUp = false;
 }
