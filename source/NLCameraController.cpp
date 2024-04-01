@@ -26,8 +26,7 @@ void CameraController::update() {
     _camera->translate(target.x - cameraPos.x, target.y - cameraPos.y);
 
     _camera->update();
-    
-    Vec2 uiPos = Vec2(_camera->getPosition().x - _camera->getViewport().getMaxX() / (2 * _camera->getZoom()), _camera->getPosition().y - _camera->getViewport().getMaxY() / (2 * _camera->getZoom()));
+    Vec2 uiPos = Vec2(_camera->getPosition().x, _camera->getPosition().y);
     _ui->setPosition(uiPos);
 }
 
