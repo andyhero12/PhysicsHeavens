@@ -206,6 +206,8 @@ void GameScene::reset() {
     _worldnode->removeAllChildren();
     _debugnode->removeAllChildren();
     
+    _backgroundWrapper = std::make_shared<World>(Vec2(0, 0),_level->getTiles(), _level->getBoundaries(), _assets);
+    
     populate();
     std::function<void(const std::shared_ptr<physics2::Obstacle>&,const std::shared_ptr<scene2::SceneNode>&)> linkSceneToObsFunc = [=](const std::shared_ptr<physics2::Obstacle>& obs, const std::shared_ptr<scene2::SceneNode>& node) {
         this->linkSceneToObs(obs,node);
@@ -304,14 +306,22 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     _network = network;
     _todoReset = false;
     // Start up the input handler
+    _level = assets->get<LevelModel>(LEVEL_ONE_KEY);
+    if (_level == nullptr) {
+        // Might need to change later if too many assets Copy Tiled Demo?
+        CULog("Fail!");
+        return false;
+    }
     _assets = assets;
     _input.init();
     _input.update(0);
 
+    
     _rand.seed(0xdeadbeef);
 
     _crateFact = CrateFactory::alloc(_assets);
 
+    _backgroundWrapper = std::make_shared<World>(Vec2(0, 0),_level->getTiles(), _level->getBoundaries(), assets);
     // IMPORTANT: SCALING MUST BE UNIFORM
     // This means that we cannot change the aspect ratio of the physics world
     // Shift to center if a bad fit
@@ -383,7 +393,7 @@ void GameScene::dispose() {
         _worldnode = nullptr;
         _debugnode = nullptr;
         _debug = false;
-        Scene2::dispose();
+        Scene2::dispose(); 
     }
 }
 
@@ -485,6 +495,9 @@ void GameScene::populate() {
     
     std::shared_ptr<Texture> image;
         
+    
+#pragma mark : Background
+//    addChildBackground();
 #pragma mark : Wall polygon 1
         
     // Create ground pieces
@@ -536,18 +549,18 @@ void GameScene::populate() {
     wall2 *= _scale;
     wallsprite2 = scene2::PolygonNode::allocWithTexture(image,wall2);
         
-#pragma mark : Crates
-    float f1 = _rand() % (int)(DEFAULT_WIDTH - 4) + 2;
-    float f2 = _rand() % (int)(DEFAULT_HEIGHT - 4) + 2;
-    Vec2 boxPos(f1, f2);
-        
-    for (int ii = 0; ii < NUM_CRATES; ii++) {
-        f1 = _rand() % (int)(DEFAULT_WIDTH - 6) + 3;
-        f2 = _rand() % (int)(DEFAULT_HEIGHT - 6) + 3;
-        // Pick a crate and random and generate the key
-        Vec2 boxPos(f1, f2);
-        addInitCrate(boxPos);
-    }
+//#pragma mark : Crates
+//    float f1 = _rand() % (int)(DEFAULT_WIDTH - 4) + 2;
+//    float f2 = _rand() % (int)(DEFAULT_HEIGHT - 4) + 2;
+//    Vec2 boxPos(f1, f2);
+//        
+//    for (int ii = 0; ii < NUM_CRATES; ii++) {
+//        f1 = _rand() % (int)(DEFAULT_WIDTH - 6) + 3;
+//        f2 = _rand() % (int)(DEFAULT_HEIGHT - 6) + 3;
+//        // Pick a crate and random and generate the key
+//        Vec2 boxPos(f1, f2);
+//        addInitCrate(boxPos);
+//    }
         
 #pragma mark : Cannon
     image  = _assets->get<Texture>(CANNON_TEXTURE);
@@ -803,3 +816,38 @@ Size GameScene::computeActiveSize() const {
     }
     return dimen;
 }
+
+
+void GameScene::addChildBackground(){
+    const std::vector<std::vector<std::shared_ptr<TileInfo>>>& currentBackground = _backgroundWrapper->getWorld();
+    int originalRows = (int) currentBackground.size();
+    int originalCols = (int) currentBackground.at(0).size();
+    for (int j =0  ;j< originalCols; j++){
+        for (int i = originalRows -1; i > -1; i--){
+            std::shared_ptr<TileInfo> t = currentBackground.at(i).at(j);
+            auto image  = t->texture;
+            auto sprite = scene2::PolygonNode::allocWithTexture(image);
+            sprite->setAnchor(Vec2::ANCHOR_CENTER);
+            if (i == 0 || j == 0 || i == originalRows -1 || j == originalCols - 1){
+                addInitObstacle(t->_tileObstacle, sprite);
+            }
+        }
+    }
+}
+//
+//void World::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
+//    int originalRows = (int) backgroundWorld.size();
+//    int originalCols = (int) backgroundWorld.at(0).size();
+//    int printIndexJ = 0;
+//    for (int j =0  ;j< originalCols; j++){
+//        int printIndexI = 0;
+//        for (int i = originalRows -1; i > -1; i--){
+//            Color4 tint = cugl::Color4("white");
+//            std::shared_ptr<TileInfo> t = backgroundWorld.at(i).at(j);
+//            batch->draw(t->texture, tint, Rect(t->getPosition(), t->getDimension()));
+//            printIndexI++;
+//        }
+//        printIndexJ++;
+//    }
+//
+//}

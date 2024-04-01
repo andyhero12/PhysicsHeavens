@@ -26,6 +26,8 @@
 #include "NLCrateEvent.h"
 #include "NLResetEvent.h"
 #include "NLCameraController.h"
+#include "NLLevelModel.h"
+#include "World.h"
 
 using namespace cugl::physics2::net;
 using namespace cugl;
@@ -114,6 +116,8 @@ protected:
     std::mt19937 _rand;
 
     std::shared_ptr<CrateFactory> _crateFact;
+    /** The level model */
+    std::shared_ptr<LevelModel> _level;
     Uint32 _factId;
 
     // Physics objects for the game
@@ -125,6 +129,8 @@ protected:
     std::shared_ptr<cugl::physics2::BoxObstacle> _cannon2;
     
     std::shared_ptr<Dog> _dog1;
+    
+    std::shared_ptr<World> _backgroundWrapper;
     /** Host is by default the left cannon */
     bool _isHost;
     
@@ -314,7 +320,9 @@ public:
      *
      * @param value whether debug mode is active.
      */
-    void setDebug(bool value) { _debug = value; _debugnode->setVisible(value); }
+    void setDebug(bool value) { _debug = value;
+        _debugnode->setVisible(value);
+    }
 
 #pragma mark -
 #pragma mark Gameplay Handling
@@ -360,6 +368,12 @@ public:
      * @param  contact  The collision manifold before contact
      */
     void beforeSolve(b2Contact* contact, const b2Manifold* oldManifold);
+    
+    
+    /**
+     Adds the Scenenode for the background tiles
+     */
+    void addChildBackground();
 };
 
 #endif /* __NL_GAME_SCENE_H__ */
