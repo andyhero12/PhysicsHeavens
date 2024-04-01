@@ -138,6 +138,10 @@ public:
     bool loadBoundaries(const std::shared_ptr<JsonValue>& json);
     
     bool loadDecorations(const std::shared_ptr<JsonValue>& json);
+    
+    
+    bool loadPlayer(const std::shared_ptr<JsonValue>& json);
+    bool loadSpanwerLocations(const std::shared_ptr<JsonValue>& json);
     /**
      * Loads this game level from the source file
      *

@@ -77,9 +77,9 @@ void LevelModel::loadLayer(const std::shared_ptr<JsonValue>& json){
     }else if (type == "Decorative"){
         loadDecorations(json);
     }else if (type == "PlayerSpawn"){
-        CULog("TODO Player PARSE %s\n", type.data());
+        loadPlayer(json);
     }else if (type == "SpawnerLocs"){
-        CULog("TODO SPAWNER PARSE %s\n", type.data());
+        loadSpanwerLocations(json);
     }else{
         CULog("TYPE NOT FOUND %s\n", type.data());
     }
@@ -110,16 +110,6 @@ bool LevelModel::loadTiles(const std::shared_ptr<JsonValue>& json) {
             _tiles.at(i).at(j) = array.at(i*column + j)->asInt();
         }
     }
-    std::cout << "start\n";
-    int ele = 0;
-    for (int i =0 ; i< _tiles.size(); i++){
-        for (int j =0 ;j < _tiles[0].size(); j++){
-            std::cout << _tiles[i][j] <<' ';
-            ele++;
-        }
-        std::cout <<'\n';
-    }
-    std::cout << "ELE: " << ele << " END\n";
     return true;
 }
 
@@ -133,16 +123,6 @@ bool LevelModel::loadBoundaries(const std::shared_ptr<JsonValue>& json) {
             _walls.at(i).at(j) = array.at(i*column + j)->asInt();
         }
     }
-    std::cout << "start\n";
-    int ele = 0;
-    for (int i =0 ; i< _walls.size(); i++){
-        for (int j =0 ;j < _walls[0].size(); j++){
-            std::cout << _walls[i][j] <<' ';
-            ele++;
-        }
-        std::cout <<'\n';
-    }
-    std::cout << "ELE: " << ele << " END\n";
     return true;
 }
 
@@ -156,19 +136,26 @@ bool LevelModel::loadDecorations(const std::shared_ptr<JsonValue>& json){
             _decors.at(i).at(j) = array.at(i*column + j)->asInt();
         }
     }
-    std::cout << "start\n";
-    int ele = 0;
-    for (int i =0 ; i< _decors.size(); i++){
-        for (int j =0 ;j < _decors[0].size(); j++){
-            std::cout << _decors[i][j] <<' ';
-            ele++;
-        }
-        std::cout <<'\n';
-    }
-    std::cout << "ELE: " << ele << " END\n";
     return true;
 }
 
+
+bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue>& json){
+    float playerX = json->get("objects")->get(0)->get("x")->asFloat();
+    float playerY = json->get("objects")->get(0)->get("y")->asFloat();
+    _playerPos = cugl::Vec2(playerX, playerY);
+    return false;
+}
+
+bool LevelModel::loadSpanwerLocations(const std::shared_ptr<JsonValue>& json){
+    auto spawnerValues = json->get("objects");
+    for (int i = 0 ; i< spawnerValues->size() ;i++){
+        float spawnerX = json->get("objects")->get(i)->get("x")->asFloat();
+        float spawnerY = json->get("objects")->get(i)->get("y")->asFloat();
+        _spawnersPos.emplace_back(cugl::Vec2(spawnerX, spawnerY));
+    }
+    return true;
+}
 
 
 
