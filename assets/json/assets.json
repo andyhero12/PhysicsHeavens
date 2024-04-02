@@ -1,5 +1,10 @@
 {
 	"textures": {
+        "tile": {
+            "file": "textures/tile/tile.png",
+              "minfilter": "linear",
+              "magfilter": "nearest"
+        },
 		"earth": {
 			"file":     "textures/earthtile.png",
             "wrapS":    "repeat",
@@ -32,6 +37,7 @@
         "left": {
             "file":  "textures/left_arrow.png"
         }
+        
 	},
     "jsons": {
         "server": "json/server.json"

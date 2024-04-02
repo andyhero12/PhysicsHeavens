@@ -25,6 +25,9 @@
 #include "NLInput.h"
 #include "NLCrateEvent.h"
 #include "NLResetEvent.h"
+#include "NLCameraController.h"
+#include "NLLevelModel.h"
+#include "World.h"
 
 using namespace cugl::physics2::net;
 using namespace cugl;
@@ -95,6 +98,7 @@ protected:
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
     NetLabInput _input;
+    CameraController _camera;
     
     // VIEW
     /** Reference to the physics root of the scene graph */
@@ -112,6 +116,8 @@ protected:
     std::mt19937 _rand;
 
     std::shared_ptr<CrateFactory> _crateFact;
+    /** The level model */
+    std::shared_ptr<LevelModel> _level;
     Uint32 _factId;
 
     // Physics objects for the game
@@ -123,6 +129,8 @@ protected:
     std::shared_ptr<cugl::physics2::BoxObstacle> _cannon2;
     
     std::shared_ptr<Dog> _dog1;
+    
+    std::shared_ptr<World> _backgroundWrapper;
     /** Host is by default the left cannon */
     bool _isHost;
     
@@ -312,24 +320,9 @@ public:
      *
      * @param value whether debug mode is active.
      */
-    void setDebug(bool value) { _debug = value; _debugnode->setVisible(value); }
-    
-    /**
-     * Draws all of the children in this scene with the given SpriteBatch.
-     *
-     * This method assumes that the sprite batch is not actively drawing.
-     * It will call both begin() and end().
-     *
-     * Rendering happens by traversing the the scene graph using an "Pre-Order"
-     * tree traversal algorithm ( https://en.wikipedia.org/wiki/Tree_traversal#Pre-order ).
-     * That means that parents are always draw before (and behind children).
-     * To override this draw order, you should place an {@link scene2::OrderedNode}
-     * in the scene graph to specify an alternative order.
-     *
-     * @param batch     The SpriteBatch to draw with.
-     */
-    virtual void render(const std::shared_ptr<SpriteBatch>& batch);
-    
+    void setDebug(bool value) { _debug = value;
+        _debugnode->setVisible(value);
+    }
 
 #pragma mark -
 #pragma mark Gameplay Handling
@@ -345,6 +338,12 @@ public:
      * @param timestep  The amount of time (in seconds) since the last frame
      */
     void update(float timestep);
+
+    /**
+     * Resets the status of the game so that we can play again.
+     */
+    void reset();
+    
 #pragma mark -
 #pragma mark Collision Handling
     /**
@@ -369,6 +368,12 @@ public:
      * @param  contact  The collision manifold before contact
      */
     void beforeSolve(b2Contact* contact, const b2Manifold* oldManifold);
+    
+    
+    /**
+     Adds the Scenenode for the background tiles
+     */
+    void addChildBackground();
 };
 
 #endif /* __NL_GAME_SCENE_H__ */

@@ -39,8 +39,10 @@ using namespace cugl::physics2::net;
 #pragma mark Level Geography
 
 /** This is the size of the active portion of the screen */
-#define SCENE_WIDTH 1024
-#define SCENE_HEIGHT 576
+#define SCENE_WIDTH 1200
+#define SCENE_HEIGHT 800
+
+#define CANVAS_TILE_HEIGHT 8
 
 /** Width of the game world in Box2d units */
 #define DEFAULT_WIDTH   32.0f
@@ -195,6 +197,32 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
 #pragma mark END SOLUTION
 }
 
+/**
+ * Resets the status of the game so that we can play again.
+ *
+ * This method disposes of the world and creates a new one.
+ */
+void GameScene::reset() {
+    _todoReset = false;
+    _rand.seed(0xdeadbeef);
+    _worldnode->removeAllChildren();
+    _debugnode->removeAllChildren();
+    
+    _backgroundWrapper = std::make_shared<World>(Vec2(0, 0),_scale, _level->getTiles(), _level->getBoundaries(), _assets->get<cugl::Texture>("tile"));
+    
+    populate();
+    std::function<void(const std::shared_ptr<physics2::Obstacle>&,const std::shared_ptr<scene2::SceneNode>&)> linkSceneToObsFunc = [=](const std::shared_ptr<physics2::Obstacle>& obs, const std::shared_ptr<scene2::SceneNode>& node) {
+        this->linkSceneToObs(obs,node);
+    };
+    _network->enablePhysics(_world, linkSceneToObsFunc);
+    
+    if(!_isHost){
+        _network->getPhysController()->acquireObs(_cannon2, 0);
+    }
+
+    _factId = _network->getPhysController()->attachFactory(_crateFact);
+    Application::get()->resetFixedRemainder();
+}
 
 #pragma mark -
 #pragma mark Constructors
@@ -280,14 +308,22 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     _network = network;
     _todoReset = false;
     // Start up the input handler
+    _level = assets->get<LevelModel>(LEVEL_ONE_KEY);
+    if (_level == nullptr) {
+        // Might need to change later if too many assets Copy Tiled Demo?
+        CULog("Fail!");
+        return false;
+    }
     _assets = assets;
     _input.init();
     _input.update(0);
 
+    
     _rand.seed(0xdeadbeef);
 
     _crateFact = CrateFactory::alloc(_assets);
 
+    _backgroundWrapper = std::make_shared<World>(Vec2(0, 0),_scale, _level->getTiles(), _level->getBoundaries(), assets->get<Texture>("tile"));
     // IMPORTANT: SCALING MUST BE UNIFORM
     // This means that we cannot change the aspect ratio of the physics world
     // Shift to center if a bad fit
@@ -305,19 +341,14 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     _debugnode->setPosition(offset);
     
     _chargeBar = std::dynamic_pointer_cast<scene2::ProgressBar>(assets->get<scene2::SceneNode>("load_bar"));
-    _chargeBar->setPosition(Vec2(dimen.width/2.0f,dimen.height*0.9f));
     
     addChild(_worldnode);
     addChild(_debugnode);
     addChild(_chargeBar);
     
-    _world = physics2::net::NetWorld::alloc(Rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),Vec2(0,DEFAULT_GRAVITY));
-    _world->onBeginContact = [this](b2Contact* contact) {
-            beginContact(contact);
-        };
-    _world->update(FIXED_TIMESTEP_S);
-    
     populate();
+    
+    
     _active = true;
     setDebug(false);
 
@@ -363,7 +394,7 @@ void GameScene::dispose() {
         _worldnode = nullptr;
         _debugnode = nullptr;
         _debug = false;
-        Scene2::dispose();
+        Scene2::dispose(); 
     }
 }
 
@@ -416,7 +447,7 @@ void GameScene::processCrateEvent(const std::shared_ptr<CrateEvent>& event){
     std::string name = (CRATE_PREFIX "0") + std::to_string(indx);
     auto image = _assets->get<Texture>(name);
     Size boxSize(image->getSize() / _scale);
-    
+    CULog("big box size %f %f", boxSize.width, boxSize.height);
     auto crate = physics2::BoxObstacle::alloc(Vec2(event->getPos().x,event->getPos().y), boxSize);
     
     crate->setDebugColor(DYNAMIC_COLOR);
@@ -465,6 +496,9 @@ void GameScene::populate() {
     
     std::shared_ptr<Texture> image;
         
+    
+#pragma mark : Background
+    addChildBackground();
 #pragma mark : Wall polygon 1
         
     // Create ground pieces
@@ -516,18 +550,18 @@ void GameScene::populate() {
     wall2 *= _scale;
     wallsprite2 = scene2::PolygonNode::allocWithTexture(image,wall2);
         
-#pragma mark : Crates
-    float f1 = _rand() % (int)(DEFAULT_WIDTH - 4) + 2;
-    float f2 = _rand() % (int)(DEFAULT_HEIGHT - 4) + 2;
-    Vec2 boxPos(f1, f2);
-        
-    for (int ii = 0; ii < NUM_CRATES; ii++) {
-        f1 = _rand() % (int)(DEFAULT_WIDTH - 6) + 3;
-        f2 = _rand() % (int)(DEFAULT_HEIGHT - 6) + 3;
-        // Pick a crate and random and generate the key
-        Vec2 boxPos(f1, f2);
-        addInitCrate(boxPos);
-    }
+//#pragma mark : Crates
+//    float f1 = _rand() % (int)(DEFAULT_WIDTH - 4) + 2;
+//    float f2 = _rand() % (int)(DEFAULT_HEIGHT - 4) + 2;
+//    Vec2 boxPos(f1, f2);
+//        
+//    for (int ii = 0; ii < NUM_CRATES; ii++) {
+//        f1 = _rand() % (int)(DEFAULT_WIDTH - 6) + 3;
+//        f2 = _rand() % (int)(DEFAULT_HEIGHT - 6) + 3;
+//        // Pick a crate and random and generate the key
+//        Vec2 boxPos(f1, f2);
+//        addInitCrate(boxPos);
+//    }
         
 #pragma mark : Cannon
     image  = _assets->get<Texture>(CANNON_TEXTURE);
@@ -555,7 +589,7 @@ void GameScene::populate() {
     addInitObstacle(_cannon2, _cannon2Node);
     
 #pragma mark : Rocket
-    Vec2 dogPos = ((Vec2)CAN1_POS);
+    Vec2 dogPos = ((Vec2)CAN1_POS) + Vec2(1,-2);
     image  = _assets->get<Texture>(CANNON_TEXTURE);
     Size dogSize(image->getSize()/_scale);
     
@@ -575,6 +609,8 @@ void GameScene::populate() {
 
     // Create the polygon node (empty, as the model will initialize)
     addInitObstacle(_dog1, rocketNode);
+    
+    _camera.init(rocketNode, _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), _chargeBar, 1000.0f);
 }
 
 void GameScene::linkSceneToObs(const std::shared_ptr<physics2::Obstacle>& obj,
@@ -622,6 +658,14 @@ void GameScene::addInitObstacle(const std::shared_ptr<physics2::Obstacle>& obj,
 #pragma mark Physics Handling
 
 void GameScene::preUpdate(float dt) {
+    if (needToReset()){
+         CULog("Reseting\n");
+         reset();
+    }
+    if (_input.didExit()) {
+        CULog("Shutting down");
+        Application::get()->quit();
+    }
     _input.update(dt);
     
     if(_input.getFirePower()>0.f){
@@ -635,16 +679,14 @@ void GameScene::preUpdate(float dt) {
     // Process the toggled key commands
     if (_input.didDebug()) { setDebug(!isDebug()); }
 
-    if (_input.didExit()) {
-        CULog("Shutting down");
-        Application::get()->quit();
-    }
-    
     if (_input.didFire()) {
         fireCrate();
     }
     
     // Apply the force to the rocket (but run physics in fixedUpdate)
+//    _camera.setZoom(SCENE_HEIGHT/CANVAS_TILE_HEIGHT);
+//    _camera.setZoom(2);
+    _camera.update();
     _dog1->moveOnInput(_input);
     
 //TODO: if _input.didBigCrate(), allocate a crate event for the center of the screen(use DEFAULT_WIDTH/2 and DEFAULT_HEIGHT/2) and send it using the pushOutEvent() method in the network controller.
@@ -778,31 +820,47 @@ Size GameScene::computeActiveSize() const {
     return dimen;
 }
 
-#pragma mark -
-#pragma mark Rendering
-/**
- * Draws all of the children in this scene with the given SpriteBatch.
- *
- * This method assumes that the sprite batch is not actively drawing.
- * It will call both begin() and end().
- *
- * Rendering happens by traversing the the scene graph using an "Pre-Order"
- * tree traversal algorithm ( https://en.wikipedia.org/wiki/Tree_traversal#Pre-order ).
- * That means that parents are always draw before (and behind children).
- * To override this draw order, you should place an {@link OrderedNode}
- * in the scene graph to specify an alternative order.
- *
- * @param batch     The SpriteBatch to draw with.
- */
-void GameScene::render(const std::shared_ptr<SpriteBatch>& batch) {
-    batch->begin(_camera->getCombined());
-    batch->setSrcBlendFunc(_srcFactor);
-    batch->setDstBlendFunc(_dstFactor);
-    batch->setBlendEquation(_blendEquation);
 
-    for(auto it = _children.begin(); it != _children.end(); ++it) {
-        (*it)->render(batch, Affine2::IDENTITY, _color);
+void GameScene::addChildBackground(){
+    const std::vector<std::vector<std::shared_ptr<TileInfo>>>& currentBackground = _backgroundWrapper->getTileWorld();
+    int originalRows = (int) currentBackground.size();
+    int originalCols = (int) currentBackground.at(0).size();
+    for (int j =0  ;j< originalCols; j++){
+        for (int i = originalRows -1; i > -1; i--){
+            std::shared_ptr<TileInfo> t = currentBackground.at(i).at(j);
+            auto image  = t->texture;
+            auto sprite = scene2::PolygonNode::allocWithTexture(image);
+            sprite->setAnchor(Vec2::ANCHOR_CENTER);
+            if (image != nullptr){
+                CULog("Rocket Size: %f %f", image->getSize().width, image->getSize().height);
+            }else{
+                CULog("IMAGE IS NULL?");
+            }
+//            CULog("Child Size: %f %f", image->getSize().width, image->getSize().height);
+            if (i == 0 || j == 0 || i == originalRows -1 || j == originalCols - 1){
+                t->setDebugColor(DYNAMIC_COLOR);
+                addInitObstacle(t, sprite);
+            }else{
+                sprite->setPosition(t->getPosition() * _scale);
+                _worldnode->addChild(sprite);
+            }
+        }
     }
-
-    batch->end();
 }
+//
+//void World::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
+//    int originalRows = (int) backgroundWorld.size();
+//    int originalCols = (int) backgroundWorld.at(0).size();
+//    int printIndexJ = 0;
+//    for (int j =0  ;j< originalCols; j++){
+//        int printIndexI = 0;
+//        for (int i = originalRows -1; i > -1; i--){
+//            Color4 tint = cugl::Color4("white");
+//            std::shared_ptr<TileInfo> t = backgroundWorld.at(i).at(j);
+//            batch->draw(t->texture, tint, Rect(t->getPosition(), t->getDimension()));
+//            printIndexI++;
+//        }
+//        printIndexJ++;
+//    }
+//
+//}

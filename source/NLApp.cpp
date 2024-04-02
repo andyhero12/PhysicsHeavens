@@ -48,14 +48,15 @@ void NetApp::onStartup() {
     _assets->attach<scene2::SceneNode>(Scene2Loader::alloc()->getHook());
     _assets->attach<JsonValue>(JsonLoader::alloc()->getHook());
     _assets->attach<WidgetValue>(WidgetLoader::alloc()->getHook());
-
+    _assets->attach<LevelModel>(GenericLoader<LevelModel>::alloc()->getHook());
+    
     _loading.init(_assets);
     _status = LOAD;
     
     // Que up the other assets
     AudioEngine::start(24);
     _assets->loadDirectoryAsync("json/assets.json",nullptr);
-    
+    _assets->loadAsync<LevelModel>(LEVEL_ONE_KEY,LEVEL_ONE_FILE,nullptr);
     cugl::net::NetworkLayer::start(net::NetworkLayer::Log::INFO);
     
     Application::onStartup(); // YOU MUST END with call to parent
