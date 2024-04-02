@@ -1,5 +1,25 @@
 {
 	"textures": {
+        "mediumdogleftrun": {
+            "file": "textures/dog/run/medium-left-run.png",
+                  "minfilter": "linear",
+                  "magfilter": "nearest"
+        },
+        "mediumdogfrontrun": {
+            "file": "textures/dog/run/medium-front-run.png",
+                  "minfilter": "linear",
+                  "magfilter": "nearest"
+        },
+        "mediumdogrightrun": {
+            "file": "textures/dog/run/medium-right-run.png",
+                  "minfilter": "linear",
+                  "magfilter": "nearest"
+        },
+        "mediumdogbackrun": {
+            "file": "textures/dog/run/medium-back-run.png",
+                  "minfilter": "linear",
+                  "magfilter": "nearest"
+        },
         "tile": {
             "file": "textures/tile/tile.png",
               "minfilter": "linear",

@@ -198,6 +198,30 @@ public:
      * @return the animation node for the given direction
      */
     const std::shared_ptr<cugl::scene2::SpriteNode>& getAnimation(Directions direction) const;
+    /**
+    * Sets the anchor point in percentages.
+    *
+    * The anchor point defines the relative origin of Node with respect to its
+    * parent.  It is a "pin" where the Node is attached to its parent.  In
+    * effect, the translation of a Node is defined by its position plus
+    * anchor point.
+    *
+    * The anchorPoint is normalized, like a percentage. (0,0) means the
+    * bottom-left corner and (1,1) means the top-right corner. There are many
+    * anchor point constants defined in {@link Vec2}.  However, there is
+    * nothing preventing an anchor point higher than (1,1) or lower than (0,0).
+    *
+    * The default anchorPoint is (0.5,0.5), so it starts in the center of
+    * the node. Changing the anchor will not move the contents of the node in
+    * the parent space, but it will change the value of the Node position.
+    *
+    * This function is disabled if the node is using absolute positioning.
+    * That is because anchors do not make sense when we are drawing polygons
+    * directly to the screen.
+    *
+    * @param anchor    The anchor point of node.
+    */
+    virtual void setAnchor(const cugl::Vec2 anchor) override;
 
 
 #pragma mark -

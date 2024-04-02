@@ -52,7 +52,7 @@ void AnimationSceneNode::dispose(){
  */
 bool AnimationSceneNode::initWithTextures(const std::vector<std::shared_ptr<cugl::Texture>>& textures,
                                           int rows, int cols, int size, int freqAnimation) {
-    CUAssertLog(size <= rows*cols, "Invalid strip size for %dx%d",rows,cols);
+    CUAssertLog(size <= rows*cols, "Invalid strip size for %dx%d", rows,cols);
     this->_animFreq = freqAnimation;
     this->_timeSinceLastAnim = 0;
     this->_rows = rows;
@@ -97,6 +97,11 @@ void AnimationSceneNode::stepAnimation(){
     _frame = (_frame + 1)% _size;
 }
 
+void AnimationSceneNode::setAnchor(const cugl::Vec2 anchor){
+    for(auto &node : _animationSprites){
+        node->setAnchor(anchor);
+    }
+}
 
 #pragma mark -
 #pragma mark Helper Functions
@@ -106,11 +111,10 @@ void AnimationSceneNode::stepAnimation(){
  */
 bool AnimationSceneNode::createSpriteNodes(const std::vector<std::shared_ptr<cugl::Texture>>& textures){
     CUAssertLog(textures.size()==8, "Invalid number of elements in to initialize a spriteNode, need 8 not %zu", textures.size());
-    bool ret = true;
     for (size_t i = 0; i < textures.size(); ++i) {
-        ret = ret && _animationSprites.at(i)->initWithSheet(textures.at(i), _rows, _cols);
+        _animationSprites.at(i) = cugl::scene2::SpriteNode::allocWithSheet(textures.at(i), _rows, _cols);
     }
-    return ret;
+    return true;
 }
 
 
