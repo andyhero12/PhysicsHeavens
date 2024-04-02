@@ -86,6 +86,7 @@ bool AnimationSceneNode::initWithTextures(const std::vector<std::shared_ptr<cugl
     this->_rows = rows;
     this->_cols = cols;
     this->_size = size;
+    _direction = Directions::SOUTH;
     _bounds.size = textures.at(0)->getSize();
     _bounds.size.width /= cols;
     _bounds.size.height /= rows;
@@ -93,3 +94,44 @@ bool AnimationSceneNode::initWithTextures(const std::vector<std::shared_ptr<cugl
 }
 
 
+
+#pragma mark -
+#pragma mark Rendering
+
+/**
+ * Animates the given direction.
+ *
+ * If the animation is not active, it will reset to the initial animation frame.
+ *
+ * @param direction    The reference to the animation direction
+ * @param on        Whether the animation is active
+ */
+void AnimationSceneNode::animate(Directions direction, bool on){
+    _direction = direction;
+    _on = on;
+    if(on){
+        _frame = (_frame + 1) % _size;
+    }
+    else{
+        _frame = 0;
+    }
+}
+
+
+/**
+ * Draws this polygon node via the given SpriteBatch.
+ *
+ * This method only worries about drawing the current node.  It does not
+ * attempt to render the children.
+ *
+ * @param batch     The SpriteBatch to draw with.
+ * @param transform The global transformation matrix.
+ * @param tint      The tint to blend with the Node color.
+ */
+void AnimationSceneNode::draw(const std::shared_ptr<cugl::SpriteBatch>& batch, const cugl::Affine2& transform, cugl::Color4 tint){
+    if(_on){
+        const std::shared_ptr<cugl::scene2::SpriteNode> dir = getAnimation(_direction);
+        dir->setFrame(_frame);
+        dir->draw(batch, transform, tint);
+    }
+}
