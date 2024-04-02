@@ -19,6 +19,7 @@
  * the heap, use one of the static constructors instead.
  */
 AnimationSceneNode::AnimationSceneNode() :
+_animationSprites(8),
 _cols(0),
 _size(0),
 _frame(0),
@@ -27,23 +28,38 @@ _bounds(cugl::Rect::ZERO) {
 }
 
 void AnimationSceneNode::dispose(){
-    
-}
-
-void AnimationSceneNode::setFrame(int frame){
-    
+    for (auto& sprite : _animationSprites) {
+        sprite = nullptr;
+    }
 }
 
 #pragma mark -
+#pragma mark Attribute Accessors
+
+void AnimationSceneNode::setFrame(int frame){
+    _frame = frame;
+}
+
+const std::shared_ptr<cugl::scene2::SpriteNode>& AnimationSceneNode::getAnimation(Directions direction) const {
+    size_t index = static_cast<std::size_t>(direction);
+    if (index >= _animationSprites.size()) {
+        throw std::out_of_range("Direction index out of range");
+    }
+    return _animationSprites.at(index);
+}
+
+
+#pragma mark -
 #pragma mark Helper Functions
+
 /**
  initializes the animationSprites vector
  */
 bool AnimationSceneNode::createSpriteNodes(const std::vector<std::shared_ptr<cugl::Texture>>& textures){
+    CUAssertLog(textures.size()==8, "Invalid number of elements in to initialize a spriteNode, need 8 not %zu", textures.size());
     bool ret = true;
-    for (const std::shared_ptr<cugl::Texture>& texture : textures) {
-        _animationSprites.emplace_back();
-        ret = ret && _animationSprites.at(_animationSprites.size() - 1)->initWithSheet(texture, _rows, _cols);
+    for (size_t i = 0; i < textures.size(); ++i) {
+        ret = ret && _animationSprites.at(i)->initWithSheet(textures.at(i), _rows, _cols);
     }
     return ret;
 }

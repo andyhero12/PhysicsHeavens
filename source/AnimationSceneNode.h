@@ -5,8 +5,8 @@
 //  Created by Henry Gao on 4/1/24.
 //
 
-#ifndef AnimationScene_hpp
-#define AnimationScene_hpp
+#ifndef AnimationScene_h
+#define AnimationScene_h
 
 #include <stdio.h>
 #include <cugl/cugl.h>
@@ -33,9 +33,25 @@ class AnimationSceneNode : public cugl::scene2::SceneNode {
         cugl::Rect _bounds;
         /** All the different sprite directions*/
         std::vector<std::shared_ptr<cugl::scene2::SpriteNode>> _animationSprites;
+    public:
+    #pragma mark -
+    #pragma mark Directions
+        /**
+         * Enumeration to identify the Animation directions
+         * From top to bottom correponds to index 0 to 7
+         */
+        enum class Directions : int {
+            EAST,
+            NORTHEAST,
+            NORTH,
+            NORTHWEST,
+            WEST,
+            SOUTHWEST,
+            SOUTH,
+            SOUTHEAST
+        };
     #pragma mark -
     #pragma mark Constructors
-    public:
         /**
          * Creates an empty scene graph node with the degenerate texture.
          *
@@ -125,24 +141,17 @@ class AnimationSceneNode : public cugl::scene2::SceneNode {
          * @param frame the index to make the active frame
          */
         void setFrame(int frame);
-        
-    #pragma mark -
-    #pragma mark Directions
+    
         /**
-         * Enumeration to identify the rocket afterburner
+         * Returns the animation node for the given animation direction
+         *
+         * @param  direction   The enumeration to identify the afterburner
+         *
+         * @return the animation node for the given direction
          */
-        enum class Directions : int {
-            EAST,
-            NORTHEAST,
-            NORTH,
-            NORTHWEST,
-            WEST,
-            SOUTHWEST,
-            SOUTH,
-            SOUTHEAST
-        };
+        const std::shared_ptr<cugl::scene2::SpriteNode>& getAnimation(Directions direction) const;
 
     };
 
 
-#endif /* AnimationScene_hpp */
+#endif /* AnimationScene_h */
