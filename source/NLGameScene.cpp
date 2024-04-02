@@ -588,7 +588,23 @@ void GameScene::populate() {
     addInitObstacle(_cannon1, _cannon1Node);
     addInitObstacle(_cannon2, _cannon2Node);
     
-#pragma mark : Rocket
+#pragma mark : Dog
+    
+    std::vector<std::shared_ptr<cugl::Texture>> textures;
+    textures.push_back(_assets->get<cugl::Texture>("mediumdogrightrun"));
+    textures.push_back(_assets->get<cugl::Texture>("mediumdogrightrun"));
+    textures.push_back(_assets->get<cugl::Texture>("mediumdogbackrun"));
+    textures.push_back(_assets->get<cugl::Texture>("mediumdogbackrun"));
+    textures.push_back(_assets->get<cugl::Texture>("mediumdogleftrun"));
+    textures.push_back(_assets->get<cugl::Texture>("mediumdogleftrun"));
+    textures.push_back(_assets->get<cugl::Texture>("mediumdogfrontrun"));
+    textures.push_back(_assets->get<cugl::Texture>("mediumdogfrontrun"));
+    
+    std::shared_ptr<AnimationSceneNode> _dogImage = std::make_shared<AnimationSceneNode>();
+    _dogImage->initWithTextures(textures, 1, 4, 4, 5);
+    _dogImage->setAnchor(Vec2::ANCHOR_CENTER);
+    
+    
     Vec2 dogPos = ((Vec2)CAN1_POS) + Vec2(1,-2);
     image  = _assets->get<Texture>(CANNON_TEXTURE);
     Size dogSize(image->getSize()/_scale);
@@ -597,25 +613,13 @@ void GameScene::populate() {
     _dog1->setDrawScale(_scale);
     _dog1->setDebugColor(DYNAMIC_COLOR);
     
-    auto rocketNode = scene2::PolygonNode::allocWithTexture(image);
-    rocketNode->setAnchor(Vec2::ANCHOR_CENTER);
-    _dog1->setShipNode(rocketNode);
-    
-    // These will attach them to the ship node
-    _dog1->setBurnerStrip(Dog::Burner::MAIN, _assets->get<Texture>(MAIN_FIRE_TEXTURE));
-    _dog1->setBurnerStrip(Dog::Burner::LEFT, _assets->get<Texture>(LEFT_FIRE_TEXTURE));
-    _dog1->setBurnerStrip(Dog::Burner::RIGHT,_assets->get<Texture>(RGHT_FIRE_TEXTURE));
-    
-
-    // Create the polygon node (empty, as the model will initialize)
-    addInitObstacle(_dog1, rocketNode);
-    
-    _camera.init(rocketNode, _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), _chargeBar, 1000.0f);
+    addInitObstacle(_dog1, _dogImage);
+    _camera.init(_dogImage, _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), _chargeBar, 1000.0f);
 }
 
 void GameScene::linkSceneToObs(const std::shared_ptr<physics2::Obstacle>& obj,
     const std::shared_ptr<scene2::SceneNode>& node) {
-
+    
     node->setPosition(obj->getPosition() * _scale);
     _worldnode->addChild(node);
 

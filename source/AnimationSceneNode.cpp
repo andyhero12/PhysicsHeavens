@@ -23,6 +23,7 @@ _animationSprites(8),
 _cols(0),
 _size(0),
 _frame(0),
+_on(true),
 _bounds(cugl::Rect::ZERO) {
     _classname = "AnimationNode";
 }
@@ -62,6 +63,7 @@ bool AnimationSceneNode::initWithTextures(const std::vector<std::shared_ptr<cugl
     _bounds.size = textures.at(0)->getSize();
     _bounds.size.width /= cols;
     _bounds.size.height /= rows;
+    _childOffset = -1;
     return createSpriteNodes(textures);
 }
 

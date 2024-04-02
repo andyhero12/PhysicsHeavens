@@ -134,8 +134,6 @@ protected:
 
     std::shared_ptr<Dog> _dog1;
 
-    std::shared_ptr<AnimationSceneNode> _dogImage;
-
     std::shared_ptr<World> _backgroundWrapper;
     /** Host is by default the left cannon */
     bool _isHost;
