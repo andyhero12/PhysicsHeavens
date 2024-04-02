@@ -35,6 +35,21 @@ public:
 #pragma mark Helper Functions
 private:
     bool createSpriteNodes(const std::vector<std::shared_ptr<cugl::Texture>>& textures);
+    
+    /**
+    Returns true if enough time has passed since the last animation frame update
+    @param
+     */
+    bool frameUpdateReady();
+    /**
+    Update frame number
+     */
+    void stepAnimation();
+    /**
+    Update numer of frames that have passed
+     */
+    void updateAnimTime();
+    
 #pragma mark -
 #pragma mark Class Attributes
 protected:
@@ -54,6 +69,11 @@ protected:
     Directions _direction;
     /** Whether draw will draw animation or not*/
     bool _on;
+    // FOR SLOWING DOWN ANIMATIONS
+    /** Number of frames that passed*/
+    int _timeSinceLastAnim;
+    /** Attack animation frequency; represents the number of frames until update */
+    int _animFreq;
 public:
 #pragma mark -
 #pragma mark Constructors
@@ -121,7 +141,30 @@ public:
      *
      * @return  true if the filmstrip is initialized properly, false otherwise.
      */
-    bool initWithTextures(const std::vector<std::shared_ptr<cugl::Texture>>& textures, int rows, int cols, int size);
+    bool initWithTextures(const std::vector<std::shared_ptr<cugl::Texture>>& textures, int rows, int cols, int size){
+            return initWithTextures(textures,rows,cols,size, 10);
+    }
+    
+    /**
+     * Initializes the film strip with the given texture.
+     *
+     * The parameter size is to indicate that there are unused frames in the
+     * filmstrip.  The value size must be less than or equal to rows*cols, or
+     * this constructor will raise an error.
+     *
+     * The size of the node is equal to the size of a single frame in the
+     * filmstrip. To resize the node, scale it up or down.  Do NOT change the
+     * polygon, as that will interfere with the animation.
+     *
+     * @param texture   The texture image to use
+     * @param rows      The number of rows in the filmstrip
+     * @param cols      The number of columns in the filmstrip
+     * @param size      The number of frames in the filmstrip
+     * @param freqAnimation      The number of frames until an update
+     *
+     * @return  true if the filmstrip is initialized properly, false otherwise.
+     */
+    bool initWithTextures(const std::vector<std::shared_ptr<cugl::Texture>>& textures, int rows, int cols, int size, int freqAnimation);
 #pragma mark -
 #pragma mark Attribute Accessors
     /**
