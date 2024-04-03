@@ -98,12 +98,23 @@ void AnimationSceneNode::stepAnimation(){
 
 void AnimationSceneNode::setAnchor(const cugl::Vec2 anchor){
     _anchor = anchor;
-    std::cout << "animation" << anchor.x << " " <<anchor.y << std::endl;
+//    std::cout << "animation" << anchor.x << " " <<anchor.y << std::endl;
     for(auto &node : _animationSprites){
         node->setAnchor(anchor);
     }
 }
 
+void AnimationSceneNode::setPosition(const cugl::Vec2 &position){
+    for(auto &node : _animationSprites){
+        node->setAnchor(position);
+    }
+}
+
+void AnimationSceneNode::setAngle(float angle) {
+    for(auto &node : _animationSprites){
+        node->setAngle(_angle);
+    }
+}
 #pragma mark -
 #pragma mark Helper Functions
 
@@ -127,7 +138,7 @@ AnimationSceneNode::Directions AnimationSceneNode::convertRadiansToDirections(do
 
 /** Convert Angle to Direction */
 AnimationSceneNode::Directions AnimationSceneNode::convertAngleToDirections(float ang){
-    
+    ang += 22.5f;
     ang = fmod(ang, 360.0f);
     if (ang < 0) {
         ang += 360.0f;
@@ -187,3 +198,4 @@ void AnimationSceneNode::draw(const std::shared_ptr<cugl::SpriteBatch>& batch, c
         dir->draw(batch, transform, tint);
     }
 }
+

@@ -223,6 +223,9 @@ public:
     */
     virtual void setAnchor(const cugl::Vec2 anchor) override;
 
+    
+    void setPosition(const cugl::Vec2 &position);
+    void setAngle(float angle);
 
 #pragma mark -
 #pragma mark Rendering
@@ -250,10 +253,10 @@ public:
     
     
     /** Convert radians to Direction */
-    Directions convertRadiansToDirections(double rad);
+    static Directions convertRadiansToDirections(double rad);
 
     /** Convert Angle to Direction */
-    Directions convertAngleToDirections(float ang);
+    static Directions convertAngleToDirections(float ang);
 };
     
 #endif /* AnimationScene_h */

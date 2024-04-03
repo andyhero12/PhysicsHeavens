@@ -590,19 +590,53 @@ void GameScene::populate() {
     
 #pragma mark : Dog
     
+    // should be from northeast; clockwise
     std::vector<std::shared_ptr<cugl::Texture>> textures;
     textures.push_back(_assets->get<cugl::Texture>("mediumdogrightrun"));
     textures.push_back(_assets->get<cugl::Texture>("mediumdogrightrun"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogbackrun"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogbackrun"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogleftrun"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogleftrun"));
     textures.push_back(_assets->get<cugl::Texture>("mediumdogfrontrun"));
     textures.push_back(_assets->get<cugl::Texture>("mediumdogfrontrun"));
+    textures.push_back(_assets->get<cugl::Texture>("mediumdogleftrun"));
+    textures.push_back(_assets->get<cugl::Texture>("mediumdogleftrun"));
+    textures.push_back(_assets->get<cugl::Texture>("mediumdogbackrun"));
+    textures.push_back(_assets->get<cugl::Texture>("mediumdogbackrun"));
+
     
-    std::shared_ptr<AnimationSceneNode> _dogImage = std::make_shared<AnimationSceneNode>();
-    _dogImage->initWithTextures(textures, 1, 4, 4, 5);
-    _dogImage->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    std::shared_ptr<AnimationSceneNode> mediumDogRun = std::make_shared<AnimationSceneNode>();
+    mediumDogRun->initWithTextures(textures, 1, 4, 4, 5);
+    mediumDogRun->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    
+    std::shared_ptr<AnimationSceneNode> mediumDogIdle = std::make_shared<AnimationSceneNode>();
+    mediumDogIdle->initWithTextures(textures, 1, 4, 4, 5);
+    mediumDogIdle->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    
+    textures.clear();
+    textures.push_back(_assets->get<cugl::Texture>("mediumdogrightbite"));
+    textures.push_back(_assets->get<cugl::Texture>("mediumdogrightbite"));
+    textures.push_back(_assets->get<cugl::Texture>("mediumdogbackbite"));
+    textures.push_back(_assets->get<cugl::Texture>("mediumdogbackbite"));
+    textures.push_back(_assets->get<cugl::Texture>("mediumdogleftbite"));
+    textures.push_back(_assets->get<cugl::Texture>("mediumdogleftbite"));
+    textures.push_back(_assets->get<cugl::Texture>("mediumdogfrontbite"));
+    textures.push_back(_assets->get<cugl::Texture>("mediumdogfrontbite"));
+    
+    std::shared_ptr<AnimationSceneNode> mediumDogBite = std::make_shared<AnimationSceneNode>();
+    mediumDogBite->initWithTextures(textures, 1, 4, 4, 5);
+    mediumDogBite->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    
+    textures.clear();
+    textures.push_back(_assets->get<cugl::Texture>("mediumdogrightshoot"));
+    textures.push_back(_assets->get<cugl::Texture>("mediumdogrightshoot"));
+    textures.push_back(_assets->get<cugl::Texture>("mediumdogbackshoot"));
+    textures.push_back(_assets->get<cugl::Texture>("mediumdogbackshoot"));
+    textures.push_back(_assets->get<cugl::Texture>("mediumdogleftshoot"));
+    textures.push_back(_assets->get<cugl::Texture>("mediumdogleftshoot"));
+    textures.push_back(_assets->get<cugl::Texture>("mediumdogfrontshoot"));
+    textures.push_back(_assets->get<cugl::Texture>("mediumdogfrontshoot"));
+    
+    std::shared_ptr<AnimationSceneNode> mediumDogShoot = std::make_shared<AnimationSceneNode>();
+    mediumDogShoot->initWithTextures(textures, 1, 4, 4, 5);
+    mediumDogShoot->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     
     
     Vec2 dogPos = ((Vec2)CAN1_POS) + Vec2(1,-2);
@@ -613,8 +647,14 @@ void GameScene::populate() {
     _dog1->setDrawScale(_scale);
     _dog1->setDebugColor(DYNAMIC_COLOR);
     
-    addInitObstacle(_dog1, _dogImage);
-    _camera.init(_dogImage, _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), _chargeBar, 1000.0f);
+    _dog1->setMediumAnimation(mediumDogIdle, mediumDogRun, mediumDogBite, mediumDogShoot);
+    
+    addInitObstacle(_dog1, mediumDogRun);
+    linkSceneToObs(_dog1, mediumDogBite);
+    linkSceneToObs(_dog1, mediumDogIdle);
+    linkSceneToObs(_dog1, mediumDogShoot);
+    
+    _camera.init(mediumDogRun, _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), _chargeBar, 1000.0f);
 }
 
 void GameScene::linkSceneToObs(const std::shared_ptr<physics2::Obstacle>& obj,
@@ -690,7 +730,7 @@ void GameScene::preUpdate(float dt) {
     // Apply the force to the rocket (but run physics in fixedUpdate)
 //    _camera.setZoom(SCENE_HEIGHT/CANVAS_TILE_HEIGHT);
 //    _camera.setZoom(2);
-    _camera.update();
+    _camera.update(dt);
     _dog1->moveOnInput(_input);
     
 //TODO: if _input.didBigCrate(), allocate a crate event for the center of the screen(use DEFAULT_WIDTH/2 and DEFAULT_HEIGHT/2) and send it using the pushOutEvent() method in the network controller.

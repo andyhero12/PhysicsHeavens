@@ -77,19 +77,10 @@ bool Dog::init(const Vec2 pos, const Size size) {
     std::string name("rocket");
     setName(name);
     
-    _shipNode = nullptr;
-    
-    _mainBurner = nullptr;
-    _mainSound  = "";
-    _mainCycle  = true;
-    
-    _leftBurner = nullptr;
-    _leftSound  = "";
-    _leftCycle  = true;
 
-    _rghtBurner = nullptr;
+    _mainSound  = "";
+    _leftSound  = "";
     _rghtSound  = "";
-    _rghtCycle  = true;
 
     setDensity(DEFAULT_DENSITY);
     setFriction(DEFAULT_FRICTION);
@@ -107,10 +98,10 @@ bool Dog::init(const Vec2 pos, const Size size) {
  * disposed, a rocket may not be used until it is initialized again.
  */
 void Dog::dispose() {
-    _shipNode = nullptr;
-    _mainBurner = nullptr;
-    _leftBurner = nullptr;
-    _rghtBurner = nullptr;
+    runAnimationMedium = nullptr;
+    biteAnimationMedium = nullptr;
+    idleAnimationMedium = nullptr;
+    shootAnimationMedium = nullptr;
 }
 
 
@@ -140,120 +131,19 @@ void Dog::moveOnInput(NetLabInput& _input){
  */
 void Dog::update(float delta) {
     Obstacle::update(delta);
-    if (_shipNode != nullptr) {
-        _shipNode->setPosition(getPosition()*_drawscale);
-        _shipNode->setAngle(getAngle());
+    if (runAnimationMedium != nullptr) {
+        runAnimationMedium->setPosition(getPosition()*_drawscale);
+        runAnimationMedium->setAngle(getAngle());
     }
+//    if (_shipNode != nullptr) {
+//        _shipNode->setPosition(getPosition()*_drawscale);
+//        _shipNode->setAngle(getAngle());
+//    }
 }
 
 
 #pragma mark -
 #pragma mark Animation
-/**
- * Sets the scene graph node representing this rocket.
- *
- * By storing a reference to the scene graph node, the model can update
- * the node to be in sync with the physics info. It does this via the
- * {@link Obstacle#update(float)} method.
- *
- * If the animation nodes are not null, this method will remove them from
- * the previous scene and add them to the new one.
- *
- * @param node  The scene graph node representing this rocket.
- */
-void Dog::setShipNode(const std::shared_ptr<scene2::SceneNode>& node) {
-    if (_shipNode != nullptr) {
-        if (_mainBurner != nullptr) {
-            _shipNode->removeChild(_mainBurner);
-        }
-        if (_leftBurner != nullptr) {
-            _shipNode->removeChild(_leftBurner);
-        }
-        if (_rghtBurner != nullptr) {
-            _shipNode->removeChild(_rghtBurner);
-        }
-    }
-    _shipNode = node;
-    if (_mainBurner != nullptr) {
-        _mainBurner->setPosition(_shipNode->getContentSize().width/2.0f,
-                                 _shipNode->getContentSize().height-
-                                 _mainBurner->getContentSize().height/2.0f);
-        _shipNode->addChild(_mainBurner);
-    }
-    if (_leftBurner != nullptr) {
-        _leftBurner->setPosition(_shipNode->getContentSize()/2.0f);
-        _shipNode->addChild(_leftBurner);
-    }
-    if (_rghtBurner != nullptr) {
-        _rghtBurner->setPosition(_shipNode->getContentSize()/2.0f);
-        _shipNode->addChild(_rghtBurner);
-    }
-}
-
-
-/**
- * Returns the animation node for the given afterburner
- *
- * The model tracks the animation nodes separately from the main scene
- * graph node (even though they are childing of this node).  That is so
- * we can encapsulate the animation cycle.
- *
- * @param  burner   The enumeration to identify the afterburner
- *
- * @return the animation node for the given afterburner
- */
-const std::shared_ptr<scene2::SpriteNode>& Dog::getBurnerStrip(Burner burner) const {
-    switch (burner) {
-        case Burner::MAIN:
-            return _mainBurner;
-        case Burner::LEFT:
-            return _leftBurner;
-        case Burner::RIGHT:
-            return _rghtBurner;
-    }
-    CUAssertLog(false, "Invalid burner enumeration");
-    return _mainBurner;
-}
-
-/**
- * Sets the animation node for the given afterburner
- *
- * The model tracks the animation nodes separately from the main scene
- * graph node (even though they are childing of this node).  That is so
- * we can encapsulate the animation cycle.
- * @param burner    The enumeration to identify the afterburner
- * @param strip     The animation node for the given afterburner
- */
-void Dog::setBurnerStrip(Burner burner, const std::shared_ptr<cugl::Texture>& strip) {
-    switch (burner) {
-        case Burner::MAIN:
-            _mainBurner = scene2::SpriteNode::allocWithSheet(strip, 1, FIRE_FRAMES, FIRE_FRAMES);
-            if (_shipNode != nullptr) {
-                _mainBurner->setPosition(_shipNode->getContentSize().width/2.0f,
-                                         _shipNode->getContentSize().height-
-                                         _mainBurner->getContentSize().height/2.0f);
-                _shipNode->addChild(_mainBurner);
-            }
-            break;
-        case Burner::LEFT:
-            _leftBurner = scene2::SpriteNode::allocWithSheet(strip, 1, FIRE_FRAMES, FIRE_FRAMES);
-            if (_shipNode != nullptr) {
-                _leftBurner->setPosition(_shipNode->getContentSize()/2.0f);
-                _shipNode->addChild(_leftBurner);
-            }
-            break;
-        case Burner::RIGHT:
-            _rghtBurner = scene2::SpriteNode::allocWithSheet(strip, 1, FIRE_FRAMES, FIRE_FRAMES);
-            if (_shipNode != nullptr) {
-                _rghtBurner->setPosition(_shipNode->getContentSize()/2.0f);
-                _shipNode->addChild(_rghtBurner);
-            }
-            break;
-        default:
-            CUAssertLog(false, "Invalid burner enumeration");
-    }
-}
-
 /**
  * Returns the key for the sound to accompany the given afterburner
  *
@@ -302,51 +192,6 @@ void Dog::setBurnerSound(Burner burner, const std::string& key) {
     }
 }
 
-/**
- * Animates the given burner.
- *
- * If the animation is not active, it will reset to the initial animation frame.
- *
- * @param burner    The reference to the rocket burner
- * @param on        Whether the animation is active
- */
-void Dog::animateBurner(Burner burner, bool on) {
-    scene2::SpriteNode* node;
-    bool*  cycle;
-
-    switch (burner) {
-        case Burner::MAIN:
-            node  = _mainBurner.get();
-            cycle = &_mainCycle;
-            break;
-        case Burner::LEFT:
-            node  = _leftBurner.get();
-            cycle = &_leftCycle;
-            break;
-        case Burner::RIGHT:
-            node  = _rghtBurner.get();
-            cycle = &_rghtCycle;
-            break;
-    }
-    
-    if (on) {
-        // Turn on the flames and go back and forth
-        if (node->getFrame() == 0 || node->getFrame() == 1) {
-            *cycle = true;
-        } else if (node->getFrame() == node->getSpan()-1) {
-            *cycle = false;
-        }
-        
-        // Increment
-        if (*cycle) {
-            node->setFrame(node->getFrame()+1);
-        } else {
-            node->setFrame(node->getFrame()-1);
-        }
-   } else {
-        node->setFrame(0);
-    }
-}
 
 /**
  * Sets the ratio of the ship sprite to the physics body
@@ -362,8 +207,15 @@ void Dog::animateBurner(Burner burner, bool on) {
  */
 void Dog::setDrawScale(float scale) {
     _drawscale = scale;
-    if (_shipNode != nullptr) {
-        _shipNode->setPosition(getPosition()*_drawscale);
+    if (runAnimationMedium != nullptr) {
+       runAnimationMedium->setPosition(getPosition()*_drawscale);
     }
+}
+
+void Dog::setMediumAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot){
+    runAnimationMedium = run;
+    idleAnimationMedium = idle;
+    shootAnimationMedium = shoot;
+    biteAnimationMedium = bite;
 }
 
