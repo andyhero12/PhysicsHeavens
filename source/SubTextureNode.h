@@ -16,7 +16,7 @@ class SubTextureNode : public cugl::scene2::PolygonNode {
 protected:
     /** full texture */
     std::shared_ptr<cugl::Texture> original;
-
+public:
     /**
      * Initializes a polygon node from a Texture object.
      *
@@ -47,7 +47,6 @@ protected:
         return TexturedNode::initWithTexture(texture);
     }
     
-    
 #pragma mark -
 #pragma mark Static Constructors
 
@@ -62,8 +61,8 @@ protected:
      *
      * @return a new polygon node from a Texture object.
      */
-    static std::shared_ptr<PolygonNode> allocWithTexture(const std::shared_ptr<cugl::Texture>& texture) {
-        std::shared_ptr<PolygonNode> node = std::make_shared<PolygonNode>();
+    static std::shared_ptr<SubTextureNode> allocWithTexture(const std::shared_ptr<cugl::Texture>& texture) {
+        std::shared_ptr<SubTextureNode> node = std::make_shared<SubTextureNode>();
         return (node->initWithTexture(texture) ? node : nullptr);
     }
     /**
@@ -78,9 +77,9 @@ protected:
      *
      * @return a new polygon node from a Texture object and the given rect.
      */
-    static std::shared_ptr<PolygonNode> allocWithTexture(const std::shared_ptr<cugl::Texture>& texture,
+    static std::shared_ptr<SubTextureNode> allocWithTexture(const std::shared_ptr<cugl::Texture>& texture,
                                                          const cugl::Rect rect)  {
-        std::shared_ptr<PolygonNode> node = std::make_shared<PolygonNode>();
+        std::shared_ptr<SubTextureNode> node = std::make_shared<SubTextureNode>();
         return (node->initWithTexturePoly(texture,rect) ? node : nullptr);
     }
 #pragma mark -

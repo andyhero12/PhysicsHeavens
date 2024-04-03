@@ -29,6 +29,7 @@
 #include "NLLevelModel.h"
 #include "World.h"
 #include "AnimationSceneNode.h"
+#include "UIController.h"
 
 using namespace cugl::physics2::net;
 using namespace cugl;
@@ -105,6 +106,8 @@ protected:
     CameraController _camera;
 
     // VIEW
+    /** Reference to the ui */
+    std::shared_ptr<cugl::scene2::SceneNode> _uinode;
     /** Reference to the physics root of the scene graph */
     std::shared_ptr<cugl::scene2::SceneNode> _worldnode;
     /** Reference to the debug root of the scene graph */
@@ -112,6 +115,7 @@ protected:
 
     std::shared_ptr<cugl::scene2::ProgressBar> _chargeBar;
 
+    std::shared_ptr<UIController> _uiController;
     /** The Box2D world */
     std::shared_ptr<cugl::physics2::net::NetWorld> _world;
     /** The scale between the physics world and the screen (MUST BE UNIFORM) */

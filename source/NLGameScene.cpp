@@ -331,6 +331,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
 
     // Create the scene graph
+    _uinode = scene2::SceneNode::alloc();
+    _uinode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    
     _worldnode = scene2::SceneNode::alloc();
     _worldnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _worldnode->setPosition(offset);
@@ -348,6 +351,10 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     
     populate();
     
+    _uiController = std::make_shared<UIController>();
+    _uiController->init(_uinode, assets, getSize(), _dog1);
+    
+    addChild(_uinode);
     
     _active = true;
     setDebug(false);
@@ -778,7 +785,7 @@ void GameScene::initDog(){
     addInitObstacleLinkAnimation(_dog1, vecNodes);
     
     
-    _camera.init(mediumDogRun, _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), _chargeBar, 1000.0f);
+    _camera.init(mediumDogRun, _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), _uinode, 1000.0f);
 }
 
 void GameScene::linkAllAnimationsToObject(const std::shared_ptr<physics2::Obstacle>& obj,
