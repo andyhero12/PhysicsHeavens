@@ -1,216 +1,158 @@
 //
-//  NLInput.h
-//  Networked Physics Demo
+//  GLInputController.h
 //
-//  This input controller is primarily designed for keyboard control.  On mobile
-//  you will notice that we use gestures to emulate keyboard commands. They even
-//  use the same variables (though we need other variables for internal keyboard
-//  emulation).  This simplifies our design quite a bit.
+//  This class buffers in input from the devices and converts it into its
+//  semantic meaning. If your game had an option that allows the player to
+//  remap the control keys, you would store this information in this class.
+//  That way, the main game scene does not have to keep track of the current
+//  key mapping.
 //
-//  This file is based on the CS 3152 PhysicsDemo Lab by Don Holden, 2007
+//  Author: Walker M. White
+//  Based on original GameX Ship Demo by Rama C. Hoetzlein, 2002
+//  Version: 1/20/22
 //
-//  Author: Walker White
-//  Version: 1/10/17
-//
-#ifndef __NL_INPUT_H__
-#define __NL_INPUT_H__
-#include <cugl/cugl.h>
+#ifndef __SL_INPUT_CONTROLLER_H__
+#define __SL_INPUT_CONTROLLER_H__
 
 /**
- * This class represents player input in the Networked Physics demo.
+ * Device-independent input manager.
  *
- * This input handler uses the CUGL input API.  It uses the polling API for
- * keyboard, but the callback API for touch.  This demonstrates a mix of ways
- * to handle input, and the reason for hiding it behind an abstraction like
- * this class.
- *
- * Unlike CUGL input devices, this class is not a singleton.  It must be
- * allocated before use.  However, you will notice that we do not do any
- * input initialization in the constructor.  This allows us to allocate this
- * controller as a field without using pointers. We simply add the class to the
- * header file of its owner, and delay initialization (via the method init())
- * until later. This is one of the main reasons we like to avoid initialization
- * in the constructor.
+ * This class currently only supports the keyboard for control.  As the
+ * semester progresses, you will learn how to write an input controller
+ * that functions differently on mobile than it does on the desktop.
  */
-class NetLabInput {
+class InputController {
 private:
-    /** Whether or not this input is active */
-    bool _active;
-    // KEYBOARD EMULATION
-    /** Whether the up arrow key is down */
-    bool  _keyUp;
-    /** Whether the down arrow key is down */
-    bool  _keyDown;
-    /** Whether the reset key is down */
-    bool  _keyReset;
-    /** Whether the reset key is down */
-    bool  _keyBigCrate;
-    /** Whether the debug key is down */
-    bool  _keyDebug;
-    /** Whether the exit key is down */
-    bool  _keyExit;
-    /** Whether the key for fired was down */
-    bool  _keyFired;
+    /** How much forward are we going? */
+    float _forward;
     
-    float _firePower;
-
-    // TOUCH SUPPORT
-    /** The initial touch location for the current gesture */
-    cugl::Vec2 _dtouch;
-    /** The timestamp for the beginning of the current gesture */
-    cugl::Timestamp _timestamp;
-
-protected:
-    // INPUT RESULTS
-    /** Whether the reset action was chosen. */
-    bool _resetPressed;
-    /** Whether the reset action was chosen. */
-    bool _bigCratePressed;
-    /** Whether the debug toggle was chosen. */
-    bool _debugPressed;
-    /** Whether the exit action was chosen. */
-    bool _exitPressed;
-    /** How much did we move horizontally? */
-    float _horizontal;
-    /** How much did we move vertically? */
-    float _vertical;
-    /** Whether the fire action was chosen. */
-    bool _fired;
+    /** How much are we turning? */
+    float _turning;
     
+    /** Did we press the fire button? */
+    bool _didFire;
+
+    /** Did we press the reset button? */
+    bool _didReset;
+    
+    /** Did press the change mode button */
+    bool _didChangeMode;
+    /** Did we press the special button? */
+    bool _didSpecial;
+    bool _didDebug;
+    bool _didExit;
+    cugl::Vec2 _Vel;
+
+    bool _UseKeyboard;
+
+    bool _UseJoystick;
+
 public:
-#pragma mark -
-#pragma mark Constructors
-    /**
-     * Creates a new input controller.
-     *
-     * This constructor does NOT do any initialzation.  It simply allocates the
-     * object. This makes it safe to use this class without a pointer.
-     */
-    NetLabInput(); // Don't initialize.  Allow stack based
-    
-    /**
-     * Disposes of this input controller, releasing all listeners.
-     */
-    ~NetLabInput() { dispose(); }
-    
-    /**
-     * Deactivates this input controller, releasing all listeners.
-     *
-     * This method will not dispose of the input controller. It can be reused
-     * once it is reinitialized.
-     */
-    void dispose();
-    
-    /**
-     * Deactivates this input controller, releasing all listeners.
-     *
-     * This method will not dispose of the input controller. It can be reused
-     * once it is reinitialized.
-     */
+
+    std::shared_ptr<cugl::GameController> _gameContrl;
     bool init();
-    
-#pragma mark -
-#pragma mark Input Detection
+
+    //GameController _gamecontr;
     /**
-     * Returns true if the input handler is currently active
+     * Returns the amount of forward movement.
      *
-     * @return true if the input handler is currently active
+     * -1 = backward, 1 = forward, 0 = still
+     *
+     * @return amount of forward movement.
      */
-    bool isActive( ) const { return _active; }
+    float getForward() const {
+        return _forward;
+    }
 
     /**
-     * Processes the currently cached inputs.
+     * Returns the amount to turn the ship.
      *
-     * This method is used to to poll the current input state.  This will poll the
-     * keyboad and accelerometer.
-     * 
-     * This method also gathers the delta difference in the touches. Depending on 
-     * the OS, we may see multiple updates of the same touch in a single animation
-     * frame, so we need to accumulate all of the data together.
+     * -1 = clockwise, 1 = counter-clockwise, 0 = still
+     *
+     * @return amount to turn the ship.
      */
-    void  update(float dt);
+    float getTurn() const {
+        return _turning;
+    }
 
     /**
-     * Clears any buffered inputs so that we may start fresh.
-     */
-    void clear();
-    
-#pragma mark -
-#pragma mark Input Results
-    /**
-     * Returns the amount of sideways movement.
+     * Returns whether the fire button was pressed.
      *
-     * -1 = left, 1 = right, 0 = still
-     *
-     * @return the amount of sideways movement.
+     * @return whether the fire button was pressed.
      */
-    float getHorizontal() const { return _horizontal; }
+    bool didPressFire() const {
+        return _didFire;
+    }
     
     /**
-     * Returns the amount of vertical movement.
+     * Returns whether the fire button was pressed.
      *
-     * -1 = down, 1 = up, 0 = still
-     *
-     * @return the amount of vertical movement.
+     * @return whether the Special button was pressed.
      */
-    float getVertical() const { return _vertical; }
+    bool didPressSpecial() const {
+        return _didSpecial;
+    }
     
     /**
-     * Returns true if the reset button was pressed.
+     * Returns whether the reset button was pressed.
      *
-     * @return true if the reset button was pressed.
+     * @return whether the reset button was pressed.
      */
-    bool didBigCrate() const { return _bigCratePressed; }
+    bool didPressReset() const {
+        return _didReset;
+    }
+    
+    bool didChangeMode() const {
+        return _didChangeMode;
+    }
+
+    bool didPressDebug() const {
+        return _didDebug;
+    }
+    
+    bool didPressExit() const {
+        return _didExit;
+    }
+    /**
+     * Creates a new input controller with the default settings
+     *
+     * This is a very simple class.  It only has the default settings and never
+     * needs to attach any custom listeners at initialization.  Therefore, we
+     * do not need an init method.  This constructor is sufficient.
+     */
+    InputController();
+
+    /**
+     * Disposses this input controller, releasing all resources.
+     */
+    ~InputController() {}
     
     /**
-     * Returns true if the reset button was pressed.
+     * Reads the input for this player and converts the result into game logic.
      *
-     * @return true if the reset button was pressed.
+     * This is an example of polling input.  Instead of registering a listener,
+     * we ask the controller about its current state.  When the game is running,
+     * it is typically best to poll input instead of using listeners.  Listeners
+     * are more appropriate for menus and buttons (like the loading screen).
      */
-    bool didReset() const { return _resetPressed; }
+    void readInput();
+
+    void readInput_joystick();
+
     
-    /**
-     * Returns true if the player wants to go toggle the debug mode.
-     *
-     * @return true if the player wants to go toggle the debug mode.
-     */
-    bool didDebug() const { return _debugPressed; }
-    
-    /**
-     * Returns true if the exit button was pressed.
-     *
-     * @return true if the exit button was pressed.
-     */
-    bool didExit() const { return false; }
-    
-    
-    /**
-     * Returns true if the fire button was pressed.
-     *
-     * @return true if the fire button was pressed.
-     */
-    bool didFire() const { return _fired; }
-    
-    float getFirePower() const { return _firePower; }
-    
-#pragma mark -
-#pragma mark Touch Callbacks
-    /**
-     * Callback for the beginning of a touch event
-     *
-     * @param t     The touch information
-     * @param event The associated event
-     */
-    void touchBeganCB(const cugl::TouchEvent& event, bool focus);
-    
-    /**
-     * Callback for the end of a touch event
-     *
-     * @param t     The touch information
-     * @param event The associated event
-     */
-    void touchEndedCB(const cugl::TouchEvent& event, bool focus);
+    void update();
+    cugl::Vec2 getVelocity() const {
+        return _Vel;
+    }
+
+    bool getControllerState() {
+        return _UseJoystick;
+    }
+
+    bool getKeyboardState() {
+        return _UseKeyboard;
+    }
 
 };
 
-#endif /* __NL_INPUT_H__ */
+#endif /* __GL_INPUT_CONTROLLER_H__ */

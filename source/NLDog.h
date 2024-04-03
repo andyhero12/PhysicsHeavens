@@ -396,7 +396,7 @@ public:
      * Applies the Velocity Movement for the Physics Engine
      *
      */
-    void moveOnInput(NetLabInput& _input);
+    void moveOnInput(InputController& _input);
     /**
      * Updates the object's physics state (NOT GAME LOGIC).
      *

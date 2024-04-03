@@ -1,275 +1,211 @@
 //
-//  NLInput.cpp
-//  Networked Physics Demo
+//  GLInputController.cpp
+//  Dog Lab
 //
-//  This input controller is primarily designed for keyboard control.  On mobile
-//  you will notice that we use gestures to emulate keyboard commands. They even
-//  use the same variables (though we need other variables for internal keyboard
-//  emulation).  This simplifies our design quite a bit.
+//  This class buffers in input from the devices and converts it into its
+//  semantic meaning. If your game had an option that allows the player to
+//  remap the control keys, you would store this information in this class.
+//  That way, the main game scene does not have to keep track of the current
+//  key mapping.
 //
-//  This file is based on the CS 3152 PhysicsDemo Lab by Don Holden, 2007
+//  Author: Walker M. White
+//  Based on original GameX Ship Demo by Rama C. Hoetzlein, 2002
+//  Version: 1/20/22
 //
-//  Author: Walker White
-//  Version: 1/10/17
-//
+#include <cugl/cugl.h>
 #include "NLInput.h"
 
 using namespace cugl;
 
-#pragma mark Input Constants
-
-/** The key to use for sending a big crate in the game */
-#define RESET_KEY KeyCode::R
-/** The key to use for sending a big crate in the game */
-#define BIG_CRATE_KEY KeyCode::B
-/** The key for toggling the debug display */
-#define DEBUG_KEY KeyCode::D
-/** The key for exitting the game */
-#define EXIT_KEY  KeyCode::ESCAPE
-/** The fire key for firing a crate */
-#define FIRE_KEY  KeyCode::SPACE
-/** The max charge time of a fire in milliseconds */
-#define FIRE_CHARGE_TIME 2000.f
-
-/** How fast a double click must be in milliseconds */
-#define EVENT_DOUBLE_CLICK  400
-/** How far we must swipe left or right for a gesture */
-#define EVENT_SWIPE_LENGTH  100
-/** How fast we must swipe left or right for a gesture */
-#define EVENT_SWIPE_TIME   1000
-/** How far we must turn the tablet for the accelerometer to register */
-#define EVENT_ACCEL_THRESH  M_PI/10.0f
-/** The key for the event handlers */
-#define LISTENER_KEY        1
-
-
-#pragma mark -
-#pragma mark Input Controller
 /**
- * Creates a new input controller.
+ * Creates a new input controller with the default settings
  *
- * This constructor does NOT do any initialzation.  It simply allocates the
- * object. This makes it safe to use this class without a pointer.
+ * This is a very simple class.  It only has the default settings and never
+ * needs to attach any custom listeners at initialization.  Therefore, we
+ * do not need an init method.  This constructor is sufficient.
  */
-NetLabInput::NetLabInput() :
-_active(false),
-_resetPressed(false),
-_bigCratePressed(false),
-_debugPressed(false),
-_exitPressed(false),
-_keyUp(false),
-_keyDown(false),
-_keyReset(false),
-_keyDebug(false),
-_keyBigCrate(false),
-_keyExit(false),
-_fired(false),
-_firePower(0.0f),
-_horizontal(0.0f),
-_vertical(0.0f) {
+InputController::InputController() :
+_forward(0),
+_turning(0),
+_didReset(false),
+_didChangeMode(false),
+_didSpecial(false),
+_didDebug(false),
+_didExit(false),
+_didFire(false)
+{
 }
 
-/**
- * Deactivates this input controller, releasing all listeners.
- *
- * This method will not dispose of the input controller. It can be reused
- * once it is reinitialized.
- */
-void NetLabInput::dispose() {
-    if (_active) {
-#ifndef CU_TOUCH_SCREEN
-        Input::deactivate<Keyboard>();
-#else
-        Input::deactivate<Accelerometer>();
-        Touchscreen* touch = Input::get<Touchscreen>();
-        touch->removeBeginListener(LISTENER_KEY);
-        touch->removeEndListener(LISTENER_KEY);
-#endif
-        _active = false;
+bool InputController::init() {
+    bool contSuccess = Input::activate<GameControllerInput>();
+
+    if (contSuccess) {
+        GameControllerInput* controller = Input::get<GameControllerInput>();
+        std::vector<std::string> deviceUUIDs = controller->devices();
+        if (deviceUUIDs.size() == 0){
+            return false;
+        }
+        _gameContrl = controller -> open(deviceUUIDs.at(0));
+        return true;
     }
-}
 
-/**
- * Initializes the input control for the given drawing scale.
- *
- * This method works like a proper constructor, initializing the input
- * controller and allocating memory.  However, it still does not activate
- * the listeners.  You must call start() do that.
- *
- * @return true if the controller was initialized successfully
- */
-bool NetLabInput::init() {
-    _timestamp.mark();
-    bool success = true;
-    
-    // Only process keyboard on desktop
-#ifndef CU_TOUCH_SCREEN
-    success = Input::activate<Keyboard>();
-#else
-    success = Input::activate<Accelerometer>();
-    Touchscreen* touch = Input::get<Touchscreen>();
-    touch->addBeginListener(LISTENER_KEY,[=](const cugl::TouchEvent& event, bool focus) {
-        this->touchBeganCB(event,focus);
-    });
-    touch->addEndListener(LISTENER_KEY,[=](const cugl::TouchEvent& event, bool focus) {
-        this->touchEndedCB(event,focus);
-    });
-#endif
-    _active = success;
-    return success;
+    return false;
+
 }
 
 
+void InputController::update(){
+    readInput_joystick();
+    readInput();
+}
 /**
- * Processes the currently cached inputs.
+ * Reads the input for this player and converts the result into game logic.
  *
- * This method is used to to poll the current input state.  This will poll the
- * keyboad and accelerometer.
- *
- * This method also gathers the delta difference in the touches. Depending on
- * the OS, we may see multiple updates of the same touch in a single animation
- * frame, so we need to accumulate all of the data together.
+ * This is an example of polling input.  Instead of registering a listener,
+ * we ask the controller about its current state.  When the game is running,
+ * it is typically best to poll input instead of using listeners.  Listeners
+ * are more appropriate for menus and buttons (like the loading screen).
  */
-void NetLabInput::update(float dt) {
-    int left = false;
-    int rght = false;
-    int up   = false;
-    int down = false;
+ /**
+  * Reads the input for this player and converts the result into game logic.
+  *
+  * This is an example of polling input.  Instead of registering a listener,
+  * we ask the controller about its current state.  When the game is running,
+  * it is typically best to poll input instead of using listeners.  Listeners
+  * are more appropriate for menus and buttons (like the loading screen).
+  */
+void InputController::readInput() {
+    // This makes it easier to change the keys later
+    KeyCode up = KeyCode::ARROW_UP;
+    KeyCode down = KeyCode::ARROW_DOWN;
+    KeyCode left = KeyCode::ARROW_LEFT;
+    KeyCode right = KeyCode::ARROW_RIGHT;
+    KeyCode shoot = KeyCode::SPACE;
+    KeyCode reset = KeyCode::R;
+    KeyCode mode = KeyCode::F;
+    KeyCode special = KeyCode::G;
+    KeyCode debug = KeyCode::D;
+    KeyCode exit = KeyCode::ESCAPE;
 
-#ifndef CU_TOUCH_SCREEN
-    // DESKTOP CONTROLS
+    // Convert keyboard state into game commands
+    //_forward = _turning = 0;
+    _UseKeyboard = false;
+
     Keyboard* keys = Input::get<Keyboard>();
 
-    // Map "keyboard" events to the current frame boundary
-    _keyReset     = keys->keyPressed(RESET_KEY);
-    _keyBigCrate  = keys->keyPressed(BIG_CRATE_KEY);
-    _keyDebug     = keys->keyPressed(DEBUG_KEY);
-    _keyExit      = keys->keyPressed(EXIT_KEY);
-    
-    if(keys->keyPressed(FIRE_KEY)){
-        _timestamp.mark();
-        _keyFired = false;
-    }
-    
-    if (keys->keyReleased(FIRE_KEY)){
-        cugl::Timestamp curr;
-        _keyFired = true;
-    }
-    else if(keys->keyDown(FIRE_KEY)){
-        Timestamp curr;
-        _firePower = SDL_min(1.0f,curr.ellapsedMillis(_timestamp)/FIRE_CHARGE_TIME);
-    }
-    else{
-        _firePower = 0.f;
-    }
-    
-    left = keys->keyDown(KeyCode::ARROW_LEFT);
-    rght = keys->keyDown(KeyCode::ARROW_RIGHT);
-    up   = keys->keyDown(KeyCode::ARROW_UP);
-    down = keys->keyDown(KeyCode::ARROW_DOWN);
-#else
-    // MOBILE CONTROLS
-    Vec3 acc = Input::get<Accelerometer>()->getAcceleration();
-    
-    // Measure the "steering wheel" tilt of the device
-    float pitch = atan2(-acc.x, sqrt(acc.y*acc.y + acc.z*acc.z));
-    
-    // Check if we turned left or right
-    up   |= (pitch > EVENT_ACCEL_THRESH);
-    down |= (pitch < -EVENT_ACCEL_THRESH);
-    
-    Timestamp curr;
-    if(_keyUp){
-        _firePower = SDL_min(1.0f,curr.ellapsedMillis(_timestamp)/FIRE_CHARGE_TIME);
-    }
-    if(_fired){
-        _firePower = 0.f;
-    }
-#endif
 
-    _resetPressed    = _keyReset;
-    _bigCratePressed = _keyBigCrate;
-    _debugPressed    = _keyDebug;
-    _exitPressed     = _keyExit;
-    _fired           = _keyFired;
-    
-    // Directional controls
-    _horizontal = 0.0f;
-    if (rght) {
-        _horizontal += 1.0f;
+    // Movement left/right
+    if (keys->keyDown(left) && !keys->keyDown(right)) {
+        _turning = -1;
+        _UseKeyboard = true;
     }
-    if (left) {
-        _horizontal -= 1.0f;
+    else if (keys->keyDown(right) && !keys->keyDown(left)) {
+        _turning = 1;
+        _UseKeyboard = true;
+    }
+    // Shooting
+    if (keys->keyDown(shoot)) {
+        _didFire = true;
+        _UseKeyboard = true;
     }
 
-    _vertical = 0.0f;
-    if (up) {
-        _vertical += 1.0f;
+    // Reset the game
+    if (keys->keyDown(reset)) {
+        _didReset = true;
+        _UseKeyboard = true;
     }
-    if (down) {
-        _vertical -= 1.0f;
+    // Movement forward/backward
+
+    if (keys->keyDown(mode)) {
+        _didChangeMode = true;
+        _UseKeyboard = true;
+    }
+
+    if (keys->keyDown(special)) {
+        _didSpecial = true;
+        _UseKeyboard = true;
     }
     
-    _keyFired = false;
+    if (keys->keyDown(debug)) {
+        _didDebug = true;
+        _UseKeyboard = true;
+    }
+    if (keys->keyDown(exit)) {
+        _didExit = true;
+        _UseKeyboard = true;
+    }
+    if (keys->keyDown(special)) {
+        _didSpecial = true;
+        _UseKeyboard = true;
+    }
 
-// If it does not support keyboard, we must reset "virtual" keyboard
-#ifdef CU_TOUCH_SCREEN
-    _keyDebug = false;
-    _keyReset = false;
-    _keyDebug = false;
-#endif
+    if (keys->keyDown(up) && !keys->keyDown(down)) {
+        _forward = 1;
+        _UseKeyboard = true;
+    }
+    else if (keys->keyDown(down) && !keys->keyDown(up)) {
+        _forward = -1;
+        _UseKeyboard = true;
+    }
+
 }
 
-/**
- * Clears any buffered inputs so that we may start fresh.
- */
-void NetLabInput::clear() {
-    _resetPressed = false;
-    _debugPressed = false;
-    _exitPressed  = false;
-    _fired = false;
+void InputController::readInput_joystick() {
+    cugl::GameController::Axis X_left = cugl::GameController::Axis::LEFT_X;
+    cugl::GameController::Axis Y_left = cugl::GameController::Axis::LEFT_Y;
+    cugl::GameController::Button A = cugl::GameController::Button::A;
+    cugl::GameController::Button X = cugl::GameController::Button::X;
+    cugl::GameController::Button B = cugl::GameController::Button::B;
+    cugl::GameController::Button Y = cugl::GameController::Button::Y;
+
+    _didFire = false;
+    _didReset = false;
+    _didChangeMode = false;
+    _didSpecial = false;
+    // TODO DEBUG AND EXIT ON CONTROLLER
+    _didDebug = false;
+    _didExit = false;
     
-    _horizontal = 0.0f;
-    _vertical   = 0.0f;
-    
-    _dtouch = Vec2::ZERO;
-    _timestamp.mark();
+    _Vel = cugl::Vec2(0, 0);
+    _UseJoystick = false;
+    // Need for this sprint
+    _forward = _turning = 0;
+    /* Movement using controller*/
+    if (_gameContrl) {
+        float LR = _gameContrl->getAxisPosition(X_left);
+        float UD = _gameContrl->getAxisPosition(Y_left);
+
+        if (_gameContrl->isButtonDown(A)) {
+            _didFire = true;
+            _UseJoystick = true;
+        }
+
+        if (_gameContrl->isButtonDown(B)) {
+            _didSpecial = true;
+            _UseJoystick = true;
+        }
+
+        if (_gameContrl->isButtonDown(X)) {
+            _didChangeMode = true;
+            _UseJoystick = true;
+        }
+
+        if (_gameContrl->isButtonDown(Y)) {
+            _didReset = true;
+            _UseJoystick = true;
+        }
+        if (abs(LR) >= 0.2 || abs(UD) >= 0.2) {
+
+            _Vel = cugl::Vec2(LR, -UD);
+            _UseJoystick = true;
+
+            if (LR > 0) {
+                _turning = 1;
+            }
+            else if (LR < 0) {
+                _turning = -1;
+            }
+        }
+    }
 }
 
-#pragma mark -
-#pragma mark Touch Callbacks
-/**
- * Callback for the beginning of a touch event
- *
- * @param t     The touch information
- * @param event The associated event
- */
-void NetLabInput::touchBeganCB(const cugl::TouchEvent& event, bool focus) {
-    // All touches correspond to key up
-    _keyUp = true;
-    _keyFired = false;
-    // Update the touch location for later gestures
-    _timestamp = event.timestamp;
-    _dtouch = event.position;
-}
- 
-/**
- * Callback for the end of a touch event
- *
- * @param t     The touch information
- * @param event The associated event
- */
-void NetLabInput::touchEndedCB(const cugl::TouchEvent& event, bool focus) {
-    // Gesture has ended.  Give it meaning.
-    Vec2 diff = event.position-_dtouch;
-    bool fast = (event.timestamp.ellapsedMillis(_timestamp) < EVENT_SWIPE_TIME);
-    if(abs(diff.x)>EVENT_SWIPE_LENGTH || abs(diff.y)>EVENT_SWIPE_LENGTH){
-        _keyReset = fast && diff.x < -EVENT_SWIPE_LENGTH;
-        _keyExit  = fast && diff.x > EVENT_SWIPE_LENGTH;
-        _keyDebug = fast && diff.y > EVENT_SWIPE_LENGTH;
-    }
-    else{
-        _keyFired = true;
-    }
-    _keyUp = false;
-}

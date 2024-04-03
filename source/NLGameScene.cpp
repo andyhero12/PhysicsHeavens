@@ -316,7 +316,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     }
     _assets = assets;
     _input.init();
-    _input.update(0);
+    _input.update();
 
     
     _rand.seed(0xdeadbeef);
@@ -389,7 +389,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
 void GameScene::dispose() {
     if (_active) {
         removeAllChildren();
-        _input.dispose();
+//        _input.dispose();
         _world = nullptr;
         _worldnode = nullptr;
         _debugnode = nullptr;
@@ -432,7 +432,7 @@ void GameScene::fireCrate() {
     auto pair = _network->getPhysController()->addSharedObstacle(_factId, params);
     float angle = cannon->getAngle() + M_PI_2;
     Vec2 forward(SDL_cosf(angle), SDL_sinf(angle));
-    pair.first->setLinearVelocity(forward * 50 *_input.getFirePower());
+    pair.first->setLinearVelocity(forward * 50 );
     pair.first->setDebugScene(_debugnode);
 #pragma mark END SOLUTION
 }
@@ -862,24 +862,22 @@ void GameScene::preUpdate(float dt) {
          CULog("Reseting\n");
          reset();
     }
-    if (_input.didExit()) {
+    if (_input.didPressExit()) {
         CULog("Shutting down");
         Application::get()->quit();
     }
-    _input.update(dt);
+    _input.update();
     
-    if(_input.getFirePower()>0.f){
+    if (_input.didPressFire()){
         _chargeBar->setVisible(true);
-        _chargeBar->setProgress(_input.getFirePower());
-    }
-    else{
+    }else{
         _chargeBar->setVisible(false);
     }
 
     // Process the toggled key commands
-    if (_input.didDebug()) { setDebug(!isDebug()); }
+    if (_input.didPressDebug()) { setDebug(!isDebug()); }
 
-    if (_input.didFire()) {
+    if (_input.didPressFire()) {
         fireCrate();
     }
     
@@ -891,11 +889,11 @@ void GameScene::preUpdate(float dt) {
     
 //TODO: if _input.didBigCrate(), allocate a crate event for the center of the screen(use DEFAULT_WIDTH/2 and DEFAULT_HEIGHT/2) and send it using the pushOutEvent() method in the network controller.
 #pragma mark BEGIN SOLUTION
-    if (_input.didBigCrate()){
+    if (_input.didChangeMode()){
         CULog("BIG CRATE COMING");
         _network->pushOutEvent(CrateEvent::allocCrateEvent(Vec2(DEFAULT_WIDTH/2,DEFAULT_HEIGHT/2)));
     }
-    if (_input.didReset()){
+    if (_input.didPressReset()){
         CULog("RESET COMING");
         _network->pushOutEvent(ResetEvent::allocResetEvent());
     }
@@ -903,7 +901,7 @@ void GameScene::preUpdate(float dt) {
     
     float turnRate = _isHost ? DEFAULT_TURN_RATE : -DEFAULT_TURN_RATE;
     auto cannon = _isHost ? _cannon1 : _cannon2;
-    cannon->setAngle(_input.getVertical() * turnRate + cannon->getAngle());
+    cannon->setAngle(_input.getForward() * turnRate + cannon->getAngle());
 }
 
 void GameScene::postUpdate(float dt) {
