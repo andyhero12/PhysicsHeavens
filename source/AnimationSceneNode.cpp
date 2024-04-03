@@ -59,6 +59,7 @@ bool AnimationSceneNode::initWithTextures(const std::vector<std::shared_ptr<cugl
     this->_rows = rows;
     this->_cols = cols;
     this->_size = size;
+    this->_on = false;
     _direction = Directions::SOUTH;
     _bounds.size = textures.at(0)->getSize();
     _bounds.size.width /= cols;
@@ -105,8 +106,8 @@ void AnimationSceneNode::setAnchor(const cugl::Vec2 anchor){
 }
 
 void AnimationSceneNode::setPosition(const cugl::Vec2 &position){
-    for(auto &node : _animationSprites){
-        node->setAnchor(position);
+    for(std::shared_ptr<cugl::scene2::SpriteNode> &node : _animationSprites){
+        node->setPosition(position);
     }
 }
 
@@ -166,6 +167,11 @@ AnimationSceneNode::Directions AnimationSceneNode::convertAngleToDirections(floa
  * @param on        Whether the animation is active
  */
 void AnimationSceneNode::animate(Directions direction, bool on){
+    if(_direction != direction){
+        _timeSinceLastAnim = 0;
+        _frame = 0;
+    }
+    
     _direction = direction;
     _on = on;
     if(on){

@@ -114,8 +114,38 @@ void Dog::dispose() {
 void Dog::moveOnInput(NetLabInput& _input){
     setVX(_input.getHorizontal()*getThrust());
     setVY(_input.getVertical()*getThrust());
+    dir.x =_input.getHorizontal()*getThrust();
+    dir.y = _input.getVertical()*getThrust();
+    
 }
 
+void Dog::dogActions(){
+    AnimationSceneNode::Directions direction = AnimationSceneNode::convertRadiansToDirections(dir.getAngle());
+//    if(biteAnimationMedium->getFrame() == biteAnimationMedium->getSize() - 1){
+//        // bite is finished
+//    }
+//    
+//    if(shootAnimationMedium->getFrame() == shootAnimationMedium->getSize() - 1){
+//        // shoot is finished
+//    }
+    if(dir.x == 0 && dir.y == 0){
+        idleAnimationMedium->animate(prevDirection, true);
+        
+        runAnimationMedium->animate(prevDirection, false);
+//        biteAnimationMedium->animate(prevDirection, false);
+//        shootAnimationMedium->animate(prevDirection, false);
+    }
+    else{
+        prevDirection = direction;
+        
+        runAnimationMedium->animate(direction, true);
+        
+        idleAnimationMedium->animate(direction, false);
+//        biteAnimationMedium->animate(direction, false);
+//        shootAnimationMedium->animate(direction, false);
+        
+    }
+}
 /**
  * Updates the object's physics state (NOT GAME LOGIC).
  *
@@ -133,12 +163,15 @@ void Dog::update(float delta) {
     Obstacle::update(delta);
     if (runAnimationMedium != nullptr) {
         runAnimationMedium->setPosition(getPosition()*_drawscale);
+        idleAnimationMedium->setPosition(getPosition()*_drawscale);
+        shootAnimationMedium->setPosition(getPosition()*_drawscale);
+        biteAnimationMedium->setPosition(getPosition()*_drawscale);
+        
+        
         runAnimationMedium->setAngle(getAngle());
+        
+        dogActions();
     }
-//    if (_shipNode != nullptr) {
-//        _shipNode->setPosition(getPosition()*_drawscale);
-//        _shipNode->setAngle(getAngle());
-//    }
 }
 
 

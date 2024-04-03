@@ -51,6 +51,19 @@
  * its own scene graph node.  This class is an example of the latter.
  */
 class Dog : public cugl::physics2::BoxObstacle {
+public:
+    enum class Actions : int {
+        IDLE,
+        RUN,
+        SHOOT,
+        BITE
+    };
+    enum class DogSize : int {
+        SMALL,
+        MEDIUM,
+        LARGE
+    };
+    
 private:
     /** This macro disables the copy constructor (not allowed on scene graphs) */
     CU_DISALLOW_COPY_AND_ASSIGN(Dog);
@@ -58,6 +71,11 @@ private:
 protected:
     /** The force to apply to this rocket */
     cugl::Vec2 _force;
+    Actions action;
+    DogSize dogSize;
+    
+    AnimationSceneNode::Directions prevDirection;
+    cugl::Vec2 dir;
     
     std::shared_ptr<AnimationSceneNode> idleAnimationMedium;
     std::shared_ptr<AnimationSceneNode> runAnimationMedium;
@@ -95,7 +113,7 @@ public:
      * NEVER USE A CONSTRUCTOR WITH NEW. If you want to allocate a model on
      * the heap, use one of the static constructors instead.
      */
-    Dog(void) : BoxObstacle(), _drawscale(1.0f){ }
+    Dog(void) : BoxObstacle(), _drawscale(1.0f), dogSize(DogSize::SMALL), action(Actions::IDLE), dir(cugl::Vec2(0,0)), prevDirection(AnimationSceneNode::Directions::SOUTH){ }
     
     /**
      * Destroys this rocket, releasing all resources.
@@ -298,6 +316,8 @@ public:
 #pragma mark -
 #pragma mark Animation
     
+    
+    void dogActions();
     /**
      * Returns the key for the sound to accompany the given afterburner
      *

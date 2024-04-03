@@ -182,6 +182,13 @@ public:
     unsigned int getFrame() const { return _frame; }
     
     /**
+     * Returns the number of frames
+     *
+     * @return the  number of frames
+     */
+    unsigned int getSize() const { return _size; }
+    
+    /**
      * Sets the active frame as the given index.
      *
      * If the frame index is invalid, an error is raised.
