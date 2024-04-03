@@ -77,9 +77,6 @@ void AnimationSceneNode::setFrame(int frame){
 
 const std::shared_ptr<cugl::scene2::SpriteNode>& AnimationSceneNode::getAnimation(Directions direction) const {
     size_t index = static_cast<std::size_t>(direction);
-    if (index >= _animationSprites.size()) {
-        throw std::out_of_range("Direction index out of range");
-    }
     return _animationSprites.at(index);
 }
 
@@ -100,6 +97,8 @@ void AnimationSceneNode::stepAnimation(){
 }
 
 void AnimationSceneNode::setAnchor(const cugl::Vec2 anchor){
+    _anchor = anchor;
+    std::cout << "animation" << anchor.x << " " <<anchor.y << std::endl;
     for(auto &node : _animationSprites){
         node->setAnchor(anchor);
     }

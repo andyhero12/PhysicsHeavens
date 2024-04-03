@@ -602,7 +602,7 @@ void GameScene::populate() {
     
     std::shared_ptr<AnimationSceneNode> _dogImage = std::make_shared<AnimationSceneNode>();
     _dogImage->initWithTextures(textures, 1, 4, 4, 5);
-    _dogImage->setAnchor(Vec2::ANCHOR_CENTER);
+    _dogImage->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     
     
     Vec2 dogPos = ((Vec2)CAN1_POS) + Vec2(1,-2);
