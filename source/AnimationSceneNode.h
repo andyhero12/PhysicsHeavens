@@ -247,7 +247,13 @@ public:
      * @param on        Whether the animation is active
      */
     void animate(Directions direction, bool on);
-    };
+    
+    
+    /** Convert radians to Direction */
+    Directions convertRadiansToDirections(double rad);
 
-
+    /** Convert Angle to Direction */
+    Directions convertAngleToDirections(float ang);
+};
+    
 #endif /* AnimationScene_h */
