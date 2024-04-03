@@ -111,11 +111,11 @@ void Dog::dispose() {
  * Applies the Velocity Movement for the Physics Engine
  *
  */
-void Dog::moveOnInput(NetLabInput& _input){
-    setVX(_input.getHorizontal()*getThrust());
-    setVY(_input.getVertical()*getThrust());
-    dir.x =_input.getHorizontal()*getThrust();
-    dir.y = _input.getVertical()*getThrust();
+void Dog::moveOnInput(InputController& _input){
+    setVX(_input.getTurn()*getThrust());
+    setVY(_input.getForward()*getThrust());
+    dir.x =_input.getTurn()*getThrust();
+    dir.y = _input.getForward()*getThrust();
     
 }
 void Dog::setDogSize(DogSize size){

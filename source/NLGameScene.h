@@ -101,7 +101,7 @@ protected:
 
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
-    NetLabInput _input;
+    InputController _input;
     CameraController _camera;
 
     // VIEW
