@@ -18,13 +18,18 @@ bool CameraController::init(const std::shared_ptr<cugl::scene2::SceneNode> targe
 #pragma mark -
 #pragma mark Camera Handling
 
-void CameraController::update() {
+void CameraController::update(float dt) {
     Vec2 cameraPos = Vec2(_camera->getPosition().x, _camera->getPosition().y);
-
+    
     Vec2 target;
+    Vec2* dst = new Vec2();
+    // Lazily track the target using lerp
     target = Vec2(_target->getWorldPosition().x, _target->getWorldPosition().y);
-    _camera->translate(target.x - cameraPos.x, target.y - cameraPos.y);
-
+    Vec2::lerp(cameraPos, target, 0.95 * dt, dst);
+    // Make sure the camera never goes outside of the _root node's bounds
+    _camera->translate((*dst).x - cameraPos.x, (*dst).y - cameraPos.y);
+    delete dst;
+    
     _camera->update();
     Vec2 uiPos = Vec2(_camera->getPosition().x, _camera->getPosition().y);
     _ui->setPosition(uiPos);

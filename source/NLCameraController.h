@@ -79,7 +79,7 @@ public:
     *
     * @param dt The delta time
     */
-    void update();
+    void update(float dt);
 
     /*
     * This method sets the zoom of the camera by a multiplier.
