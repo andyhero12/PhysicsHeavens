@@ -64,6 +64,7 @@ public:
         return _forward;
     }
 
+    void resetKeys();
     /**
      * Returns the amount to turn the ship.
      *

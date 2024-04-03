@@ -55,6 +55,7 @@ bool InputController::init() {
 
 
 void InputController::update(){
+    resetKeys();
     readInput_joystick();
     readInput();
 }
@@ -86,10 +87,6 @@ void InputController::readInput() {
     KeyCode special = KeyCode::G;
     KeyCode debug = KeyCode::D;
     KeyCode exit = KeyCode::ESCAPE;
-
-    // Convert keyboard state into game commands
-    //_forward = _turning = 0;
-    _UseKeyboard = false;
 
     Keyboard* keys = Input::get<Keyboard>();
 
@@ -146,6 +143,21 @@ void InputController::readInput() {
 
 }
 
+
+void InputController::resetKeys(){
+    _didFire = false;
+    _didReset = false;
+    _didChangeMode = false;
+    _didSpecial = false;
+    _didDebug = false;
+    _didExit = false;
+    _UseJoystick = false;
+    _UseKeyboard = false;
+    _forward  = 0;
+    _turning = 0;
+    _Vel = cugl::Vec2(0, 0);
+}
+
 void InputController::readInput_joystick() {
     cugl::GameController::Axis X_left = cugl::GameController::Axis::LEFT_X;
     cugl::GameController::Axis Y_left = cugl::GameController::Axis::LEFT_Y;
@@ -154,18 +166,7 @@ void InputController::readInput_joystick() {
     cugl::GameController::Button B = cugl::GameController::Button::B;
     cugl::GameController::Button Y = cugl::GameController::Button::Y;
 
-    _didFire = false;
-    _didReset = false;
-    _didChangeMode = false;
-    _didSpecial = false;
-    // TODO DEBUG AND EXIT ON CONTROLLER
-    _didDebug = false;
-    _didExit = false;
     
-    _Vel = cugl::Vec2(0, 0);
-    _UseJoystick = false;
-    // Need for this sprint
-    _forward = _turning = 0;
     /* Movement using controller*/
     if (_gameContrl) {
         float LR = _gameContrl->getAxisPosition(X_left);
