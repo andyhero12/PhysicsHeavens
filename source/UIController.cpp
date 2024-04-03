@@ -11,7 +11,7 @@ using namespace cugl;
 bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std::shared_ptr<cugl::AssetManager>& assets, cugl::Size screenSize, std::shared_ptr<Dog> dog){
 //    _childOffset = -1;
 //    // Get gameplay ui elements
-//    _screenSize = screenSize;
+    _screenSize = screenSize;
     UInode = node;
     _healthframe = cugl::scene2::PolygonNode::allocWithTexture(assets->get<Texture>("healthframe"));
     _healthfill = SubTextureNode::allocWithTexture(assets->get<Texture>("healthfill"));
@@ -39,21 +39,27 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     _shoottoggle->setAnchor(Vec2::ANCHOR_CENTER);
     _baittoggle->setAnchor(Vec2::ANCHOR_CENTER);
     
-    float x = -screenSize.width/2;
-    float y = -screenSize.height/2;
+    x = -screenSize.width/2;
+    y = -screenSize.height/2;
     
 
     float healthx = x + UI_SCALE * _healthframe->getTexture()->getWidth()/2;
     float healthy = y + screenSize.height - UI_SCALE * _healthframe->getTexture()->getHeight()/2;
     
     _healthframe->setPosition(healthx, healthy);
-    _healthfill->setPosition(healthx, healthy);
+    
+    float healthfillx = x + UI_SCALE * _healthfill->getTexture()->getWidth()/2;
+    
+    _healthfill->setPosition(healthfillx, healthy);
     
     float sizex = x + UI_SCALE * _sizeframe->getTexture()->getWidth()/2;
     float sizey = y + UI_SCALE * _sizeframe->getTexture()->getHeight()/2;
     
+    float sizefillx = x + UI_SCALE * _sizefill->getTexture()->getWidth()/2;
+    float sizefilly = y + UI_SCALE * _sizefill->getTexture()->getHeight()/2;
+    
     _sizeframe->setPosition(sizex , sizey);
-    _sizefill->setPosition(sizex , sizey);
+    _sizefill->setPosition(sizefillx , sizefilly);
     
     float togglex = x + screenSize.width - UI_SCALE * _baittoggle->getTexture()->getWidth()/2;
     float toggley = y + screenSize.height - UI_SCALE * _baittoggle->getTexture()->getHeight()/2;
@@ -75,6 +81,8 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     _dog = dog;
 
     setToggle();
+    setHealthBarTexture(50);
+    setSizeBarTexture(15);
     return true;
 }
 
@@ -88,6 +96,11 @@ void UIController::setHealthBarTexture(float health){
     GLfloat maxT = 1;
     
     _healthfill->setSubtexture(minS, maxS, minT, maxT);
+    
+    float healthy = y + _screenSize.height - UI_SCALE * _healthframe->getTexture()->getHeight()/2;
+    float healthfillx = x + UI_SCALE * _healthfill->getTexture()->getWidth()/2;
+    _healthfill->setAnchor(Vec2::ANCHOR_CENTER);
+    _healthfill->setPosition(healthfillx, healthy);
 }
 
 void UIController::setSizeBarTexture(float size){
@@ -100,6 +113,11 @@ void UIController::setSizeBarTexture(float size){
     GLfloat maxT = 1;
 
     _sizefill->setSubtexture(minS, maxS, minT, maxT);
+    
+    float sizefillx = x + UI_SCALE * _sizefill->getTexture()->getWidth()/2;
+    float sizefilly = y + UI_SCALE * _sizefill->getTexture()->getHeight()/2;
+
+    _sizefill->setPosition(sizefillx , sizefilly);
 }
 
 void UIController::setToggle(){

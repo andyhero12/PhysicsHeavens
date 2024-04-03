@@ -21,6 +21,12 @@ class UIController{
     
 private:
     std::shared_ptr<cugl::scene2::SceneNode> UInode;
+    cugl::Size _screenSize;
+    
+    // represents the bottom left corner of the screen
+    float x;
+    float y;
+    
     
     const Vec2 origin = Vec2(0, 0);
     
