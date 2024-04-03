@@ -582,9 +582,9 @@ void GameScene::populate() {
     _cannon2->setAngle(M_PI_2);
     _cannon2->setDebugColor(DYNAMIC_COLOR);
     _cannon2->setSensor(true);
-    
-    addInitObstacle(wallobj1, wallsprite1);  // All walls share the same texture
-    addInitObstacle(wallobj2, wallsprite2);  // All walls share the same texture
+//    
+//    addInitObstacle(wallobj1, wallsprite1);  // All walls share the same texture
+//    addInitObstacle(wallobj2, wallsprite2);  // All walls share the same texture
     addInitObstacle(_cannon1, _cannon1Node);
     addInitObstacle(_cannon2, _cannon2Node);
     
@@ -601,10 +601,8 @@ void GameScene::populate() {
     textures.push_back(_assets->get<cugl::Texture>("mediumdogbackrun"));
     textures.push_back(_assets->get<cugl::Texture>("mediumdogbackrun"));
 
-    
-    std::shared_ptr<AnimationSceneNode> mediumDogRun = std::make_shared<AnimationSceneNode>();
-    mediumDogRun->initWithTextures(textures, 1, 4, 4, 5);
-    mediumDogRun->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    std::shared_ptr<AnimationSceneNode> mediumDogRun = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
+    mediumDogRun->setAnchor(Vec2::ANCHOR_CENTER);
     
     
     textures.clear();
@@ -616,9 +614,9 @@ void GameScene::populate() {
     textures.push_back(_assets->get<cugl::Texture>("mediumdogleftidle"));
     textures.push_back(_assets->get<cugl::Texture>("mediumdogbackidle"));
     textures.push_back(_assets->get<cugl::Texture>("mediumdogbackidle"));
-    std::shared_ptr<AnimationSceneNode> mediumDogIdle = std::make_shared<AnimationSceneNode>();
-    mediumDogIdle->initWithTextures(textures, 1, 4, 4, 5);
-    mediumDogIdle->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    
+    std::shared_ptr<AnimationSceneNode> mediumDogIdle = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
+    mediumDogIdle->setAnchor(Vec2::ANCHOR_CENTER);
     
     textures.clear();
     textures.push_back(_assets->get<cugl::Texture>("mediumdogrightbite"));
@@ -630,10 +628,8 @@ void GameScene::populate() {
     textures.push_back(_assets->get<cugl::Texture>("mediumdogbackbite"));
     textures.push_back(_assets->get<cugl::Texture>("mediumdogbackbite"));
 
-    
-    std::shared_ptr<AnimationSceneNode> mediumDogBite = std::make_shared<AnimationSceneNode>();
-    mediumDogBite->initWithTextures(textures, 1, 4, 4, 5);
-    mediumDogBite->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    std::shared_ptr<AnimationSceneNode> mediumDogBite = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
+    mediumDogIdle->setAnchor(Vec2::ANCHOR_CENTER);
     
     textures.clear();
     textures.push_back(_assets->get<cugl::Texture>("mediumdogrightshoot"));
@@ -644,32 +640,49 @@ void GameScene::populate() {
     textures.push_back(_assets->get<cugl::Texture>("mediumdogleftshoot"));
     textures.push_back(_assets->get<cugl::Texture>("mediumdogbackshoot"));
     textures.push_back(_assets->get<cugl::Texture>("mediumdogbackshoot"));
-
     
-    std::shared_ptr<AnimationSceneNode> mediumDogShoot = std::make_shared<AnimationSceneNode>();
-    mediumDogShoot->initWithTextures(textures, 1, 4, 4, 5);
-    mediumDogShoot->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    std::shared_ptr<AnimationSceneNode> mediumDogShoot = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
+    mediumDogIdle->setAnchor(Vec2::ANCHOR_CENTER);
     
     
     Vec2 dogPos = ((Vec2)CAN1_POS) + Vec2(1,-2);
     image  = _assets->get<Texture>(CANNON_TEXTURE);
-    Size dogSize(image->getSize()/_scale);
+    Size mySize(64,64);
+    Size dogSize(mySize/_scale);
     
     _dog1 = Dog::alloc(dogPos,dogSize);
     _dog1->setDrawScale(_scale);
     _dog1->setDebugColor(DYNAMIC_COLOR);
 
     _dog1->setMediumAnimation(mediumDogIdle, mediumDogRun, mediumDogBite, mediumDogShoot);
-    
-
-    addInitObstacle(_dog1, mediumDogRun);
-//    linkSceneToObs(_dog1, mediumDogBite);
-//    linkSceneToObs(_dog1, mediumDogIdle);
-//    linkSceneToObs(_dog1, mediumDogShoot);
+    std::vector<std::shared_ptr<scene2::SceneNode>> vecNodes = {mediumDogIdle,mediumDogRun,mediumDogBite, mediumDogShoot};
+    addInitObstacleLinkAnimation(_dog1, vecNodes);
     
     _camera.init(mediumDogRun, _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), _chargeBar, 1000.0f);
 }
 
+void GameScene::linkAllAnimationsToObject(const std::shared_ptr<physics2::Obstacle>& obj,
+                                          const std::vector<std::shared_ptr<scene2::SceneNode>>& vecNodes) {
+    
+    for (const std::shared_ptr<scene2::SceneNode>& node: vecNodes){
+        node->setPosition(obj->getPosition() * _scale);
+        _worldnode->addChild(node);
+    }
+
+    // Dynamic objects need constant updating
+    if (obj->getBodyType() == b2_dynamicBody) {
+        obj->setListener([=](physics2::Obstacle* obs) {
+            float leftover = Application::get()->getFixedRemainder() / 1000000.f;
+            Vec2 pos = obs->getPosition() + leftover * obs->getLinearVelocity();
+            float angle = obs->getAngle() + leftover * obs->getAngularVelocity();
+            for (const std::shared_ptr<scene2::SceneNode>& node: vecNodes){
+                scene2::SceneNode* weak = node.get();
+                weak->setPosition(pos * _scale);
+                weak->setAngle(angle);
+            }
+        });
+    }
+}
 void GameScene::linkSceneToObs(const std::shared_ptr<physics2::Obstacle>& obj,
     const std::shared_ptr<scene2::SceneNode>& node) {
     
@@ -708,6 +721,16 @@ void GameScene::addInitObstacle(const std::shared_ptr<physics2::Obstacle>& obj,
         _world->getOwnedObstacles().insert({obj,0});
     }
     linkSceneToObs(obj, node);
+}
+
+void GameScene::addInitObstacleLinkAnimation(const std::shared_ptr<physics2::Obstacle>& obj,
+                                      const std::vector<std::shared_ptr<scene2::SceneNode>>& vecNodes) {
+    _world->initObstacle(obj);
+    obj->setDebugScene(_debugnode);
+    if(_isHost){
+        _world->getOwnedObstacles().insert({obj,0});
+    }
+    linkAllAnimationsToObject(obj, vecNodes);
 }
 
 

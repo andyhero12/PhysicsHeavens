@@ -13,7 +13,7 @@
 
 
 
-class AnimationSceneNode : public cugl::scene2::SceneNode {
+class AnimationSceneNode : public cugl::scene2::SpriteNode {
 public:
 #pragma mark -
 #pragma mark Directions
@@ -34,7 +34,7 @@ public:
 #pragma mark -
 #pragma mark Helper Functions
 private:
-    bool createSpriteNodes(const std::vector<std::shared_ptr<cugl::Texture>>& textures);
+    bool createSpriteNodes(const std::vector<std::shared_ptr<cugl::Texture>>& textures,int rows, int cols);
     
     /**
     Returns true if enough time has passed since the last animation frame update
@@ -53,16 +53,8 @@ private:
 #pragma mark -
 #pragma mark Class Attributes
 protected:
-    /** The number of columns in this filmstrip */
-    int _cols;
-    /** The number of rows in this filmstrip */
-    int _rows;
-    /** The number of frames in this filmstrip */
-    int _size;
     /** The active animation frame */
     int _frame;
-    /** The size of a single animation frame (different from active polygon) */
-    cugl::Rect _bounds;
     /** All the different sprite directions*/
     std::vector<std::shared_ptr<cugl::scene2::SpriteNode>> _animationSprites;
     /** current direction animation is facing*/
@@ -75,6 +67,23 @@ protected:
     /** Attack animation frequency; represents the number of frames until update */
     int _animFreq;
 public:
+    
+
+    /**
+      * Returns a new polygon node from a Texture object.
+      *
+      * After creation, the polygon will be a rectangle. The vertices of this
+      * polygon will be the corners of the image. The rectangle will be
+      * triangulated with the standard two triangles.
+      *
+      * @param texture   A shared pointer to a Texture object.
+      *
+      * @return a new polygon node from a Texture object.
+      */
+     static std::shared_ptr<AnimationSceneNode> allocWithTextures(const std::vector<std::shared_ptr<cugl::Texture>>& texture, int rows, int cols, int size, int freqAnimation) {
+         std::shared_ptr<AnimationSceneNode> node = std::make_shared<AnimationSceneNode>();
+         return (node->initWithTextures(texture,rows, cols, size, freqAnimation) ? node : nullptr);
+     }
 #pragma mark -
 #pragma mark Constructors
     /**

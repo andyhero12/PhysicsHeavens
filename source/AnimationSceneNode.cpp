@@ -19,12 +19,11 @@
  * the heap, use one of the static constructors instead.
  */
 AnimationSceneNode::AnimationSceneNode() :
+SpriteNode(),
 _animationSprites(8),
-_cols(0),
-_size(0),
 _frame(0),
-_on(true),
-_bounds(cugl::Rect::ZERO) {
+_on(true)
+{
     _classname = "AnimationNode";
 }
 
@@ -56,16 +55,10 @@ bool AnimationSceneNode::initWithTextures(const std::vector<std::shared_ptr<cugl
     CUAssertLog(size <= rows*cols, "Invalid strip size for %dx%d", rows,cols);
     this->_animFreq = freqAnimation;
     this->_timeSinceLastAnim = 0;
-    this->_rows = rows;
-    this->_cols = cols;
-    this->_size = size;
     this->_on = false;
     _direction = Directions::SOUTH;
-    _bounds.size = textures.at(0)->getSize();
-    _bounds.size.width /= cols;
-    _bounds.size.height /= rows;
-    _childOffset = -1;
-    return createSpriteNodes(textures);
+    createSpriteNodes(textures,rows, cols);
+    return this->initWithSheet(textures.at(0),rows, cols);
 }
 
 
@@ -124,10 +117,10 @@ void AnimationSceneNode::setAngle(float angle) {
 /**
  initializes the animationSprites vector
  */
-bool AnimationSceneNode::createSpriteNodes(const std::vector<std::shared_ptr<cugl::Texture>>& textures){
+bool AnimationSceneNode::createSpriteNodes(const std::vector<std::shared_ptr<cugl::Texture>>& textures, int rows, int cols){
     CUAssertLog(textures.size()==8, "Invalid number of elements in to initialize a spriteNode, need 8 not %zu", textures.size());
     for (size_t i = 0; i < textures.size(); ++i) {
-        _animationSprites.at(i) = cugl::scene2::SpriteNode::allocWithSheet(textures.at(i), _rows, _cols);
+        _animationSprites.at(i) = cugl::scene2::SpriteNode::allocWithSheet(textures.at(i), rows, cols);
     }
     return true;
 }
@@ -142,7 +135,9 @@ AnimationSceneNode::Directions AnimationSceneNode::convertRadiansToDirections(do
 /** Convert Angle to Direction */
 AnimationSceneNode::Directions AnimationSceneNode::convertAngleToDirections(float ang){
     ang += 22.5f;
-    ang = fmod(ang, 360.0f);
+    if (ang >= 360){
+         ang -= 360.0f;
+     }
     if (ang < 0) {
         ang += 360.0f;
     }
