@@ -171,22 +171,22 @@ void InputController::readInput_joystick() {
         float LR = _gameContrl->getAxisPosition(X_left);
         float UD = _gameContrl->getAxisPosition(Y_left);
 
-        if (_gameContrl->isButtonDown(A)) {
+        if (_gameContrl->isButtonPressed(A)) {
             _didFire = true;
             _UseJoystick = true;
         }
 
-        if (_gameContrl->isButtonDown(B)) {
+        if (_gameContrl->isButtonPressed(B)) {
             _didSpecial = true;
             _UseJoystick = true;
         }
 
-        if (_gameContrl->isButtonDown(X)) {
+        if (_gameContrl->isButtonPressed(X)) {
             _didChangeMode = true;
             _UseJoystick = true;
         }
 
-        if (_gameContrl->isButtonDown(Y)) {
+        if (_gameContrl->isButtonPressed(Y)) {
             _didReset = true;
             _UseJoystick = true;
         }
