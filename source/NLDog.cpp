@@ -86,7 +86,7 @@ bool Dog::init(const Vec2 pos, const Size size) {
     setFriction(DEFAULT_FRICTION);
     setRestitution(DEFAULT_RESTITUTION);
     setFixedRotation(true);
-    
+    setDogSize(DogSize::SMALL);
     return true;
 }
 
@@ -118,31 +118,70 @@ void Dog::moveOnInput(NetLabInput& _input){
     dir.y = _input.getVertical()*getThrust();
     
 }
-
-void Dog::dogActions(){
-    AnimationSceneNode::Directions direction = AnimationSceneNode::convertRadiansToDirections(dir.getAngle());
-    if(biteAnimationMedium->getFrame() == biteAnimationMedium->getSize() - 1){
-        // bite is finished
+void Dog::setDogSize(DogSize size){
+    if(idleAnimation != nullptr && size != dogSize){
+        idleAnimation->animate(AnimationSceneNode::Directions::SOUTH, false);
+        runAnimation->animate(AnimationSceneNode::Directions::SOUTH, false);
+        biteAnimation->animate(AnimationSceneNode::Directions::SOUTH, false);
+        shootAnimation->animate(AnimationSceneNode::Directions::SOUTH, false);
+    }
+    switch (size) {
+        case DogSize::SMALL:
+            idleAnimation =  idleAnimationSmall;
+            runAnimation =  runAnimationSmall;
+            biteAnimation = biteAnimationSmall;
+            shootAnimation = shootAnimationSmall;
+            break;
+        case DogSize::MEDIUM:
+            idleAnimation =  idleAnimationMedium;
+            runAnimation =  runAnimationMedium;
+            biteAnimation = biteAnimationMedium;
+            shootAnimation = shootAnimationMedium;
+            break;
+        case DogSize::LARGE:
+            idleAnimation =  idleAnimationLarge;
+            runAnimation =  runAnimationLarge;
+            biteAnimation = biteAnimationLarge;
+            shootAnimation = shootAnimationLarge;
+            break;
+        default:
+            CULog("INVALID SETDOGSIZE INPUT");
+            break;
     }
     
-    if(shootAnimationMedium->getFrame() == shootAnimationMedium->getSize() - 1){
-        // shoot is finished
+}
+void Dog::dogActions(){
+    AnimationSceneNode::Directions direction = AnimationSceneNode::convertRadiansToDirections(dir.getAngle());
+    if(action == Actions::BITE && biteAnimation->getFrame() == biteAnimation->getSize() - 1){
+        // bite is finished
+        action = Actions::RUN;
     }
-    if(dir.x == 0 && dir.y == 0){
-        idleAnimationMedium->animate(prevDirection, true);
-        
-        runAnimationMedium->animate(prevDirection, false);
-        biteAnimationMedium->animate(prevDirection, false);
-        shootAnimationMedium->animate(prevDirection, false);
+    else if(action == Actions::SHOOT && shootAnimation->getFrame() == shootAnimation->getSize() - 1){
+        // shoot is finished
+        action = Actions::RUN;
+    }
+    
+    
+    bool attack = action == Actions::BITE || action==Actions::SHOOT;
+    
+    if(dir.x == 0 && dir.y == 0 && !attack){
+        action = Actions::IDLE;
+        idleAnimation->animate(prevDirection, true);
+        runAnimation->animate(prevDirection, false);
+        biteAnimation->animate(prevDirection, false);
+        shootAnimation->animate(prevDirection, false);
     }
     else{
         prevDirection = direction;
+        idleAnimation->animate(direction, false);
         
-        runAnimationMedium->animate(direction, true);
+        if(!attack){
+            action = Actions::RUN;
+        }
         
-        idleAnimationMedium->animate(direction, false);
-        biteAnimationMedium->animate(direction, false);
-        shootAnimationMedium->animate(direction, false);
+        runAnimation->animate(direction, action == Actions::RUN);
+        biteAnimation->animate(direction, action == Actions::BITE);
+        shootAnimation->animate(direction, action == Actions::SHOOT);
         
     }
 }
@@ -161,14 +200,14 @@ void Dog::dogActions(){
  */
 void Dog::update(float delta) {
     Obstacle::update(delta);
-    if (runAnimationMedium != nullptr) {
-        runAnimationMedium->setPosition(getPosition()*_drawscale);
-        idleAnimationMedium->setPosition(getPosition()*_drawscale);
-        shootAnimationMedium->setPosition(getPosition()*_drawscale);
-        biteAnimationMedium->setPosition(getPosition()*_drawscale);
+    if (runAnimation != nullptr) {
+        runAnimation->setPosition(getPosition()*_drawscale);
+        idleAnimation->setPosition(getPosition()*_drawscale);
+        shootAnimation->setPosition(getPosition()*_drawscale);
+        biteAnimation->setPosition(getPosition()*_drawscale);
         
         
-        runAnimationMedium->setAngle(getAngle());
+        runAnimation->setAngle(getAngle());
         
         dogActions();
     }
@@ -245,10 +284,27 @@ void Dog::setDrawScale(float scale) {
     }
 }
 
+void Dog::setSmallAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot){
+    runAnimationSmall = run;
+    idleAnimationSmall = idle;
+    shootAnimationSmall = shoot;
+    biteAnimationSmall = bite;
+    setDogSize(DogSize::SMALL);
+}
+
 void Dog::setMediumAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot){
     runAnimationMedium = run;
     idleAnimationMedium = idle;
     shootAnimationMedium = shoot;
     biteAnimationMedium = bite;
 }
+
+void Dog::setLargeAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot){
+    runAnimationLarge = run;
+    idleAnimationLarge = idle;
+    shootAnimationLarge = shoot;
+    biteAnimationLarge = bite;
+}
+
+
 

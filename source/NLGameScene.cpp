@@ -654,7 +654,7 @@ void GameScene::populate() {
     _dog1->setDrawScale(_scale);
     _dog1->setDebugColor(DYNAMIC_COLOR);
 
-    _dog1->setMediumAnimation(mediumDogIdle, mediumDogRun, mediumDogBite, mediumDogShoot);
+    _dog1->setSmallAnimation(mediumDogIdle, mediumDogRun, mediumDogBite, mediumDogShoot);
     std::vector<std::shared_ptr<scene2::SceneNode>> vecNodes = {mediumDogIdle,mediumDogRun,mediumDogBite, mediumDogShoot};
     addInitObstacleLinkAnimation(_dog1, vecNodes);
     

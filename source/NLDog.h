@@ -77,10 +77,25 @@ protected:
     AnimationSceneNode::Directions prevDirection;
     cugl::Vec2 dir;
     
+    std::shared_ptr<AnimationSceneNode> idleAnimation;
+    std::shared_ptr<AnimationSceneNode> runAnimation;
+    std::shared_ptr<AnimationSceneNode> biteAnimation;
+    std::shared_ptr<AnimationSceneNode> shootAnimation;
+    
+    std::shared_ptr<AnimationSceneNode> idleAnimationSmall;
+    std::shared_ptr<AnimationSceneNode> runAnimationSmall;
+    std::shared_ptr<AnimationSceneNode> biteAnimationSmall;
+    std::shared_ptr<AnimationSceneNode> shootAnimationSmall;
+    
     std::shared_ptr<AnimationSceneNode> idleAnimationMedium;
     std::shared_ptr<AnimationSceneNode> runAnimationMedium;
     std::shared_ptr<AnimationSceneNode> biteAnimationMedium;
     std::shared_ptr<AnimationSceneNode> shootAnimationMedium;
+    
+    std::shared_ptr<AnimationSceneNode> idleAnimationLarge;
+    std::shared_ptr<AnimationSceneNode> runAnimationLarge;
+    std::shared_ptr<AnimationSceneNode> biteAnimationLarge;
+    std::shared_ptr<AnimationSceneNode> shootAnimationLarge;
     
     std::string _mainSound;
     
@@ -113,7 +128,7 @@ public:
      * NEVER USE A CONSTRUCTOR WITH NEW. If you want to allocate a model on
      * the heap, use one of the static constructors instead.
      */
-    Dog(void) : BoxObstacle(), _drawscale(1.0f), dogSize(DogSize::SMALL), action(Actions::IDLE), dir(cugl::Vec2(0,0)), prevDirection(AnimationSceneNode::Directions::SOUTH){ }
+    Dog(void) : BoxObstacle(), _drawscale(1.0f), action(Actions::IDLE), dir(cugl::Vec2(0,0)), prevDirection(AnimationSceneNode::Directions::SOUTH){ }
     
     /**
      * Destroys this rocket, releasing all resources.
@@ -177,9 +192,10 @@ public:
      */
     virtual bool init(const cugl::Vec2 pos, const cugl::Size size) override;
     
-    
+ 
+    void setSmallAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot);
     void setMediumAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot);
-    
+    void setLargeAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot);
     
 #pragma mark Static Constructors
     /**
@@ -311,6 +327,8 @@ public:
      * @return the amount of thrust that this rocket has.
      */
     float getThrust() const { return DEFAULT_THRUST; }
+    
+    void setDogSize(DogSize size);
 
     
 #pragma mark -
