@@ -1,250 +1,229 @@
 {
 	"textures": {
+        "healthframe": {
+            "file": "textures/game_ui/HEALTH_FRAME.png",
+            "magfilter": "nearest"
+        },
+        "healthfill": {
+            "file": "textures/game_ui/HEALTH_FILL.png",
+            "magfilter": "nearest"
+        },
+        "sizeframe": {
+            "file": "textures/game_ui/SIZE_FRAME.png",
+            "magfilter": "nearest"
+        },
+        "sizefill": {
+            "file": "textures/game_ui/SIZE_FILL.png",
+            "magfilter": "nearest"
+        },
+        "baittoggle": {
+            "file": "textures/game_ui/BAIT_TOGGLE.png",
+            "magfilter": "nearest"
+        },
+        "bombtoggle": {
+            "file": "textures/game_ui/BOMB_TOGGLE.png",
+            "magfilter": "nearest"
+        },
+        "shoottoggle": {
+            "file": "textures/game_ui/SHOOT_TOGGLE.png",
+            "magfilter": "nearest"
+        },
         "smalldogleftidle": {
             "file": "textures/dog/idle/small-left-idle.png",
-              "minfilter": "linear",
-              "magfilter": "nearest"
+            "magfilter": "nearest"
         },
         "smalldogrightidle": {
             "file": "textures/dog/idle/small-right-idle.png",
-                  "minfilter": "linear",
-                  "magfilter": "nearest"
+            "magfilter": "nearest"
         },
         "smalldogfrontidle": {
             "file": "textures/dog/idle/small-front-idle.png",
-                  "minfilter": "linear",
-                  "magfilter": "nearest"
+            "magfilter": "nearest"
         },
         "smalldogbackidle": {
             "file": "textures/dog/idle/small-back-idle.png",
-                  "minfilter": "linear",
-                  "magfilter": "nearest"
+            "magfilter": "nearest"
         },
         "smalldogleftshoot": {
             "file": "textures/dog/shoot/medium-left-shoot.png",
-                  "minfilter": "linear",
-                  "magfilter": "nearest"
+            "magfilter": "nearest"
         },
         "smalldogrightshoot": {
             "file": "textures/dog/shoot/medium-right-shoot.png",
-                  "minfilter": "linear",
-                  "magfilter": "nearest"
+            "magfilter": "nearest"
         },
         "smalldogfrontshoot": {
             "file": "textures/dog/shoot/medium-front-shoot.png",
-                  "minfilter": "linear",
-                  "magfilter": "nearest"
+            "magfilter": "nearest"
         },
         "smalldogbackshoot": {
             "file": "textures/dog/shoot/medium-back-shoot.png",
-                  "minfilter": "linear",
-                  "magfilter": "nearest"
+            "magfilter": "nearest"
         },
         "smalldogleftrun": {
             "file": "textures/dog/run/small-left-run.png",
-                  "minfilter": "linear",
-                  "magfilter": "nearest"
+            "magfilter": "nearest"
         },
         "smalldogrightrun": {
             "file": "textures/dog/run/small-right-run.png",
-                  "minfilter": "linear",
-                  "magfilter": "nearest"
+            "magfilter": "nearest"
         },
         "smalldogfrontrun": {
             "file": "textures/dog/run/small-front-run.png",
-                  "minfilter": "linear",
-                  "magfilter": "nearest"
+            "magfilter": "nearest"
         },
         "smalldogbackrun": {
             "file": "textures/dog/run/small-back-run.png",
-                  "minfilter": "linear",
-                  "magfilter": "nearest"
+            "magfilter": "nearest"
         },
         "smalldogfrontbite": {
             "file": "textures/dog/bite/medium-front-bite.png",
-                  "minfilter": "linear",
-                  "magfilter": "nearest"
+            "magfilter": "nearest"
         },
         "smalldogbackbite": {
             "file": "textures/dog/bite/medium-back-bite.png",
-                  "minfilter": "linear",
-                  "magfilter": "nearest"
+            "magfilter": "nearest"
         },
         "smalldogleftbite": {
             "file": "textures/dog/bite/medium-left-bite.png",
-                  "minfilter": "linear",
-                  "magfilter": "nearest"
+            "magfilter": "nearest"
         },
         "smalldogrightbite": {
             "file": "textures/dog/bite/medium-right-bite.png",
-                  "minfilter": "linear",
-                  "magfilter": "nearest"
+            "magfilter": "nearest"
         },
         "mediumdogleftidle": {
             "file": "textures/dog/idle/medium-left-idle.png",
-                  "minfilter": "linear",
-                  "magfilter": "nearest"
+            "magfilter": "nearest"
         },
         "mediumdogfrontidle": {
             "file": "textures/dog/idle/medium-front-idle.png",
-                  "minfilter": "linear",
-                  "magfilter": "nearest"
+            "magfilter": "nearest"
         },
         "mediumdogrightidle": {
             "file": "textures/dog/idle/medium-right-idle.png",
-                  "minfilter": "linear",
-                  "magfilter": "nearest"
+            "magfilter": "nearest"
         },
         "mediumdogbackidle": {
             "file": "textures/dog/idle/medium-back-idle.png",
-                  "minfilter": "linear",
-                  "magfilter": "nearest"
+            "magfilter": "nearest"
         },
         "mediumdogleftshoot": {
             "file": "textures/dog/shoot/medium-left-shoot.png",
-                  "minfilter": "linear",
-                  "magfilter": "nearest"
+            "magfilter": "nearest"
         },
         "mediumdogrightshoot": {
             "file": "textures/dog/shoot/medium-right-shoot.png",
-                  "minfilter": "linear",
-                  "magfilter": "nearest"
+            "magfilter": "nearest"
         },
         "mediumdogfrontshoot": {
             "file": "textures/dog/shoot/medium-front-shoot.png",
-                  "minfilter": "linear",
-                  "magfilter": "nearest"
+            "magfilter": "nearest"
         },
         "mediumdogbackshoot": {
             "file": "textures/dog/shoot/medium-back-shoot.png",
-                  "minfilter": "linear",
-                  "magfilter": "nearest"
+            "magfilter": "nearest"
         },
         "mediumdogleftrun": {
             "file": "textures/dog/run/medium-left-run.png",
-                  "minfilter": "linear",
-                  "magfilter": "nearest"
+            "magfilter": "nearest"
         },
         "mediumdogfrontrun": {
             "file": "textures/dog/run/medium-front-run.png",
-                  "minfilter": "linear",
-                  "magfilter": "nearest"
+            "magfilter": "nearest"
         },
         "mediumdogrightrun": {
             "file": "textures/dog/run/medium-right-run.png",
-                  "minfilter": "linear",
-                  "magfilter": "nearest"
+            "magfilter": "nearest"
         },
         "mediumdogbackrun": {
             "file": "textures/dog/run/medium-back-run.png",
-                  "minfilter": "linear",
-                  "magfilter": "nearest"
+            "magfilter": "nearest"
         },
         "mediumdogfrontbite": {
             "file": "textures/dog/bite/medium-front-bite.png",
-                  "minfilter": "linear",
-                  "magfilter": "nearest"
+            "magfilter": "nearest"
         },
         "mediumdogleftbite": {
             "file": "textures/dog/bite/medium-left-bite.png",
-                  "minfilter": "linear",
-                  "magfilter": "nearest"
+            "magfilter": "nearest"
         },
         "mediumdogrightbite": {
             "file": "textures/dog/bite/medium-right-bite.png",
-                  "minfilter": "linear",
-                  "magfilter": "nearest"
+            "magfilter": "nearest"
         },
         "mediumdogbackbite": {
             "file": "textures/dog/bite/medium-back-bite.png",
-                  "minfilter": "linear",
-                  "magfilter": "nearest"
+            "magfilter": "nearest"
         },
-       
+
        "largedogleftidle": {
            "file": "textures/dog/idle/large-left-idle.png",
-                 "minfilter": "linear",
-                 "magfilter": "nearest"
+            "magfilter": "nearest"
        },
        "largedogfrontidle": {
            "file": "textures/dog/idle/large-front-idle.png",
-                 "minfilter": "linear",
-                 "magfilter": "nearest"
+            "magfilter": "nearest"
        },
        "largedogrightidle": {
            "file": "textures/dog/idle/large-right-idle.png",
-                 "minfilter": "linear",
-                 "magfilter": "nearest"
+            "magfilter": "nearest"
        },
        "largedogbackidle": {
            "file": "textures/dog/idle/large-back-idle.png",
-                 "minfilter": "linear",
-                 "magfilter": "nearest"
+            "magfilter": "nearest"
        },
        "largedogleftshoot": {
            "file": "textures/dog/shoot/large-left-shoot.png",
-                 "minfilter": "linear",
-                 "magfilter": "nearest"
+            "magfilter": "nearest"
        },
        "largedogrightshoot": {
            "file": "textures/dog/shoot/large-right-shoot.png",
-                 "minfilter": "linear",
-                 "magfilter": "nearest"
+            "magfilter": "nearest"
        },
        "largedogfrontshoot": {
            "file": "textures/dog/shoot/large-front-shoot.png",
-                 "minfilter": "linear",
-                 "magfilter": "nearest"
+            "magfilter": "nearest"
        },
        "largedogbackshoot": {
            "file": "textures/dog/shoot/large-back-shoot.png",
-                 "minfilter": "linear",
-                 "magfilter": "nearest"
+            "magfilter": "nearest"
        },
        "largedogleftrun": {
            "file": "textures/dog/run/large-left-run.png",
-                 "minfilter": "linear",
-                 "magfilter": "nearest"
+            "magfilter": "nearest"
        },
        "largedogfrontrun": {
            "file": "textures/dog/run/large-front-run.png",
-                 "minfilter": "linear",
-                 "magfilter": "nearest"
+            "magfilter": "nearest"
        },
        "largedogrightrun": {
            "file": "textures/dog/run/large-right-run.png",
-                 "minfilter": "linear",
-                 "magfilter": "nearest"
+            "magfilter": "nearest"
        },
        "largedogbackrun": {
            "file": "textures/dog/run/large-back-run.png",
-                 "minfilter": "linear",
-                 "magfilter": "nearest"
+            "magfilter": "nearest"
        },
        "largedogfrontbite": {
            "file": "textures/dog/bite/large-front-bite.png",
-                 "minfilter": "linear",
-                 "magfilter": "nearest"
+            "magfilter": "nearest"
        },
        "largedogleftbite": {
            "file": "textures/dog/bite/large-left-bite.png",
-                 "minfilter": "linear",
-                 "magfilter": "nearest"
+            "magfilter": "nearest"
        },
        "largedogrightbite": {
            "file": "textures/dog/bite/large-right-bite.png",
-                 "minfilter": "linear",
-                 "magfilter": "nearest"
+            "magfilter": "nearest"
        },
        "largedogbackbite": {
            "file": "textures/dog/bite/large-back-bite.png",
-                 "minfilter": "linear",
-                 "magfilter": "nearest"
+            "magfilter": "nearest"
        },
         "tile": {
             "file": "textures/tile/tile.png",
-              "minfilter": "linear",
-              "magfilter": "nearest"
+            "magfilter": "nearest"
         },
 		"earth": {
 			"file":     "textures/earthtile.png",
