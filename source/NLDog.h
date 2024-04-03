@@ -41,6 +41,9 @@
 
 /** The thrust factor to convert player input into thrust */
 #define DEFAULT_THRUST 5.0f
+/** The number of frames until we can fire again */
+#define RELOAD_RATE 3
+#define MAX_ABSORB 30
 
 /**
  * This class is the player avatar for the rocket lander game.
