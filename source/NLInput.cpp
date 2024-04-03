@@ -104,38 +104,34 @@ void InputController::readInput() {
         _UseKeyboard = true;
     }
     // Shooting
-    if (keys->keyDown(shoot)) {
+    if (keys->keyPressed(shoot)) {
         _didFire = true;
         _UseKeyboard = true;
     }
 
     // Reset the game
-    if (keys->keyDown(reset)) {
+    if (keys->keyPressed(reset)) {
         _didReset = true;
         _UseKeyboard = true;
     }
     // Movement forward/backward
 
-    if (keys->keyDown(mode)) {
+    if (keys->keyPressed(mode)) {
         _didChangeMode = true;
         _UseKeyboard = true;
     }
 
-    if (keys->keyDown(special)) {
+    if (keys->keyPressed(special)) {
         _didSpecial = true;
         _UseKeyboard = true;
     }
     
-    if (keys->keyDown(debug)) {
+    if (keys->keyPressed(debug)) {
         _didDebug = true;
         _UseKeyboard = true;
     }
-    if (keys->keyDown(exit)) {
+    if (keys->keyPressed(exit)) {
         _didExit = true;
-        _UseKeyboard = true;
-    }
-    if (keys->keyDown(special)) {
-        _didSpecial = true;
         _UseKeyboard = true;
     }
 
