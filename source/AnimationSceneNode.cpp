@@ -106,12 +106,14 @@ void AnimationSceneNode::setAnchor(const cugl::Vec2 anchor){
 }
 
 void AnimationSceneNode::setPosition(const cugl::Vec2 &position){
+    _position = position;
     for(std::shared_ptr<cugl::scene2::SpriteNode> &node : _animationSprites){
         node->setPosition(position);
     }
 }
 
 void AnimationSceneNode::setAngle(float angle) {
+    _angle = angle;
     for(auto &node : _animationSprites){
         node->setAngle(_angle);
     }

@@ -121,19 +121,19 @@ void Dog::moveOnInput(NetLabInput& _input){
 
 void Dog::dogActions(){
     AnimationSceneNode::Directions direction = AnimationSceneNode::convertRadiansToDirections(dir.getAngle());
-//    if(biteAnimationMedium->getFrame() == biteAnimationMedium->getSize() - 1){
-//        // bite is finished
-//    }
-//    
-//    if(shootAnimationMedium->getFrame() == shootAnimationMedium->getSize() - 1){
-//        // shoot is finished
-//    }
+    if(biteAnimationMedium->getFrame() == biteAnimationMedium->getSize() - 1){
+        // bite is finished
+    }
+    
+    if(shootAnimationMedium->getFrame() == shootAnimationMedium->getSize() - 1){
+        // shoot is finished
+    }
     if(dir.x == 0 && dir.y == 0){
         idleAnimationMedium->animate(prevDirection, true);
         
         runAnimationMedium->animate(prevDirection, false);
-//        biteAnimationMedium->animate(prevDirection, false);
-//        shootAnimationMedium->animate(prevDirection, false);
+        biteAnimationMedium->animate(prevDirection, false);
+        shootAnimationMedium->animate(prevDirection, false);
     }
     else{
         prevDirection = direction;
@@ -141,8 +141,8 @@ void Dog::dogActions(){
         runAnimationMedium->animate(direction, true);
         
         idleAnimationMedium->animate(direction, false);
-//        biteAnimationMedium->animate(direction, false);
-//        shootAnimationMedium->animate(direction, false);
+        biteAnimationMedium->animate(direction, false);
+        shootAnimationMedium->animate(direction, false);
         
     }
 }

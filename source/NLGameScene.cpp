@@ -663,9 +663,9 @@ void GameScene::populate() {
     
 
     addInitObstacle(_dog1, mediumDogRun);
-    linkSceneToObs(_dog1, mediumDogBite);
-    linkSceneToObs(_dog1, mediumDogIdle);
-    linkSceneToObs(_dog1, mediumDogShoot);
+//    linkSceneToObs(_dog1, mediumDogBite);
+//    linkSceneToObs(_dog1, mediumDogIdle);
+//    linkSceneToObs(_dog1, mediumDogShoot);
     
     _camera.init(mediumDogRun, _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), _chargeBar, 1000.0f);
 }
