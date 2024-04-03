@@ -67,23 +67,6 @@ protected:
     /** Attack animation frequency; represents the number of frames until update */
     int _animFreq;
 public:
-    
-
-    /**
-      * Returns a new polygon node from a Texture object.
-      *
-      * After creation, the polygon will be a rectangle. The vertices of this
-      * polygon will be the corners of the image. The rectangle will be
-      * triangulated with the standard two triangles.
-      *
-      * @param texture   A shared pointer to a Texture object.
-      *
-      * @return a new polygon node from a Texture object.
-      */
-     static std::shared_ptr<AnimationSceneNode> allocWithTextures(const std::vector<std::shared_ptr<cugl::Texture>>& texture, int rows, int cols, int size, int freqAnimation) {
-         std::shared_ptr<AnimationSceneNode> node = std::make_shared<AnimationSceneNode>();
-         return (node->initWithTextures(texture,rows, cols, size, freqAnimation) ? node : nullptr);
-     }
 #pragma mark -
 #pragma mark Constructors
     /**
@@ -174,6 +157,22 @@ public:
      * @return  true if the filmstrip is initialized properly, false otherwise.
      */
     bool initWithTextures(const std::vector<std::shared_ptr<cugl::Texture>>& textures, int rows, int cols, int size, int freqAnimation);
+
+    /**
+      * Returns a new polygon node from a Texture object.
+      *
+      * After creation, the polygon will be a rectangle. The vertices of this
+      * polygon will be the corners of the image. The rectangle will be
+      * triangulated with the standard two triangles.
+      *
+      * @param texture   A shared pointer to a Texture object.
+      *
+      * @return a new polygon node from a Texture object.
+      */
+     static std::shared_ptr<AnimationSceneNode> allocWithTextures(const std::vector<std::shared_ptr<cugl::Texture>>& texture, int rows, int cols, int size, int freqAnimation) {
+         std::shared_ptr<AnimationSceneNode> node = std::make_shared<AnimationSceneNode>();
+         return (node->initWithTextures(texture,rows, cols, size, freqAnimation) ? node : nullptr);
+     }
 #pragma mark -
 #pragma mark Attribute Accessors
     /**

@@ -163,6 +163,9 @@ protected:
      * with your serialization loader, which would process a level file.
      */
     void populate();
+    
+    /** populate the dog*/
+    void initDog();
 
     /**
      * Adds the physics object to the physics world and loosely couples it to the scene graph
