@@ -900,7 +900,6 @@ void GameScene::preUpdate(float dt) {
     
     // Apply the force to the rocket (but run physics in fixedUpdate)
 //    _camera.setZoom(SCENE_HEIGHT/CANVAS_TILE_HEIGHT);
-//    _camera.setZoom(2);
     _camera.update(dt);
     _dog1->moveOnInput(_input);
     

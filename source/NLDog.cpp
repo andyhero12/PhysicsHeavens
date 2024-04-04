@@ -143,6 +143,10 @@ void Dog::moveOnInput(InputController& _input){
     dir.x =_vel.x*getThrust();
     dir.y = _vel.y*getThrust();
     
+    if (_input.didChangeMode()){
+        toggleMode();
+        CULog("toggle");
+    }
     if (action == Actions::BITE || action == Actions::SHOOT){ // wait for them to finish
         return;
     }
@@ -211,7 +215,6 @@ void Dog::dogActions(){
         shootAnimation->animate(prevDirection, false);
     }
     else{
-//        prevDirection = direction;
         idleAnimation->animate(direction, false);
         runAnimation->animate(direction, action == Actions::RUN);
         biteAnimation->animate(direction, action == Actions::BITE);
@@ -293,7 +296,6 @@ void Dog::setFinalDog(std::shared_ptr<cugl::scene2::SceneNode> baseNode){
 void Dog::resetCurrentAnimations(DogSize size){
     baseBlankNode->removeAllChildren();
     setDogSize(size);
-    Size resultSize(baseBlankNode->getContentSize());
     idleAnimation->setPosition(baseBlankNode->getAnchor());
     baseBlankNode->addChild(idleAnimation);
     biteAnimation->setPosition(baseBlankNode->getAnchor());
