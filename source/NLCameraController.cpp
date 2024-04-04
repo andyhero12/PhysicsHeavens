@@ -45,7 +45,7 @@ void CameraController::setZoom(float zoom) {
     }
     _camera->setZoom(zoom);
     // Scale the UI so that it always looks the same size
-//    _ui->setScale(1 / _camera->getZoom());
+    _ui->setScale(1 / _camera->getZoom());
 }
 
 void CameraController::addZoom(float zoom) {
