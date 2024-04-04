@@ -134,14 +134,15 @@ void Dog::moveOnInput(InputController& _input){
         _vel = Vec2(_input.getTurn(), _input.getForward());
     }
     prevDirection =_curDirection;
-    // keep same direction until movement
-    if (_vel.x != 0 || _vel.y != 0){
-        _curDirection = AnimationSceneNode::convertRadiansToDirections(dir.getAngle());
-    }
     setVX(_vel.x*getThrust());
     setVY(_vel.y*getThrust());
     dir.x =_vel.x*getThrust();
     dir.y = _vel.y*getThrust();
+    
+    // keep same direction until movement
+    if (_vel.x != 0 || _vel.y != 0){
+        _curDirection = AnimationSceneNode::convertRadiansToDirections(dir.getAngle());
+    }
     
     if (_input.didChangeMode()){
         toggleMode();
