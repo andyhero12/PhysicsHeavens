@@ -126,7 +126,13 @@ void Dog::dispose() {
  * Applies the Velocity Movement for the Physics Engine
  *
  */
-void Dog::moveOnInput(InputController& _input){
+void Dog::moveOnInputSetAction(InputController& _input){
+    if (_refire <= _firerate) {
+        _refire++;
+    }
+    if (_healCooldown <= _healRate) {
+        _healCooldown++;
+    }
     cugl::Vec2 _vel(0,0);
     if (_input.getControllerState()){
         _vel = _input.getVelocity();
@@ -146,15 +152,16 @@ void Dog::moveOnInput(InputController& _input){
     
     if (_input.didChangeMode()){
         toggleMode();
-        CULog("toggle");
     }
     if (action == Actions::BITE || action == Actions::SHOOT){ // wait for them to finish
         return;
     }
-    if (_input.didPressFire()){ // bite
+    if (_input.didPressFire() && canFireWeapon()){ // bite
         action = Actions::BITE;
     }else if (_input.didPressSpecial() && modes.at(_mode) == "SHOOT"){ // attack
         action = Actions::SHOOT;
+    }else if (_input.didPressSpecial() && getMode() == "EXPLODE"){
+        // maybe add explode animation later
     }else if (_vel.x != 0 || _vel.y != 0){ // walking
         action = Actions::RUN;
     }else{ // idle
@@ -238,12 +245,6 @@ void Dog::dogActions(){
  */
 void Dog::update(float delta) {
     Obstacle::update(delta);
-    if (_refire <= _firerate) {
-        _refire++;
-    }
-    if (_healCooldown <= _healRate) {
-        _healCooldown++;
-    }
     // Decoupled so useless for now
     if (baseBlankNode){
         baseBlankNode->setPosition(getPosition()*_drawscale);
@@ -313,8 +314,20 @@ void Dog::setHealth(int value){
     _uiController->setHealthBarTexture(_health/_maxHealth);
 }
 
+void Dog::addAbsorb(int value) {
+    _absorbValue += value;
+    _absorbValue = fmin(_absorbValue, MAX_ABSORB);
+}
+
+void Dog::subAbsorb(int value) {
+    _absorbValue -= value;
+    if (_absorbValue < 0){
+        _absorbValue = 0;
+    }
+}
 void Dog::setAbsorbValue(int value){
     _absorbValue = value;
+    _absorbValue = fmin(_absorbValue, MAX_ABSORB);
     _uiController->setSizeBarTexture(_absorbValue/MAX_ABSORB);
 }
 

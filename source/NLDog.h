@@ -255,6 +255,12 @@ public:
     
 #pragma mark -
 #pragma mark Accessors
+    
+    void addAbsorb(int value);
+    void subAbsorb(int value);
+    const int getAbsorb() const{ 
+        return _absorbValue;
+    }
     /**
      * Returns the amount of thrust that this rocket has.
      *
@@ -296,7 +302,7 @@ public:
      * @return true if the ship can fire
      */
     bool canFireWeapon() const{
-        return _refire > _firerate;
+        return _refire > _firerate && (action == Actions::IDLE || action == Actions::RUN);
     }
     
     void reloadWeapon() {
@@ -310,6 +316,10 @@ public:
 
     void resetHeal() {
         _healCooldown = 0;
+    }
+    
+    float getExplosionRadius() const{
+        return _explosionRadius;
     }
     
     float getBiteRadius() const{
@@ -374,7 +384,7 @@ public:
      * Applies the Velocity Movement for the Physics Engine
      *
      */
-    void moveOnInput(InputController& _input);
+    void moveOnInputSetAction(InputController& _input);
     /**
      * Updates the object's physics state (NOT GAME LOGIC).
      *

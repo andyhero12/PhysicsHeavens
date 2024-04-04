@@ -905,7 +905,7 @@ void GameScene::preUpdate(float dt) {
     // Apply the force to the rocket (but run physics in fixedUpdate)
 //    _camera.setZoom(SCENE_HEIGHT/CANVAS_TILE_HEIGHT);
     _camera.update(dt);
-    _dog1->moveOnInput(_input);
+    _dog1->moveOnInputSetAction(_input);
     
 //TODO: if _input.didBigCrate(), allocate a crate event for the center of the screen(use DEFAULT_WIDTH/2 and DEFAULT_HEIGHT/2) and send it using the pushOutEvent() method in the network controller.
 #pragma mark BEGIN SOLUTION
