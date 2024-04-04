@@ -773,7 +773,7 @@ void GameScene::initDog(){
     _dog1->setSmallAnimation(smallDogIdle, smallDogRun, smallDogBite, smallDogShoot);
     _dog1->setMediumAnimation(mediumDogIdle, mediumDogRun, mediumDogBite, mediumDogShoot);
     _dog1->setLargeAnimation(largeDogIdle, largeDogRun, largeDogBite, largeDogShoot);
-    std::shared_ptr<scene2::SceneNode> placeHolderDrawOver = scene2::SceneNode::alloc();
+    std::shared_ptr<AnimationSceneNode> placeHolderDrawOver = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
     
     
 // BEGIN BIND
