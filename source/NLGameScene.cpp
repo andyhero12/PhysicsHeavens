@@ -763,7 +763,7 @@ void GameScene::initDog(){
     largeDogIdle->setAnchor(Vec2::ANCHOR_CENTER);
     
     
-    Vec2 dogPos = ((Vec2)CAN1_POS) + Vec2(1,-2);
+    Vec2 dogPos = _level->getPlayerPos() / _scale;
     Size mySize(64,64);
     Size dogSize(mySize/_scale);
     
