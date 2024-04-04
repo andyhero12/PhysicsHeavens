@@ -305,4 +305,17 @@ void Dog::resetCurrentAnimations(DogSize size){
     baseBlankNode->setPosition(getPosition()*_drawscale);
 }
 
+void Dog::setHealth(int value){
+    _health = value;
+    _uiController->setHealthBarTexture(_health/_maxHealth);
+}
 
+void Dog::setAbsorbValue(int value){
+    _absorbValue = value;
+    _uiController->setSizeBarTexture(_absorbValue/MAX_ABSORB);
+}
+
+void Dog::setMode(int mode){
+    _mode = mode;
+    _uiController->setToggle(modes.at(_mode));
+}

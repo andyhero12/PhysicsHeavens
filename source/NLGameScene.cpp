@@ -352,7 +352,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     populate();
     
     _uiController = std::make_shared<UIController>();
-    _uiController->init(_uinode, assets, getSize(), _dog1);
+    _uiController->init(_uinode, assets, getSize());
     
     addChild(_uinode);
     
@@ -602,7 +602,7 @@ void GameScene::populate() {
 
 
 void GameScene::initDog(){
-    // should be from northeast; clockwise
+    // should start at northeast and add to vector with animation in clockwise direction
     std::vector<std::shared_ptr<cugl::Texture>> textures;
     textures.push_back(_assets->get<cugl::Texture>("smalldogrightrun"));
     textures.push_back(_assets->get<cugl::Texture>("smalldogrightrun"));

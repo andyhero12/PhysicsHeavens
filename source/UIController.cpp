@@ -8,7 +8,7 @@
 #include "UIController.h"
 using namespace cugl;
 
-bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std::shared_ptr<cugl::AssetManager>& assets, cugl::Size screenSize, std::shared_ptr<Dog> dog){
+bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std::shared_ptr<cugl::AssetManager>& assets, cugl::Size screenSize){
 //    _childOffset = -1;
 //    // Get gameplay ui elements
     _screenSize = screenSize;
@@ -77,21 +77,16 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     node->addChild(_healthfill);
     node->addChild(_sizefill);
     
-    
-    _dog = dog;
-
-    setToggle();
-    setHealthBarTexture(50);
-    setSizeBarTexture(15);
     return true;
 }
 
-void UIController::setHealthBarTexture(float health){
+void UIController::setHealthBarTexture(float percentage){
+    CUAssert(0 <= percentage <= 1);
     // The percentage of the health bar that is empty space, needed to adjust how fast the health bar decreases
     GLfloat emptyPercent = 15.0/_healthfill->getWidth();
     
     GLfloat minS = 0;
-    GLfloat maxS = emptyPercent + (1.0 - emptyPercent) * health/100.0;
+    GLfloat maxS = emptyPercent + (1.0 - emptyPercent) * percentage;
     GLfloat minT = 0;
     GLfloat maxT = 1;
     
@@ -103,13 +98,14 @@ void UIController::setHealthBarTexture(float health){
     _healthfill->setPosition(healthfillx, healthy);
 }
 
-void UIController::setSizeBarTexture(float size){
+void UIController::setSizeBarTexture(float percentage){
+    CUAssert(0 <= percentage <= 1);
     // The percentage of the size bar that is empty space, needed to adjust how fast the health bar decreases
     GLfloat emptyPercent = 3.2/_sizefill->getWidth();
     
     GLfloat minS = 0;
     GLfloat maxS = 1;
-    GLfloat minT = 1 - (emptyPercent + (1.0 - emptyPercent) * size/MAX_ABSORB);
+    GLfloat minT = 1 - (emptyPercent + (1.0 - emptyPercent) * percentage);
     GLfloat maxT = 1;
 
     _sizefill->setSubtexture(minS, maxS, minT, maxT);
@@ -120,8 +116,28 @@ void UIController::setSizeBarTexture(float size){
     _sizefill->setPosition(sizefillx , sizefilly);
 }
 
-void UIController::setToggle(){
-    _bombtoggle->setVisible(true);
-    _shoottoggle->setVisible(false);
-    _baittoggle->setVisible(false);
+void UIController::setToggle(std::string mode){
+    if (mode == "SHOOT") {
+        _bombtoggle->setVisible(false);
+        _shoottoggle->setVisible(true);
+        _baittoggle->setVisible(false);
+    }
+    else if (mode == "BAIT"){
+        _bombtoggle->setVisible(false);
+        _shoottoggle->setVisible(false);
+        _baittoggle->setVisible(true);
+    }
+    else if (mode == "BOMB"){
+        _bombtoggle->setVisible(true);
+        _shoottoggle->setVisible(false);
+        _baittoggle->setVisible(false);
+    }
+    else if (mode == "NOTHING"){
+        _bombtoggle->setVisible(false);
+        _shoottoggle->setVisible(false);
+        _baittoggle->setVisible(false);
+    }
+    else{
+        CUAssertLog(false, "wrong mode string");
+    }
 }

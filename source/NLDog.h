@@ -38,6 +38,7 @@
 #include <cugl/cugl.h>
 #include "NLInput.h"
 #include "AnimationSceneNode.h"
+#include "UIController.h"
 
 /** The thrust factor to convert player input into thrust */
 #define DEFAULT_THRUST 5.0f
@@ -95,9 +96,11 @@ protected:
     std::shared_ptr<AnimationSceneNode> biteAnimationLarge;
     std::shared_ptr<AnimationSceneNode> shootAnimationLarge;
     
+    std::shared_ptr<UIController> _uiController;
+    
     float _drawscale;
     
-    std::array<std::string,4> modes = {"SHOOT", "BUILD", "EXPLODE", "NOTHING"};
+    std::array<std::string,4> modes = {"SHOOT", "BAIT", "BOMB", "NOTHING"};
     int _mode;
     int _refire;
     int _absorbValue;
@@ -186,6 +189,8 @@ public:
     void setSmallAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot);
     void setMediumAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot);
     void setLargeAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot);
+    
+    void setUIController(std::shared_ptr<UIController> controller){ _uiController = controller; }
     
     void setFinalDog(std::shared_ptr<cugl::scene2::SceneNode> baseNode);
     void resetCurrentAnimations(DogSize dogSize);
@@ -277,6 +282,10 @@ public:
      * @param value The current ship health.
      */
     void setHealth(int value);
+    
+    void setAbsorbValue(int value);
+    
+    void setMode(int mode);
     
     /**
      * Returns true if the ship can fire its weapon
