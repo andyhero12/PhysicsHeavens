@@ -207,6 +207,8 @@ void GameScene::reset() {
     _rand.seed(0xdeadbeef);
     _worldnode->removeAllChildren();
     _debugnode->removeAllChildren();
+    _uinode->removeAllChildren();
+    
     
     _backgroundWrapper = std::make_shared<World>(Vec2(0, 0),_scale, _level->getTiles(), _level->getBoundaries(), _assets->get<cugl::Texture>("tile"));
     
@@ -350,9 +352,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     addChild(_chargeBar);
     
     populate();
-    
-    _uiController = std::make_shared<UIController>();
-    _uiController->init(_uinode, assets, getSize());
     
     addChild(_uinode);
     
@@ -774,7 +773,7 @@ void GameScene::initDog(){
     _dog1->setSmallAnimation(smallDogIdle, smallDogRun, smallDogBite, smallDogShoot);
     _dog1->setMediumAnimation(mediumDogIdle, mediumDogRun, mediumDogBite, mediumDogShoot);
     _dog1->setLargeAnimation(largeDogIdle, largeDogRun, largeDogBite, largeDogShoot);
-    std::shared_ptr<AnimationSceneNode> placeHolderDrawOver = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
+    std::shared_ptr<scene2::SceneNode> placeHolderDrawOver = scene2::SceneNode::alloc();
     
     
 // BEGIN BIND
@@ -795,7 +794,12 @@ void GameScene::initDog(){
 //    };
 //    _dog1->setDogSize(Dog::DogSize::MEDIUM);
 //    addInitObstacleLinkAnimation(_dog1, vecNodes);
-    _camera.init(mediumDogIdle, _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), _uinode, 1000.0f);
+    
+    _uiController = std::make_shared<UIController>();
+    _uiController->init(_uinode, _assets, getSize());
+    _dog1->setUIController(_uiController);
+    
+    _camera.init(placeHolderDrawOver, _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), _uinode, 1000.0f);
 }
 
 void GameScene::linkAllAnimationsToObject(const std::shared_ptr<physics2::Obstacle>& obj,

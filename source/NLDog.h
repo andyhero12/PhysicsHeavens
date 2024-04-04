@@ -100,7 +100,7 @@ protected:
     
     float _drawscale;
     
-    std::array<std::string,4> modes = {"SHOOT", "BAIT", "BOMB", "NOTHING"};
+    std::array<std::string,3> modes = {"SHOOT", "BAIT", "BOMB"};
     int _mode;
     int _refire;
     int _absorbValue;
@@ -327,8 +327,9 @@ public:
     }
     
     void toggleMode(){
-        int length = sizeof(modes) / sizeof(modes.at(0));
+        int length = (int) modes.size();
         _mode = (_mode + 1) % length;
+        _uiController->setToggle(getMode());
     }
     void setDogSize(DogSize size);
 
