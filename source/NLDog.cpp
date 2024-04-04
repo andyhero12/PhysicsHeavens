@@ -54,6 +54,13 @@ using namespace cugl;
 /** The restitution of this rocket */
 #define DEFAULT_RESTITUTION 0.4f
 
+#define FIRE_RATE 25
+#define HEAL_RATE 50
+#define HEALTH 100
+#define BITE_RADIUS 180.0f
+#define SHOOT_RADIUS 540.0f
+#define EXPLOSION_RADIUS 90.0f
+
 #pragma mark -
 #pragma mark Constructors
 
@@ -76,17 +83,25 @@ bool Dog::init(const Vec2 pos, const Size size) {
     physics2::BoxObstacle::init(pos,size);
     std::string name("rocket");
     setName(name);
-    
-
-    _mainSound  = "";
-    _leftSound  = "";
-    _rghtSound  = "";
-
     setDensity(DEFAULT_DENSITY);
     setFriction(DEFAULT_FRICTION);
     setRestitution(DEFAULT_RESTITUTION);
     setFixedRotation(true);
-    setDogSize(DogSize::SMALL);
+    setDogSize(DogSize::MEDIUM);
+    _mode = 0;
+    _refire = 0;
+    _absorbValue = 0;
+    _firerate = FIRE_RATE;
+    _healCooldown = 0;
+    _health = HEALTH;
+    _maxHealth = HEALTH;
+    _healRate = HEAL_RATE;
+    _explosionRadius = EXPLOSION_RADIUS;
+    _biteRadius = BITE_RADIUS;
+    _shootRadius = SHOOT_RADIUS;
+    prevDirection =AnimationSceneNode::Directions::EAST;
+    _curDirection = AnimationSceneNode::Directions::EAST;
+    
     return true;
 }
 
@@ -112,10 +127,34 @@ void Dog::dispose() {
  *
  */
 void Dog::moveOnInput(InputController& _input){
-    setVX(_input.getTurn()*getThrust());
-    setVY(_input.getForward()*getThrust());
-    dir.x =_input.getTurn()*getThrust();
-    dir.y = _input.getForward()*getThrust();
+    cugl::Vec2 _vel(0,0);
+    if (_input.getControllerState()){
+        _vel = _input.getVelocity();
+    }else if (_input.getKeyboardState()){
+        _vel = Vec2(_input.getTurn(), _input.getForward());
+    }
+    prevDirection =_curDirection;
+    // keep same direction until movement
+    if (_vel.x != 0 || _vel.y != 0){
+        _curDirection = AnimationSceneNode::convertRadiansToDirections(dir.getAngle());
+    }
+    setVX(_vel.x*getThrust());
+    setVY(_vel.y*getThrust());
+    dir.x =_vel.x*getThrust();
+    dir.y = _vel.y*getThrust();
+    
+    if (action == Actions::BITE || action == Actions::SHOOT){ // wait for them to finish
+        return;
+    }
+    if (_input.didPressFire()){ // bite
+        action = Actions::BITE;
+    }else if (_input.didPressSpecial() && modes.at(_mode) == "SHOOT"){ // attack
+        action = Actions::SHOOT;
+    }else if (_vel.x != 0 || _vel.y != 0){ // walking
+        action = Actions::RUN;
+    }else{ // idle
+        action = Actions::IDLE;
+    }
     
 }
 void Dog::setDogSize(DogSize size){
@@ -126,6 +165,7 @@ void Dog::setDogSize(DogSize size){
         shootAnimation->animate(AnimationSceneNode::Directions::SOUTH, false);
     }
     switch (size) {
+
         case DogSize::SMALL:
             idleAnimation =  idleAnimationSmall;
             runAnimation =  runAnimationSmall;
@@ -151,7 +191,7 @@ void Dog::setDogSize(DogSize size){
     
 }
 void Dog::dogActions(){
-    AnimationSceneNode::Directions direction = AnimationSceneNode::convertRadiansToDirections(dir.getAngle());
+    AnimationSceneNode::Directions direction = getDirection();
     if(action == Actions::BITE && biteAnimation->getFrame() == biteAnimation->getSize() - 1){
         // bite is finished
         action = Actions::RUN;
@@ -160,7 +200,6 @@ void Dog::dogActions(){
         // shoot is finished
         action = Actions::RUN;
     }
-    
     
     bool attack = action == Actions::BITE || action==Actions::SHOOT;
     
@@ -172,13 +211,8 @@ void Dog::dogActions(){
         shootAnimation->animate(prevDirection, false);
     }
     else{
-        prevDirection = direction;
+//        prevDirection = direction;
         idleAnimation->animate(direction, false);
-        
-        if(!attack){
-            action = Actions::RUN;
-        }
-        
         runAnimation->animate(direction, action == Actions::RUN);
         biteAnimation->animate(direction, action == Actions::BITE);
         shootAnimation->animate(direction, action == Actions::SHOOT);
@@ -200,70 +234,19 @@ void Dog::dogActions(){
  */
 void Dog::update(float delta) {
     Obstacle::update(delta);
-    if (runAnimation != nullptr) {
-        runAnimation->setPosition(getPosition()*_drawscale);
-        idleAnimation->setPosition(getPosition()*_drawscale);
-        shootAnimation->setPosition(getPosition()*_drawscale);
-        biteAnimation->setPosition(getPosition()*_drawscale);
-        
-        
-        runAnimation->setAngle(getAngle());
-        
-        dogActions();
+    if (_refire <= _firerate) {
+        _refire++;
     }
-}
-
-
-#pragma mark -
-#pragma mark Animation
-/**
- * Returns the key for the sound to accompany the given afterburner
- *
- * The key should either refer to a valid sound loaded in the AssetManager or
- * be empty ("").  If the key is "", then no sound will play.
- *
- * @param burner    The enumeration to identify the afterburner
- *
- * @return the key for the sound to accompany the given afterburner
- */
-const std::string& Dog::getBurnerSound(Burner burner) const {
-    switch (burner) {
-        case Burner::MAIN:
-            return _mainSound;
-        case Burner::LEFT:
-            return _leftSound;
-        case Burner::RIGHT:
-            return _rghtSound;
+    if (_healCooldown <= _healRate) {
+        _healCooldown++;
     }
-    CUAssertLog(false, "Invalid burner enumeration");
-    return _mainSound;
-}
-
-/**
- * Sets the key for the sound to accompany the given afterburner
- *
- * The key should either refer to a valid sound loaded in the AssetManager or
- * be empty ("").  If the key is "", then no sound will play.
- *
- * @param burner    The enumeration to identify the afterburner
- * @param key       The key for the sound to accompany the main afterburner
- */
-void Dog::setBurnerSound(Burner burner, const std::string& key) {
-    switch (burner) {
-        case Burner::MAIN:
-            _mainSound = key;
-            break;
-        case Burner::LEFT:
-            _leftSound = key;
-            break;
-        case Burner::RIGHT:
-            _rghtSound = key;
-            break;
-        default:
-            CUAssertLog(false, "Invalid burner enumeration");
+    // Decoupled so useless for now
+    if (baseBlankNode){
+        baseBlankNode->setPosition(getPosition()*_drawscale);
+        baseBlankNode->setAngle(getAngle());
     }
+    dogActions();
 }
-
 
 /**
  * Sets the ratio of the ship sprite to the physics body
@@ -279,9 +262,6 @@ void Dog::setBurnerSound(Burner burner, const std::string& key) {
  */
 void Dog::setDrawScale(float scale) {
     _drawscale = scale;
-    if (runAnimationMedium != nullptr) {
-       runAnimationMedium->setPosition(getPosition()*_drawscale);
-    }
 }
 
 void Dog::setSmallAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot){
@@ -289,7 +269,6 @@ void Dog::setSmallAnimation(std::shared_ptr<AnimationSceneNode> idle, std::share
     idleAnimationSmall = idle;
     shootAnimationSmall = shoot;
     biteAnimationSmall = bite;
-    setDogSize(DogSize::SMALL);
 }
 
 void Dog::setMediumAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot){
@@ -305,6 +284,25 @@ void Dog::setLargeAnimation(std::shared_ptr<AnimationSceneNode> idle, std::share
     shootAnimationLarge = shoot;
     biteAnimationLarge = bite;
 }
+// Decoupled so useless for now
+void Dog::setFinalDog(std::shared_ptr<cugl::scene2::SceneNode> baseNode){
+    baseBlankNode = baseNode;
+    resetCurrentAnimations(DogSize::MEDIUM);
+}
 
+void Dog::resetCurrentAnimations(DogSize size){
+    baseBlankNode->removeAllChildren();
+    setDogSize(size);
+    Size resultSize(baseBlankNode->getContentSize());
+    idleAnimation->setPosition(baseBlankNode->getAnchor());
+    baseBlankNode->addChild(idleAnimation);
+    biteAnimation->setPosition(baseBlankNode->getAnchor());
+    baseBlankNode->addChild(biteAnimation);
+    shootAnimation->setPosition(baseBlankNode->getAnchor());
+    baseBlankNode->addChild(shootAnimation);
+    runAnimation->setPosition(baseBlankNode->getAnchor());
+    baseBlankNode->addChild(runAnimation);
+    baseBlankNode->setPosition(getPosition()*_drawscale);
+}
 
 

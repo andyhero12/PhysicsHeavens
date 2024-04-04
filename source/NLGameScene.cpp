@@ -640,7 +640,7 @@ void GameScene::initDog(){
     textures.push_back(_assets->get<cugl::Texture>("smalldogbackbite"));
     textures.push_back(_assets->get<cugl::Texture>("smalldogbackbite"));
 
-    std::shared_ptr<AnimationSceneNode> smallDogBite = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
+    std::shared_ptr<AnimationSceneNode> smallDogBite = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 15);
     smallDogIdle->setAnchor(Vec2::ANCHOR_CENTER);
     
     textures.clear();
@@ -653,7 +653,7 @@ void GameScene::initDog(){
     textures.push_back(_assets->get<cugl::Texture>("smalldogbackshoot"));
     textures.push_back(_assets->get<cugl::Texture>("smalldogbackshoot"));
     
-    std::shared_ptr<AnimationSceneNode> smallDogShoot = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
+    std::shared_ptr<AnimationSceneNode> smallDogShoot = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 15);
     smallDogIdle->setAnchor(Vec2::ANCHOR_CENTER);
 
     textures.clear();
@@ -769,23 +769,33 @@ void GameScene::initDog(){
     Size dogSize(mySize/_scale);
     
     _dog1 = Dog::alloc(dogPos,dogSize);
-    _dog1->setDrawScale(_scale);
     _dog1->setDebugColor(DYNAMIC_COLOR);
 
     _dog1->setSmallAnimation(smallDogIdle, smallDogRun, smallDogBite, smallDogShoot);
     _dog1->setMediumAnimation(mediumDogIdle, mediumDogRun, mediumDogBite, mediumDogShoot);
     _dog1->setLargeAnimation(largeDogIdle, largeDogRun, largeDogBite, largeDogShoot);
-    
-    std::vector<std::shared_ptr<scene2::SceneNode>> vecNodes = {
-        smallDogIdle, smallDogRun, smallDogBite, smallDogShoot,
-        mediumDogIdle,mediumDogRun,mediumDogBite, mediumDogShoot,
-        largeDogIdle, largeDogRun, largeDogBite, largeDogShoot
-    };
-    
-    addInitObstacleLinkAnimation(_dog1, vecNodes);
+    std::shared_ptr<AnimationSceneNode> placeHolderDrawOver = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
     
     
-    _camera.init(mediumDogRun, _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), _uinode, 1000.0f);
+// BEGIN BIND
+    _dog1->setFinalDog(placeHolderDrawOver);
+    _world->initObstacle(_dog1);
+    _dog1->setDebugScene(_debugnode);
+    if (_isHost){
+        _world->getOwnedObstacles().insert({_dog1,0});
+    }
+    _dog1->setDrawScale(_scale);
+    _worldnode->addChild(placeHolderDrawOver);
+    
+// END BIND
+//    std::vector<std::shared_ptr<scene2::SceneNode>> vecNodes = {
+//        smallDogIdle, smallDogRun, smallDogBite, smallDogShoot,
+//        mediumDogIdle, mediumDogRun,mediumDogBite, mediumDogShoot,
+//        largeDogIdle, largeDogRun, largeDogBite, largeDogShoot
+//    };
+//    _dog1->setDogSize(Dog::DogSize::MEDIUM);
+//    addInitObstacleLinkAnimation(_dog1, vecNodes);
+    _camera.init(mediumDogIdle, _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), _uinode, 1000.0f);
 }
 
 void GameScene::linkAllAnimationsToObject(const std::shared_ptr<physics2::Obstacle>& obj,

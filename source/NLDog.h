@@ -41,10 +41,7 @@
 
 /** The thrust factor to convert player input into thrust */
 #define DEFAULT_THRUST 5.0f
-/** The number of frames until we can fire again */
-#define RELOAD_RATE 3
 #define MAX_ABSORB 30
-
 /**
  * This class is the player avatar for the rocket lander game.
  *
@@ -66,20 +63,18 @@ public:
         MEDIUM,
         LARGE
     };
-    
 private:
     /** This macro disables the copy constructor (not allowed on scene graphs) */
     CU_DISALLOW_COPY_AND_ASSIGN(Dog);
 
 protected:
-    /** The force to apply to this rocket */
-    cugl::Vec2 _force;
     Actions action;
     DogSize dogSize;
     
     AnimationSceneNode::Directions prevDirection;
     cugl::Vec2 dir;
     
+    std::shared_ptr<cugl::scene2::SceneNode> baseBlankNode;
     std::shared_ptr<AnimationSceneNode> idleAnimation;
     std::shared_ptr<AnimationSceneNode> runAnimation;
     std::shared_ptr<AnimationSceneNode> biteAnimation;
@@ -100,30 +95,22 @@ protected:
     std::shared_ptr<AnimationSceneNode> biteAnimationLarge;
     std::shared_ptr<AnimationSceneNode> shootAnimationLarge;
     
-    std::string _mainSound;
-    
-    std::string _leftSound;
-   
-    std::string _rghtSound;
-  
-    /** Cache object for transforming the force according the object angle */
-    cugl::Mat4 _affine;
     float _drawscale;
     
+    std::array<std::string,4> modes = {"SHOOT", "BUILD", "EXPLODE", "NOTHING"};
+    int _mode;
+    int _refire;
+    int _absorbValue;
+    int _firerate;
+    int _healCooldown;
+    int _health;
+    int _maxHealth;
+    int _healRate;
+    float _explosionRadius;
+    float _biteRadius;
+    float _shootRadius;
+    AnimationSceneNode::Directions _curDirection;
 public:
-    /**
-     * Enumeration to identify the rocket afterburner
-     */
-    enum class Burner : int {
-        /** The main afterburner */
-        MAIN,
-        /** The left side thruster */
-        LEFT,
-        /** The right side thruster */
-        RIGHT
-    };
-    
-    
 #pragma mark Constructors
     /**
      * Creates a new rocket at the origin.
@@ -200,6 +187,8 @@ public:
     void setMediumAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot);
     void setLargeAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot);
     
+    void setFinalDog(std::shared_ptr<cugl::scene2::SceneNode> baseNode);
+    void resetCurrentAnimations(DogSize dogSize);
 #pragma mark Static Constructors
     /**
      * Returns a newly allocate rocket at the origin.
@@ -262,66 +251,6 @@ public:
 #pragma mark -
 #pragma mark Accessors
     /**
-     * Returns the force applied to this rocket.
-     *
-     * Remember to modify the input values by the thrust amount before assigning
-     * the value to force.
-     *
-     * @return the force applied to this rocket.
-     */
-    const cugl::Vec2& getForce() const { return _force; }
-
-    /**
-     * Sets the force applied to this rocket.
-     *
-     * Remember to modify the input values by the thrust amount before assigning
-     * the value to force.
-     *
-     * @param value  the force applied to this rocket.
-     */
-        void setForce(const cugl::Vec2& value) { _force.set(value); }
-
-    /**
-     * Returns the x-component of the force applied to this rocket.
-     *
-     * Remember to modify the input values by the thrust amount before assigning
-     * the value to force.
-     *
-     * @return the x-component of the force applied to this rocket.
-     */
-    float getFX() const { return _force.x; }
-    
-    /**
-     * Sets the x-component of the force applied to this rocket.
-     *
-     * Remember to modify the input values by the thrust amount before assigning
-     * the value to force.
-     *
-     * @param value the x-component of the force applied to this rocket.
-     */
-    void setFX(float value) { _force.x = value; }
-    
-    /**
-     * Returns the y-component of the force applied to this rocket.
-     *
-     * Remember to modify the input values by the thrust amount before assigning
-     * the value to force.
-     *
-     * @return the y-component of the force applied to this rocket.
-     */
-    float getFY() const { return _force.y; }
-    
-    /**
-     * Sets the x-component of the force applied to this rocket.
-     *
-     * Remember to modify the input values by the thrust amount before assigning
-     * the value to force.
-     *
-     * @param value the x-component of the force applied to this rocket.
-     */
-    void setFY(float value) { _force.y = value; }
-    
-    /**
      * Returns the amount of thrust that this rocket has.
      *
      * Multiply this value times the horizontal and vertical values in the
@@ -330,7 +259,68 @@ public:
      * @return the amount of thrust that this rocket has.
      */
     float getThrust() const { return DEFAULT_THRUST; }
+    /**
+     * Returns the current ship health.
+     *
+     * When the health of the ship is 0, it is "dead"
+     *
+     * @return the current ship health.
+     */
+    int getHealth() const { return _health; }
     
+    int getMaxHealth() const { return _maxHealth; }
+    /**
+     * Sets the current ship health.
+     *
+     * When the health of the ship is 0, it is "dead"
+     *
+     * @param value The current ship health.
+     */
+    void setHealth(int value);
+    
+    /**
+     * Returns true if the ship can fire its weapon
+     *
+     * Weapon fire is subjected to a cooldown. You can modify the
+     * value "fire rate" in the JSON file to make this faster or slower.
+     *
+     * @return true if the ship can fire
+     */
+    bool canFireWeapon() const{
+        return _refire > _firerate;
+    }
+    
+    void reloadWeapon() {
+        _refire = 0;
+    }
+    
+    
+    bool canHeal() const {
+        return (_healCooldown > _healRate);
+    }
+
+    void resetHeal() {
+        _healCooldown = 0;
+    }
+    
+    float getBiteRadius() const{
+        return _biteRadius;
+    }
+    float getShootRadius() const {
+        return _shootRadius;
+    }
+    
+    AnimationSceneNode::Directions getDirection() const{
+        return _curDirection;
+    }
+    std::string getMode(){
+        return modes.at(_mode);
+    }
+    
+    void toggleMode(){
+        int length = sizeof(modes) / sizeof(modes.at(0));
+        _mode = (_mode + 1) % length;
+    }
     void setDogSize(DogSize size);
 
     
@@ -339,30 +329,6 @@ public:
     
     
     void dogActions();
-    /**
-     * Returns the key for the sound to accompany the given afterburner
-     *
-     * The key should either refer to a valid sound loaded in the AssetManager or
-     * be empty ("").  If the key is "", then no sound will play.
-     *
-     * @param burner    The enumeration to identify the afterburner
-     *
-     * @return the key for the sound to accompany the given afterburner
-     */
-    const std::string& getBurnerSound(Burner burner) const;
-    
-    /**
-     * Sets the key for the sound to accompany the given afterburner
-     *
-     * The key should either refer to a valid sound loaded in the AssetManager or
-     * be empty ("").  If the key is "", then no sound will play.
-     *
-     * @param burner    The enumeration to identify the afterburner
-     * @param key       The key for the sound to accompany the main afterburner
-     */
-    void setBurnerSound(Burner burner, const std::string& key);
-
-    
     /**
      * Sets the ratio of the ship sprite to the physics body
      *
@@ -394,7 +360,6 @@ public:
     
 #pragma mark -
 #pragma mark Physics
-
     /**
      * Applies the Velocity Movement for the Physics Engine
      *
