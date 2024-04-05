@@ -110,12 +110,10 @@ protected:
     InputController _input;
     CameraController _camera;
 
-    // VIEW
-    /** Reference to the ui */
-    std::shared_ptr<cugl::scene2::SceneNode> _uinode;
     /** Reference to the physics root of the scene graph */
     std::shared_ptr<cugl::scene2::SceneNode> _worldnode;
     OverWorld overWorld;
+    
     /** Reference to the debug root of the scene graph */
     std::shared_ptr<cugl::scene2::SceneNode> _debugnode;
     
@@ -135,8 +133,6 @@ protected:
     /** Reference to the player2 cannon */
     std::shared_ptr<cugl::scene2::SceneNode> _cannon2Node;
     std::shared_ptr<cugl::physics2::BoxObstacle> _cannon2;
-
-    std::shared_ptr<Dog> _dog1;
 
     std::shared_ptr<World> _backgroundWrapper;
     /** Host is by default the left cannon */

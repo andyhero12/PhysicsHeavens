@@ -27,10 +27,6 @@
 #include "NLLevelConstants.h"
 using namespace cugl;
 
-/** Forward references to the various classes used by this level */
-class ExitModel;
-class WallModel;
-class CrateModel;
 
 #pragma mark -
 #pragma mark Level Model

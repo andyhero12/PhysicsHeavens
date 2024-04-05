@@ -36,9 +36,6 @@ void CameraController::update(float dt) {
 }
 
 void CameraController::setZoom(float zoom) {
-//    float originalZoom = _camera->getZoom();
-    // Don't let it be greater than max zoom
-//    std::cout << originalZoom <<' ' << zoom <<' ' << _maxZoom <<'\n';
     if (zoom > _maxZoom){
         CULog("ZOOM TOO FAR");
         return;

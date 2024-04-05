@@ -39,6 +39,9 @@ private:
     
 public:
         
+    std::shared_ptr<cugl::scene2::SceneNode> getUINode(){
+        return UInode;
+    }
     UIController(){}
     
     ~UIController(){}

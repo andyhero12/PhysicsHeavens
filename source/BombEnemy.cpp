@@ -43,22 +43,22 @@ void BombEnemy::update(float dt, OverWorld& overWorld){
     cugl::Vec2 direction = target_pos- position;
     // Animate
     position += direction.normalize() * 0.03;
-    cugl::Size size = overWorld.getTotalSize();
+//    cugl::Size size = overWorld.getTotalSize();
     
     _walkingAnimations.update(direction.getAngle());
-    
-    while (position.x > size.width) {
-        position.x = size.width;
-    }
-    while (position.x < 0) {
-        position.x = 0;
-    }
-    while (position.y > size.height) {
-        position.y = size.height;
-    }
-    while (position.y < 0) {
-        position.y = 0;
-    }
+//    
+//    while (position.x > size.width) {
+//        position.x = size.width;
+//    }
+//    while (position.x < 0) {
+//        position.x = 0;
+//    }
+//    while (position.y > size.height) {
+//        position.y = size.height;
+//    }
+//    while (position.y < 0) {
+//        position.y = 0;
+//    }
 }
 void BombEnemy::executeDeath(OverWorld& overWorld){
     

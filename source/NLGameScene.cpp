@@ -61,16 +61,6 @@ using namespace cugl::physics2::net;
 // In an actual game, this information would go in a data file.
 // IMPORTANT: Note that Box2D units do not equal drawing units
 /** The wall vertices */
-float WALL1[] = { 0.0f,  0.0f, 16.0f,  0.0f, 16.0f,  1.0f,
-                  3.0f,  1.0f,  3.0f,  5.0f,  2.0f,  7.0f,
-                  1.0f, 17.0f,  8.0f, 15.0f, 16.0f, 17.0f,
-                 16.0f, 18.0f,  0.0f, 18.0f};
-float WALL2[] = {32.0f, 18.0f, 16.0f, 18.0f, 16.0f, 17.0f,
-                 31.0f, 16.0f, 30.0f, 10.0f, 31.0f,  1.0f,
-                 16.0f,  1.0f, 16.0f,  0.0f, 32.0f,  0.0f};
-float WALL3[] = { 4.0f,  9.5f,  8.0f,  9.5f,
-                  8.0f, 10.5f,  4.0f, 10.5f };
-
 /** The positions of the crate pyramid */
 float BOXES[] = { 14.5f, 14.25f,
                   13.0f, 12.00f, 16.0f, 12.00f,
@@ -204,14 +194,22 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
  */
 void GameScene::reset() {
     _todoReset = false;
+    removeAllChildren();
     _worldnode->removeAllChildren();
     _debugnode->removeAllChildren();
-    _uinode->removeAllChildren();
-    
     
     _backgroundWrapper = std::make_shared<World>(Vec2(0, 0),_scale, _level->getTiles(), _level->getBoundaries(), _assets->get<cugl::Texture>("tile"));
     
     populate();
+    overWorld.reset();
+    overWorld.setRootNode(_worldnode, _debugnode, _world, _isHost);
+    
+    _camera.init(overWorld.getDog()->getDogNode(), _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), overWorld.getDog()->getUINode(), 1000.0f);
+
+    addChild(_worldnode);
+    addChild(_debugnode);
+    addChild(overWorld.getDog()->getUINode());
+    
     std::function<void(const std::shared_ptr<physics2::Obstacle>&,const std::shared_ptr<scene2::SceneNode>&)> linkSceneToObsFunc = [=](const std::shared_ptr<physics2::Obstacle>& obs, const std::shared_ptr<scene2::SceneNode>& node) {
         this->linkSceneToObs(obs,node);
     };
@@ -329,10 +327,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     
     _backgroundWrapper = std::make_shared<World>(Vec2(0, 0),_scale, _level->getTiles(), _level->getBoundaries(), assets->get<Texture>("tile"));
     
-    // Create the scene graph
-    _uinode = scene2::SceneNode::alloc();
-    _uinode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-    
     _worldnode = scene2::SceneNode::alloc();
     _worldnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _worldnode->setPosition(offset);
@@ -346,8 +340,12 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     addChild(_debugnode);
     
     populate();
+    overWorld.init(assets, _level, _scale, computeActiveSize());
+    overWorld.setRootNode(_worldnode, _debugnode, _world, isHost);
     
-    addChild(_uinode);
+    addChild(overWorld.getDog()->getUINode());
+    
+    _camera.init(overWorld.getDog()->getDogNode(), _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), overWorld.getDog()->getUINode(), 1000.0f);
     
     _active = true;
     setDebug(false);
@@ -401,10 +399,6 @@ void GameScene::dispose() {
 #pragma mark -
 #pragma mark Level Layout
 
-std::shared_ptr<physics2::PolygonObstacle> wallobj1;
-std::shared_ptr<physics2::PolygonObstacle> wallobj2;
-std::shared_ptr<scene2::PolygonNode> wallsprite1;
-std::shared_ptr<scene2::PolygonNode> wallsprite2;
 
 std::vector<std::shared_ptr<physics2::BoxObstacle>> boxes;
 std::vector<std::shared_ptr<scene2::PolygonNode>> nodes;
@@ -499,57 +493,6 @@ void GameScene::populate() {
     
 #pragma mark : Background
     addChildBackground();
-#pragma mark : Wall polygon 1
-        
-    // Create ground pieces
-    // All walls share the same texture
-    image  = _assets->get<Texture>(EARTH_TEXTURE);
-    std::string wname = "wall";
-
-    // Create the polygon outline
-    Poly2 wall1(reinterpret_cast<Vec2*>(WALL1),11);
-    EarclipTriangulator triangulator;
-    triangulator.set(wall1.vertices);
-    triangulator.calculate();
-    wall1.setIndices(triangulator.getTriangulation());
-    triangulator.clear();
-
-    //std::shared_ptr<physics2::PolygonObstacle> wallobj;
-    wallobj1 = physics2::PolygonObstacle::allocWithAnchor(wall1,Vec2::ANCHOR_CENTER);
-    wallobj1->setDebugColor(STATIC_COLOR);
-    wallobj1->setName(wname);
-
-    // Set the physics attributes
-    wallobj1->setBodyType(b2_staticBody);
-    wallobj1->setDensity(BASIC_DENSITY);
-    wallobj1->setFriction(BASIC_FRICTION);
-    wallobj1->setRestitution(BASIC_RESTITUTION);
-
-    // Add the scene graph nodes to this object
-    wall1 *= _scale;
-    wallsprite1 = scene2::PolygonNode::allocWithTexture(image,wall1);
-    
-#pragma mark : Wall polygon 2
-    Poly2 wall2(reinterpret_cast<Vec2*>(WALL2),9);
-    triangulator.set(wall2.vertices);
-    triangulator.calculate();
-    wall2.setIndices(triangulator.getTriangulation());
-    triangulator.clear();
-
-    wallobj2 = physics2::PolygonObstacle::allocWithAnchor(wall2,Vec2::ANCHOR_CENTER);
-    wallobj2->setDebugColor(STATIC_COLOR);
-    wallobj2->setName(wname);
-
-    // Set the physics attributes
-    wallobj2->setBodyType(b2_staticBody);
-    wallobj2->setDensity(BASIC_DENSITY);
-    wallobj2->setFriction(BASIC_FRICTION);
-    wallobj2->setRestitution(BASIC_RESTITUTION);
-
-    // Add the scene graph nodes to this object
-    wall2 *= _scale;
-    wallsprite2 = scene2::PolygonNode::allocWithTexture(image,wall2);
-        
 #pragma mark : Cannon
     image  = _assets->get<Texture>(CANNON_TEXTURE);
     _cannon1Node = scene2::PolygonNode::allocWithTexture(image);
@@ -569,219 +512,9 @@ void GameScene::populate() {
     _cannon2->setAngle(M_PI_2);
     _cannon2->setDebugColor(DYNAMIC_COLOR);
     _cannon2->setSensor(true);
-//    
-//    addInitObstacle(wallobj1, wallsprite1);  // All walls share the same texture
-//    addInitObstacle(wallobj2, wallsprite2);  // All walls share the same texture
+
     addInitObstacle(_cannon1, _cannon1Node);
     addInitObstacle(_cannon2, _cannon2Node);
-    
-#pragma mark : Dog
-    
-    initDog();
-}
-
-
-void GameScene::initDog(){
-    // should start at northeast and add to vector with animation in clockwise direction
-    std::vector<std::shared_ptr<cugl::Texture>> textures;
-    textures.push_back(_assets->get<cugl::Texture>("smalldogrightrun"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogrightrun"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogfrontrun"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogfrontrun"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogleftrun"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogleftrun"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogbackrun"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogbackrun"));
-
-    std::shared_ptr<AnimationSceneNode> smallDogRun = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
-    smallDogRun->setAnchor(Vec2::ANCHOR_CENTER);
-    
-    
-    textures.clear();
-    textures.push_back(_assets->get<cugl::Texture>("smalldogrightidle"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogrightidle"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogfrontidle"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogfrontidle"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogleftidle"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogleftidle"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogbackidle"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogbackidle"));
-    
-    std::shared_ptr<AnimationSceneNode> smallDogIdle = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 15);
-    smallDogIdle->setAnchor(Vec2::ANCHOR_CENTER);
-    
-    textures.clear();
-    textures.push_back(_assets->get<cugl::Texture>("smalldogrightbite"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogrightbite"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogfrontbite"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogfrontbite"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogleftbite"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogleftbite"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogbackbite"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogbackbite"));
-
-    std::shared_ptr<AnimationSceneNode> smallDogBite = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 15);
-    smallDogIdle->setAnchor(Vec2::ANCHOR_CENTER);
-    
-    textures.clear();
-    textures.push_back(_assets->get<cugl::Texture>("smalldogrightshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogrightshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogfrontshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogfrontshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogleftshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogleftshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogbackshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogbackshoot"));
-    
-    std::shared_ptr<AnimationSceneNode> smallDogShoot = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 15);
-    smallDogIdle->setAnchor(Vec2::ANCHOR_CENTER);
-
-    textures.clear();
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogrightrun"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogrightrun"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogfrontrun"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogfrontrun"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogleftrun"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogleftrun"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogbackrun"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogbackrun"));
-
-    std::shared_ptr<AnimationSceneNode> mediumDogRun = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
-    mediumDogRun->setAnchor(Vec2::ANCHOR_CENTER);
-    
-    
-    textures.clear();
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogrightidle"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogrightidle"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogfrontidle"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogfrontidle"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogleftidle"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogleftidle"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogbackidle"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogbackidle"));
-    
-    std::shared_ptr<AnimationSceneNode> mediumDogIdle = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 15);
-    mediumDogIdle->setAnchor(Vec2::ANCHOR_CENTER);
-    
-    textures.clear();
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogrightbite"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogrightbite"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogfrontbite"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogfrontbite"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogleftbite"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogleftbite"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogbackbite"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogbackbite"));
-
-    std::shared_ptr<AnimationSceneNode> mediumDogBite = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
-    mediumDogIdle->setAnchor(Vec2::ANCHOR_CENTER);
-    
-    textures.clear();
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogrightshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogrightshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogfrontshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogfrontshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogleftshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogleftshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogbackshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogbackshoot"));
-    
-    std::shared_ptr<AnimationSceneNode> mediumDogShoot = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
-    mediumDogIdle->setAnchor(Vec2::ANCHOR_CENTER);
-    
-    
-    textures.clear();
-    textures.push_back(_assets->get<cugl::Texture>("largedogrightrun"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogrightrun"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogfrontrun"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogfrontrun"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogleftrun"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogleftrun"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogbackrun"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogbackrun"));
-
-    std::shared_ptr<AnimationSceneNode> largeDogRun = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
-    largeDogRun->setAnchor(Vec2::ANCHOR_CENTER);
-    
-    
-    textures.clear();
-    textures.push_back(_assets->get<cugl::Texture>("largedogrightidle"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogrightidle"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogfrontidle"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogfrontidle"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogleftidle"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogleftidle"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogbackidle"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogbackidle"));
-    
-    std::shared_ptr<AnimationSceneNode> largeDogIdle = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 15);
-    largeDogIdle->setAnchor(Vec2::ANCHOR_CENTER);
-    
-    textures.clear();
-    textures.push_back(_assets->get<cugl::Texture>("largedogrightbite"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogrightbite"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogfrontbite"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogfrontbite"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogleftbite"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogleftbite"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogbackbite"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogbackbite"));
-
-    std::shared_ptr<AnimationSceneNode> largeDogBite = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
-    largeDogIdle->setAnchor(Vec2::ANCHOR_CENTER);
-    
-    textures.clear();
-    textures.push_back(_assets->get<cugl::Texture>("largedogrightshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogrightshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogfrontshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogfrontshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogleftshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogleftshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogbackshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogbackshoot"));
-    
-    std::shared_ptr<AnimationSceneNode> largeDogShoot = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
-    largeDogIdle->setAnchor(Vec2::ANCHOR_CENTER);
-    
-    
-    Vec2 dogPos = _level->getPlayerPos() / _scale;
-    Size mySize(64,64);
-    Size dogSize(mySize/_scale);
-    
-    _dog1 = Dog::alloc(dogPos,dogSize);
-    _dog1->setDebugColor(DYNAMIC_COLOR);
-
-    _dog1->setSmallAnimation(smallDogIdle, smallDogRun, smallDogBite, smallDogShoot);
-    _dog1->setMediumAnimation(mediumDogIdle, mediumDogRun, mediumDogBite, mediumDogShoot);
-    _dog1->setLargeAnimation(largeDogIdle, largeDogRun, largeDogBite, largeDogShoot);
-
-    
-    
-// BEGIN BIND
-    std::shared_ptr<AnimationSceneNode> placeHolderDrawOver = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
-    _dog1->setFinalDog(placeHolderDrawOver);
-    _world->initObstacle(_dog1);
-    _dog1->setDebugScene(_debugnode);
-    if (_isHost){
-        _world->getOwnedObstacles().insert({_dog1,0});
-    }
-    _dog1->setDrawScale(_scale);
-    _worldnode->addChild(placeHolderDrawOver);
-// END BIND
-    
-//    std::vector<std::shared_ptr<scene2::SceneNode>> vecNodes = {
-//        smallDogIdle, smallDogRun, smallDogBite, smallDogShoot,
-//        mediumDogIdle, mediumDogRun,mediumDogBite, mediumDogShoot,
-//        largeDogIdle, largeDogRun, largeDogBite, largeDogShoot
-//    };
-//    _dog1->setDogSize(Dog::DogSize::MEDIUM);
-//    addInitObstacleLinkAnimation(_dog1, vecNodes);
-    
-    std::shared_ptr<UIController> _uiController = std::make_shared<UIController>();
-    _uiController->init(_uinode, _assets, getSize());
-    _dog1->setUIController(_uiController);
-    
-    _camera.init(placeHolderDrawOver, _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), _uinode, 1000.0f);
 }
 
 void GameScene::linkAllAnimationsToObject(const std::shared_ptr<physics2::Obstacle>& obj,
@@ -878,11 +611,9 @@ void GameScene::preUpdate(float dt) {
     if (_input.didPressFire()) {
         fireCrate();
     }
-    
-    // Apply the force to the rocket (but run physics in fixedUpdate)
-//    _camera.setZoom(SCENE_HEIGHT/CANVAS_TILE_HEIGHT);
+
     _camera.update(dt);
-    _dog1->moveOnInputSetAction(_input);
+    overWorld.update(_input, computeActiveSize(), dt);
 #pragma mark BEGIN SOLUTION
     if (_input.didChangeMode()){
         CULog("BIG CRATE COMING");

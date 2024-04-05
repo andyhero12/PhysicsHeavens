@@ -67,7 +67,7 @@ public:
 private:
     /** This macro disables the copy constructor (not allowed on scene graphs) */
     CU_DISALLOW_COPY_AND_ASSIGN(Dog);
-
+    
 protected:
     Actions action;
     DogSize dogSize;
@@ -185,7 +185,7 @@ public:
      */
     virtual bool init(const cugl::Vec2 pos, const cugl::Size size) override;
     
- 
+    
     void setSmallAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot);
     void setMediumAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot);
     void setLargeAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot);
@@ -256,6 +256,13 @@ public:
 #pragma mark -
 #pragma mark Accessors
     
+    
+    std::shared_ptr<scene2::SceneNode> getDogNode(){
+        return baseBlankNode;
+    }
+    std::shared_ptr<scene2::SceneNode> getUINode(){
+        return _uiController->getUINode();
+    }
     void addAbsorb(int value);
     void subAbsorb(int value);
     const int getAbsorb() const{ 
