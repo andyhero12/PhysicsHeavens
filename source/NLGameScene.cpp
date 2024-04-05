@@ -318,7 +318,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     _assets = assets;
     _input.init();
     _input.update();
-
+    
     _crateFact = CrateFactory::alloc(_assets);
 
     // IMPORTANT: SCALING MUST BE UNIFORM
@@ -754,33 +754,33 @@ void GameScene::initDog(){
     _dog1->setSmallAnimation(smallDogIdle, smallDogRun, smallDogBite, smallDogShoot);
     _dog1->setMediumAnimation(mediumDogIdle, mediumDogRun, mediumDogBite, mediumDogShoot);
     _dog1->setLargeAnimation(largeDogIdle, largeDogRun, largeDogBite, largeDogShoot);
-    std::shared_ptr<AnimationSceneNode> placeHolderDrawOver = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
     
     
 // BEGIN BIND
-    _dog1->setFinalDog(placeHolderDrawOver);
-    _world->initObstacle(_dog1);
-    _dog1->setDebugScene(_debugnode);
-    if (_isHost){
-        _world->getOwnedObstacles().insert({_dog1,0});
-    }
-    _dog1->setDrawScale(_scale);
-    _worldnode->addChild(placeHolderDrawOver);
-    
+//    std::shared_ptr<AnimationSceneNode> placeHolderDrawOver = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
+//    _dog1->setFinalDog(placeHolderDrawOver);
+//    _world->initObstacle(_dog1);
+//    _dog1->setDebugScene(_debugnode);
+//    if (_isHost){
+//        _world->getOwnedObstacles().insert({_dog1,0});
+//    }
+//    _dog1->setDrawScale(_scale);
+//    _worldnode->addChild(placeHolderDrawOver);
+//    
 // END BIND
-//    std::vector<std::shared_ptr<scene2::SceneNode>> vecNodes = {
-//        smallDogIdle, smallDogRun, smallDogBite, smallDogShoot,
-//        mediumDogIdle, mediumDogRun,mediumDogBite, mediumDogShoot,
-//        largeDogIdle, largeDogRun, largeDogBite, largeDogShoot
-//    };
-//    _dog1->setDogSize(Dog::DogSize::MEDIUM);
-//    addInitObstacleLinkAnimation(_dog1, vecNodes);
+    std::vector<std::shared_ptr<scene2::SceneNode>> vecNodes = {
+        smallDogIdle, smallDogRun, smallDogBite, smallDogShoot,
+        mediumDogIdle, mediumDogRun,mediumDogBite, mediumDogShoot,
+        largeDogIdle, largeDogRun, largeDogBite, largeDogShoot
+    };
+    _dog1->setDogSize(Dog::DogSize::MEDIUM);
+    addInitObstacleLinkAnimation(_dog1, vecNodes);
     
     std::shared_ptr<UIController> _uiController = std::make_shared<UIController>();
     _uiController->init(_uinode, _assets, getSize());
     _dog1->setUIController(_uiController);
     
-    _camera.init(placeHolderDrawOver, _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), _uinode, 1000.0f);
+    _camera.init(mediumDogIdle, _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), _uinode, 1000.0f);
 }
 
 void GameScene::linkAllAnimationsToObject(const std::shared_ptr<physics2::Obstacle>& obj,
@@ -865,13 +865,14 @@ void GameScene::preUpdate(float dt) {
          reset();
     }
     if (_input.didPressExit()) {
-        CULog("Shutting down");
         Application::get()->quit();
     }
     _input.update();
 
     // Process the toggled key commands
-    if (_input.didPressDebug()) { setDebug(!isDebug()); }
+    if (_input.didPressDebug()) {
+        setDebug(!isDebug());
+    }
 
     if (_input.didPressFire()) {
         fireCrate();
@@ -881,8 +882,6 @@ void GameScene::preUpdate(float dt) {
 //    _camera.setZoom(SCENE_HEIGHT/CANVAS_TILE_HEIGHT);
     _camera.update(dt);
     _dog1->moveOnInputSetAction(_input);
-    
-//TODO: if _input.didBigCrate(), allocate a crate event for the center of the screen(use DEFAULT_WIDTH/2 and DEFAULT_HEIGHT/2) and send it using the pushOutEvent() method in the network controller.
 #pragma mark BEGIN SOLUTION
     if (_input.didChangeMode()){
         CULog("BIG CRATE COMING");
@@ -1024,12 +1023,6 @@ void GameScene::addChildBackground(){
             auto image  = t->texture;
             auto sprite = scene2::PolygonNode::allocWithTexture(image);
             sprite->setAnchor(Vec2::ANCHOR_CENTER);
-            if (image != nullptr){
-                CULog("Rocket Size: %f %f", image->getSize().width, image->getSize().height);
-            }else{
-                CULog("IMAGE IS NULL?");
-            }
-//            CULog("Child Size: %f %f", image->getSize().width, image->getSize().height);
             if (i == 0 || j == 0 || i == originalRows -1 || j == originalCols - 1){
                 t->setDebugColor(DYNAMIC_COLOR);
                 addInitObstacle(t, sprite);
@@ -1040,20 +1033,3 @@ void GameScene::addChildBackground(){
         }
     }
 }
-//
-//void World::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
-//    int originalRows = (int) backgroundWorld.size();
-//    int originalCols = (int) backgroundWorld.at(0).size();
-//    int printIndexJ = 0;
-//    for (int j =0  ;j< originalCols; j++){
-//        int printIndexI = 0;
-//        for (int i = originalRows -1; i > -1; i--){
-//            Color4 tint = cugl::Color4("white");
-//            std::shared_ptr<TileInfo> t = backgroundWorld.at(i).at(j);
-//            batch->draw(t->texture, tint, Rect(t->getPosition(), t->getDimension()));
-//            printIndexI++;
-//        }
-//        printIndexJ++;
-//    }
-//
-//}
