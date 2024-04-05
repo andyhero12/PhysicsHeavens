@@ -17,7 +17,6 @@
 #define __NL_GAME_SCENE_H__
 #include <cugl/cugl.h>
 #include <box2d/b2_world_callbacks.h>
-#include "NLDog.h"
 #include <vector>
 #include <format>
 #include <string>
@@ -163,9 +162,6 @@ protected:
      * with your serialization loader, which would process a level file.
      */
     void populate();
-    
-    /** populate the dog*/
-    void initDog();
 
     /**
      * Adds the physics object to the physics world and loosely couples it to the scene graph
