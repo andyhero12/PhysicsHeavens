@@ -20,6 +20,8 @@
 #include "NLLevelModel.h"
 #include "NLDecoyEvent.h"
 #include "NLBiteEvent.h"
+#include "NLExplodeEvent.h"
+#include "NLShootEvent.h"
 
 class OverWorld{
 private:
@@ -65,7 +67,10 @@ public:
     void update(InputController& input, cugl::Size totalSize, float timestep);
     void postUpdate();
     
+    void processShootEvent(const std::shared_ptr<ShootEvent>& shootEvent);
     void processBiteEvent(const std::shared_ptr<BiteEvent>& biteEvent);
+    void processExplodeEvent(const std::shared_ptr<ExplodeEvent>& explodeEvent);
+    
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch,cugl::Size totalSize);
     std::shared_ptr<Dog> getDog() const {
         return _dog;

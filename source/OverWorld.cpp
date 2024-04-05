@@ -271,26 +271,36 @@ bool OverWorld::setRootNode(const std::shared_ptr<scene2::SceneNode>& _worldNode
 void OverWorld::processBiteEvent(const std::shared_ptr<BiteEvent>& biteEvent){
     Vec2 center = biteEvent->getPos();
     float ang = biteEvent->getAng();
-    _attackPolygonSet.addBite(center,ang, _dog->getExplosionRadius());
+    _attackPolygonSet.addBite(center,ang, _dog->getBiteRadius());
+}
+
+void OverWorld::processShootEvent(const std::shared_ptr<ShootEvent>& shootEvent){
+    Vec2 center = shootEvent->getPos();
+    float ang = shootEvent->getAng();
+    _attackPolygonSet.addShoot(center,ang, _dog->getShootRadius());
+}
+void OverWorld::processExplodeEvent(const std::shared_ptr<ExplodeEvent>& explodeEvent){
+    Vec2 center = explodeEvent->getPos();
+    _attackPolygonSet.addExplode(center, _dog->getExplosionRadius());
 }
 void OverWorld::dogUpdate(InputController& _input, cugl::Size totalSize){
     _dog->moveOnInputSetAction(_input);
     if (_input.didPressFire() && _dog->canFireWeapon()){
-        _network->pushOutEvent(BiteEvent::allocBiteEvent(_dog->getPosition(), _dog->getDirInDegrees()));
+        _network->pushOutEvent(BiteEvent::allocBiteEvent(_dog->getBiteCenter(), _dog->getDirInDegrees()));
         _dog->reloadWeapon();
     }
     if (_input.didPressSpecial() && _dog->canFireWeapon()){
         _dog->reloadWeapon();
-        if (_dog->getMode() == "SHOOT" && _dog->getAbsorb() > 5){
-            _dog->subAbsorb(5);
-            _attackPolygonSet.addShoot(_dog);
+        if (_dog->getMode() == "SHOOT"){
+//            _dog->subAbsorb(5);
+            _network->pushOutEvent(ShootEvent::allocShootEvent(_dog->getShootCenter(), _dog->getDirInDegrees()));
         }else if (_dog->getMode() == "BAIT"){
 //            _dog->subAbsorb(5);
 //            _decoys->addNewDecoy(_dog->getPosition());
             _network->pushOutEvent(DecoyEvent::allocDecoyEvent(_dog->getPosition()));
-        }else if (_dog->getMode() == "BOMB" && _dog->getAbsorb() > 10){
-            _dog->subAbsorb(10);
-            _attackPolygonSet.addExplode(_dog);
+        }else if (_dog->getMode() == "BOMB"){
+//            _dog->subAbsorb(10);
+            _network->pushOutEvent(ExplodeEvent::allocExplodeEvent(_dog->getPosition()));
         }else {
             CULog("NOTHING\n");
         }

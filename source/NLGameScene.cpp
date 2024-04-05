@@ -376,6 +376,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     _network->attachEventType<ResetEvent>();
     _network->attachEventType<DecoyEvent>();
     _network->attachEventType<BiteEvent>();
+    _network->attachEventType<ExplodeEvent>();
+    _network->attachEventType<ShootEvent>();
 #pragma mark END SOLUTION
     
     // XNA nostalgia
@@ -659,6 +661,14 @@ void GameScene::fixedUpdate() {
         if (auto biteEvent = std::dynamic_pointer_cast<BiteEvent>(e)){
 //            CULog("Bite Event Got");
             overWorld.processBiteEvent(biteEvent);
+        }
+        if (auto explodeEvent = std::dynamic_pointer_cast<ExplodeEvent>(e)){
+//            CULog("Explode Event Got");
+            overWorld.processExplodeEvent(explodeEvent);
+        }
+        if (auto shootEvent = std::dynamic_pointer_cast<ShootEvent>(e)){
+//            CULog("Explode Event Got");
+            overWorld.processShootEvent(shootEvent);
         }
     }
 #pragma mark END SOLUTION

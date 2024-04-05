@@ -84,25 +84,28 @@ void AttackPolygons::draw(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl:
     }
 }
 
-void AttackPolygons::addShoot(const std::shared_ptr<Dog>& ship){
-    Vec2 center = ship->getPosition();
+void AttackPolygons::addShoot(Vec2 center, float angle, float shootRadius){
     float degree = 60;
     PolyFactory curFactory;
-    Poly2 resultingPolygon_shoot = curFactory.makeArc(center, ship->getShootRadius(), ship->getAngle() + degree, degree);
+    Poly2 resultingPolygon_shoot = curFactory.makeArc(center, shootRadius, angle + degree, degree);
     std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(Action::SHOOT, resultingPolygon_shoot, max_age);
+    attackPolygonNode->addChild(curPtr->getActionNode());
+    curPtr->getActionNode()->setPosition(center * _scale);
     currentAttacks.insert(curPtr);
 }
-void AttackPolygons::addExplode(const std::shared_ptr<Dog>& ship){
-    Vec2 center = ship->getPosition();
+
+void AttackPolygons::addExplode(Vec2 center, float explosionRad){
     PolyFactory curFactory;
-    Poly2 resultingPolygon = curFactory.makeCircle(center, ship->getExplosionRadius());
+    Poly2 resultingPolygon = curFactory.makeCircle(center, explosionRad);
     std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(Action::EXPLODE, resultingPolygon,max_age);
+    attackPolygonNode->addChild(curPtr->getActionNode());
+    curPtr->getActionNode()->setPosition(center * _scale);
     currentAttacks.insert(curPtr);
 }
 
 void AttackPolygons::addBite(Vec2 center, float angle, float explosionRad){
     PolyFactory curFactory;
-    Poly2 resultingPolygon = curFactory.makeArc(center, explosionRad*2, angle, 180);
+    Poly2 resultingPolygon = curFactory.makeArc(center, explosionRad, angle, 180);
     std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(Action::BITE, resultingPolygon,BITE_AGE);
     attackPolygonNode->addChild(curPtr->getActionNode());
     curPtr->getActionNode()->setPosition(center * _scale);

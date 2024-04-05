@@ -62,8 +62,8 @@ public:
     bool isEmpty() const { return currentAttacks.empty(); }
     void update();
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl::Size size);
-    void addShoot(const std::shared_ptr<Dog>& ship);
-    void addExplode(const std::shared_ptr<Dog>& ship);
+    void addShoot(Vec2 center, float angle, float shootRadius);
+    void addExplode(cugl::Vec2 center, float explosionRadius);
     void addBite(cugl::Vec2 center, float angle, float explosionRad);
     std::shared_ptr<cugl::scene2::SceneNode> getAttackPolygonNode(){
         return attackPolygonNode;
