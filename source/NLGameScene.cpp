@@ -644,15 +644,15 @@ void GameScene::fixedUpdate() {
     if(_network->isInAvailable()){
         auto e = _network->popInEvent();
         if(auto crateEvent = std::dynamic_pointer_cast<CrateEvent>(e)){
-            CULog("BIG CRATE GOT");
+//            CULog("BIG CRATE GOT");
             processCrateEvent(crateEvent);
         }
         if (auto resetEvent = std::dynamic_pointer_cast<ResetEvent>(e)){
-            CULog("RESET EVENT GOT");
+//            CULog("RESET EVENT GOT");
             setToDoReset(true);
         }
         if (auto decoyEvent = std::dynamic_pointer_cast<DecoyEvent>(e)){
-            CULog("Decoy Event Got");
+//            CULog("Decoy Event Got");
             overWorld.getDecoys()->addNewDecoy(Vec2(decoyEvent->getPos().x,decoyEvent->getPos().y));
         }
     }
