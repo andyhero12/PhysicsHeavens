@@ -230,11 +230,6 @@
               "minfilter": "linear",
               "magfilter": "nearest"
         },
-		"earth": {
-			"file":     "textures/earthtile.png",
-            "wrapS":    "repeat",
-            "wrapT":    "repeat"
-		},
         "crate01": {
             "file":     "textures/crate01.png"
         },
