@@ -19,6 +19,7 @@
 #include "DecoySet.h"
 #include "NLLevelModel.h"
 #include "NLDecoyEvent.h"
+#include "NLBiteEvent.h"
 
 class OverWorld{
 private:
@@ -64,24 +65,8 @@ public:
     void update(InputController& input, cugl::Size totalSize, float timestep);
     void postUpdate();
     
+    void processBiteEvent(const std::shared_ptr<BiteEvent>& biteEvent);
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch,cugl::Size totalSize);
-    
-    // Might want to be more specific with tile types
-    enum Terrain {
-        PASSABLE,
-        IMPASSIBLE
-    };
-    
-    // Information for a tile, add to this later since idk what this will include
-    class TileInfo {
-    public:
-    private:
-        Terrain type;
-    };
-    
-    // Matrix with information about the overworld
-    std::vector<std::vector<TileInfo>> overworld;
-    
     std::shared_ptr<Dog> getDog() const {
         return _dog;
     }
@@ -106,27 +91,5 @@ public:
     void setDevil(std::shared_ptr<Devil> m_devil){
         _devil = m_devil;
     }
-    
-    /**
-    Get the type of terrain at the tile at (x, y)
-     */
-    Terrain getTerrain(int x, int y);
-    
-    /**
-    Whether the terrain at (x, y) is passable
-     */
-    bool isPassable(int x, int y);
-    
-    /**
-     Gets the width of the overworld in tile coordinates
-     */
-    int getRows();
-    
-    /**
-     Gets the height of the overworld in tile coordinates
-     */
-    int getCols();
-    
-    
 };
 #endif /* OverWorld_hpp */

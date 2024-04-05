@@ -74,7 +74,7 @@ protected:
     
     AnimationSceneNode::Directions prevDirection;
     cugl::Vec2 dir;
-    
+    cugl::Vec2 _ang;
     std::shared_ptr<cugl::scene2::SceneNode> baseBlankNode;
     std::shared_ptr<AnimationSceneNode> idleAnimation;
     std::shared_ptr<AnimationSceneNode> runAnimation;
@@ -309,7 +309,7 @@ public:
      * @return true if the ship can fire
      */
     bool canFireWeapon() const{
-        return _refire > _firerate && (action == Actions::IDLE || action == Actions::RUN);
+        return _refire > _firerate;
     }
     
     void reloadWeapon() {
@@ -338,6 +338,17 @@ public:
     
     AnimationSceneNode::Directions getDirection() const{
         return _curDirection;
+    }
+    
+    float getDirInDegrees() const {
+        // normalize to our coordinates
+        float res =_ang.getAngle() * (180 / M_PI);
+        res -= 90.0f;
+        if (res < 0){
+            res += 360.0f;
+        }
+        
+        return res;
     }
     std::string getMode(){
         return modes.at(_mode);

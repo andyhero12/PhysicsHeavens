@@ -6,7 +6,7 @@
 
 #include "AttackPolygons.h"
 #define BITE_AGE 2
-void ActionPolygon::update(cugl::Size size){
+void ActionPolygon::update(){
     _age++;
     // update animation when needed
 }
@@ -18,7 +18,7 @@ ActionPolygon::ActionPolygon(Action curAction, Poly2& mintPoly, int mx)
 , _maxage{mx}
 , _scale{1.0}
 {
-    
+    actionNode = cugl::scene2::PolygonNode::allocWithPoly(mintPoly);
 }
 void ActionPolygon::drawShoot(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl::Size size){
     batch->setTexture(nullptr);
@@ -59,17 +59,20 @@ AttackPolygons::AttackPolygons()
     
 }
 
-bool AttackPolygons::init(){
+bool AttackPolygons::init(float scale){
     currentAttacks.clear();
+    attackPolygonNode = cugl::scene2::SceneNode::alloc();
+    _scale = scale;
     return true;
 }
-void AttackPolygons::update(cugl::Size size){
+void AttackPolygons::update(){
     auto it =currentAttacks.begin();
     while (it != currentAttacks.end()){
         std::shared_ptr<ActionPolygon> curAction = *it;
-        curAction->update(size);
+        curAction->update();
         auto curIt = it++;
         if (curAction->expired()){
+            attackPolygonNode->removeChild(curAction->getActionNode());
             currentAttacks.erase(curIt);
         }
     }
@@ -97,10 +100,11 @@ void AttackPolygons::addExplode(const std::shared_ptr<Dog>& ship){
     currentAttacks.insert(curPtr);
 }
 
-void AttackPolygons::addBite(const std::shared_ptr<Dog>& ship){
-    Vec2 center = ship->getPosition();
+void AttackPolygons::addBite(Vec2 center, float angle, float explosionRad){
     PolyFactory curFactory;
-    Poly2 resultingPolygon = curFactory.makeArc(center, ship->getBiteRadius(),ship->getAngle(), 180);
+    Poly2 resultingPolygon = curFactory.makeArc(center, explosionRad*2, angle, 180);
     std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(Action::BITE, resultingPolygon,BITE_AGE);
+    attackPolygonNode->addChild(curPtr->getActionNode());
+    curPtr->getActionNode()->setPosition(center * _scale);
     currentAttacks.insert(curPtr);
 }

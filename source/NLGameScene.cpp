@@ -375,6 +375,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     _network->attachEventType<CrateEvent>();
     _network->attachEventType<ResetEvent>();
     _network->attachEventType<DecoyEvent>();
+    _network->attachEventType<BiteEvent>();
 #pragma mark END SOLUTION
     
     // XNA nostalgia
@@ -641,7 +642,7 @@ void GameScene::fixedUpdate() {
     //Hint: You can check if ptr points to an object of class A using std::dynamic_pointer_cast<A>(ptr). You should always check isInAvailable() before popInEvent().
     
 #pragma mark BEGIN SOLUTION
-    if(_network->isInAvailable()){
+    while(_network->isInAvailable()){
         auto e = _network->popInEvent();
         if(auto crateEvent = std::dynamic_pointer_cast<CrateEvent>(e)){
 //            CULog("BIG CRATE GOT");
@@ -654,6 +655,10 @@ void GameScene::fixedUpdate() {
         if (auto decoyEvent = std::dynamic_pointer_cast<DecoyEvent>(e)){
 //            CULog("Decoy Event Got");
             overWorld.getDecoys()->addNewDecoy(Vec2(decoyEvent->getPos().x,decoyEvent->getPos().y));
+        }
+        if (auto biteEvent = std::dynamic_pointer_cast<BiteEvent>(e)){
+//            CULog("Bite Event Got");
+            overWorld.processBiteEvent(biteEvent);
         }
     }
 #pragma mark END SOLUTION

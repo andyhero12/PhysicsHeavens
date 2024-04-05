@@ -15,7 +15,7 @@ void OverWorld::reset() {
 //    _devil->setPosition(resetSize/2);
     initBases();
     initDecoys();
-    _attackPolygonSet.init();
+    _attackPolygonSet.init(_scale);
 }
 
 bool OverWorld::initDogModel(){
@@ -239,6 +239,7 @@ bool OverWorld::init(const std::shared_ptr<cugl::AssetManager>& assets, const st
     initDogModel();
     initBases();
     initDecoys();
+    _attackPolygonSet.init(_scale);
 //    initDevil();
     return true;
 }
@@ -247,6 +248,9 @@ bool OverWorld::setRootNode(const std::shared_ptr<scene2::SceneNode>& _worldNode
     // Add Base Decoy node
     _worldNode->addChild(_decoys->getDecoySetNode());
     
+    
+    // Attack Polygon base to the world nOde
+    _worldNode->addChild(_attackPolygonSet.getAttackPolygonNode());
     // Add Bases to the World Node
     for (auto& base : _bases->_bases){
         std::shared_ptr<scene2::SceneNode> baseNode = base->getSceneNode();
@@ -264,11 +268,15 @@ bool OverWorld::setRootNode(const std::shared_ptr<scene2::SceneNode>& _worldNode
     // Add Obstacles
     return true;
 }
-
+void OverWorld::processBiteEvent(const std::shared_ptr<BiteEvent>& biteEvent){
+    Vec2 center = biteEvent->getPos();
+    float ang = biteEvent->getAng();
+    _attackPolygonSet.addBite(center,ang, _dog->getExplosionRadius());
+}
 void OverWorld::dogUpdate(InputController& _input, cugl::Size totalSize){
     _dog->moveOnInputSetAction(_input);
     if (_input.didPressFire() && _dog->canFireWeapon()){
-        _attackPolygonSet.addBite(_dog);
+        _network->pushOutEvent(BiteEvent::allocBiteEvent(_dog->getPosition(), _dog->getDirInDegrees()));
         _dog->reloadWeapon();
     }
     if (_input.didPressSpecial() && _dog->canFireWeapon()){
@@ -297,16 +305,9 @@ void OverWorld::update(InputController& _input, cugl::Size totalSize, float time
     _bases->update();
     _decoys->update(timestep);
 //    devilUpdate(_input, totalSize);
-//    _attackPolygonSet.update(totalSize);
+    _attackPolygonSet.update();
 } 
 
 void OverWorld::postUpdate(){
     _decoys->postUpdate();
 }
-//void OverWorld::draw(const std::shared_ptr<cugl::SpriteBatch>& batch,cugl::Size totalSize){
-//    _attackPolygonSet.draw(batch,totalSize);
-//    _bases->draw(batch,totalSize);
-////    _dog->draw(batch, totalSize);
-////    _devil->draw(batch, totalSize);
-//    _decoys->draw(batch);
-//}

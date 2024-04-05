@@ -147,6 +147,7 @@ void Dog::moveOnInputSetAction(InputController& _input){
     
     // keep same direction until movement
     if (_vel.x != 0 || _vel.y != 0){
+        _ang = dir;
         _curDirection = AnimationSceneNode::convertRadiansToDirections(dir.getAngle());
     }
     
