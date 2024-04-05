@@ -137,7 +137,7 @@ float CAN2_POS[] = { 30,9 };
  */
 std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode>> CrateFactory::createObstacle(Vec2 pos, float scale) {
     //Choose randomly between wooden crates and iron crates.
-    int indx = (_rand() % 2 == 0 ? 2 : 1);
+    int indx = 1;
     std::string name = (CRATE_PREFIX "0") + std::to_string(indx);
     auto image = _assets->get<Texture>(name);
     Size boxSize(image->getSize() / scale / 2.f);
@@ -204,7 +204,6 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
  */
 void GameScene::reset() {
     _todoReset = false;
-    _rand.seed(0xdeadbeef);
     _worldnode->removeAllChildren();
     _debugnode->removeAllChildren();
     _uinode->removeAllChildren();
@@ -320,18 +319,16 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     _input.init();
     _input.update();
 
-    
-    _rand.seed(0xdeadbeef);
-
     _crateFact = CrateFactory::alloc(_assets);
 
-    _backgroundWrapper = std::make_shared<World>(Vec2(0, 0),_scale, _level->getTiles(), _level->getBoundaries(), assets->get<Texture>("tile"));
     // IMPORTANT: SCALING MUST BE UNIFORM
     // This means that we cannot change the aspect ratio of the physics world
     // Shift to center if a bad fit
     _scale = dimen.width == SCENE_WIDTH ? dimen.width/rect.size.width : dimen.height/rect.size.height;
     Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
-
+    
+    _backgroundWrapper = std::make_shared<World>(Vec2(0, 0),_scale, _level->getTiles(), _level->getBoundaries(), assets->get<Texture>("tile"));
+    
     // Create the scene graph
     _uinode = scene2::SceneNode::alloc();
     _uinode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
@@ -345,11 +342,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     _debugnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _debugnode->setPosition(offset);
     
-    _chargeBar = std::dynamic_pointer_cast<scene2::ProgressBar>(assets->get<scene2::SceneNode>("load_bar"));
-    
     addChild(_worldnode);
     addChild(_debugnode);
-    addChild(_chargeBar);
     
     populate();
     
@@ -449,7 +443,7 @@ void GameScene::fireCrate() {
  */
 void GameScene::processCrateEvent(const std::shared_ptr<CrateEvent>& event){
     //Choose randomly between wooden crates and iron crates.
-    int indx = (_rand() % 2 == 0 ? 2 : 1);
+    int indx = 1;
     std::string name = (CRATE_PREFIX "0") + std::to_string(indx);
     auto image = _assets->get<Texture>(name);
     Size boxSize(image->getSize() / _scale);
@@ -555,19 +549,6 @@ void GameScene::populate() {
     // Add the scene graph nodes to this object
     wall2 *= _scale;
     wallsprite2 = scene2::PolygonNode::allocWithTexture(image,wall2);
-        
-//#pragma mark : Crates
-//    float f1 = _rand() % (int)(DEFAULT_WIDTH - 4) + 2;
-//    float f2 = _rand() % (int)(DEFAULT_HEIGHT - 4) + 2;
-//    Vec2 boxPos(f1, f2);
-//        
-//    for (int ii = 0; ii < NUM_CRATES; ii++) {
-//        f1 = _rand() % (int)(DEFAULT_WIDTH - 6) + 3;
-//        f2 = _rand() % (int)(DEFAULT_HEIGHT - 6) + 3;
-//        // Pick a crate and random and generate the key
-//        Vec2 boxPos(f1, f2);
-//        addInitCrate(boxPos);
-//    }
         
 #pragma mark : Cannon
     image  = _assets->get<Texture>(CANNON_TEXTURE);
@@ -795,7 +776,7 @@ void GameScene::initDog(){
 //    _dog1->setDogSize(Dog::DogSize::MEDIUM);
 //    addInitObstacleLinkAnimation(_dog1, vecNodes);
     
-    _uiController = std::make_shared<UIController>();
+    std::shared_ptr<UIController> _uiController = std::make_shared<UIController>();
     _uiController->init(_uinode, _assets, getSize());
     _dog1->setUIController(_uiController);
     
@@ -888,12 +869,6 @@ void GameScene::preUpdate(float dt) {
         Application::get()->quit();
     }
     _input.update();
-    
-    if (_input.didPressFire()){
-        _chargeBar->setVisible(true);
-    }else{
-        _chargeBar->setVisible(false);
-    }
 
     // Process the toggled key commands
     if (_input.didPressDebug()) { setDebug(!isDebug()); }

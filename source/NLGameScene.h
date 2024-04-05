@@ -30,6 +30,11 @@
 #include "World.h"
 #include "AnimationSceneNode.h"
 #include "UIController.h"
+#include "CollisionController.h"
+#include "SpawnerController.h"
+#include "OverWorld.h"
+#include "MonsterController.h"
+#include "GlobalConstants.h"
 
 using namespace cugl::physics2::net;
 using namespace cugl;
@@ -110,19 +115,14 @@ protected:
     std::shared_ptr<cugl::scene2::SceneNode> _uinode;
     /** Reference to the physics root of the scene graph */
     std::shared_ptr<cugl::scene2::SceneNode> _worldnode;
+    OverWorld overWorld;
     /** Reference to the debug root of the scene graph */
     std::shared_ptr<cugl::scene2::SceneNode> _debugnode;
-
-    std::shared_ptr<cugl::scene2::ProgressBar> _chargeBar;
-
-    std::shared_ptr<UIController> _uiController;
-    /** The Box2D world */
+    
     std::shared_ptr<cugl::physics2::net::NetWorld> _world;
     /** The scale between the physics world and the screen (MUST BE UNIFORM) */
     float _scale;
-
-    std::mt19937 _rand;
-
+    
     std::shared_ptr<CrateFactory> _crateFact;
     /** The level model */
     std::shared_ptr<LevelModel> _level;
