@@ -24,6 +24,7 @@
 #include "NLInput.h"
 #include "NLCrateEvent.h"
 #include "NLResetEvent.h"
+#include "NLDecoyEvent.h"
 #include "NLCameraController.h"
 #include "NLLevelModel.h"
 #include "World.h"

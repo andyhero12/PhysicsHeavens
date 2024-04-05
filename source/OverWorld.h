@@ -18,11 +18,14 @@
 #include "AttackPolygons.h"
 #include "DecoySet.h"
 #include "NLLevelModel.h"
+#include "NLDecoyEvent.h"
 
 class OverWorld{
 private:
     std::shared_ptr<LevelModel> _level;
     float _scale;
+    std::shared_ptr<NetEventController> _network;
+    bool _isHost;
     cugl::Size _activeSize;
     std::shared_ptr<Dog> _dog;
     std::shared_ptr<Devil> _devil;
@@ -48,13 +51,13 @@ public:
     }
     
     void reset();
-    bool init(const std::shared_ptr<cugl::AssetManager>& assets, const std::shared_ptr<LevelModel>& _level, float scale, cugl::Size activeSize);
+    bool init(const std::shared_ptr<cugl::AssetManager>& assets, const std::shared_ptr<LevelModel>& _level, float scale, cugl::Size activeSize, std::shared_ptr<cugl::physics2::net::NetEventController> network, bool isHost);
     bool initDogModel();
     bool initDevil();
     bool initBases();
     bool initDecoys();
     
-    bool setRootNode(const std::shared_ptr<scene2::SceneNode>& _worldNode, const std::shared_ptr<scene2::SceneNode>& _debugNode, std::shared_ptr<cugl::physics2::net::NetWorld> _world, bool isHost);
+    bool setRootNode(const std::shared_ptr<scene2::SceneNode>& _worldNode, const std::shared_ptr<scene2::SceneNode>& _debugNode, std::shared_ptr<cugl::physics2::net::NetWorld> _world);
     // will add Obstacle nodes too
     void dogUpdate(InputController& _input,cugl::Size totalSize);
     void devilUpdate(InputController& _input,cugl::Size totalSize);

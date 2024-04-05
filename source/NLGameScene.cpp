@@ -202,7 +202,7 @@ void GameScene::reset() {
     
     populate();
     overWorld.reset();
-    overWorld.setRootNode(_worldnode, _debugnode, _world, _isHost);
+    overWorld.setRootNode(_worldnode, _debugnode, _world);
     
     _camera.init(overWorld.getDog()->getDogNode(), _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), overWorld.getDog()->getUINode(), 1000.0f);
 
@@ -340,8 +340,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     addChild(_debugnode);
     
     populate();
-    overWorld.init(assets, _level, _scale, computeActiveSize());
-    overWorld.setRootNode(_worldnode, _debugnode, _world, isHost);
+    overWorld.init(assets, _level, _scale, computeActiveSize(),_network, isHost);
+    overWorld.setRootNode(_worldnode, _debugnode, _world);
     
     addChild(overWorld.getDog()->getUINode());
     
@@ -374,6 +374,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
 #pragma mark BEGIN SOLUTION
     _network->attachEventType<CrateEvent>();
     _network->attachEventType<ResetEvent>();
+    _network->attachEventType<DecoyEvent>();
 #pragma mark END SOLUTION
     
     // XNA nostalgia
@@ -441,7 +442,6 @@ void GameScene::processCrateEvent(const std::shared_ptr<CrateEvent>& event){
     std::string name = (CRATE_PREFIX "0") + std::to_string(indx);
     auto image = _assets->get<Texture>(name);
     Size boxSize(image->getSize() / _scale);
-    CULog("big box size %f %f", boxSize.width, boxSize.height);
     auto crate = physics2::BoxObstacle::alloc(Vec2(event->getPos().x,event->getPos().y), boxSize);
     
     crate->setDebugColor(DYNAMIC_COLOR);
@@ -632,6 +632,7 @@ void GameScene::preUpdate(float dt) {
 
 void GameScene::postUpdate(float dt) {
     //Nothing to do now
+    overWorld.postUpdate();
 }
 
 void GameScene::fixedUpdate() {
@@ -646,9 +647,13 @@ void GameScene::fixedUpdate() {
             CULog("BIG CRATE GOT");
             processCrateEvent(crateEvent);
         }
-        if (auto crateEvent = std::dynamic_pointer_cast<ResetEvent>(e)){
+        if (auto resetEvent = std::dynamic_pointer_cast<ResetEvent>(e)){
             CULog("RESET EVENT GOT");
             setToDoReset(true);
+        }
+        if (auto decoyEvent = std::dynamic_pointer_cast<DecoyEvent>(e)){
+            CULog("Decoy Event Got");
+            overWorld.getDecoys()->addNewDecoy(Vec2(decoyEvent->getPos().x,decoyEvent->getPos().y));
         }
     }
 #pragma mark END SOLUTION

@@ -14,6 +14,9 @@
 
 
 class BaseSet{
+private:
+    
+    float _scale;
 public:
 //    /* Base Textures */
     std::shared_ptr<cugl::Texture> _texture;
@@ -27,7 +30,7 @@ public:
     
     void update();
     
-    bool init(std::shared_ptr<cugl::JsonValue> data);
+    bool init(std::shared_ptr<cugl::JsonValue> data, float scale);
     
     bool baseLost();
     

@@ -20,12 +20,18 @@ class Decoy{
 private:
     
     std::shared_ptr<cugl::Texture> _texture;
+    std::shared_ptr<cugl::scene2::SceneNode> drawNode;
     int _health;
     float _time_duration;
     cugl::Vec2 _position;
     
 public:
-    
+    void setSceneNode(std::shared_ptr<cugl::scene2::SceneNode> incomingNode){
+        drawNode = incomingNode;
+    }
+    std::shared_ptr<cugl::scene2::SceneNode> getSceneNode() const{
+        return drawNode;
+    }
     Decoy(cugl::Vec2 pos);
     
     void update(float timestep);

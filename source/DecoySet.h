@@ -14,12 +14,18 @@
 class DecoySet{
 
 private:
+    std::shared_ptr<cugl::scene2::SceneNode> decoySetNode;
     std::vector<std::shared_ptr<Decoy>> _currentDecoys;
     std::vector<std::shared_ptr<Decoy>> _removedDecoys;
     std::vector<std::shared_ptr<Decoy>> _pendingDecoys;
     std::shared_ptr<cugl::Texture> _texture;
+    float _scale;
     
 public:
+    
+    std::shared_ptr<cugl::scene2::SceneNode> getDecoySetNode(){
+        return decoySetNode;
+    }
     std::vector<std::shared_ptr<Decoy>>& getCurrentDecoys(){
         return _currentDecoys;
     }
@@ -32,7 +38,7 @@ public:
     bool removedDecoy(){
         return _removedDecoys.size() != 0;
     }
-    void init();
+    void init(float scale);
     void update(float timestep);
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch);
     void setTexture(const std::shared_ptr<cugl::Texture> &value);

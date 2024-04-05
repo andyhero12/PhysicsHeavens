@@ -68,6 +68,9 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     _shoottoggle->setPosition(togglex, toggley);
     _baittoggle->setPosition(togglex, toggley);
     
+    _shoottoggle->setVisible(true);
+    _bombtoggle->setVisible(false);
+    _baittoggle->setVisible(false);
     
     node->addChild(_healthframe);
     node->addChild(_sizeframe);

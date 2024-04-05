@@ -14,7 +14,7 @@ void OverWorld::reset() {
     initDogModel();
 //    _devil->setPosition(resetSize/2);
     initBases();
-//    _decoys->init();
+    initDecoys();
     _attackPolygonSet.init();
 }
 
@@ -215,52 +215,48 @@ bool OverWorld::initDevil(){
 
 bool OverWorld::initBases(){
     _bases = std::make_shared<BaseSet>();
-    _bases->init(_constants->get("base"));
+    _bases->init(_constants->get("base"), _scale);
     _bases->setTexture(_assets->get<cugl::Texture>("base"));
-    if (_assets->get<cugl::Texture>("base")){
-        CULog("IMAGE HERE");
-    }else{
-        CULog("IMAGE NULL");
-    }
-
     return true;
 }
 
 bool OverWorld::initDecoys(){
     _decoys = std::make_shared<DecoySet>();
+    _decoys->init(_scale);
     _decoys->setTexture(_assets->get<cugl::Texture>("base"));
     return true;
 }
 
-bool OverWorld::init(const std::shared_ptr<cugl::AssetManager>& assets, const std::shared_ptr<LevelModel>& level, float scale, cugl::Size activeSize){
+bool OverWorld::init(const std::shared_ptr<cugl::AssetManager>& assets, const std::shared_ptr<LevelModel>& level, float scale, cugl::Size activeSize,std::shared_ptr<cugl::physics2::net::NetEventController> network, bool isHost){
     _assets = assets;
     _level = level;
+    _network = network;
+    _isHost = isHost;
     _activeSize = activeSize;
     _constants = assets->get<cugl::JsonValue>("constants");
     _scale = scale;
     
     initDogModel();
     initBases();
+    initDecoys();
 //    initDevil();
-//    initDecoys();
     return true;
 }
 
-bool OverWorld::setRootNode(const std::shared_ptr<scene2::SceneNode>& _worldNode, const std::shared_ptr<scene2::SceneNode>& _debugNode, std::shared_ptr<cugl::physics2::net::NetWorld> _world, bool isHost){
-    
+bool OverWorld::setRootNode(const std::shared_ptr<scene2::SceneNode>& _worldNode, const std::shared_ptr<scene2::SceneNode>& _debugNode, std::shared_ptr<cugl::physics2::net::NetWorld> _world){
+    // Add Base Decoy node
+    _worldNode->addChild(_decoys->getDecoySetNode());
     
     // Add Bases to the World Node
     for (auto& base : _bases->_bases){
         std::shared_ptr<scene2::SceneNode> baseNode = base->getSceneNode();
-        baseNode->setAnchor(Vec2::ANCHOR_CENTER);
-        baseNode->setPosition(base->getPos()*_scale);
         _worldNode->addChild(base->getSceneNode());
     }
     
     // Add Dog to Obstacle World
     _world->initObstacle(_dog);
     _dog->setDebugScene(_debugNode);
-    if (isHost){
+    if (_isHost){
         _world->getOwnedObstacles().insert({_dog,0});
     }
     _worldNode->addChild(_dog->getDogNode());
@@ -280,10 +276,11 @@ void OverWorld::dogUpdate(InputController& _input, cugl::Size totalSize){
         if (_dog->getMode() == "SHOOT" && _dog->getAbsorb() > 5){
             _dog->subAbsorb(5);
             _attackPolygonSet.addShoot(_dog);
-        }else if (_dog->getMode() == "BUILD" && _dog->getAbsorb() > 5 ){
-            _dog->subAbsorb(5);
-            _decoys->addNewDecoy(_dog->getPosition());
-        }else if (_dog->getMode() == "EXPLODE" && _dog->getAbsorb() > 10){
+        }else if (_dog->getMode() == "BAIT"){
+//            _dog->subAbsorb(5);
+//            _decoys->addNewDecoy(_dog->getPosition());
+            _network->pushOutEvent(DecoyEvent::allocDecoyEvent(_dog->getPosition()));
+        }else if (_dog->getMode() == "BOMB" && _dog->getAbsorb() > 10){
             _dog->subAbsorb(10);
             _attackPolygonSet.addExplode(_dog);
         }else {
@@ -297,15 +294,15 @@ void OverWorld::devilUpdate(InputController& _input,cugl::Size totalSize){
 }
 void OverWorld::update(InputController& _input, cugl::Size totalSize, float timestep){
     dogUpdate(_input,totalSize);
+    _bases->update();
+    _decoys->update(timestep);
 //    devilUpdate(_input, totalSize);
 //    _attackPolygonSet.update(totalSize);
-    _bases->update();
-//    _decoys->update(timestep);
 } 
 
-//void OverWorld::postUpdate(){
-//    _decoys->postUpdate();
-//}
+void OverWorld::postUpdate(){
+    _decoys->postUpdate();
+}
 //void OverWorld::draw(const std::shared_ptr<cugl::SpriteBatch>& batch,cugl::Size totalSize){
 //    _attackPolygonSet.draw(batch,totalSize);
 //    _bases->draw(batch,totalSize);
