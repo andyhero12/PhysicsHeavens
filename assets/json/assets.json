@@ -225,6 +225,11 @@
             "file": "textures/tile/tile.png",
             "magfilter": "nearest"
         },
+        "base": {
+            "file": "textures/target.png",
+              "minfilter": "linear",
+              "magfilter": "nearest"
+        },
 		"earth": {
 			"file":     "textures/earthtile.png",
             "wrapS":    "repeat",
@@ -239,15 +244,6 @@
         "rocket": {
             "file":     "textures/rocket.png"
         },
-        "flames": {
-            "file":     "textures/flames.png"
-        },
-        "flames-right": {
-            "file":     "textures/flames-right.png"
-        },
-        "flames-left": {
-            "file":     "textures/flames-left.png"
-        },
         "button": {
             "file":  "textures/button.png"
         },
@@ -260,7 +256,8 @@
         
 	},
     "jsons": {
-        "server": "json/server.json"
+        "server": "json/server.json",
+        "constants": "json/constants.json"
     },
     "sounds": {
         "bump": {

@@ -18,13 +18,19 @@ class Base{
 private:
     
     std::shared_ptr<cugl::Texture> _texture;
-    
+    std::shared_ptr<cugl::scene2::SceneNode> drawNode;
     int _health;
     int _healVal;
     cugl::Vec2 _position;
     
 public:
     
+    void setSceneNode(std::shared_ptr<cugl::scene2::SceneNode> incomingNode){
+        drawNode = incomingNode;
+    }
+    std::shared_ptr<cugl::scene2::SceneNode> getSceneNode(){
+        return drawNode;
+    }
     Base(int health, cugl::Vec2 pos);
     void update();
     void reduceHealth(int val);

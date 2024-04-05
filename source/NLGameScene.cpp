@@ -497,7 +497,7 @@ void GameScene::populate() {
     image  = _assets->get<Texture>(CANNON_TEXTURE);
     _cannon1Node = scene2::PolygonNode::allocWithTexture(image);
     Size canSize(image->getSize()/_scale);
-        
+         
     Vec2 canPos1 = ((Vec2)CAN1_POS);
     _cannon1 = cugl::physics2::BoxObstacle::alloc(canPos1,canSize);
     _cannon1->setAngle(-M_PI_2);
@@ -754,7 +754,6 @@ void GameScene::addChildBackground(){
             std::shared_ptr<TileInfo> t = currentBackground.at(i).at(j);
             auto image  = t->texture;
             auto sprite = scene2::PolygonNode::allocWithTexture(image);
-            sprite->setAnchor(Vec2::ANCHOR_CENTER);
             if (i == 0 || j == 0 || i == originalRows -1 || j == originalCols - 1){
                 t->setDebugColor(DYNAMIC_COLOR);
                 addInitObstacle(t, sprite);

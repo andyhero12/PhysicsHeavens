@@ -17,11 +17,8 @@ class BaseSet{
 public:
 //    /* Base Textures */
     std::shared_ptr<cugl::Texture> _texture;
-//
-//
 //    /* Set of bases */
     std::vector<std::shared_ptr<Base>> _bases;
-//
     BaseSet();
     
     ~BaseSet();
@@ -31,8 +28,6 @@ public:
     void update();
     
     bool init(std::shared_ptr<cugl::JsonValue> data);
-    
-    void draw(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl::Size size);
     
     bool baseLost();
     

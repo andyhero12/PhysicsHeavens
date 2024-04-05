@@ -42,6 +42,7 @@ bool BaseSet::init(std::shared_ptr<cugl::JsonValue> data)
                 _bases.emplace_back(std::make_shared<Base>(health, pos));
             }
         }
+        
         return true;
     }
     return false;
@@ -50,19 +51,9 @@ bool BaseSet::init(std::shared_ptr<cugl::JsonValue> data)
 void BaseSet::setTexture(const std::shared_ptr<cugl::Texture> &value)
 {
     _texture = value;
-}
-
-void BaseSet::draw(const std::shared_ptr<cugl::SpriteBatch> &batch, cugl::Size size)
-{
-    for (auto &base : _bases)
-    {
-        cugl::Vec2 pos = base->getPos();
-        cugl::Vec2 origin(0, 0);
-        cugl::Affine2 trans;
-        float scale = 1;
-        trans.scale(scale / _texture->getHeight());
-        trans.translate(pos);
-        batch->draw(_texture, origin, trans);
+    for (auto& base : _bases){
+        std::shared_ptr<cugl::scene2::SceneNode> baseNode = cugl::scene2::PolygonNode::allocWithTexture(_texture);
+        base->setSceneNode(baseNode);
     }
 }
 bool BaseSet::baseLost()
