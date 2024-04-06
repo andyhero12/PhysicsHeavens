@@ -343,7 +343,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     populate();
     overWorld.init(assets, _level, computeActiveSize(),_network, isHost);
     overWorld.setRootNode(_worldnode, _debugnode, _world);
-    
     addChild(overWorld.getDog()->getUINode());
     
     _camera.init(overWorld.getDog()->getDogNode(), _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), overWorld.getDog()->getUINode(), 1000.0f);

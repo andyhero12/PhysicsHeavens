@@ -6,6 +6,12 @@
 
 #include "AttackPolygons.h"
 #define BITE_AGE 2
+
+#include "NLDog.h"
+// used to translate attacks to originate from the dog's head
+#define BITE_HEAD_OFFSET_RATIO 0.8f
+#define SHOOT_HEAD_OFFSET_RATIO 1.5f
+
 void ActionPolygon::update(){
     _age++;
     // update animation when needed
@@ -89,6 +95,8 @@ void AttackPolygons::addShoot(Vec2 center, float angle, float shootRadius){
     Poly2 resultingPolygon_shoot = curFactory.makeArc(center, shootRadius, angle + degree, degree);
     std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(Action::SHOOT, resultingPolygon_shoot, max_age);
     attackPolygonNode->addChild(curPtr->getActionNode());
+    Vec2 offset = Vec2(SDL_cosf((angle + 90) * 3.14f / 180), SDL_sinf((angle + 90) * 3.14f / 180)) * DOG_SIZE.x * SHOOT_HEAD_OFFSET_RATIO;
+    curPtr->getActionNode()->setPosition(center.add(offset));
     curPtr->getActionNode()->setPosition(center);
     currentAttacks.insert(curPtr);
 }
@@ -107,6 +115,7 @@ void AttackPolygons::addBite(Vec2 center, float angle, float explosionRad){
     Poly2 resultingPolygon = curFactory.makeArc(center, explosionRad, angle, 180);
     std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(Action::BITE, resultingPolygon,BITE_AGE);
     attackPolygonNode->addChild(curPtr->getActionNode());
-    curPtr->getActionNode()->setPosition(center);
+    Vec2 offset = Vec2(SDL_cosf((angle + 90) * 3.14f / 180), SDL_sinf((angle + 90) * 3.14f / 180)) * DOG_SIZE.x * BITE_HEAD_OFFSET_RATIO;
+    curPtr->getActionNode()->setPosition(center.add(offset));
     currentAttacks.insert(curPtr);
 }

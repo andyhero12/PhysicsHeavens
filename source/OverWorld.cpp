@@ -10,7 +10,7 @@
 
 #define WORLD_SIZE 3
 
-#define DOG_SIZE Vec2(1.5, 1.5)
+#include "NLDog.h"
 
 void OverWorld::reset() {
     initDogModel();

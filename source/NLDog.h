@@ -44,6 +44,8 @@
 /** The thrust factor to convert player input into thrust */
 #define DEFAULT_THRUST 1.0f
 #define MAX_ABSORB 30
+
+#define DOG_SIZE Vec2(1.5, 1.5)
 /**
  * This class is the player avatar for the rocket lander game.
  *
