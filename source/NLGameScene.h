@@ -23,10 +23,10 @@
 #include <random>
 #include "NLInput.h"
 #include "NLCrateEvent.h"
-#include "NLResetEvent.h"
 #include "NLDecoyEvent.h"
 #include "NLExplodeEvent.h"
 #include "NLShootEvent.h"
+#include "NLGameResEvent.h"
 #include "NLCameraController.h"
 #include "NLLevelModel.h"
 #include "World.h"
@@ -115,6 +115,8 @@ protected:
     /** Reference to the physics root of the scene graph */
     std::shared_ptr<cugl::scene2::SceneNode> _worldnode;
     OverWorld overWorld;
+    SpawnerController _spawnerController;
+    MonsterController _monsterController;
     
     /** Reference to the debug root of the scene graph */
     std::shared_ptr<cugl::scene2::SceneNode> _debugnode;

@@ -373,11 +373,11 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
 //TODO: For task 5, attach CrateEvent to the network controller
 #pragma mark BEGIN SOLUTION
     _network->attachEventType<CrateEvent>();
-    _network->attachEventType<ResetEvent>();
     _network->attachEventType<DecoyEvent>();
     _network->attachEventType<BiteEvent>();
     _network->attachEventType<ExplodeEvent>();
     _network->attachEventType<ShootEvent>();
+    _network->attachEventType<GameResEvent>();
 #pragma mark END SOLUTION
     
     // XNA nostalgia
@@ -624,7 +624,7 @@ void GameScene::preUpdate(float dt) {
     }
     if (_input.didPressReset()){
         CULog("RESET COMING");
-        _network->pushOutEvent(ResetEvent::allocResetEvent());
+        _network->pushOutEvent(GameResEvent::allocGameResEvent(Vec2(0,0)));
     }
 #pragma mark END SOLUTION
     
@@ -650,7 +650,7 @@ void GameScene::fixedUpdate() {
 //            CULog("BIG CRATE GOT");
             processCrateEvent(crateEvent);
         }
-        if (auto resetEvent = std::dynamic_pointer_cast<ResetEvent>(e)){
+        if (auto resetEvent = std::dynamic_pointer_cast<GameResEvent>(e)){
 //            CULog("RESET EVENT GOT");
             setToDoReset(true);
         }

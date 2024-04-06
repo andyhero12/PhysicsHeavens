@@ -293,7 +293,7 @@ void OverWorld::dogUpdate(InputController& _input, cugl::Size totalSize){
         _dog->reloadWeapon();
         if (_dog->getMode() == "SHOOT"){
 //            _dog->subAbsorb(5);
-            _network->pushOutEvent(ShootEvent::allocShootEvent(_dog->getShootCenter(), _dog->getDirInDegrees()));
+            _network->pushOutEvent(ShootEvent::allocShootEvent(_dog->getShootCenter(), _dog->getDirInDegrees())); 
         }else if (_dog->getMode() == "BAIT"){
 //            _dog->subAbsorb(5);
 //            _decoys->addNewDecoy(_dog->getPosition());
