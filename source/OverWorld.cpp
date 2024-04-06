@@ -10,12 +10,14 @@
 
 #define WORLD_SIZE 3
 
+#define DOG_SIZE Vec2(2, 2)
+
 void OverWorld::reset() {
     initDogModel();
 //    _devil->setPosition(resetSize/2);
     initBases();
     initDecoys();
-    _attackPolygonSet.init(_scale);
+    _attackPolygonSet.init();
 }
 
 bool OverWorld::initDogModel(){
@@ -32,6 +34,8 @@ bool OverWorld::initDogModel(){
 
     std::shared_ptr<AnimationSceneNode> smallDogRun = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
     smallDogRun->setAnchor(Vec2::ANCHOR_CENTER);
+    //surely there is a more intelligent way to do this??
+    //smallDogRun->setContentSize(DOG_SIZE);
     
     
     textures.clear();
@@ -46,6 +50,7 @@ bool OverWorld::initDogModel(){
     
     std::shared_ptr<AnimationSceneNode> smallDogIdle = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 15);
     smallDogIdle->setAnchor(Vec2::ANCHOR_CENTER);
+    //smallDogIdle->setContentSize(DOG_SIZE);
     
     textures.clear();
     textures.push_back(_assets->get<cugl::Texture>("smalldogrightbite"));
@@ -58,7 +63,8 @@ bool OverWorld::initDogModel(){
     textures.push_back(_assets->get<cugl::Texture>("smalldogbackbite"));
 
     std::shared_ptr<AnimationSceneNode> smallDogBite = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 15);
-    smallDogIdle->setAnchor(Vec2::ANCHOR_CENTER);
+    smallDogBite->setAnchor(Vec2::ANCHOR_CENTER);
+    //smallDogBite->setContentSize(DOG_SIZE);
     
     textures.clear();
     textures.push_back(_assets->get<cugl::Texture>("smalldogrightshoot"));
@@ -71,7 +77,8 @@ bool OverWorld::initDogModel(){
     textures.push_back(_assets->get<cugl::Texture>("smalldogbackshoot"));
     
     std::shared_ptr<AnimationSceneNode> smallDogShoot = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 15);
-    smallDogIdle->setAnchor(Vec2::ANCHOR_CENTER);
+    smallDogShoot->setAnchor(Vec2::ANCHOR_CENTER);
+    //smallDogShoot->setContentSize(DOG_SIZE);
 
     textures.clear();
     textures.push_back(_assets->get<cugl::Texture>("mediumdogrightrun"));
@@ -85,6 +92,7 @@ bool OverWorld::initDogModel(){
 
     std::shared_ptr<AnimationSceneNode> mediumDogRun = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
     mediumDogRun->setAnchor(Vec2::ANCHOR_CENTER);
+    //mediumDogRun->setContentSize(DOG_SIZE);
     
     
     textures.clear();
@@ -99,6 +107,7 @@ bool OverWorld::initDogModel(){
     
     std::shared_ptr<AnimationSceneNode> mediumDogIdle = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 15);
     mediumDogIdle->setAnchor(Vec2::ANCHOR_CENTER);
+    //mediumDogIdle->setContentSize(DOG_SIZE);
     
     textures.clear();
     textures.push_back(_assets->get<cugl::Texture>("mediumdogrightbite"));
@@ -111,7 +120,8 @@ bool OverWorld::initDogModel(){
     textures.push_back(_assets->get<cugl::Texture>("mediumdogbackbite"));
 
     std::shared_ptr<AnimationSceneNode> mediumDogBite = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
-    mediumDogIdle->setAnchor(Vec2::ANCHOR_CENTER);
+    mediumDogBite->setAnchor(Vec2::ANCHOR_CENTER);
+    //mediumDogBite->setContentSize(DOG_SIZE);
     
     textures.clear();
     textures.push_back(_assets->get<cugl::Texture>("mediumdogrightshoot"));
@@ -124,7 +134,8 @@ bool OverWorld::initDogModel(){
     textures.push_back(_assets->get<cugl::Texture>("mediumdogbackshoot"));
     
     std::shared_ptr<AnimationSceneNode> mediumDogShoot = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
-    mediumDogIdle->setAnchor(Vec2::ANCHOR_CENTER);
+    mediumDogShoot->setAnchor(Vec2::ANCHOR_CENTER);
+    //mediumDogShoot->setContentSize(DOG_SIZE);
     
     
     textures.clear();
@@ -139,6 +150,7 @@ bool OverWorld::initDogModel(){
 
     std::shared_ptr<AnimationSceneNode> largeDogRun = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
     largeDogRun->setAnchor(Vec2::ANCHOR_CENTER);
+    //largeDogRun->setContentSize(DOG_SIZE);
     
     
     textures.clear();
@@ -153,6 +165,7 @@ bool OverWorld::initDogModel(){
     
     std::shared_ptr<AnimationSceneNode> largeDogIdle = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 15);
     largeDogIdle->setAnchor(Vec2::ANCHOR_CENTER);
+    //largeDogIdle->setContentSize(DOG_SIZE);
     
     textures.clear();
     textures.push_back(_assets->get<cugl::Texture>("largedogrightbite"));
@@ -165,7 +178,8 @@ bool OverWorld::initDogModel(){
     textures.push_back(_assets->get<cugl::Texture>("largedogbackbite"));
 
     std::shared_ptr<AnimationSceneNode> largeDogBite = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
-    largeDogIdle->setAnchor(Vec2::ANCHOR_CENTER);
+    largeDogBite->setAnchor(Vec2::ANCHOR_CENTER);
+    //largeDogBite->setContentSize(DOG_SIZE);
     
     textures.clear();
     textures.push_back(_assets->get<cugl::Texture>("largedogrightshoot"));
@@ -178,13 +192,13 @@ bool OverWorld::initDogModel(){
     textures.push_back(_assets->get<cugl::Texture>("largedogbackshoot"));
     
     std::shared_ptr<AnimationSceneNode> largeDogShoot = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
-    largeDogIdle->setAnchor(Vec2::ANCHOR_CENTER);
+    largeDogShoot->setAnchor(Vec2::ANCHOR_CENTER);
+    //largeDogShoot->setContentSize(DOG_SIZE);
     
     
-    Vec2 dogPos = _level->getPlayerPos() / _scale;
-    Size mySize(64,64);
-    Size dogSize(mySize/_scale);
-    
+    // MAGIC NUMBER ALERT!!
+    Vec2 dogPos = _level->getPlayerPos() / 32;
+    Size dogSize(2,2);
     _dog = Dog::alloc(dogPos,dogSize);
     _dog->setDebugColor(DYNAMIC_COLOR);
 
@@ -193,8 +207,9 @@ bool OverWorld::initDogModel(){
     _dog->setLargeAnimation(largeDogIdle, largeDogRun, largeDogBite, largeDogShoot);
     
     std::shared_ptr<AnimationSceneNode> placeHolderDrawOver = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
+    // MORE MAGIC NUMBER ALERT
+    placeHolderDrawOver->setContentSize(DOG_SIZE);
     _dog->setFinalDog(placeHolderDrawOver);
-    _dog->setDrawScale(_scale);
     
     std::shared_ptr<scene2::SceneNode> _uinode = scene2::SceneNode::alloc();
     _uinode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
@@ -215,31 +230,30 @@ bool OverWorld::initDevil(){
 
 bool OverWorld::initBases(){
     _bases = std::make_shared<BaseSet>();
-    _bases->init(_constants->get("base"), _scale);
+    _bases->init(_constants->get("base"));
     _bases->setTexture(_assets->get<cugl::Texture>("base"));
     return true;
 }
 
 bool OverWorld::initDecoys(){
     _decoys = std::make_shared<DecoySet>();
-    _decoys->init(_scale);
+    _decoys->init();
     _decoys->setTexture(_assets->get<cugl::Texture>("base"));
     return true;
 }
 
-bool OverWorld::init(const std::shared_ptr<cugl::AssetManager>& assets, const std::shared_ptr<LevelModel>& level, float scale, cugl::Size activeSize,std::shared_ptr<cugl::physics2::net::NetEventController> network, bool isHost){
+bool OverWorld::init(const std::shared_ptr<cugl::AssetManager>& assets, const std::shared_ptr<LevelModel>& level, cugl::Size activeSize,std::shared_ptr<cugl::physics2::net::NetEventController> network, bool isHost){
     _assets = assets;
     _level = level;
     _network = network;
     _isHost = isHost;
     _activeSize = activeSize;
     _constants = assets->get<cugl::JsonValue>("constants");
-    _scale = scale;
     
     initDogModel();
     initBases();
     initDecoys();
-    _attackPolygonSet.init(_scale);
+    _attackPolygonSet.init();
 //    initDevil();
     return true;
 }

@@ -57,9 +57,9 @@ using namespace cugl;
 #define FIRE_RATE 25
 #define HEAL_RATE 50
 #define HEALTH 100
-#define BITE_RADIUS 220.0f
-#define SHOOT_RADIUS 540.0f
-#define EXPLOSION_RADIUS 90.0f
+#define BITE_RADIUS 3.5f
+#define SHOOT_RADIUS 8.5f
+#define EXPLOSION_RADIUS 1.4f
 
 #pragma mark -
 #pragma mark Constructors
@@ -248,27 +248,12 @@ void Dog::update(float delta) {
     Obstacle::update(delta);
     // Decoupled so useless for now
     if (baseBlankNode){
-        baseBlankNode->setPosition(getPosition()*_drawscale);
+        baseBlankNode->setPosition(getPosition());
         baseBlankNode->setAngle(getAngle());
     }
     dogActions();
 }
 
-/**
- * Sets the ratio of the ship sprite to the physics body
- *
- * The rocket needs this value to convert correctly between the physics
- * coordinates and the drawing screen coordinates.  Otherwise it will
- * interpret one Box2D unit as one pixel.
- *
- * All physics scaling must be uniform.  Rotation does weird things when
- * attempting to scale physics by a non-uniform factor.
- *
- * @param scale The ratio of the ship sprite to the physics body
- */
-void Dog::setDrawScale(float scale) {
-    _drawscale = scale;
-}
 
 void Dog::setSmallAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot){
     runAnimationSmall = run;
@@ -307,7 +292,7 @@ void Dog::resetCurrentAnimations(DogSize size){
     baseBlankNode->addChild(shootAnimation);
     runAnimation->setPosition(baseBlankNode->getAnchor());
     baseBlankNode->addChild(runAnimation);
-    baseBlankNode->setPosition(getPosition()*_drawscale);
+    baseBlankNode->setPosition(getPosition());
 }
 
 void Dog::setHealth(int value){

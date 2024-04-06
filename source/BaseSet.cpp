@@ -23,7 +23,7 @@ int BaseSet::getFirstHealth()
 {
     return (*_bases.begin())->getHealth();
 }
-bool BaseSet::init(std::shared_ptr<cugl::JsonValue> data,float scale)
+bool BaseSet::init(std::shared_ptr<cugl::JsonValue> data)
 {
     if (data)
     {
@@ -42,7 +42,6 @@ bool BaseSet::init(std::shared_ptr<cugl::JsonValue> data,float scale)
                 _bases.emplace_back(std::make_shared<Base>(health, pos));
             }
         }
-        _scale = scale;
         return true;
     }
     return false;
@@ -53,7 +52,8 @@ void BaseSet::setTexture(const std::shared_ptr<cugl::Texture> &value)
     _texture = value;
     for (auto& base : _bases){
         std::shared_ptr<cugl::scene2::SceneNode> baseNode = cugl::scene2::PolygonNode::allocWithTexture(_texture);
-        baseNode->setPosition(base->getPos() * _scale);
+        baseNode->setContentSize(cugl::Vec2(1, 1));
+        baseNode->setPosition(base->getPos());
         baseNode->setAnchor(cugl::Vec2::ANCHOR_CENTER);
         base->setSceneNode(baseNode);
     }

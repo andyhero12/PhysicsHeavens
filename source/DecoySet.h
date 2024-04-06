@@ -19,7 +19,6 @@ private:
     std::vector<std::shared_ptr<Decoy>> _removedDecoys;
     std::vector<std::shared_ptr<Decoy>> _pendingDecoys;
     std::shared_ptr<cugl::Texture> _texture;
-    float _scale;
     
 public:
     
@@ -38,7 +37,7 @@ public:
     bool removedDecoy(){
         return _removedDecoys.size() != 0;
     }
-    void init(float scale);
+    void init();
     void update(float timestep);
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch);
     void setTexture(const std::shared_ptr<cugl::Texture> &value);

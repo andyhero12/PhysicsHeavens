@@ -42,7 +42,7 @@
 #include <array>
 
 /** The thrust factor to convert player input into thrust */
-#define DEFAULT_THRUST 5.0f
+#define DEFAULT_THRUST 1.0f
 #define MAX_ABSORB 30
 /**
  * This class is the player avatar for the rocket lander game.
@@ -98,8 +98,6 @@ protected:
     std::shared_ptr<AnimationSceneNode> shootAnimationLarge;
     
     std::shared_ptr<UIController> _uiController;
-    
-    float _drawscale;
 
     std::array<std::string,3> modes = {"SHOOT", "BAIT", "BOMB"};
     int _mode;
@@ -122,7 +120,7 @@ public:
      * NEVER USE A CONSTRUCTOR WITH NEW. If you want to allocate a model on
      * the heap, use one of the static constructors instead.
      */
-    Dog(void) : BoxObstacle(), _drawscale(1.0f), action(Actions::IDLE), dir(cugl::Vec2(0,0)), prevDirection(AnimationSceneNode::Directions::SOUTH){ }
+    Dog(void) : BoxObstacle(), action(Actions::IDLE), dir(cugl::Vec2(0,0)), prevDirection(AnimationSceneNode::Directions::SOUTH){ }
     
     /**
      * Destroys this rocket, releasing all resources.
@@ -375,33 +373,6 @@ public:
     
     
     void dogActions();
-    /**
-     * Sets the ratio of the ship sprite to the physics body
-     *
-     * The rocket needs this value to convert correctly between the physics
-     * coordinates and the drawing screen coordinates.  Otherwise it will
-     * interpret one Box2D unit as one pixel.
-     *
-     * All physics scaling must be uniform.  Rotation does weird things when
-     * attempting to scale physics by a non-uniform factor.
-     *
-     * @param scale The ratio of the ship sprite to the physics body
-     */
-    void setDrawScale(float scale);
-    
-    /**
-     * Returns the ratio of the ship sprite to the physics body
-     *
-     * The rocket needs this value to convert correctly between the physics
-     * coordinates and the drawing screen coordinates.  Otherwise it will
-     * interpret one Box2D unit as one pixel.
-     *
-     * All physics scaling must be uniform.  Rotation does weird things when
-     * attempting to scale physics by a non-uniform factor.
-     *
-     * @return the ratio of the ship sprite to the physics body
-     */
-    float getDrawScale() const { return _drawscale; }
     
     
 #pragma mark -

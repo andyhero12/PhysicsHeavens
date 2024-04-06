@@ -68,7 +68,7 @@ private:
 public:
     std::vector<std::vector<std::shared_ptr<TileInfo>>> tileWorld;
     World () {};
-    World (cugl::Vec2 bottomleft,float _scale,
+    World (cugl::Vec2 bottomleft,
            const std::vector<std::vector<int>> &map,
            const std::vector<std::vector<int>> &passable, std::shared_ptr<cugl::Texture> tileset);
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch);

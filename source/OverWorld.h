@@ -26,7 +26,6 @@
 class OverWorld{
 private:
     std::shared_ptr<LevelModel> _level;
-    float _scale;
     std::shared_ptr<NetEventController> _network;
     bool _isHost;
     cugl::Size _activeSize;
@@ -54,7 +53,7 @@ public:
     }
     
     void reset();
-    bool init(const std::shared_ptr<cugl::AssetManager>& assets, const std::shared_ptr<LevelModel>& _level, float scale, cugl::Size activeSize, std::shared_ptr<cugl::physics2::net::NetEventController> network, bool isHost);
+    bool init(const std::shared_ptr<cugl::AssetManager>& assets, const std::shared_ptr<LevelModel>& _level, cugl::Size activeSize, std::shared_ptr<cugl::physics2::net::NetEventController> network, bool isHost);
     bool initDogModel();
     bool initDevil();
     bool initBases();

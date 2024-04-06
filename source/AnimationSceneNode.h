@@ -238,6 +238,21 @@ public:
     */
     virtual void setAnchor(const cugl::Vec2 anchor) override;
 
+
+    /**
+     * Sets the untransformed size of the node.
+     *
+     * The content size remains the same no matter how the node is scaled or
+     * rotated. All nodes must have a size, though it may be degenerate (0,0).
+     *
+     * By default, the content size of a TexturedNode is the size of the
+     * bounding box of the defining polygon. Resizing a texture node will
+     * stretch the image to fill in the new size.
+     *
+     * @param size  The untransformed size of the node.
+     */
+    virtual void setContentSize(const cugl::Size size) override;
+
     
     void setPosition(const cugl::Vec2 &position);
     void setAngle(float angle);

@@ -39,7 +39,7 @@ using namespace cugl::physics2::net;
 #pragma mark Level Geography
 
 /** This is the size of the active portion of the screen */
-#define SCENE_WIDTH 1200
+#define SCENE_WIDTH 1280
 #define SCENE_HEIGHT 800
 
 #define CANVAS_TILE_HEIGHT 8
@@ -130,7 +130,7 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
     int indx = 1;
     std::string name = (CRATE_PREFIX "0") + std::to_string(indx);
     auto image = _assets->get<Texture>(name);
-    Size boxSize(image->getSize() / scale / 2.f);
+    Size boxSize(image->getSize() / 2.f);
     
     // TODO: allocate a box obstacle at pos with boxSize, set its angleSnap to 0, debugColor to DYNAMIC_COLOR, density to CRATE_DENSITY, friction to CRATE_FRICTION, and restitution to BASIC_RESTITUTION, after everything is set, make the object shared by calling setShared(). Then allocate a PolygonNode from image, set its anchor to center, and scale to 0.5f. Lastly return the pair of Obstacle and sceneNode.
     
@@ -198,7 +198,7 @@ void GameScene::reset() {
     _worldnode->removeAllChildren();
     _debugnode->removeAllChildren();
     
-    _backgroundWrapper = std::make_shared<World>(Vec2(0, 0),_scale, _level->getTiles(), _level->getBoundaries(), _assets->get<cugl::Texture>("tile"));
+    _backgroundWrapper = std::make_shared<World>(Vec2(0, 0), _level->getTiles(), _level->getBoundaries(), _assets->get<cugl::Texture>("tile"));
     
     populate();
     overWorld.reset();
@@ -322,17 +322,18 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     // IMPORTANT: SCALING MUST BE UNIFORM
     // This means that we cannot change the aspect ratio of the physics world
     // Shift to center if a bad fit
-    _scale = dimen.width == SCENE_WIDTH ? dimen.width/rect.size.width : dimen.height/rect.size.height;
     Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
+    float zoom = dimen.height / CANVAS_TILE_HEIGHT;
     
-    _backgroundWrapper = std::make_shared<World>(Vec2(0, 0),_scale, _level->getTiles(), _level->getBoundaries(), assets->get<Texture>("tile"));
+    _backgroundWrapper = std::make_shared<World>(Vec2(0, 0), _level->getTiles(), _level->getBoundaries(), assets->get<Texture>("tile"));
     
     _worldnode = scene2::SceneNode::alloc();
+    _worldnode->setScale(zoom);
     _worldnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _worldnode->setPosition(offset);
     
     _debugnode = scene2::SceneNode::alloc();
-    _debugnode->setScale(_scale); // Debug node draws in PHYSICS coordinates
+    _debugnode->setScale(zoom);
     _debugnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _debugnode->setPosition(offset);
     
@@ -340,7 +341,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     addChild(_debugnode);
     
     populate();
-    overWorld.init(assets, _level, _scale, computeActiveSize(),_network, isHost);
+    overWorld.init(assets, _level, computeActiveSize(),_network, isHost);
     overWorld.setRootNode(_worldnode, _debugnode, _world);
     
     addChild(overWorld.getDog()->getUINode());
@@ -410,8 +411,8 @@ std::vector<std::shared_ptr<scene2::PolygonNode>> nodes;
 /**
  * This method adds a crate at the given position during the init process.
  */
-std::shared_ptr<physics2::Obstacle> GameScene::addInitCrate(cugl::Vec2 pos) {
-    auto pair =  _crateFact->createObstacle(pos, _scale);
+std::shared_ptr<physics2::Obstacle> GameScene::addInitCrate(cugl::Vec2 pos, float scale) {
+    auto pair =  _crateFact->createObstacle(pos, scale);
     addInitObstacle(pair.first,pair.second);
     return pair.first;
 }
@@ -426,7 +427,7 @@ void GameScene::fireCrate() {
     //HINT: You can use the serializedParams() method of the crate factory to help you serialize the parameters.
 #pragma mark BEGIN SOLUTION
     auto cannon = _isHost ? _cannon1 : _cannon2;
-    auto params = _crateFact->serializeParams(cannon->getPosition(), _scale);
+    auto params = _crateFact->serializeParams(cannon->getPosition(), 1);
     auto pair = _network->getPhysController()->addSharedObstacle(_factId, params);
     float angle = cannon->getAngle() + M_PI_2;
     Vec2 forward(SDL_cosf(angle), SDL_sinf(angle));
@@ -444,7 +445,7 @@ void GameScene::processCrateEvent(const std::shared_ptr<CrateEvent>& event){
     int indx = 1;
     std::string name = (CRATE_PREFIX "0") + std::to_string(indx);
     auto image = _assets->get<Texture>(name);
-    Size boxSize(image->getSize() / _scale);
+    Size boxSize(Vec2(1, 1));
     auto crate = physics2::BoxObstacle::alloc(Vec2(event->getPos().x,event->getPos().y), boxSize);
     
     crate->setDebugColor(DYNAMIC_COLOR);
@@ -460,7 +461,7 @@ void GameScene::processCrateEvent(const std::shared_ptr<CrateEvent>& event){
     
     auto sprite = scene2::PolygonNode::allocWithTexture(image);
     sprite->setAnchor(Vec2::ANCHOR_CENTER);
-    sprite->setScale(1.0f);
+    sprite->setContentSize(Vec2(1, 1));
     
     //TODO: add the crate and sprite to the simulation
     //NOTE: since both the host and client will receive a CrateEvent, we don't want to use addSharedObstacle() for it because it will create two separate crate. Instead you should use addInitObstacle(), which has the same top-bit id and if all clients called init obstacle the same amount of times, the same low-bit id. There is a potential race condition where multiple clients calling addInitObstacle() can cause id to be mixed up(clients send CrateEvent at the same time). In this lab, we will not address that race condition. But you could send along an obstacle id to ensure that all clients have that id for the obstacle.
@@ -499,7 +500,8 @@ void GameScene::populate() {
 #pragma mark : Cannon
     image  = _assets->get<Texture>(CANNON_TEXTURE);
     _cannon1Node = scene2::PolygonNode::allocWithTexture(image);
-    Size canSize(image->getSize()/_scale);
+    _cannon1Node->setContentSize(Vec2(1, 1));
+    Size canSize(Vec2(1, 1));
          
     Vec2 canPos1 = ((Vec2)CAN1_POS);
     _cannon1 = cugl::physics2::BoxObstacle::alloc(canPos1,canSize);
@@ -509,6 +511,7 @@ void GameScene::populate() {
         
     image  = _assets->get<Texture>(CANNON_TEXTURE);
     _cannon2Node = scene2::PolygonNode::allocWithTexture(image);
+    _cannon2Node->setContentSize(Vec2(1, 1));
     
     Vec2 canPos2 = ((Vec2)CAN2_POS);
     _cannon2= cugl::physics2::BoxObstacle::alloc(canPos2,canSize);
@@ -524,7 +527,7 @@ void GameScene::linkAllAnimationsToObject(const std::shared_ptr<physics2::Obstac
                                           const std::vector<std::shared_ptr<scene2::SceneNode>>& vecNodes) {
     
     for (const std::shared_ptr<scene2::SceneNode>& node: vecNodes){
-        node->setPosition(obj->getPosition() * _scale);
+        node->setPosition(obj->getPosition());
         _worldnode->addChild(node);
     }
 
@@ -536,7 +539,7 @@ void GameScene::linkAllAnimationsToObject(const std::shared_ptr<physics2::Obstac
             float angle = obs->getAngle() + leftover * obs->getAngularVelocity();
             for (const std::shared_ptr<scene2::SceneNode>& node: vecNodes){
                 scene2::SceneNode* weak = node.get();
-                weak->setPosition(pos * _scale);
+                weak->setPosition(pos);
                 weak->setAngle(angle);
             }
         });
@@ -545,7 +548,7 @@ void GameScene::linkAllAnimationsToObject(const std::shared_ptr<physics2::Obstac
 void GameScene::linkSceneToObs(const std::shared_ptr<physics2::Obstacle>& obj,
     const std::shared_ptr<scene2::SceneNode>& node) {
     
-    node->setPosition(obj->getPosition() * _scale);
+    node->setPosition(obj->getPosition());
     _worldnode->addChild(node);
 
     // Dynamic objects need constant updating
@@ -555,7 +558,7 @@ void GameScene::linkSceneToObs(const std::shared_ptr<physics2::Obstacle>& obj,
             float leftover = Application::get()->getFixedRemainder() / 1000000.f;
             Vec2 pos = obs->getPosition() + leftover * obs->getLinearVelocity();
             float angle = obs->getAngle() + leftover * obs->getAngularVelocity();
-            weak->setPosition(pos * _scale);
+            weak->setPosition(pos);
             weak->setAngle(angle);
         });
     }
@@ -612,7 +615,7 @@ void GameScene::preUpdate(float dt) {
     }
 
     if (_input.didPressFire()) {
-        fireCrate();
+        //fireCrate();
     }
 
     _camera.update(dt);
@@ -774,11 +777,12 @@ void GameScene::addChildBackground(){
             std::shared_ptr<TileInfo> t = currentBackground.at(i).at(j);
             auto image  = t->texture;
             auto sprite = scene2::PolygonNode::allocWithTexture(image);
+            sprite->setContentSize(Vec2(1, 1));
             if (i == 0 || j == 0 || i == originalRows -1 || j == originalCols - 1){
                 t->setDebugColor(DYNAMIC_COLOR);
                 addInitObstacle(t, sprite);
             }else{
-                sprite->setPosition(t->getPosition() * _scale);
+                sprite->setPosition(t->getPosition());
                 _worldnode->addChild(sprite);
             }
         }

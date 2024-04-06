@@ -7,12 +7,11 @@
 
 #include "DecoySet.h"
 
-void DecoySet::init(float scale){
+void DecoySet::init(){
     _currentDecoys.clear();
     _pendingDecoys.clear();
     _removedDecoys.clear();
     decoySetNode = cugl::scene2::SceneNode::alloc();
-    _scale = scale;
 }
 
 void DecoySet::update(float timestep){
@@ -37,7 +36,7 @@ void DecoySet::addNewDecoy(cugl::Vec2 pos){
     std::shared_ptr<Decoy> newDecoy = std::make_shared<Decoy>(pos);
     std::shared_ptr<cugl::scene2::SceneNode> decoyNode = cugl::scene2::PolygonNode::allocWithTexture(_texture);
     decoyNode->setAnchor(Vec2::ANCHOR_CENTER);
-    decoyNode->setPosition(pos*_scale);
+    decoyNode->setPosition(pos);
     newDecoy->setSceneNode(decoyNode);
     decoySetNode->addChild(decoyNode);
     _pendingDecoys.emplace_back(newDecoy);

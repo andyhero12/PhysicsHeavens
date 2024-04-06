@@ -122,8 +122,6 @@ protected:
     std::shared_ptr<cugl::scene2::SceneNode> _debugnode;
     
     std::shared_ptr<cugl::physics2::net::NetWorld> _world;
-    /** The scale between the physics world and the screen (MUST BE UNIFORM) */
-    float _scale;
     
     std::shared_ptr<CrateFactory> _crateFact;
     /** The level model */
@@ -153,7 +151,7 @@ protected:
     /**
      * This method adds a crate at the given position during the init process.
      */
-    std::shared_ptr<cugl::physics2::Obstacle> addInitCrate(cugl::Vec2 pos);
+    std::shared_ptr<cugl::physics2::Obstacle> addInitCrate(cugl::Vec2 pos, float scale);
 
     /**
      * Lays out the game geography.

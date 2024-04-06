@@ -59,10 +59,9 @@ AttackPolygons::AttackPolygons()
     
 }
 
-bool AttackPolygons::init(float scale){
+bool AttackPolygons::init(){
     currentAttacks.clear();
     attackPolygonNode = cugl::scene2::SceneNode::alloc();
-    _scale = scale;
     return true;
 }
 void AttackPolygons::update(){
@@ -90,7 +89,7 @@ void AttackPolygons::addShoot(Vec2 center, float angle, float shootRadius){
     Poly2 resultingPolygon_shoot = curFactory.makeArc(center, shootRadius, angle + degree, degree);
     std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(Action::SHOOT, resultingPolygon_shoot, max_age);
     attackPolygonNode->addChild(curPtr->getActionNode());
-    curPtr->getActionNode()->setPosition(center * _scale);
+    curPtr->getActionNode()->setPosition(center);
     currentAttacks.insert(curPtr);
 }
 
@@ -99,7 +98,7 @@ void AttackPolygons::addExplode(Vec2 center, float explosionRad){
     Poly2 resultingPolygon = curFactory.makeCircle(center, explosionRad);
     std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(Action::EXPLODE, resultingPolygon,max_age);
     attackPolygonNode->addChild(curPtr->getActionNode());
-    curPtr->getActionNode()->setPosition(center * _scale);
+    curPtr->getActionNode()->setPosition(center);
     currentAttacks.insert(curPtr);
 }
 
@@ -108,6 +107,6 @@ void AttackPolygons::addBite(Vec2 center, float angle, float explosionRad){
     Poly2 resultingPolygon = curFactory.makeArc(center, explosionRad, angle, 180);
     std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(Action::BITE, resultingPolygon,BITE_AGE);
     attackPolygonNode->addChild(curPtr->getActionNode());
-    curPtr->getActionNode()->setPosition(center * _scale);
+    curPtr->getActionNode()->setPosition(center);
     currentAttacks.insert(curPtr);
 }

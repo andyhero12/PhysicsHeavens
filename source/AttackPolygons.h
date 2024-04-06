@@ -51,14 +51,13 @@ private:
 class AttackPolygons{
     
 private:
-    float _scale;
     std::shared_ptr<cugl::scene2::SceneNode> attackPolygonNode;
 public:
     // Have AttackPolygon Set hold all possible textures for bite, shoot, explode
     int max_age;
     std::unordered_set<std::shared_ptr<ActionPolygon>> currentAttacks;
     AttackPolygons();
-    bool init(float scale);
+    bool init();
     bool isEmpty() const { return currentAttacks.empty(); }
     void update();
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl::Size size);
