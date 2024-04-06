@@ -39,6 +39,7 @@
 #include "NLInput.h"
 #include "AnimationSceneNode.h"
 #include "UIController.h"
+#include <array>
 
 /** The thrust factor to convert player input into thrust */
 #define DEFAULT_THRUST 5.0f
@@ -99,7 +100,7 @@ protected:
     std::shared_ptr<UIController> _uiController;
     
     float _drawscale;
-    
+
     std::array<std::string,3> modes = {"SHOOT", "BAIT", "BOMB"};
     int _mode;
     int _refire;
