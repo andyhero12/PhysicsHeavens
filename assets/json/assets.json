@@ -226,6 +226,21 @@
            "file": "textures/dog/bite/large-back-bite.png",
             "magfilter": "nearest"
        },
+       "basicEnemy0": {
+           "file": "textures/basicEnemy/basicWalkLeft.PNG",
+                 "minfilter": "linear",
+                 "magfilter": "nearest"
+       },
+       "basicEnemy1": {
+           "file": "textures/basicEnemy/basicWalkRight.PNG",
+                 "minfilter": "linear",
+                 "magfilter": "nearest"
+       },
+       "bombEnemyIdle": {
+           "file": "textures/bomb/bombIdle.png",
+                 "minfilter": "linear",
+                 "magfilter": "nearest"
+       },
         "tile": {
             "file": "textures/tile/tile.png",
             "magfilter": "nearest"

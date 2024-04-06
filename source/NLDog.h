@@ -408,7 +408,7 @@ public:
     
 #pragma mark -
 #pragma mark Physics
-    
+    void updateClientAnimations();
     void updateUI();
     /**
      * Applies the Velocity Movement for the Physics Engine

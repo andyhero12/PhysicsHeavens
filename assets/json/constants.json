@@ -23,7 +23,7 @@
         "sprite size": 7,
         "sprite frame": 0
     },
-    "asteroids": {
+    "monsters": {
         "sprite cols": 4,
         "sprite size": 4,
         "start": [

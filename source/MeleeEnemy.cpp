@@ -5,58 +5,32 @@
 //  Created by Andrew Cheng on 3/14/24.
 //
 
+#define MELEE_DAMAGE 5
 #include "MeleeEnemy.h"
-MeleeEnemy::MeleeEnemy(cugl::Vec2 m_pos, int m_health, float m_radius, int m_targetIndex)
-: AbstractEnemy(m_pos, m_health, m_radius, m_targetIndex)
-, _contactDamage(5)
-{
-    
+MeleeEnemy::MeleeEnemy(){}
+bool MeleeEnemy::init(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex){
+    if (AbstractEnemy::init(m_pos, m_size, m_health, m_targetIndex)){
+        std::string name("Melee Enemy");
+        setName(name);
+        _contactDamage = MELEE_DAMAGE;
+        return true;
+    }
+    return false;
 }
-
-void MeleeEnemy::draw(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl::Size size,  std::shared_ptr<cugl::Font> font){
-    Vec2 pos = getPos();
-
-    Affine2 trans;
-    const std::shared_ptr<cugl::SpriteSheet>& sprite = getSprite();
-    trans.scale(1 / sprite->getFrameSize().height);
-    trans.translate(pos);
-    sprite->draw(batch, trans); // draw enemy animation
-    
-    Affine2 trans_bar;
-    
-    // Might need to change; this was specifically for the default health bar
-    trans_bar.scale(0.1);
-    Vec2 pos_bar = Vec2(pos.x + 5, pos.y + 35);
-    trans_bar.translate(pos_bar);
-    
-    _healthBar->setProgress(getHealth()/(float)_maxHealth);
-    _healthBar->render(batch, trans_bar, Color4::RED);
-}
-
-void MeleeEnemy::update(float dt, OverWorld& overWorld){
+void MeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
     if (_attackCooldown < 60){
         _attackCooldown++;
     }
     
     cugl::Vec2 target_pos = getTargetPositionFromIndex(overWorld);
-    cugl::Vec2 direction = target_pos- position;
+    cugl::Vec2 direction = target_pos - getPosition();
+    if (overWorld._isHost){
+        setVX(direction.normalize().x * 0.5);
+        setVY(direction.normalize().y * 0.5);
+    }
     // Animate
-    position += direction.normalize();
-//    cugl::Size size = overWorld.getTotalSize();
-    
- 
-    _walkingAnimations.update(direction.getAngle() + 67.5f);
-//    
-//    while (position.x > size.width) {
-//        position.x = size.width;
-//    }
-//    while (position.x < 0) {
-//        position.x = 0;
-//    }
-//    while (position.y > size.height) {
-//        position.y = size.height;
-//    }
-//    while (position.y < 0) {
-//        position.y = 0;
-//    }
+    _prevDirection =_curDirection;
+    _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
+    runAnimations->animate(_curDirection, curAction == EnemyActions::RUN);
+    attackAnimations->animate(_curDirection, curAction == EnemyActions::ATTACK);
 }

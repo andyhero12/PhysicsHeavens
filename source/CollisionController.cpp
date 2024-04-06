@@ -79,9 +79,9 @@ bool CollisionController::monsterBaseCollsion(std::shared_ptr<BaseSet> curBases,
         bool hitSomething = false;
         while ( itA != curEnemies.end()){
             const std::shared_ptr<AbstractEnemy>& enemy = *itA;
-            Vec2 norm = base->getPos() - enemy->getPos();
+            Vec2 norm = base->getPos() - enemy->getPosition();
             float distance = norm.length();
-            float impactDistance = enemy->getRadius()+ 10;
+            float impactDistance = 10;
             auto curA = itA;
             itA++;
             if (distance < impactDistance) {
@@ -102,9 +102,9 @@ bool CollisionController::monsterDecoyCollision(std::shared_ptr<DecoySet> decoyS
     std::vector<std::shared_ptr<Decoy>> decoys = decoySet->getCurrentDecoys();
     for (std::shared_ptr<Decoy> curDecoy: decoys){
         for (std::shared_ptr<AbstractEnemy> enemy: curEnemies){
-            Vec2 norm = curDecoy->getPos() - enemy->getPos();
+            Vec2 norm = curDecoy->getPos() - enemy->getPosition();
             float distance = norm.length();
-            float impactDistance = enemy->getRadius() +5;
+            float impactDistance = 5;
             if (distance < impactDistance){ // need noise
                 if (enemy->canAttack()){
                     collide = true;
@@ -121,15 +121,11 @@ bool CollisionController::monsterDogCollision(std::shared_ptr<Dog> curDog, std::
     auto it = curEnemies.begin();
     while (it != curEnemies.end()){
         std::shared_ptr<AbstractEnemy> enemy = *it;
-        Vec2 norm = curDog->getPosition() - enemy->getPos();
+        Vec2 norm = curDog->getPosition() - enemy->getPosition();
         float distance = norm.length();
-        float impactDistance = enemy->getRadius();
+        float impactDistance = 10;
         it++;
         if (distance < impactDistance) {
-            norm.normalize();
-            Vec2 temp = norm * ((impactDistance - distance) / 2);
-            curDog->setPosition(curDog->getPosition()+temp);
-            enemy->setPos(enemy->getPos() - temp);
             if (enemy->canAttack()){
                 collision = true;
                 enemy->resetAttack();
@@ -151,7 +147,7 @@ void CollisionController::resolveBiteAttack(const cugl::Poly2& bitePolygon, std:
         const std::shared_ptr<AbstractEnemy>& enemy = *itA;
         auto curA = itA;
         itA++;
-        if (bitePolygon.contains(enemy->getPos())){
+        if (bitePolygon.contains(enemy->getPosition())){
             hitSomething = true;
             enemy->setHealth(enemy->getHealth() - 1);
             if(enemy->getHealth() <= 0){
@@ -185,7 +181,7 @@ void CollisionController::hugeBlastCollision(const cugl::Poly2& blastRectangle, 
     auto itA = enemies.begin();
     while (itA != enemies.end()){
         const std::shared_ptr<AbstractEnemy>& enemy = *itA;
-        Vec2 enemyPos = enemy->getPos();
+        Vec2 enemyPos = enemy->getPosition();
         auto curA = itA;
         itA++;
         if (blastRectangle.contains(enemyPos)){
@@ -198,7 +194,7 @@ void CollisionController::resolveBlowup(const cugl::Poly2& blastCircle, std::uno
     while (itA != monsterEnemies.end()){
         const std::shared_ptr<AbstractEnemy>& enemy = *itA;
         auto curA = itA++;
-        if (blastCircle.contains(enemy->getPos())){
+        if (blastCircle.contains(enemy->getPosition())){
             monsterEnemies.erase(curA);
         }
     }

@@ -28,7 +28,6 @@ private:
     std::shared_ptr<LevelModel> _level;
     float _scale;
     std::shared_ptr<NetEventController> _network;
-    bool _isHost;
     cugl::Size _activeSize;
     std::shared_ptr<Dog> _dog;
     std::shared_ptr<Devil> _devil;
@@ -40,6 +39,7 @@ private:
     
     void drawDecoy(const std::shared_ptr<cugl::SpriteBatch>& batch);
 public:
+    bool _isHost;
     OverWorld(){
         
     }

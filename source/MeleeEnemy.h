@@ -14,10 +14,16 @@
 
 class MeleeEnemy : public AbstractEnemy {
 public:
-    MeleeEnemy(cugl::Vec2 m_pos, int m_health, float m_radius, int m_targetIndex);
-    virtual void draw(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl::Size size,  std::shared_ptr<cugl::Font> font) override;
-
-    virtual void update(float dt, OverWorld& overWorld) override;
+    
+    
+    static std::shared_ptr<MeleeEnemy> alloc(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex) {
+        std::shared_ptr<MeleeEnemy> result = std::make_shared<MeleeEnemy>();
+        return (result->init(m_pos, m_size, m_health, m_targetIndex) ? result : nullptr);
+    }
+    MeleeEnemy();
+    bool init(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex);
+    
+    virtual void preUpdate(float dt, OverWorld& overWorld) override;
     
     virtual int getDamage() override{
         return _contactDamage;

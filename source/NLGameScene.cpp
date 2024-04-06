@@ -208,6 +208,8 @@ void GameScene::reset() {
     overWorld.reset();
     overWorld.setRootNode(_worldnode, _debugnode, _world);
     
+    _monsterController.init(_constants->get("monsters"), overWorld, _world, _debugnode);
+    _worldnode->addChild(_monsterController.getMonsterSceneNode());
     _camera.init(overWorld.getDog()->getDogNode(), _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), overWorld.getDog()->getUINode(), 1000.0f);
 
     addChild(_worldnode);
@@ -356,6 +358,11 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     addChild(overWorld.getDog()->getUINode());
     
     _camera.init(overWorld.getDog()->getDogNode(), _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), overWorld.getDog()->getUINode(), 1000.0f);
+    
+    _monsterController.setMeleeAnimationData(_constants->get("basicEnemy"), assets);
+    _monsterController.setBombAnimationData(_constants->get("bomb"), assets);
+    _monsterController.init(_constants->get("monsters"), overWorld, _world, _debugnode);
+    _worldnode->addChild(_monsterController.getMonsterSceneNode());
     
     _active = true;
     setDebug(false);
@@ -629,7 +636,8 @@ void GameScene::preUpdate(float dt) {
     overWorld.update(_input, computeActiveSize(), dt);
     
     
-//    _spawnerController.update(_monsterController, overWorld, dt);
+    _spawnerController.update(_monsterController, overWorld, dt);
+    _monsterController.update( dt, overWorld);
     
     
 #pragma mark BEGIN SOLUTION
@@ -650,6 +658,7 @@ void GameScene::preUpdate(float dt) {
 
 void GameScene::postUpdate(float dt) {
     //Nothing to do now
+    _monsterController.postUpdate();
     overWorld.postUpdate();
 }
 

@@ -307,6 +307,8 @@ void OverWorld::dogUpdate(InputController& _input, cugl::Size totalSize){
                 CULog("NOTHING\n");
             }
         }
+    }else{
+        _dog->updateClientAnimations();
     }
 }
 
