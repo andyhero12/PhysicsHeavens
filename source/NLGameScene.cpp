@@ -201,6 +201,10 @@ void GameScene::reset() {
     _backgroundWrapper = std::make_shared<World>(Vec2(0, 0),_scale, _level->getTiles(), _level->getBoundaries(), _assets->get<cugl::Texture>("tile"));
     
     populate();
+    
+    _spawnerController.init(_level->getSpawnersPos(), _scale);
+    _spawnerController.setRootNode(_worldnode, _isHost);
+    
     overWorld.reset();
     overWorld.setRootNode(_worldnode, _debugnode, _world);
     
@@ -308,6 +312,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     _todoReset = false;
     // Start up the input handler
     _level = assets->get<LevelModel>(LEVEL_ONE_KEY);
+    _constants = assets->get<JsonValue>("constants");
     if (_level == nullptr) {
         // Might need to change later if too many assets Copy Tiled Demo?
         CULog("Fail!");
@@ -340,6 +345,11 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     addChild(_debugnode);
     
     populate();
+    
+    _spawnerController.setTexture(assets->get<Texture>("spawner"));
+    _spawnerController.init(_level->getSpawnersPos(), _scale);
+    _spawnerController.setRootNode(_worldnode, _isHost);
+    
     overWorld.init(assets, _level, _scale, computeActiveSize(),_network, isHost);
     overWorld.setRootNode(_worldnode, _debugnode, _world);
     
@@ -617,6 +627,11 @@ void GameScene::preUpdate(float dt) {
 
     _camera.update(dt);
     overWorld.update(_input, computeActiveSize(), dt);
+    
+    
+//    _spawnerController.update(_monsterController, overWorld, dt);
+    
+    
 #pragma mark BEGIN SOLUTION
     if (_input.didChangeMode()){
         CULog("BIG CRATE COMING");

@@ -40,12 +40,6 @@ private:
     
     void drawDecoy(const std::shared_ptr<cugl::SpriteBatch>& batch);
 public:
-    
-    std::shared_ptr<cugl::scene2::SceneNode> _worldnode;
-    
-    std::shared_ptr<cugl::scene2::SceneNode> getWorldNode(){
-        return _worldnode;
-    }
     OverWorld(){
         
     }

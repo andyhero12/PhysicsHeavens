@@ -1,5 +1,10 @@
 {
 	"textures": {
+        "spawner": {
+            "file": "textures/spawner.png",
+              "minfilter": "linear",
+              "magfilter": "nearest"
+        },
         "healthframe": {
             "file": "textures/game_ui/HEALTH_FRAME.png",
             "magfilter": "nearest"

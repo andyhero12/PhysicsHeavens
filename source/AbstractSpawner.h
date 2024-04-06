@@ -13,7 +13,7 @@
 
 class AbstractSpawner{
 protected:
-    std::shared_ptr<cugl::Texture> _texture;
+    std::shared_ptr<cugl::scene2::PolygonNode> polyNode;
     int _spawnRate;
     int _respawnCnt;
     int _health;
@@ -23,6 +23,9 @@ protected:
     
 public:
     
+    std::shared_ptr<cugl::scene2::SceneNode> getSpawnerNode(){
+        return polyNode;
+    }
     AbstractSpawner(int rate, cugl::Vec2 pos, int health, int delay)
     : _spawnRate(rate)
     , _position(pos)
@@ -30,14 +33,8 @@ public:
     , _timeElapsed(0.0)
     , _delay{delay}
     {
-        
     }
-    const std::shared_ptr<cugl::Texture>& getTexture() const {
-        return _texture;
-    }
-    void setTexture(const std::shared_ptr<cugl::Texture>& value){
-        _texture = value;
-    }
+    
     double getTimeElapsed() const{
         return _timeElapsed;
     }
@@ -46,6 +43,9 @@ public:
     }
     void reloadSpawner() {
         _respawnCnt = 0;
+    }
+    void setSceneNode(std::shared_ptr<cugl::Texture> _texture){
+        polyNode = cugl::scene2::PolygonNode::allocWithTexture(_texture);
     }
     const int getCnt() const {
         return _respawnCnt;
@@ -56,9 +56,9 @@ public:
     bool dead(){
         return _health <= 0;
     }
-    
+//    
     virtual void update(MonsterController& monsterController, OverWorld& overWorld, float timestep) = 0;
-    
-    virtual void draw(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl::Size size) = 0;
+//    
+//    virtual void draw(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl::Size size) = 0;
 };
 #endif /* AbstractSpawner_h */

@@ -21,12 +21,7 @@
 
 class SpawnerController{
 public:
-    /* Monster Textures */
-//    std::shared_ptr<cugl::Texture> _monsterTexture;
-//    
-//    /* Spawner Textures */
     std::shared_ptr<cugl::Texture> _texture;
-    
     
     /* Set of spawners */
     std::unordered_set<std::shared_ptr<AbstractSpawner>> _spawners;
@@ -39,13 +34,19 @@ public:
     void setTexture(const std::shared_ptr<cugl::Texture>& value);
     void update(MonsterController& monsterController, OverWorld& overWorld, float timestep);
     
-    bool init(std::shared_ptr<cugl::JsonValue> data,const std::vector<cugl::Vec2>& startLocs);
+    bool init(const std::vector<cugl::Vec2>& startLocs, float scale);
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl::Size size);
-    
+    void setRootNode(const std::shared_ptr<scene2::SceneNode>& _worldNode, bool isHost);
     bool win(){return _spawners.empty();}
     
+    std::shared_ptr<cugl::scene2::SceneNode> getSpawnerNode() const{
+        return baseSpawnerNode;
+    }
 private:
-    
+    std::shared_ptr<cugl::scene2::SceneNode> baseSpawnerNode;
+    float _scale;
+    std::shared_ptr<NetEventController> _network;
+    bool _isHost;
 };
 
 

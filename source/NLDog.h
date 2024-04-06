@@ -39,10 +39,10 @@
 #include "NLInput.h"
 #include "AnimationSceneNode.h"
 #include "UIController.h"
+#include <array>
 
 /** The thrust factor to convert player input into thrust */
 #define DEFAULT_THRUST 5.0f
-#define MAX_ABSORB 30
 /**
  * This class is the player avatar for the rocket lander game.
  *
@@ -104,6 +104,7 @@ protected:
     int _mode;
     int _refire;
     int _absorbValue;
+    int _maxAbsorb;
     int _firerate;
     int _healCooldown;
     int _health;
@@ -287,6 +288,8 @@ public:
     int getHealth() const { return _health; }
     
     int getMaxHealth() const { return _maxHealth; }
+    
+    int getMaxAbsorb() const { return _maxAbsorb; }
     /**
      * Sets the current ship health.
      *
@@ -405,6 +408,8 @@ public:
     
 #pragma mark -
 #pragma mark Physics
+    
+    void updateUI();
     /**
      * Applies the Velocity Movement for the Physics Engine
      *

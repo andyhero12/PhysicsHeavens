@@ -118,6 +118,7 @@ protected:
     SpawnerController _spawnerController;
     MonsterController _monsterController;
     
+    std::shared_ptr<cugl::JsonValue> _constants;
     /** Reference to the debug root of the scene graph */
     std::shared_ptr<cugl::scene2::SceneNode> _debugnode;
     
