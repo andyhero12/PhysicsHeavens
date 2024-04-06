@@ -10,7 +10,7 @@
 
 #define WORLD_SIZE 3
 
-#define DOG_SIZE Vec2(2, 2)
+#define DOG_SIZE Vec2(1.5, 1.5)
 
 void OverWorld::reset() {
     initDogModel();
@@ -35,7 +35,7 @@ bool OverWorld::initDogModel(){
     std::shared_ptr<AnimationSceneNode> smallDogRun = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
     smallDogRun->setAnchor(Vec2::ANCHOR_CENTER);
     //surely there is a more intelligent way to do this??
-    //smallDogRun->setContentSize(DOG_SIZE);
+    smallDogRun->setContentSize(DOG_SIZE);
     
     
     textures.clear();
@@ -50,7 +50,7 @@ bool OverWorld::initDogModel(){
     
     std::shared_ptr<AnimationSceneNode> smallDogIdle = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 15);
     smallDogIdle->setAnchor(Vec2::ANCHOR_CENTER);
-    //smallDogIdle->setContentSize(DOG_SIZE);
+    smallDogIdle->setContentSize(DOG_SIZE);
     
     textures.clear();
     textures.push_back(_assets->get<cugl::Texture>("smalldogrightbite"));
@@ -64,7 +64,7 @@ bool OverWorld::initDogModel(){
 
     std::shared_ptr<AnimationSceneNode> smallDogBite = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 15);
     smallDogBite->setAnchor(Vec2::ANCHOR_CENTER);
-    //smallDogBite->setContentSize(DOG_SIZE);
+    smallDogBite->setContentSize(DOG_SIZE);
     
     textures.clear();
     textures.push_back(_assets->get<cugl::Texture>("smalldogrightshoot"));
@@ -78,7 +78,7 @@ bool OverWorld::initDogModel(){
     
     std::shared_ptr<AnimationSceneNode> smallDogShoot = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 15);
     smallDogShoot->setAnchor(Vec2::ANCHOR_CENTER);
-    //smallDogShoot->setContentSize(DOG_SIZE);
+    smallDogShoot->setContentSize(DOG_SIZE);
 
     textures.clear();
     textures.push_back(_assets->get<cugl::Texture>("mediumdogrightrun"));
@@ -92,7 +92,7 @@ bool OverWorld::initDogModel(){
 
     std::shared_ptr<AnimationSceneNode> mediumDogRun = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
     mediumDogRun->setAnchor(Vec2::ANCHOR_CENTER);
-    //mediumDogRun->setContentSize(DOG_SIZE);
+    mediumDogRun->setContentSize(DOG_SIZE);
     
     
     textures.clear();
@@ -107,7 +107,7 @@ bool OverWorld::initDogModel(){
     
     std::shared_ptr<AnimationSceneNode> mediumDogIdle = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 15);
     mediumDogIdle->setAnchor(Vec2::ANCHOR_CENTER);
-    //mediumDogIdle->setContentSize(DOG_SIZE);
+    mediumDogIdle->setContentSize(DOG_SIZE);
     
     textures.clear();
     textures.push_back(_assets->get<cugl::Texture>("mediumdogrightbite"));
@@ -121,7 +121,7 @@ bool OverWorld::initDogModel(){
 
     std::shared_ptr<AnimationSceneNode> mediumDogBite = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
     mediumDogBite->setAnchor(Vec2::ANCHOR_CENTER);
-    //mediumDogBite->setContentSize(DOG_SIZE);
+    mediumDogBite->setContentSize(DOG_SIZE);
     
     textures.clear();
     textures.push_back(_assets->get<cugl::Texture>("mediumdogrightshoot"));
@@ -135,7 +135,7 @@ bool OverWorld::initDogModel(){
     
     std::shared_ptr<AnimationSceneNode> mediumDogShoot = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
     mediumDogShoot->setAnchor(Vec2::ANCHOR_CENTER);
-    //mediumDogShoot->setContentSize(DOG_SIZE);
+    mediumDogShoot->setContentSize(DOG_SIZE);
     
     
     textures.clear();
@@ -150,7 +150,7 @@ bool OverWorld::initDogModel(){
 
     std::shared_ptr<AnimationSceneNode> largeDogRun = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
     largeDogRun->setAnchor(Vec2::ANCHOR_CENTER);
-    //largeDogRun->setContentSize(DOG_SIZE);
+    largeDogRun->setContentSize(DOG_SIZE);
     
     
     textures.clear();
@@ -165,7 +165,7 @@ bool OverWorld::initDogModel(){
     
     std::shared_ptr<AnimationSceneNode> largeDogIdle = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 15);
     largeDogIdle->setAnchor(Vec2::ANCHOR_CENTER);
-    //largeDogIdle->setContentSize(DOG_SIZE);
+    largeDogIdle->setContentSize(DOG_SIZE);
     
     textures.clear();
     textures.push_back(_assets->get<cugl::Texture>("largedogrightbite"));
@@ -179,7 +179,7 @@ bool OverWorld::initDogModel(){
 
     std::shared_ptr<AnimationSceneNode> largeDogBite = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
     largeDogBite->setAnchor(Vec2::ANCHOR_CENTER);
-    //largeDogBite->setContentSize(DOG_SIZE);
+    largeDogBite->setContentSize(DOG_SIZE);
     
     textures.clear();
     textures.push_back(_assets->get<cugl::Texture>("largedogrightshoot"));
@@ -193,23 +193,26 @@ bool OverWorld::initDogModel(){
     
     std::shared_ptr<AnimationSceneNode> largeDogShoot = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
     largeDogShoot->setAnchor(Vec2::ANCHOR_CENTER);
-    //largeDogShoot->setContentSize(DOG_SIZE);
+    largeDogShoot->setContentSize(DOG_SIZE);
     
     
     // MAGIC NUMBER ALERT!!
     Vec2 dogPos = _level->getPlayerPos() / 32;
-    Size dogSize(2,2);
-    _dog = Dog::alloc(dogPos,dogSize);
+    _dog = Dog::alloc(dogPos, DOG_SIZE);
     _dog->setDebugColor(DYNAMIC_COLOR);
 
     _dog->setSmallAnimation(smallDogIdle, smallDogRun, smallDogBite, smallDogShoot);
     _dog->setMediumAnimation(mediumDogIdle, mediumDogRun, mediumDogBite, mediumDogShoot);
     _dog->setLargeAnimation(largeDogIdle, largeDogRun, largeDogBite, largeDogShoot);
     
-    std::shared_ptr<AnimationSceneNode> placeHolderDrawOver = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
+    //std::shared_ptr<AnimationSceneNode> placeHolderDrawOver = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
+    std::shared_ptr<cugl::scene2::SceneNode> placeHolderDrawOver = scene2::SceneNode::allocWithBounds(DOG_SIZE);
     // MORE MAGIC NUMBER ALERT
-    placeHolderDrawOver->setContentSize(DOG_SIZE);
+    
+    //placeHolderDrawOver->setContentSize(DOG_SIZE);
     _dog->setFinalDog(placeHolderDrawOver);
+    placeHolderDrawOver->setScale(DOG_SIZE.y / textures.at(0)->getHeight());
+    //placeHolderDrawOver->setAnchor(Vec2::ANCHOR_CENTER);
     
     std::shared_ptr<scene2::SceneNode> _uinode = scene2::SceneNode::alloc();
     _uinode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
