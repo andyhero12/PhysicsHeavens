@@ -17,12 +17,14 @@ int generateRandomInclusiveHighLow(int low, int high)
 }
 
 bool MonsterController::init(std::shared_ptr<cugl::JsonValue> data, OverWorld& overWorld,
+                             std::shared_ptr<cugl::scene2::SceneNode> worldNode,
      std::shared_ptr<cugl::scene2::SceneNode> debugNode){
     if (data){
         _current.clear();
         _pending.clear();
         monsterControllerSceneNode = cugl::scene2::SceneNode::alloc();
         _debugNode = debugNode;
+        _worldnode = worldNode;
         if (data->get("start")){
             auto initEnemies = data->get("start")->children();
             for (auto it = initEnemies.begin(); it != initEnemies.end(); it++){
@@ -49,7 +51,7 @@ void MonsterController::postUpdate(){
 void MonsterController::retargetToDecoy( OverWorld& overWorld){
     int totalTargets = overWorld.getTotalTargets(); // really brittle be careful
     for (std::shared_ptr<AbstractEnemy> enemy : getEnemies()){
-        enemy->setTargetIndex(totalTargets); // will add the pending decoy to real next iteration
+        enemy->setTargetIndex(totalTargets-1); // added pending decoy to this iteration
     }
 }
 void MonsterController::retargetCloset( OverWorld& overWorld){
@@ -148,6 +150,9 @@ void MonsterController::spawnStaticBasicEnemy(cugl::Vec2 pos, OverWorld& overWor
 }
 
 void MonsterController::spawnBombEnemy(cugl::Vec2 pos, OverWorld& overWorld){
+    if (!overWorld._isHost){
+        return;
+    }
     Size mySize(32,32);
     mySize /= 44;
     auto params = _bombEnemyFactory->serializeParams(pos, mySize, 3, 0);
@@ -157,4 +162,8 @@ void MonsterController::spawnBombEnemy(cugl::Vec2 pos, OverWorld& overWorld){
     if (auto static_enemy = std::dynamic_pointer_cast<AbstractEnemy>(pair.first)){
         _pending.emplace(static_enemy);
     }
+}
+void MonsterController::removeEnemy(std::shared_ptr<AbstractEnemy> enemy){
+    getNetwork()->getPhysController()->removeSharedObstacle(enemy);
+    enemy->getTopLevelNode()->removeFromParent();
 }

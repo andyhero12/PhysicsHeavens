@@ -12,6 +12,7 @@ void DecoySet::init(){
     _pendingDecoys.clear();
     _removedDecoys.clear();
     decoySetNode = cugl::scene2::SceneNode::alloc();
+    justAdded = false;
 }
 
 void DecoySet::update(float timestep){
@@ -42,6 +43,7 @@ void DecoySet::addNewDecoy(cugl::Vec2 pos){
     _pendingDecoys.emplace_back(newDecoy);
 }
 void DecoySet::postUpdate(){
+    justAdded = (_pendingDecoys.size() != 0);
     for (auto& decoy : _pendingDecoys){
         _currentDecoys.emplace_back(decoy);
     }

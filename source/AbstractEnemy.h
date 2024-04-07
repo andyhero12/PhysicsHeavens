@@ -56,7 +56,7 @@ public:
         _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
         runAnimations->animate(_curDirection, curAction == EnemyActions::RUN);
         attackAnimations->animate(_curDirection, curAction == EnemyActions::ATTACK);
-//        dogActions();
+        //        dogActions();
     }
     virtual void preUpdate(float dt, OverWorld& overWorld) = 0;
     
@@ -117,6 +117,9 @@ public:
         attackAnimations = attackingNode;
     }
     
+    std::shared_ptr<cugl::scene2::SceneNode> getTopLevelNode(){
+        return topLevelPlaceHolder;
+    }
 protected:
     int _maxHealth;
     int _health;

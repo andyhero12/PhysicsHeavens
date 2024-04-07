@@ -6,7 +6,7 @@
 //
 #include "BombEnemy.h"
 
-#define EXPLOSION_RADIUS 0.5
+#define EXPLOSION_RADIUS 1.5f
 #define CONTACT_DAMAGE 4
 #define EXPLOSION_DAMAGE 11
 #define DYNAMIC_COLOR   Color4::YELLOW
@@ -143,6 +143,6 @@ void BombEnemy::executeDeath(OverWorld& overWorld){
         return;
     }
     curDog->setHealth(curDog->getHealth() - getExplosionDamage());
-    CULog("Dog got exploded on\n");
+//    CULog("Dog got exploded on %d", curDog->getHealth());
 }
 
