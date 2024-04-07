@@ -43,7 +43,6 @@
 
 /** The thrust factor to convert player input into thrust */
 #define DEFAULT_THRUST 1.0f
-#define MAX_ABSORB 30
 
 #define DOG_SIZE Vec2(1.5, 1.5)
 /**
@@ -105,6 +104,7 @@ protected:
     int _mode;
     int _refire;
     int _absorbValue;
+    int _maxAbsorb;
     int _firerate;
     int _healCooldown;
     int _health;
@@ -288,6 +288,8 @@ public:
     int getHealth() const { return _health; }
     
     int getMaxHealth() const { return _maxHealth; }
+    
+    int getMaxAbsorb() const { return _maxAbsorb; }
     /**
      * Sets the current ship health.
      *
@@ -379,6 +381,8 @@ public:
     
 #pragma mark -
 #pragma mark Physics
+    
+    void updateUI();
     /**
      * Applies the Velocity Movement for the Physics Engine
      *

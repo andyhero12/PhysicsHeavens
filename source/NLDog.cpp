@@ -57,6 +57,7 @@ using namespace cugl;
 #define FIRE_RATE 25
 #define HEAL_RATE 50
 #define HEALTH 100
+#define MAX_ABSORB 30
 #define BITE_RADIUS 3.5f
 #define SHOOT_RADIUS 8.5f
 #define EXPLOSION_RADIUS 1.4f
@@ -91,6 +92,7 @@ bool Dog::init(const Vec2 pos, const Size size) {
     _mode = 0;
     _refire = 0;
     _absorbValue = 0;
+    _maxAbsorb = MAX_ABSORB;
     _firerate = FIRE_RATE;
     _healCooldown = 0;
     _health = HEALTH;
@@ -122,6 +124,11 @@ void Dog::dispose() {
 
 #pragma mark -
 #pragma mark Physics
+
+void Dog::updateUI(){
+    _uiController->setHealthBarTexture(((float)getHealth())/getMaxHealth());
+    _uiController->setSizeBarTexture(((float)getAbsorb())/getMaxAbsorb());
+}
 /**
  * Applies the Velocity Movement for the Physics Engine
  *
