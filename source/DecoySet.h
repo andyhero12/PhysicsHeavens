@@ -18,6 +18,7 @@ private:
     std::vector<std::shared_ptr<Decoy>> _currentDecoys;
     std::vector<std::shared_ptr<Decoy>> _removedDecoys;
     std::vector<std::shared_ptr<Decoy>> _pendingDecoys;
+    std::shared_ptr<cugl::Texture> _texture;
     bool justAdded;
 public:
     

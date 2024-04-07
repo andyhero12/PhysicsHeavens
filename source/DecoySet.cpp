@@ -7,6 +7,8 @@
 
 #include "DecoySet.h"
 
+#define DECOY_SIZE Size(1, 1)
+
 void DecoySet::init(){
     _currentDecoys.clear();
     _pendingDecoys.clear();
@@ -36,6 +38,7 @@ void DecoySet::setTexture(const std::shared_ptr<cugl::Texture> &value){
 void DecoySet::addNewDecoy(cugl::Vec2 pos){
     std::shared_ptr<Decoy> newDecoy = std::make_shared<Decoy>(pos);
     std::shared_ptr<cugl::scene2::SceneNode> decoyNode = cugl::scene2::PolygonNode::allocWithTexture(_texture);
+    decoyNode->setContentSize(DECOY_SIZE);
     decoyNode->setAnchor(Vec2::ANCHOR_CENTER);
     decoyNode->setPosition(pos);
     newDecoy->setSceneNode(decoyNode);
