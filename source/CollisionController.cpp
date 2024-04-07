@@ -125,7 +125,6 @@ bool CollisionController::monsterDogCollision(std::shared_ptr<Dog> curDog, std::
         float distance = norm.length();
         float impactDistance = 1.2;
         it++;
-        CULog("Distance %f", distance);
         if (distance < impactDistance) {
             if (enemy->canAttack()){
                 collision = true;
