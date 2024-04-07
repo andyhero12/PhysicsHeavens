@@ -81,30 +81,32 @@ using namespace cugl;
  * @return  true if the obstacle is initialized properly, false otherwise.
  */
 bool Dog::init(const Vec2 pos, const Size size) {
-    physics2::BoxObstacle::init(pos,size);
-    std::string name("rocket");
-    setName(name);
-    setDensity(DEFAULT_DENSITY);
-    setFriction(DEFAULT_FRICTION);
-    setRestitution(DEFAULT_RESTITUTION);
-    setFixedRotation(true);
-    setDogSize(DogSize::MEDIUM);
-    _mode = 0;
-    _refire = 0;
-    _absorbValue = 0;
-    _maxAbsorb = MAX_ABSORB;
-    _firerate = FIRE_RATE;
-    _healCooldown = 0;
-    _health = HEALTH;
-    _maxHealth = HEALTH;
-    _healRate = HEAL_RATE;
-    _explosionRadius = EXPLOSION_RADIUS;
-    _biteRadius = BITE_RADIUS;
-    _shootRadius = SHOOT_RADIUS;
-    prevDirection =AnimationSceneNode::Directions::EAST;
-    _curDirection = AnimationSceneNode::Directions::EAST;
+    if (physics2::BoxObstacle::init(pos,size)){
+        std::string name("rocket");
+        setName(name);
+        setDensity(DEFAULT_DENSITY);
+        setFriction(DEFAULT_FRICTION);
+        setRestitution(DEFAULT_RESTITUTION);
+        setFixedRotation(true);
+        setDogSize(DogSize::MEDIUM);
+        _mode = 0;
+        _refire = 0;
+        _absorbValue = 0;
+        _maxAbsorb = MAX_ABSORB;
+        _firerate = FIRE_RATE;
+        _healCooldown = 0;
+        _health = HEALTH;
+        _maxHealth = HEALTH;
+        _healRate = HEAL_RATE;
+        _explosionRadius = EXPLOSION_RADIUS;
+        _biteRadius = BITE_RADIUS;
+        _shootRadius = SHOOT_RADIUS;
+        prevDirection =AnimationSceneNode::Directions::EAST;
+        _curDirection = AnimationSceneNode::Directions::EAST;
+        return true;
+    }
     
-    return true;
+    return false;
 }
 
 
@@ -128,6 +130,13 @@ void Dog::dispose() {
 void Dog::updateUI(){
     _uiController->setHealthBarTexture(((float)getHealth())/getMaxHealth());
     _uiController->setSizeBarTexture(((float)getAbsorb())/getMaxAbsorb());
+}
+
+void Dog::updateClientAnimations(){
+    prevDirection =_curDirection;
+    if (getVX() != 0 || getVY() != 0){
+        _curDirection = AnimationSceneNode::convertRadiansToDirections(getLinearVelocity().getAngle());
+    }
 }
 /**
  * Applies the Velocity Movement for the Physics Engine

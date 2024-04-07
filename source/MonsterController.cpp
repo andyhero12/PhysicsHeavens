@@ -6,7 +6,7 @@
 //
 #include "MonsterController.h"
 
-
+#define DYNAMIC_COLOR   Color4::YELLOW
 int generateRandomInclusiveHighLow(int low, int high)
 {
     // Static used for the seed to ensure it's only seeded once
@@ -16,10 +16,13 @@ int generateRandomInclusiveHighLow(int low, int high)
     return dis(gen);
 }
 
-bool MonsterController::init(std::shared_ptr<cugl::JsonValue> data, OverWorld& overWorld){
-    if (data){ 
+bool MonsterController::init(std::shared_ptr<cugl::JsonValue> data, OverWorld& overWorld,
+     std::shared_ptr<cugl::scene2::SceneNode> debugNode){
+    if (data){
         _current.clear();
         _pending.clear();
+        monsterControllerSceneNode = cugl::scene2::SceneNode::alloc();
+        _debugNode = debugNode;
         if (data->get("start")){
             auto initEnemies = data->get("start")->children();
             for (auto it = initEnemies.begin(); it != initEnemies.end(); it++){
@@ -29,14 +32,14 @@ bool MonsterController::init(std::shared_ptr<cugl::JsonValue> data, OverWorld& o
                 pos.x = entry->get(0)->get(0)->asFloat(0) / 64;
                 pos.y = entry->get(0)->get(1)->asFloat(0) / 64;
                 spawnStaticBasicEnemy(pos, overWorld);
-//               pos += Vec2(20,20);
-//               spawnBombEnemy(pos,overWorld);
+               pos += Vec2(2,2);
+               spawnBombEnemy(pos,overWorld);
             }
         }
     }
     return true;
 }
-void MonsterController::postUpdate(cugl::Size size, float timestep){
+void MonsterController::postUpdate(){
     for (std::shared_ptr<AbstractEnemy> curEnemy: _pending){
         _current.insert(curEnemy);
     }
@@ -54,7 +57,7 @@ void MonsterController::retargetCloset( OverWorld& overWorld){
     int baseSize = (int) overWorld.getBaseSet()->_bases.size();
     int decoySize = (int) overWorld.getDecoys()->getCurrentDecoys().size();
     for (std::shared_ptr<AbstractEnemy> enemy : getEnemies()){
-        Vec2 enemyPos = enemy->getPos();
+        Vec2 enemyPos = enemy->getPosition();
         int index = 0;
         float dist = (enemyPos - dogPos).length();
         int sizeBases = baseSize;
@@ -78,7 +81,10 @@ void MonsterController::retargetCloset( OverWorld& overWorld){
         enemy->setTargetIndex(index);
     }
 }
-void MonsterController::update(cugl::Size size, float timestep, OverWorld& overWorld){
+void MonsterController::update(float timestep, OverWorld& overWorld){
+    if (!overWorld._isHost){
+        return;
+    }
     std::shared_ptr<DecoySet> decoySet = overWorld.getDecoys();
     if (decoySet->addedNewDecoy()){
         retargetToDecoy(overWorld);
@@ -89,111 +95,66 @@ void MonsterController::update(cugl::Size size, float timestep, OverWorld& overW
         return;
     }
     for (std::shared_ptr<AbstractEnemy> curEnemy: _current){
-        curEnemy->update(timestep, overWorld);
+        curEnemy->preUpdate(timestep, overWorld);
     }
 }
-void MonsterController::draw(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl::Size size,  std::shared_ptr<cugl::Font> font){
-    for (std::shared_ptr<AbstractEnemy> curEnemy: _current){
-        curEnemy->draw( batch, size, font);
-    }
-}
-
 void MonsterController::setMeleeAnimationData(std::shared_ptr<cugl::JsonValue> data,
-                           const std::shared_ptr<cugl::AssetManager> _assets){
-    int _framecols = data->getFloat("sprite cols", 0);
-    int _framesize = data->getFloat("sprite size", 0);
-    std::vector<std::shared_ptr<cugl::Texture>> textures;
-    textures.push_back(_assets->get<Texture>("basicEnemy0"));
-    textures.push_back(_assets->get<Texture>("basicEnemy1"));
-    int rows = _framesize / _framecols;
-    for(auto& text : textures) {
-        meleeAnimationData._sprite.push_back(cugl::SpriteSheet::alloc(text, rows, _framecols, _framesize));
-    }
-    meleeAnimationData._framesize = _framesize;
-    meleeAnimationData._framecols = _framecols;
+                           std::shared_ptr<cugl::AssetManager> _assets){
+    _staticMeleeFactory = StaticMeleeFactory::alloc(data, _assets);
+    _staticMeleeFactID = _network->getPhysController()->attachFactory(_staticMeleeFactory);
+    _meleeFactory = MeleeFactory::alloc(data, _assets);
+    _meleeFactID = _network->getPhysController()->attachFactory(_meleeFactory);
 }
 
 void MonsterController::setBombAnimationData(std::shared_ptr<cugl::JsonValue> data,
-                           const std::shared_ptr<cugl::AssetManager> _assets){
-    int _framecols = data->getFloat("sprite cols", 0);
-    int _framesize = data->getFloat("sprite size", 0);
-    std::vector<std::shared_ptr<cugl::Texture>> textures;
-    textures.push_back(_assets->get<Texture>("bombEnemyIdle"));
-//    textures.push_back(_assets->get<Texture>("monkey1"));
-//    textures.push_back(_assets->get<Texture>("monkey2"));
-//    textures.push_back(_assets->get<Texture>("monkey3"));
-//    textures.push_back(_assets->get<Texture>("monkey4"));
-//    textures.push_back(_assets->get<Texture>("monkey5"));
-//    textures.push_back(_assets->get<Texture>("monkey6"));
-//    textures.push_back(_assets->get<Texture>("monkey7"));
-    int rows = _framesize / _framecols;
-    for(auto& text : textures) {
-        bombAnimationData._sprite.push_back(cugl::SpriteSheet::alloc(text, rows, _framecols, _framesize));
-    }
-    bombAnimationData._framesize = _framesize;
-    bombAnimationData._framecols = _framecols;
+                        std::shared_ptr<cugl::AssetManager> _assets){
+    _bombEnemyFactory = BombFactory::alloc(data, _assets);
+    _bombEnemyFactID = _network->getPhysController()->attachFactory(_bombEnemyFactory);
 }
 
 void MonsterController::setHealthBar(std::shared_ptr<cugl::scene2::ProgressBar> bar){
     _healthBar = bar;
 }
 void MonsterController::spawnBasicEnemy(cugl::Vec2 pos, OverWorld& overWorld){
-    
-    std::vector<std::shared_ptr<cugl::SpriteSheet>>& _texture = meleeAnimationData._sprite;
-    int _framesize = meleeAnimationData._framesize;
-    int _framecols = meleeAnimationData._framecols;
+    if (!overWorld._isHost){
+        return;
+    }
     int numTargets =  overWorld.getTotalTargets();
     int chosenTarget = generateRandomInclusiveHighLow(0, numTargets-1);
-    if (_texture.size() > 0)
-    {
-        int rows = _framesize / _framecols;
-        if (_framesize % _framecols != 0)
-        {
-            rows++;
-        }
-        float _radius = std::max(_framecols, rows) / 2;
-        std::shared_ptr<MeleeEnemy> basic = std::make_shared<MeleeEnemy>(pos, 3, _radius, chosenTarget);
-        basic->setWalkingSprite(_texture, Vec2(0, 0));
-        basic->setHealthBar(_healthBar);
-        _pending.emplace(basic);
+    Size mySize(32,32);
+    mySize /= 44;
+    auto params = _meleeFactory->serializeParams(pos, mySize, 3, chosenTarget);
+    auto pair = _network->getPhysController()->addSharedObstacle(_meleeFactID, params);
+//        static_enemy->setHealthBar(_healthBar);
+    pair.first->setDebugScene(_debugNode);
+    if (auto static_enemy = std::dynamic_pointer_cast<AbstractEnemy>(pair.first)){
+        _pending.emplace(static_enemy);
     }
 }
+
 void MonsterController::spawnStaticBasicEnemy(cugl::Vec2 pos, OverWorld& overWorld){
-    
-    std::vector<std::shared_ptr<cugl::SpriteSheet>>& _texture = meleeAnimationData._sprite;
-    int _framesize = meleeAnimationData._framesize;
-    int _framecols = meleeAnimationData._framecols;
-    if (_texture.size() > 0)
-    {
-        int rows = _framesize / _framecols;
-        if (_framesize % _framecols != 0)
-        {
-            rows++;
-        }
-        float _radius = std::max(_framecols, rows) / 2;
-        std::shared_ptr<StaticMeleeEnemy> static_enemy = std::make_shared<StaticMeleeEnemy>(pos, 3, _radius, 0);
-        static_enemy->setWalkingSprite(_texture, Vec2(0, 0));
-        static_enemy->setHealthBar(_healthBar);
+    if (!overWorld._isHost){
+        return;
+    }
+    Size mySize(32,32);
+    mySize /= 44;
+    auto params = _staticMeleeFactory->serializeParams(pos, mySize, 3, 0);
+    auto pair = _network->getPhysController()->addSharedObstacle(_staticMeleeFactID, params);
+//        static_enemy->setHealthBar(_healthBar);
+    pair.first->setDebugScene(_debugNode);
+    if (auto static_enemy = std::dynamic_pointer_cast<AbstractEnemy>(pair.first)){
         _pending.emplace(static_enemy);
     }
 }
 
 void MonsterController::spawnBombEnemy(cugl::Vec2 pos, OverWorld& overWorld){
-    
-    std::vector<std::shared_ptr<cugl::SpriteSheet>>& _texture = bombAnimationData._sprite;
-    int _framesize = bombAnimationData._framesize;
-    int _framecols = bombAnimationData._framecols;
-    if (_texture.size() > 0)
-    {
-        int rows = _framesize / _framecols;
-        if (_framesize % _framecols != 0)
-        {
-            rows++;
-        }
-        float _radius = std::max(_framecols, rows) / 2;
-        std::shared_ptr<BombEnemy> bomb_enemy = std::make_shared<BombEnemy>(pos, 3, _radius, 0);
-        bomb_enemy->setWalkingSprite(_texture, Vec2(0, 0));
-        bomb_enemy->setHealthBar(_healthBar);
-        _pending.emplace(bomb_enemy);
+    Size mySize(32,32);
+    mySize /= 44;
+    auto params = _bombEnemyFactory->serializeParams(pos, mySize, 3, 0);
+    auto pair = _network->getPhysController()->addSharedObstacle(_bombEnemyFactID, params);
+//        static_enemy->setHealthBar(_healthBar);
+    pair.first->setDebugScene(_debugNode);
+    if (auto static_enemy = std::dynamic_pointer_cast<AbstractEnemy>(pair.first)){
+        _pending.emplace(static_enemy);
     }
 }

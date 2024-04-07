@@ -201,19 +201,6 @@ void GameScene::reset() {
     _backgroundWrapper = std::make_shared<World>(Vec2(0, 0), _level->getTiles(), _level->getBoundaries(), _assets->get<cugl::Texture>("tile"));
     
     populate();
-    
-    _spawnerController.init(_level->getSpawnersPos());
-    _spawnerController.setRootNode(_worldnode, _isHost);
-    
-    overWorld.reset();
-    overWorld.setRootNode(_worldnode, _debugnode, _world);
-    
-    _camera.init(overWorld.getDog()->getDogNode(), _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), overWorld.getDog()->getUINode(), 1000.0f);
-
-    addChild(_worldnode);
-    addChild(_debugnode);
-    addChild(overWorld.getDog()->getUINode());
-    
     std::function<void(const std::shared_ptr<physics2::Obstacle>&,const std::shared_ptr<scene2::SceneNode>&)> linkSceneToObsFunc = [=](const std::shared_ptr<physics2::Obstacle>& obs, const std::shared_ptr<scene2::SceneNode>& node) {
         this->linkSceneToObs(obs,node);
     };
@@ -224,6 +211,25 @@ void GameScene::reset() {
     }
 
     _factId = _network->getPhysController()->attachFactory(_crateFact);
+    
+    
+    _spawnerController.init(_level->getSpawnersPos());
+    _spawnerController.setRootNode(_worldnode, _isHost);
+    
+    overWorld.reset();
+    overWorld.setRootNode(_worldnode, _debugnode, _world);
+    
+    
+    _monsterController.setNetwork(_network);
+    _monsterController.setMeleeAnimationData(_constants->get("basicEnemy"), _assets);
+    _monsterController.setBombAnimationData(_constants->get("bomb"), _assets);
+    _monsterController.init(_constants->get("monsters"), overWorld, _debugnode);
+    _worldnode->addChild(_monsterController.getMonsterSceneNode());
+    _camera.init(overWorld.getDog()->getDogNode(), _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), overWorld.getDog()->getUINode(), 1000.0f);
+
+    addChild(_worldnode);
+    addChild(_debugnode);
+    addChild(overWorld.getDog()->getUINode());
     Application::get()->resetFixedRemainder();
 }
 
@@ -346,6 +352,18 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     addChild(_debugnode);
     
     populate();
+    std::function<void(const std::shared_ptr<physics2::Obstacle>&,const std::shared_ptr<scene2::SceneNode>&)> linkSceneToObsFunc = [=](const std::shared_ptr<physics2::Obstacle>& obs, const std::shared_ptr<scene2::SceneNode>& node) {
+        this->linkSceneToObs(obs,node);
+    };
+    
+    _network->enablePhysics(_world, linkSceneToObsFunc);
+    
+    if(!isHost){
+        _network->getPhysController()->acquireObs(_cannon2, 0);
+    }
+
+    _factId = _network->getPhysController()->attachFactory(_crateFact);
+    
     
     _spawnerController.setTexture(assets->get<Texture>("spawner"));
     _spawnerController.init(_level->getSpawnersPos());
@@ -357,28 +375,14 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     
     _camera.init(overWorld.getDog()->getDogNode(), _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), overWorld.getDog()->getUINode(), 1000.0f);
     
+    _monsterController.setNetwork(_network);
+    _monsterController.setMeleeAnimationData(_constants->get("basicEnemy"), assets);
+    _monsterController.setBombAnimationData(_constants->get("bomb"), assets);
+    _monsterController.init(_constants->get("monsters"), overWorld, _debugnode);
+//    _worldnode->addChild(_monsterController.getMonsterSceneNode());
+    
     _active = true;
     setDebug(false);
-
-    //Make a std::function reference of the linkSceneToObs function in game scene for network controller
-    std::function<void(const std::shared_ptr<physics2::Obstacle>&,const std::shared_ptr<scene2::SceneNode>&)> linkSceneToObsFunc = [=](const std::shared_ptr<physics2::Obstacle>& obs, const std::shared_ptr<scene2::SceneNode>& node) {
-        this->linkSceneToObs(obs,node);
-    };
-    
-    /**
-     * TODO: Call network controller to enable physics with linkSceneToObsFunc as the method to attach nodes to obstacles and attach the crate factory to the physics controller and set _factId to its return value.
-     *
-     * TODO: Acquire the ownership of _cannon2 if this machine is not the host.
-     */
-#pragma mark BEGIN SOLUTION
-    _network->enablePhysics(_world, linkSceneToObsFunc);
-    
-    if(!isHost){
-        _network->getPhysController()->acquireObs(_cannon2, 0);
-    }
-
-    _factId = _network->getPhysController()->attachFactory(_crateFact);
-#pragma mark END SOLUTION
 
 //TODO: For task 5, attach CrateEvent to the network controller
 #pragma mark BEGIN SOLUTION
@@ -531,35 +535,11 @@ void GameScene::populate() {
     addInitObstacle(_cannon1, _cannon1Node);
     addInitObstacle(_cannon2, _cannon2Node);
 }
-
-void GameScene::linkAllAnimationsToObject(const std::shared_ptr<physics2::Obstacle>& obj,
-                                          const std::vector<std::shared_ptr<scene2::SceneNode>>& vecNodes) {
-    
-    for (const std::shared_ptr<scene2::SceneNode>& node: vecNodes){
-        node->setPosition(obj->getPosition());
-        _worldnode->addChild(node);
-    }
-
-    // Dynamic objects need constant updating
-    if (obj->getBodyType() == b2_dynamicBody) {
-        obj->setListener([=](physics2::Obstacle* obs) {
-            float leftover = Application::get()->getFixedRemainder() / 1000000.f;
-            Vec2 pos = obs->getPosition() + leftover * obs->getLinearVelocity();
-            float angle = obs->getAngle() + leftover * obs->getAngularVelocity();
-            for (const std::shared_ptr<scene2::SceneNode>& node: vecNodes){
-                scene2::SceneNode* weak = node.get();
-                weak->setPosition(pos);
-                weak->setAngle(angle);
-            }
-        });
-    }
-}
 void GameScene::linkSceneToObs(const std::shared_ptr<physics2::Obstacle>& obj,
     const std::shared_ptr<scene2::SceneNode>& node) {
     
     node->setPosition(obj->getPosition());
     _worldnode->addChild(node);
-
     // Dynamic objects need constant updating
     if (obj->getBodyType() == b2_dynamicBody) {
         scene2::SceneNode* weak = node.get(); // No need for smart pointer in callback
@@ -594,17 +574,6 @@ void GameScene::addInitObstacle(const std::shared_ptr<physics2::Obstacle>& obj,
     linkSceneToObs(obj, node);
 }
 
-void GameScene::addInitObstacleLinkAnimation(const std::shared_ptr<physics2::Obstacle>& obj,
-                                      const std::vector<std::shared_ptr<scene2::SceneNode>>& vecNodes) {
-    _world->initObstacle(obj);
-    obj->setDebugScene(_debugnode);
-    if(_isHost){
-        _world->getOwnedObstacles().insert({obj,0});
-    }
-    linkAllAnimationsToObject(obj, vecNodes);
-}
-
-
 #pragma mark
 #pragma mark Physics Handling
 
@@ -629,20 +598,18 @@ void GameScene::preUpdate(float dt) {
 
     _camera.update(dt);
     overWorld.update(_input, computeActiveSize(), dt);
-    
-    
-//    _spawnerController.update(_monsterController, overWorld, dt);
-    
+    _spawnerController.update(_monsterController, overWorld, dt);
+    _monsterController.update( dt, overWorld);
     
 #pragma mark BEGIN SOLUTION
     if (_input.didChangeMode()){
         CULog("BIG CRATE COMING");
         _network->pushOutEvent(CrateEvent::allocCrateEvent(Vec2(DEFAULT_WIDTH/2,DEFAULT_HEIGHT/2)));
     }
-    if (_input.didPressReset()){
-        CULog("RESET COMING");
-        _network->pushOutEvent(GameResEvent::allocGameResEvent(Vec2(0,0)));
-    }
+//    if (_input.didPressReset()){
+//        CULog("RESET COMING");
+//        _network->pushOutEvent(GameResEvent::allocGameResEvent(Vec2(0,0)));
+//    }
 #pragma mark END SOLUTION
     
     float turnRate = _isHost ? DEFAULT_TURN_RATE : -DEFAULT_TURN_RATE;
@@ -652,6 +619,7 @@ void GameScene::preUpdate(float dt) {
 
 void GameScene::postUpdate(float dt) {
     //Nothing to do now
+    _monsterController.postUpdate();
     overWorld.postUpdate();
 }
 
@@ -689,6 +657,7 @@ void GameScene::fixedUpdate() {
         }
     }
 #pragma mark END SOLUTION
+    
     _world->update(FIXED_TIMESTEP_S);
 }
 

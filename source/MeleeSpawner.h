@@ -14,7 +14,6 @@ class MeleeSpawner: public AbstractSpawner{
 public:
     MeleeSpawner(int rate, cugl::Vec2 pos, int health, int delay);
     virtual void update(MonsterController& monsterController, OverWorld& overWorld, float timestep) override;
-//    virtual void draw(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl::Size size) override;
 };
 
 #endif /* MeleeSpawner_hpp */

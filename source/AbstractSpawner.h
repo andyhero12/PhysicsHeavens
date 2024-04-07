@@ -57,9 +57,7 @@ public:
     bool dead(){
         return _health <= 0;
     }
-//    
     virtual void update(MonsterController& monsterController, OverWorld& overWorld, float timestep) = 0;
-//    
-//    virtual void draw(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl::Size size) = 0;
+    
 };
 #endif /* AbstractSpawner_h */

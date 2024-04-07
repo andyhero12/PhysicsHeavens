@@ -9,26 +9,56 @@
 #define AbstractEnemy_h
 #include <cugl/cugl.h>
 #include "OverWorld.h"
-#include "Animation.h"
-
+#include "AnimationSceneNode.h"
 #define MAGIC_NUMBER_ENEMY_ANIMATION_FREQUENECY 4
-
-class AbstractEnemy {
+// Default physics values
+/** The density of this rocket */
+#define DEFAULT_DENSITY 1.0f
+/** The friction of this rocket */
+#define DEFAULT_FRICTION 0.1f
+/** The restitution of this rocket */
+#define DEFAULT_RESTITUTION 0.4f
+class AbstractEnemy : public cugl::physics2::BoxObstacle {
 public:
     
+    enum class EnemyActions : int {
+        RUN,
+        ATTACK
+    };
+    AbstractEnemy(){}
+    // Virtual destructor
+    virtual ~AbstractEnemy() {}
     
-    AbstractEnemy(cugl::Vec2 m_pos, int m_health, float m_radius, int m_targetIndex)
-    : position{m_pos}
-    , _health{m_health}
-    , _maxHealth{m_health}
-    , _radius{m_radius}
-    , targetIndex{m_targetIndex}
-    {
-        
+    bool init(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex){
+        bool result = physics2::BoxObstacle::init(m_pos,m_size);
+        if (result){
+            setDensity(DEFAULT_DENSITY);
+            setFriction(DEFAULT_FRICTION);
+            setRestitution(DEFAULT_RESTITUTION);
+            setFixedRotation(true);
+            
+            curAction = EnemyActions::RUN;
+            _health = m_health;
+            _maxHealth = m_health;
+            targetIndex = m_targetIndex;
+            _prevDirection =AnimationSceneNode::Directions::EAST;
+            _curDirection = AnimationSceneNode::Directions::EAST;
+            return true;
+        }
+        return false;
     }
-    virtual void draw(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl::Size size,  std::shared_ptr<cugl::Font> font) = 0;
     
-    virtual void update(float dt, OverWorld& overWorld) = 0;
+    void update(float delta) override{
+        Obstacle::update(delta);
+        // Decoupled so useless for now
+        _prevDirection =_curDirection;
+        Vec2 direction = getLinearVelocity();
+        _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
+        runAnimations->animate(_curDirection, curAction == EnemyActions::RUN);
+        attackAnimations->animate(_curDirection, curAction == EnemyActions::ATTACK);
+//        dogActions();
+    }
+    virtual void preUpdate(float dt, OverWorld& overWorld) = 0;
     
     virtual int getDamage() = 0;
     virtual bool canAttack() const = 0;
@@ -37,15 +67,7 @@ public:
     virtual void executeDeath(OverWorld& overWorld) {
         CULog("executing Death\n");
     }
-    // Virtual destructor
-    virtual ~AbstractEnemy() {}
     
-    cugl::Vec2 getPos() const {
-        return position;
-    }
-    void setPos(cugl::Vec2 m_pos){
-        position = m_pos;
-    }
     int getTargetIndex() const{
         return targetIndex;
     }
@@ -57,9 +79,6 @@ public:
     }
     void setHealth(int m_health) {
         _health = m_health;
-    }
-    int getRadius() const{
-        return _radius;
     }
     
     cugl::Vec2 getTargetPositionFromIndex(OverWorld& overWorld){
@@ -77,34 +96,38 @@ public:
         }
         return target_pos;
     }
-    void setWalkingSprite(std::vector<std::shared_ptr<cugl::SpriteSheet>>& anims, cugl::Vec2 origin ){
-        _walkingAnimations.setOrigin(origin);
-        _walkingAnimations = Animation(anims, MAGIC_NUMBER_ENEMY_ANIMATION_FREQUENECY, 0);
-    }
-    
-    void setAttackingSprite(std::vector<std::shared_ptr<cugl::SpriteSheet>>& anims, cugl::Vec2 origin ){
-        _attackingAnimations.setOrigin(origin);
-        _attackingAnimations = Animation(anims, MAGIC_NUMBER_ENEMY_ANIMATION_FREQUENECY, 0);
-    }
     
     void setHealthBar(std::shared_ptr<cugl::scene2::ProgressBar> bar){
         _healthBar = bar;
     }
     
-    const std::shared_ptr<cugl::SpriteSheet>& getSprite() const {
-        return _walkingAnimations.getSprite();
+    void setFinalEnemy(std::shared_ptr<cugl::scene2::SceneNode> baseNode){
+        topLevelPlaceHolder = baseNode;
+        topLevelPlaceHolder->removeAllChildren();
+        runAnimations->setPosition(topLevelPlaceHolder->getAnchor());
+        topLevelPlaceHolder->addChild(runAnimations);
+        attackAnimations->setPosition(topLevelPlaceHolder->getAnchor());
+        topLevelPlaceHolder->addChild(attackAnimations);
+    }
+    void setWalkingSceneNode(std::shared_ptr<AnimationSceneNode> walkingNode){
+        runAnimations = walkingNode;
+    }
+    
+    void setAttackingSceneNode(std::shared_ptr<AnimationSceneNode> attackingNode){
+        attackAnimations = attackingNode;
     }
     
 protected:
     int _maxHealth;
     int _health;
     int targetIndex;
-    cugl::Vec2 position;
-    Animation _walkingAnimations;
-    Animation _attackingAnimations;
+    EnemyActions curAction;
+    AnimationSceneNode::Directions _prevDirection;
+    AnimationSceneNode::Directions _curDirection;
+    std::shared_ptr<cugl::scene2::SceneNode> topLevelPlaceHolder;
+    std::shared_ptr<AnimationSceneNode> runAnimations;
+    std::shared_ptr<AnimationSceneNode> attackAnimations;
     /** The health  bar */
     std::shared_ptr<cugl::scene2::ProgressBar>  _healthBar;
-    float _radius;
-    bool attacking;
 };
 #endif /* AbstractEnemy_h */

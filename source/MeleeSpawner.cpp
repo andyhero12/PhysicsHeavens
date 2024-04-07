@@ -27,13 +27,3 @@ void MeleeSpawner::update(MonsterController& monsterController, OverWorld& overW
         monsterController.spawnBasicEnemy(getPos(),overWorld);
     }
 }
-//
-//void MeleeSpawner::draw(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl::Size size){ 
-//    cugl::Vec2 pos = getPos();
-//    cugl::Vec2 origin(0, 0);
-//    cugl::Affine2 trans;
-//    float scale = 1;
-//    trans.scale(scale / _texture->getHeight());
-//    trans.translate(pos);
-//    batch->draw(_texture, origin, trans);
-//}

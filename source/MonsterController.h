@@ -17,14 +17,29 @@
 #include <vector>
 #include <random>
 struct AnimationDataStruct{
-    std::vector<std::shared_ptr<cugl::SpriteSheet>> _sprite;
+    std::vector<std::shared_ptr<cugl::Texture>> _textures;
+    std::vector<std::shared_ptr<cugl::Texture>> _attackTextures;
     int _framesize;
     int _framecols;
+    int _freqAnimations;
 };
 class MonsterController{
 private:
+    
+    std::shared_ptr<StaticMeleeFactory> _staticMeleeFactory;
+    Uint32 _staticMeleeFactID;
+    
+    std::shared_ptr<MeleeFactory> _meleeFactory;
+    Uint32 _meleeFactID;
+    
+    std::shared_ptr<BombFactory> _bombEnemyFactory;
+    Uint32 _bombEnemyFactID;
+    
     std::unordered_set<std::shared_ptr<AbstractEnemy>> _current;
     std::unordered_set<std::shared_ptr<AbstractEnemy>> _pending;
+    
+    std::shared_ptr<NetEventController> _network;
+    std::shared_ptr<cugl::scene2::SceneNode> _debugNode;
     // Need a Wrapper class that contains each and every Sprite
     // Each one needs its own sprite
     
@@ -32,24 +47,31 @@ private:
     AnimationDataStruct meleeAnimationData;
     AnimationDataStruct bombAnimationData;
     std::shared_ptr<cugl::scene2::ProgressBar>  _healthBar;
+    
+    std::shared_ptr<cugl::scene2::SceneNode> monsterControllerSceneNode;
 public:
-        
+       
+    void setNetwork(std::shared_ptr<NetEventController> network){
+        _network = network;
+    }
+    std::shared_ptr<cugl::scene2::SceneNode> getMonsterSceneNode(){
+        return monsterControllerSceneNode;
+    }
     MonsterController(){
         
     }
     ~MonsterController(){
         
     }
-    bool init(std::shared_ptr<cugl::JsonValue> data, OverWorld& overWorld);
+    bool init(std::shared_ptr<cugl::JsonValue> data, OverWorld& overWorld,
+              std::shared_ptr<cugl::scene2::SceneNode> _debugNode);
     
     bool isEmpty(){
         return _current.size() == 0 && _pending.size() == 0;
     }
     void retargetToDecoy( OverWorld& overWorld);
     void retargetCloset( OverWorld& overWorld);
-    void update(cugl::Size size, float timestep, OverWorld& overWorld);
-    
-    void draw(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl::Size size,  std::shared_ptr<cugl::Font> font);
+    void update( float timestep, OverWorld& overWorld);
     
     std::unordered_set<std::shared_ptr<AbstractEnemy>>& getEnemies(){
         return _current;
@@ -58,12 +80,12 @@ public:
     void spawnBasicEnemy(cugl::Vec2 pos, OverWorld& overWorld);
     void spawnStaticBasicEnemy(cugl::Vec2 pos, OverWorld& overWorld);
     void spawnBombEnemy(cugl::Vec2 pos, OverWorld& overWorld);
-    void postUpdate(cugl::Size size, float timestep);
+    void postUpdate();
     
     void setMeleeAnimationData(std::shared_ptr<cugl::JsonValue> data,
-                               const std::shared_ptr<cugl::AssetManager> _assets);
+                            std::shared_ptr<cugl::AssetManager> _assets);
     void setBombAnimationData(std::shared_ptr<cugl::JsonValue> data,
-                               const std::shared_ptr<cugl::AssetManager> _assets);
+                            std::shared_ptr<cugl::AssetManager> _assets);
     
     void setHealthBar(std::shared_ptr<cugl::scene2::ProgressBar> bar);
     
