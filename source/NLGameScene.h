@@ -183,11 +183,6 @@ protected:
      */
     void addInitObstacle(const std::shared_ptr<cugl::physics2::Obstacle> &obj,
                          const std::shared_ptr<cugl::scene2::SceneNode> &node);
-
-    void addInitObstacleLinkAnimation(const std::shared_ptr<physics2::Obstacle>& obj,
-                                                 const std::vector<std::shared_ptr<scene2::SceneNode>>& vecNodes);
-    void linkAllAnimationsToObject(const std::shared_ptr<physics2::Obstacle>& obj,
-                                   const std::vector<std::shared_ptr<scene2::SceneNode>>& vecNodes);
     /**
      * This method links a scene node to the obstacle.
      *

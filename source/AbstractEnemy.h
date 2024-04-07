@@ -51,10 +51,11 @@ public:
     void update(float delta) override{
         Obstacle::update(delta);
         // Decoupled so useless for now
-        if (topLevelPlaceHolder){
-            topLevelPlaceHolder->setPosition(getPosition()*44.0);
-            topLevelPlaceHolder->setAngle(getAngle());
-        }
+        _prevDirection =_curDirection;
+        Vec2 direction = getLinearVelocity();
+        _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
+        runAnimations->animate(_curDirection, curAction == EnemyActions::RUN);
+        attackAnimations->animate(_curDirection, curAction == EnemyActions::ATTACK);
 //        dogActions();
     }
     virtual void preUpdate(float dt, OverWorld& overWorld) = 0;

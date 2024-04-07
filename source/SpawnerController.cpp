@@ -23,9 +23,9 @@ int generateRandomValue(int left, int right) {
 }
 
 void SpawnerController::update(MonsterController& monsterController, OverWorld& overWorld, float timestep){
-//    for(auto& spawner : _spawners) {
-//        spawner->update(monsterController, overWorld, timestep);
-//    }
+    for(auto& spawner : _spawners) {
+        spawner->update(monsterController, overWorld, timestep);
+    }
     
     
     auto it = _spawners.begin();

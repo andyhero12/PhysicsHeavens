@@ -24,8 +24,6 @@ void MeleeSpawner::update(MonsterController& monsterController, OverWorld& overW
     _timeElapsed += timestep;
     if (canSpawn()){
         reloadSpawner();
-        if (overWorld._isHost){
-            monsterController.spawnBasicEnemy(getPos(),overWorld);
-        }
+        monsterController.spawnBasicEnemy(getPos(),overWorld);
     }
 }

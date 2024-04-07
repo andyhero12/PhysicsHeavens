@@ -14,6 +14,9 @@
  */
 std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode>> StaticMeleeFactory::createObstacle(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex) {
     std::vector<std::shared_ptr<cugl::Texture>>& _textures = staticEnemyStruct._walkTextures;
+    if (_textures.size() == 0){
+        CULog("EMPTY TEXTURES");
+    }
     int _framesize = staticEnemyStruct._framesize;
     int _framecols = staticEnemyStruct._framecols;
     int _freqAnims = staticEnemyStruct._freqAnimations;
@@ -23,6 +26,9 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
         rows++;
     }
     std::shared_ptr<StaticMeleeEnemy> static_enemy = StaticMeleeEnemy::alloc(m_pos, m_size, m_health, m_targetIndex);
+    static_enemy->setDebugColor(DYNAMIC_COLOR);
+    static_enemy->setAngleSnap(0); // Snap to the nearest degree
+    
     std::shared_ptr<cugl::scene2::SceneNode> topLevel = AnimationSceneNode::allocWithTextures(_textures, rows,_framecols, _framesize, _freqAnims);
     topLevel->setAnchor(Vec2::ANCHOR_CENTER);
     std::shared_ptr<AnimationSceneNode> runAnimations = AnimationSceneNode::allocWithTextures(_textures, rows,_framecols, _framesize, _freqAnims);
@@ -119,8 +125,8 @@ void StaticMeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
         }
     }
     // Animate
-    _prevDirection =_curDirection;
-    _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
-    runAnimations->animate(_curDirection, curAction == EnemyActions::RUN);
-    attackAnimations->animate(_curDirection, curAction == EnemyActions::ATTACK);
+//    _prevDirection =_curDirection;
+//    _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
+//    runAnimations->animate(_curDirection, curAction == EnemyActions::RUN);
+//    attackAnimations->animate(_curDirection, curAction == EnemyActions::ATTACK);
 }
