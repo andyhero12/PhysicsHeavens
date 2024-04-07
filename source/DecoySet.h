@@ -20,7 +20,7 @@ private:
     std::vector<std::shared_ptr<Decoy>> _pendingDecoys;
     std::shared_ptr<cugl::Texture> _texture;
     float _scale;
-    
+    bool justAdded;
 public:
     
     std::shared_ptr<cugl::scene2::SceneNode> getDecoySetNode(){
@@ -33,7 +33,7 @@ public:
         return _pendingDecoys;
     }
     bool addedNewDecoy(){
-        return _pendingDecoys.size() != 0;
+        return justAdded;
     }
     bool removedDecoy(){
         return _removedDecoys.size() != 0;

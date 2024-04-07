@@ -327,8 +327,8 @@ void Dog::resetCurrentAnimations(DogSize size){
 }
 
 void Dog::setHealth(int value){
-    _health = value;
-    _uiController->setHealthBarTexture(_health/_maxHealth);
+    _health = std::max(0,value);
+    _uiController->setHealthBarTexture(float(_health)/_maxHealth);
 }
 
 void Dog::addAbsorb(int value) {

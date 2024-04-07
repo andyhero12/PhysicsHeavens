@@ -40,6 +40,7 @@ private:
     
     std::shared_ptr<NetEventController> _network;
     std::shared_ptr<cugl::scene2::SceneNode> _debugNode;
+    std::shared_ptr<cugl::scene2::SceneNode> _worldnode;
     // Need a Wrapper class that contains each and every Sprite
     // Each one needs its own sprite
     
@@ -50,9 +51,13 @@ private:
     
     std::shared_ptr<cugl::scene2::SceneNode> monsterControllerSceneNode;
 public:
-       
+    
+    void removeEnemy(std::shared_ptr<AbstractEnemy> enemy);
     void setNetwork(std::shared_ptr<NetEventController> network){
         _network = network;
+    }
+    std::shared_ptr<NetEventController> getNetwork(){
+        return _network;
     }
     std::shared_ptr<cugl::scene2::SceneNode> getMonsterSceneNode(){
         return monsterControllerSceneNode;
@@ -64,6 +69,7 @@ public:
         
     }
     bool init(std::shared_ptr<cugl::JsonValue> data, OverWorld& overWorld,
+              std::shared_ptr<cugl::scene2::SceneNode> worldNode,
               std::shared_ptr<cugl::scene2::SceneNode> _debugNode);
     
     bool isEmpty(){

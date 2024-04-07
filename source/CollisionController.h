@@ -37,8 +37,6 @@
  */
 class CollisionController {
 private:
-    /** The window size (to support wrap-around collisions) */
-    cugl::Size _size;
 
 public:
     /**
@@ -72,18 +70,17 @@ public:
      *
      * @return true if initialization was successful
      */
-    bool init(cugl::Size size) {
-        _size = size;
+    bool init() {
         return true;
     }
     
-    void resolveBlowup(const cugl::Poly2& blastCircle, std::unordered_set<std::shared_ptr<AbstractEnemy>>& monsterEnemies, std::unordered_set<std::shared_ptr<AbstractSpawner>>& spawners);
+    void resolveBlowup(const cugl::Poly2& blastCircle, MonsterController& monsterController, std::unordered_set<std::shared_ptr<AbstractSpawner>>& spawners);
     
-    void hugeBlastCollision(const cugl::Poly2& blastRectangle, std::unordered_set<std::shared_ptr<AbstractEnemy>>& enemies);
+    void hugeBlastCollision(const cugl::Poly2& blastRectangle, MonsterController& monsterController);
     
     bool healFromBaseCollsion( BaseSet& bset, std::shared_ptr<Dog> ship);
     
-    void resolveBiteAttack(const cugl::Poly2& bitePolygon, std::unordered_set<std::shared_ptr<AbstractEnemy>>& monsterEnemies,
+    void resolveBiteAttack(const cugl::Poly2& bitePolygon, MonsterController& monsterController,
                            OverWorld& overWorld);
     
     // Post Update Functions
@@ -93,7 +90,7 @@ public:
     
     bool monsterDogCollision(std::shared_ptr<Dog> curDog, std::unordered_set<std::shared_ptr<AbstractEnemy>>& curEnemies);
     bool monsterDecoyCollision(std::shared_ptr<DecoySet> decoySet, std::unordered_set<std::shared_ptr<AbstractEnemy>>& curEnemies);
-    bool monsterBaseCollsion(std::shared_ptr<BaseSet> curBases, std::unordered_set<std::shared_ptr<AbstractEnemy>>& curEnemies);
+    bool monsterBaseCollsion(OverWorld& overWorld, std::shared_ptr<BaseSet> curBases, MonsterController& monsterController);
     
     
     void attackCollisions(OverWorld& overWorld, MonsterController& monsterController, SpawnerController& spawnerController);

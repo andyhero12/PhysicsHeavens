@@ -223,7 +223,7 @@ void GameScene::reset() {
     _monsterController.setNetwork(_network);
     _monsterController.setMeleeAnimationData(_constants->get("basicEnemy"), _assets);
     _monsterController.setBombAnimationData(_constants->get("bomb"), _assets);
-    _monsterController.init(_constants->get("monsters"), overWorld, _debugnode);
+    _monsterController.init(_constants->get("monsters"), overWorld, _worldnode, _debugnode);
     _worldnode->addChild(_monsterController.getMonsterSceneNode());
     _camera.init(overWorld.getDog()->getDogNode(), _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), overWorld.getDog()->getUINode(), 1000.0f);
 
@@ -378,8 +378,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     _monsterController.setNetwork(_network);
     _monsterController.setMeleeAnimationData(_constants->get("basicEnemy"), assets);
     _monsterController.setBombAnimationData(_constants->get("bomb"), assets);
-    _monsterController.init(_constants->get("monsters"), overWorld, _debugnode);
-//    _worldnode->addChild(_monsterController.getMonsterSceneNode());
+    _monsterController.init(_constants->get("monsters"), overWorld,_worldnode,  _debugnode);
+    _worldnode->addChild(_monsterController.getMonsterSceneNode());
+    _collisionController.init();
     
     _active = true;
     setDebug(false);
@@ -590,18 +591,24 @@ void GameScene::preUpdate(float dt) {
         setDebug(!isDebug());
     }
 
-    if (_input.didPressFire()) {
-        fireCrate();
-    }
+//    if (_input.didPressFire()) {
+//        fireCrate();
+//    }
 
     _camera.update(dt);
     overWorld.update(_input, computeActiveSize(), dt);
     _spawnerController.update(_monsterController, overWorld, dt);
     _monsterController.update( dt, overWorld);
     
+    if (_isHost){
+        _collisionController.intraOverWorldCollisions(overWorld);
+        _collisionController.overWorldMonsterControllerCollisions(overWorld, _monsterController);
+        _collisionController.attackCollisions(overWorld, _monsterController, _spawnerController);
+    }
+        
 #pragma mark BEGIN SOLUTION
     if (_input.didChangeMode()){
-        CULog("BIG CRATE COMING");
+//        CULog("BIG CRATE COMING");
         _network->pushOutEvent(CrateEvent::allocCrateEvent(Vec2(DEFAULT_WIDTH/2,DEFAULT_HEIGHT/2)));
     }
 //    if (_input.didPressReset()){

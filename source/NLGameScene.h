@@ -115,6 +115,7 @@ protected:
     /** Reference to the physics root of the scene graph */
     std::shared_ptr<cugl::scene2::SceneNode> _worldnode;
     OverWorld overWorld;
+    CollisionController _collisionController;
     SpawnerController _spawnerController;
     MonsterController _monsterController;
     

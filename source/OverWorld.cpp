@@ -288,6 +288,7 @@ void OverWorld::dogUpdate(InputController& _input, cugl::Size totalSize){
         _dog->moveOnInputSetAction(_input);
         _dog->updateUI();
         if (_input.didPressFire() && _dog->canFireWeapon()){
+            CULog("Send Attack");
             _network->pushOutEvent(BiteEvent::allocBiteEvent(_dog->getBiteCenter(), _dog->getDirInDegrees()));
             _dog->reloadWeapon();
         }
