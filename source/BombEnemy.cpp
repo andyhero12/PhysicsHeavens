@@ -27,17 +27,20 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
     static_enemy->setDebugColor(DYNAMIC_COLOR);
     static_enemy->setAngleSnap(0); // Snap to the nearest degree
     
-    std::shared_ptr<cugl::scene2::SceneNode> topLevel = AnimationSceneNode::allocWithTextures(_textures, rows,_framecols, _framesize, _freqAnims);
+    std::shared_ptr<cugl::scene2::SceneNode> topLevel = scene2::SceneNode::allocWithBounds(m_size);
     topLevel->setAnchor(Vec2::ANCHOR_CENTER);
     std::shared_ptr<AnimationSceneNode> runAnimations = AnimationSceneNode::allocWithTextures(_textures, rows,_framecols, _framesize, _freqAnims);
+    runAnimations->setContentSize(m_size);
     // Temp PlaceHolder
     runAnimations->setAnchor(Vec2::ANCHOR_CENTER);
     std::shared_ptr<AnimationSceneNode> attackAnimations = AnimationSceneNode::allocWithTextures(_textures, rows,_framecols, _framesize, _freqAnims);
     attackAnimations->setAnchor(Vec2::ANCHOR_CENTER);
-    topLevel->setPosition(m_pos * 44); // temp scale
+    attackAnimations->setContentSize(m_size);
+    topLevel->setPosition(m_pos);
     static_enemy->setWalkingSceneNode(runAnimations);
     static_enemy->setAttackingSceneNode(attackAnimations);
     static_enemy->setFinalEnemy(topLevel);
+    topLevel->setScale(m_size.height / _textures.at(0)->getHeight());
     static_enemy->setShared(true);
     
 //        static_enemy->setHealthBar(_healthBar);
