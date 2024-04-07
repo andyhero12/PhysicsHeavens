@@ -42,7 +42,7 @@
 #include <array>
 
 /** The thrust factor to convert player input into thrust */
-#define DEFAULT_THRUST 1.0f
+#define DEFAULT_THRUST 2.0f
 
 #define DOG_SIZE Vec2(1.5, 1.5)
 /**
