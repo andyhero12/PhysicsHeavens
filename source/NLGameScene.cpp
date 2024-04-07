@@ -202,7 +202,7 @@ void GameScene::reset() {
     
     populate();
     
-    _spawnerController.init(_level->getSpawnersPos(), _scale);
+    _spawnerController.init(_level->getSpawnersPos());
     _spawnerController.setRootNode(_worldnode, _isHost);
     
     overWorld.reset();
@@ -348,7 +348,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     populate();
     
     _spawnerController.setTexture(assets->get<Texture>("spawner"));
-    _spawnerController.init(_level->getSpawnersPos(), _scale);
+    _spawnerController.init(_level->getSpawnersPos());
     _spawnerController.setRootNode(_worldnode, _isHost);
     
     overWorld.init(assets, _level, computeActiveSize(),_network, isHost);

@@ -34,7 +34,7 @@ public:
     void setTexture(const std::shared_ptr<cugl::Texture>& value);
     void update(MonsterController& monsterController, OverWorld& overWorld, float timestep);
     
-    bool init(const std::vector<cugl::Vec2>& startLocs, float scale);
+    bool init(const std::vector<cugl::Vec2>& startLocs);
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl::Size size);
     void setRootNode(const std::shared_ptr<scene2::SceneNode>& _worldNode, bool isHost);
     bool win(){return _spawners.empty();}
@@ -44,7 +44,6 @@ public:
     }
 private:
     std::shared_ptr<cugl::scene2::SceneNode> baseSpawnerNode;
-    float _scale;
     std::shared_ptr<NetEventController> _network;
     bool _isHost;
 };

@@ -42,9 +42,8 @@ void SpawnerController::update(MonsterController& monsterController, OverWorld& 
     
 }
 
-bool SpawnerController::init(const std::vector<cugl::Vec2>& startLocs, float scale) {
+bool SpawnerController::init(const std::vector<cugl::Vec2>& startLocs) {
     _spawners.clear();
-    _scale = scale;
     baseSpawnerNode = cugl::scene2::SceneNode::alloc();
     for (int i =0; i< startLocs.size(); i++){
         cugl::Vec2 pos;
@@ -54,7 +53,7 @@ bool SpawnerController::init(const std::vector<cugl::Vec2>& startLocs, float sca
         std::shared_ptr<MeleeSpawner> curSpawner = std::make_shared<MeleeSpawner>(spawnRate,pos,health,0);
         curSpawner->setSceneNode(_texture);
         baseSpawnerNode->addChild(curSpawner->getSpawnerNode());
-        curSpawner->getSpawnerNode()->setPosition(pos * _scale);
+        curSpawner->getSpawnerNode()->setPosition(pos);
         _spawners.insert(curSpawner);
     }
     return true;

@@ -46,6 +46,7 @@ public:
     }
     void setSceneNode(std::shared_ptr<cugl::Texture> _texture){
         polyNode = cugl::scene2::PolygonNode::allocWithTexture(_texture);
+        polyNode->setContentSize(Vec2(1, 1));
     }
     const int getCnt() const {
         return _respawnCnt;
