@@ -16,27 +16,20 @@ int generateRandomInclusiveHighLow(int low, int high)
     return dis(gen);
 }
 
-bool MonsterController::init(std::shared_ptr<cugl::JsonValue> data, OverWorld& overWorld,
+bool MonsterController::init(OverWorld& overWorld,
                              std::shared_ptr<cugl::scene2::SceneNode> worldNode,
      std::shared_ptr<cugl::scene2::SceneNode> debugNode){
-    if (data){
-        _current.clear();
-        _pending.clear();
-        monsterControllerSceneNode = cugl::scene2::SceneNode::alloc();
-        _debugNode = debugNode;
-        _worldnode = worldNode;
-        if (data->get("start")){
-            auto initEnemies = data->get("start")->children();
-            for (auto it = initEnemies.begin(); it != initEnemies.end(); it++){
-                std::shared_ptr<JsonValue> entry = (*it);
-                Vec2 pos;
-                // TEMPORARY MAGIC NUMBERS
-                pos.x = entry->get(0)->get(0)->asFloat(0) / 64;
-                pos.y = entry->get(0)->get(1)->asFloat(0) / 64;
-                spawnStaticBasicEnemy(pos, overWorld);
-               pos += Vec2(2,2);
-               spawnBombEnemy(pos,overWorld);
-            }
+    _current.clear();
+    _pending.clear();
+    monsterControllerSceneNode = cugl::scene2::SceneNode::alloc();
+    _debugNode = debugNode;
+    _worldnode = worldNode;
+    for (const cugl::Vec3& cluster : overWorld.getLevelModel()->preSpawnLocs()){
+        float cx = cluster.x;
+        float cy = cluster.y;
+        int count = round(cluster.z);
+        for(int i = 0; i < count; i++) {
+            spawnStaticBasicEnemy(Vec2(cx,cy), overWorld);
         }
     }
     return true;

@@ -59,6 +59,8 @@ private:
     
     cugl::Vec2 _playerPos;
     
+    std::vector<cugl::Vec3> _basesPos;
+    std::vector<cugl::Vec3> _preSpawnLocs;
     std::vector<cugl::Vec2> _spawnersPos;
     
     std::vector<std::vector<int>> _tiles;
@@ -86,6 +88,12 @@ public:
     
     const std::vector<cugl::Vec2>& getSpawnersPos(){
         return _spawnersPos;
+    };
+    const std::vector<cugl::Vec3>& getBasesPos(){
+        return _basesPos;
+    };
+    const std::vector<cugl::Vec3>& preSpawnLocs(){
+        return _preSpawnLocs;
     };
     
     const std::vector<std::vector<int>>& getTiles()    { return _tiles;};
@@ -129,6 +137,10 @@ public:
 
 #pragma mark -
 #pragma mark Asset Loading
+    bool loadBaseLocations(const std::shared_ptr<JsonValue>& json);
+
+    bool loadPreSpawnedClusters(const std::shared_ptr<JsonValue>& json);
+    
     bool loadTiles(const std::shared_ptr<JsonValue>& json);
     
     bool loadBoundaries(const std::shared_ptr<JsonValue>& json);

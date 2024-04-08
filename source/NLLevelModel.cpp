@@ -74,12 +74,16 @@ void LevelModel::loadLayer(const std::shared_ptr<JsonValue>& json){
         loadTiles(json);
     }else if (type == "Boundaries"){
         loadBoundaries(json);
-    }else if (type == "Decorative"){
+    }else if (type == "Decor"){
         loadDecorations(json);
     }else if (type == "PlayerSpawn"){
         loadPlayer(json);
     }else if (type == "SpawnerLocs"){
         loadSpanwerLocations(json);
+    }else if (type == "BaseSpawn"){
+        loadBaseLocations(json);
+    }else if (type == "PreSpawnedClusters"){
+        loadPreSpawnedClusters(json);
     }else{
         CULog("TYPE NOT FOUND %s\n", type.data());
     }
@@ -100,6 +104,27 @@ void LevelModel::unload() {
 #pragma mark -
 #pragma mark Individual Loaders
 
+bool LevelModel::loadBaseLocations(const std::shared_ptr<JsonValue>& json) {
+    auto spawnerValues = json->get("objects");
+    for (int i = 0 ; i< spawnerValues->size() ;i++){
+        float baseX = json->get("objects")->get(i)->get("x")->asFloat();
+        float baseY = json->get("objects")->get(i)->get("y")->asFloat();
+        auto health = json->get("objects")->get("properties")->get(0)->get("value")->asFloat();
+        _basesPos.emplace_back(cugl::Vec3(baseX,baseY, health));
+    }
+    return true;
+}
+
+bool LevelModel::loadPreSpawnedClusters(const std::shared_ptr<JsonValue>& json) {
+    auto clusters = json->get("objects");
+    for (int i = 0 ; i< clusters->size() ;i++){
+        float spawnX = json->get("objects")->get(i)->get("x")->asFloat();
+        float spawnY = json->get("objects")->get(i)->get("y")->asFloat();
+        auto spawnNum = json->get("objects")->get("properties")->get(0)->get("value")->asFloat();
+        _preSpawnLocs.emplace_back(cugl::Vec3(spawnX,spawnY, spawnNum));
+    }
+    return true;
+}
 bool LevelModel::loadTiles(const std::shared_ptr<JsonValue>& json) {
     int row = json->get("width")->asInt();
     int column = json->get("height")->asInt();
