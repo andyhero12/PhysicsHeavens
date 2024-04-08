@@ -636,7 +636,7 @@ void GameScene::fixedUpdate() {
     //Hint: You can check if ptr points to an object of class A using std::dynamic_pointer_cast<A>(ptr). You should always check isInAvailable() before popInEvent().
     
 #pragma mark BEGIN SOLUTION
-    while(_network->isInAvailable()){
+    if(_network->isInAvailable()){
         auto e = _network->popInEvent();
         if(auto crateEvent = std::dynamic_pointer_cast<CrateEvent>(e)){
 //            CULog("BIG CRATE GOT");
@@ -651,7 +651,7 @@ void GameScene::fixedUpdate() {
             overWorld.getDecoys()->addNewDecoy(Vec2(decoyEvent->getPos().x,decoyEvent->getPos().y));
         }
         if (auto biteEvent = std::dynamic_pointer_cast<BiteEvent>(e)){
-//            CULog("Bite Event Got");
+            CULog("Bite Event Got");
             overWorld.processBiteEvent(biteEvent);
         }
         if (auto explodeEvent = std::dynamic_pointer_cast<ExplodeEvent>(e)){
