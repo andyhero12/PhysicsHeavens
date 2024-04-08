@@ -177,23 +177,29 @@ bool LevelModel::loadSpanwerLocations(const std::shared_ptr<JsonValue>& json){
     for (int i = 0 ; i< spawnerValues->size() ;i++){
         float spawnerX = json->get("objects")->get(i)->get("x")->asFloat();
         float spawnerY = json->get("objects")->get(i)->get("y")->asFloat();
-//        int hp;
-//        int initDelay;
-//        std::string primaryEnemy = "NULL";
-//        std::string secondaryEnemy = "NULL";
-//        std::string tertiaryEnemy = "NULL";
-//        std::shared_ptr<JsonValue> properties = json->get("objects")->get("properties");
-//        for (int i = 0; i < properties->size(); i++){
-//            std::string name = properties->get("name")->asString();
-//            if(name == "HP") {
-//                hp = properties->get("value")->asInt();
-//            }
-//            else if (name == "InitDelay") {
-//                
-//            }
-//        }
-        
-        
+        int hp;
+        int initDelay;
+        int regularDelay;
+        std::string primaryEnemy = "NULL";
+        std::string secondaryEnemy = "NULL";
+        std::string tertiaryEnemy = "NULL";
+        std::shared_ptr<JsonValue> properties = json->get("objects")->get("properties");
+        for (int i = 0; i < properties->size(); i++){
+            std::string name = properties->get("name")->asString();
+            if(name == "HP") {
+                hp = properties->get("value")->asInt();
+            }else if (name == "InitDelay") {
+                initDelay = properties->get("value")->asInt();
+            }else if (name == "PrimaryEnemy"){
+                primaryEnemy = properties->get("name")->asString();
+            }else if (name == "RegDelay"){
+                regularDelay = properties->get("value")->asInt();
+            }else if (name == "SecondaryEnemy"){
+                secondaryEnemy = properties->get("name")->asString();
+            }else if (name == "TertiaryEnemy"){
+                tertiaryEnemy = properties->get("name")->asString();
+            }
+        }
         _spawnersPos.emplace_back(cugl::Vec2(spawnerX, spawnerY));
     }
     return true;
