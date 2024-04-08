@@ -26,6 +26,21 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
         rows++;
     }
     std::shared_ptr<StaticMeleeEnemy> static_enemy = StaticMeleeEnemy::alloc(m_pos, m_size, m_health, m_targetIndex);
+    
+    // used to create progress bars
+    std::shared_ptr<cugl::Texture> barImage = _assets->get<Texture>("progress");
+    
+    float textureWidth = barImage->getWidth();
+    float textureHeight = barImage->getHeight();
+    
+    std::shared_ptr<cugl::Texture> bg = barImage->getSubTexture(0/textureWidth, 320/textureWidth, 0/textureHeight, 45/textureHeight);
+    std::shared_ptr<cugl::Texture> fg = barImage->getSubTexture(24/textureWidth, 296/textureWidth, 45/textureHeight, 90/textureHeight);
+    std::shared_ptr<cugl::Texture> left_cap = barImage->getSubTexture(0/textureWidth, 24/textureWidth, 45/textureHeight, 90/textureHeight);
+    std::shared_ptr<cugl::Texture> right_cap = barImage->getSubTexture(296/textureWidth, 320/textureWidth, 45/textureHeight, 90/textureHeight);
+    
+    std::shared_ptr<cugl::scene2::ProgressBar> _bar = cugl::scene2::ProgressBar::allocWithCaps(bg, fg, left_cap, right_cap);
+    _bar->setProgress(1.0f);
+    static_enemy->setHealthBar(_bar);
     static_enemy->setDebugColor(DYNAMIC_COLOR);
     static_enemy->setAngleSnap(0); // Snap to the nearest degree
     

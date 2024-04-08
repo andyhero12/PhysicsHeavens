@@ -79,6 +79,7 @@ public:
     }
     void setHealth(int m_health) {
         _health = m_health;
+        _healthBar->setProgress((float)_health/_maxHealth);
     }
     
     cugl::Vec2 getTargetPositionFromIndex(OverWorld& overWorld){
@@ -99,6 +100,9 @@ public:
     
     void setHealthBar(std::shared_ptr<cugl::scene2::ProgressBar> bar){
         _healthBar = bar;
+//        _healthBar->setContentSize(Size(32,4));
+        _healthBar->setScale(0.1);
+        _healthBar->setAnchor(Vec2::ANCHOR_CENTER);
     }
     
     void setFinalEnemy(std::shared_ptr<cugl::scene2::SceneNode> baseNode){
@@ -108,6 +112,9 @@ public:
         topLevelPlaceHolder->addChild(runAnimations);
         attackAnimations->setPosition(topLevelPlaceHolder->getAnchor());
         topLevelPlaceHolder->addChild(attackAnimations);
+        
+        _healthBar->setPosition(getPosition() + Vec2(-5,16));
+        topLevelPlaceHolder->addChild(_healthBar);
     }
     void setWalkingSceneNode(std::shared_ptr<AnimationSceneNode> walkingNode){
         runAnimations = walkingNode;
