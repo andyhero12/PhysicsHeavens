@@ -145,6 +145,9 @@ protected:
     bool _todoReset;
     /** Whether or not debug mode is active */
     bool _debug;
+    
+    /** Whether to pause */
+    bool _todoPause;
 
     std::shared_ptr<NetEventController> _network;
 
@@ -309,6 +312,20 @@ public:
      * @return true if the gameplay controller is currently active
      */
     void setToDoReset(bool value) { _todoReset = value; }
+    
+    /**
+     * Returns true if the gameplay controller is currently active
+     *
+     * @return true if the gameplay controller is currently active
+     */
+    bool needToPause() const { return _todoPause; }
+
+    /**
+     * Returns true if the gameplay controller is currently active
+     *
+     * @return true if the gameplay controller is currently active
+     */
+    void setToDoPause(bool value) { _todoPause = value; }
 
     /**
      * Returns true if debug mode is active.
@@ -351,6 +368,11 @@ public:
      * Resets the status of the game so that we can play again.
      */
     void reset();
+    
+    /**
+     * Pause the game
+     */
+    void pause();
 
 #pragma mark -
 #pragma mark Collision Handling

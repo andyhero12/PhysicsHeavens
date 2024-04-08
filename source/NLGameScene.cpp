@@ -233,6 +233,10 @@ void GameScene::reset() {
     Application::get()->resetFixedRemainder();
 }
 
+void GameScene::pause(){
+    // pause the game
+}
+
 #pragma mark -
 #pragma mark Constructors
 /**
@@ -244,7 +248,8 @@ void GameScene::reset() {
 GameScene::GameScene() : cugl::Scene2(),
 _debug(false),
 _isHost(false),
-_todoReset(false)
+_todoReset(false),
+_todoPause(false)
 {
 }
 
@@ -316,6 +321,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
 
     _network = network;
     _todoReset = false;
+    _todoPause = false;
     // Start up the input handler
     _level = assets->get<LevelModel>(LEVEL_ONE_KEY);
     _constants = assets->get<JsonValue>("constants");
@@ -579,14 +585,24 @@ void GameScene::addInitObstacle(const std::shared_ptr<physics2::Obstacle>& obj,
 #pragma mark Physics Handling
 
 void GameScene::preUpdate(float dt) {
-    if (needToReset()){
-         CULog("Reseting\n");
-         reset();
+//    if (needToReset()){
+//         CULog("Reseting\n");
+//         reset();
+//    }
+    if(_input.didPressPause()){
+        setToDoPause(_input.getPause());
+        pause();
     }
+    
     if (_input.didPressExit()) {
         Application::get()->quit();
     }
     _input.update();
+    
+    if(needToPause()){
+        // prevents reading input
+        return;
+    }
 
     // Process the toggled key commands
     if (_input.didPressDebug()) {
@@ -609,10 +625,10 @@ void GameScene::preUpdate(float dt) {
     }
         
 #pragma mark BEGIN SOLUTION
-    if (_input.didChangeMode()){
-//        CULog("BIG CRATE COMING");
-        _network->pushOutEvent(CrateEvent::allocCrateEvent(Vec2(DEFAULT_WIDTH/2,DEFAULT_HEIGHT/2)));
-    }
+//    if (_input.didChangeMode()){
+////        CULog("BIG CRATE COMING");
+//        _network->pushOutEvent(CrateEvent::allocCrateEvent(Vec2(DEFAULT_WIDTH/2,DEFAULT_HEIGHT/2)));
+//    }
 //    if (_input.didPressReset()){
 //        CULog("RESET COMING");
 //        _network->pushOutEvent(GameResEvent::allocGameResEvent(Vec2(0,0)));
@@ -642,10 +658,10 @@ void GameScene::fixedUpdate() {
 //            CULog("BIG CRATE GOT");
             processCrateEvent(crateEvent);
         }
-        if (auto resetEvent = std::dynamic_pointer_cast<GameResEvent>(e)){
-//            CULog("RESET EVENT GOT");
-            setToDoReset(true);
-        }
+//        if (auto resetEvent = std::dynamic_pointer_cast<GameResEvent>(e)){
+////            CULog("RESET EVENT GOT");
+//            setToDoReset(true);
+//        }
         if (auto decoyEvent = std::dynamic_pointer_cast<DecoyEvent>(e)){
 //            CULog("Decoy Event Got");
             overWorld.getDecoys()->addNewDecoy(Vec2(decoyEvent->getPos().x,decoyEvent->getPos().y));
