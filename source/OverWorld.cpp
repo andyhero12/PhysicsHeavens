@@ -311,15 +311,15 @@ void OverWorld::dogUpdate(InputController& _input, cugl::Size totalSize){
         }
         if (_input.didPressSpecial() && _dog->canFireWeapon()){
             _dog->reloadWeapon();
-            if (_dog->getMode() == "SHOOT"){
-                //            _dog->subAbsorb(5);
+            if (_dog->getMode() == "SHOOT" && _dog->getAbsorb() >= 5){
+                _dog->subAbsorb(5);
                 _network->pushOutEvent(ShootEvent::allocShootEvent(_dog->getShootCenter(), _dog->getDirInDegrees()));
-            }else if (_dog->getMode() == "BAIT"){
-                //            _dog->subAbsorb(5);
+            }else if (_dog->getMode() == "BAIT" && _dog->getAbsorb() >= 5){
+                _dog->subAbsorb(5);
                 //            _decoys->addNewDecoy(_dog->getPosition());
                 _network->pushOutEvent(DecoyEvent::allocDecoyEvent(_dog->getPosition()));
-            }else if (_dog->getMode() == "BOMB"){
-                //            _dog->subAbsorb(10);
+            }else if (_dog->getMode() == "BOMB" && _dog->getAbsorb() >= 5){
+                _dog->subAbsorb(5);
                 _network->pushOutEvent(ExplodeEvent::allocExplodeEvent(_dog->getPosition()));
             }else {
                 CULog("NOTHING\n");

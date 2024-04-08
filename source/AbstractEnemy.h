@@ -32,6 +32,8 @@ public:
     bool init(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex){
         bool result = physics2::BoxObstacle::init(m_pos,m_size);
         if (result){
+            _counter = 0;
+            updateRate = 10;
             setDensity(DEFAULT_DENSITY);
             setFriction(DEFAULT_FRICTION);
             setRestitution(DEFAULT_RESTITUTION);
@@ -100,7 +102,6 @@ public:
     
     void setHealthBar(std::shared_ptr<cugl::scene2::ProgressBar> bar){
         _healthBar = bar;
-//        _healthBar->setContentSize(Size(32,4));
         _healthBar->setScale(0.1);
         _healthBar->setAnchor(Vec2::ANCHOR_CENTER);
     }
@@ -131,6 +132,8 @@ protected:
     int _maxHealth;
     int _health;
     int targetIndex;
+    int updateRate;
+    int _counter;
     EnemyActions curAction;
     AnimationSceneNode::Directions _prevDirection;
     AnimationSceneNode::Directions _curDirection;

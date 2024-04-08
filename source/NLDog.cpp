@@ -175,9 +175,9 @@ void Dog::moveOnInputSetAction(InputController& _input){
     }
     if (_input.didPressFire() && canFireWeapon()){ // bite
         action = Actions::BITE;
-    }else if (_input.didPressSpecial() && modes.at(_mode) == "SHOOT"){ // attack
+    }else if (_input.didPressSpecial() && modes.at(_mode) == "SHOOT" && getAbsorb() >= 5){ // attack
         action = Actions::SHOOT;
-    }else if (_input.didPressSpecial() && getMode() == "EXPLODE"){
+    }else if (_input.didPressSpecial() && getMode() == "EXPLODE" && getAbsorb() >= 5){
         // maybe add explode animation later
     }else if (_vel.x != 0 || _vel.y != 0){ // walking
         action = Actions::RUN;
@@ -317,20 +317,20 @@ void Dog::setHealth(int value){
 }
 
 void Dog::addAbsorb(int value) {
-    _absorbValue += value;
-    _absorbValue = fmin(_absorbValue, MAX_ABSORB);
+    setAbsorbValue(std::fmin(MAX_ABSORB,getAbsorb() + value));
 }
 
 void Dog::subAbsorb(int value) {
-    _absorbValue -= value;
-    if (_absorbValue < 0){
-        _absorbValue = 0;
-    }
+    setAbsorbValue(std::fmax(0.0f,getAbsorb() - value));
 }
 void Dog::setAbsorbValue(int value){
     _absorbValue = value;
     _absorbValue = fmin(_absorbValue, MAX_ABSORB);
     _uiController->setSizeBarTexture(_absorbValue/MAX_ABSORB);
+    float dim = (float) value / MAX_ABSORB + 1.5;
+    cugl::Size nxtSize(dim,dim);
+    setDimension(nxtSize);
+    baseBlankNode->setScale(dim/64);
 }
 
 void Dog::setMode(int mode){

@@ -116,6 +116,10 @@ void StaticMeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
     if (_attackCooldown < 60){
         _attackCooldown++;
     }
+    
+    if (_counter < updateRate){
+        _counter++;
+    }
     cugl::Vec2 dog_pos = overWorld.getDog()->getPosition();
     
     
@@ -125,7 +129,8 @@ void StaticMeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
 //    CULog("distance %f %d", distance, DISTANCE_CUTOFF);
     if (distance > DISTANCE_CUTOFF){ // too far from origin return
         direction = original_pos - getPosition();
-        if (overWorld._isHost){
+        if (overWorld._isHost && _counter >= updateRate){
+            _counter = 0;
             if (direction.lengthSquared() >= 1){
                 setVX(direction.normalize().x);
                 setVY(direction.normalize().y);

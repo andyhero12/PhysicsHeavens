@@ -115,6 +115,7 @@ void BoxObstacle::resetDebug() {
         }
     } else {
         _debug->setPath(Rect(Vec2::ZERO,_dimension));
+        _debug->setContentSize(_debug->getPolygon().getBounds().size);
     }
     _debug->setAnchor(Vec2::ANCHOR_CENTER);
     _debug->setPosition(getPosition());

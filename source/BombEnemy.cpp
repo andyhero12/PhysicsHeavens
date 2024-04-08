@@ -136,9 +136,12 @@ void BombEnemy::preUpdate(float dt, OverWorld& overWorld){
         _attackCooldown++;
     }
     
+    if (_counter < updateRate){
+        _counter++;
+    }
     cugl::Vec2 target_pos = getTargetPositionFromIndex(overWorld);
     cugl::Vec2 direction = target_pos - getPosition();
-    if (overWorld._isHost){
+    if (overWorld._isHost && _counter >= updateRate){
         setVX(direction.normalize().x * 0.5);
         setVY(direction.normalize().y * 0.5);
     }

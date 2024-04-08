@@ -205,10 +205,10 @@ void GameScene::reset() {
         this->linkSceneToObs(obs,node);
     };
     _network->enablePhysics(_world, linkSceneToObsFunc);
-    
-    if(!_isHost){
-        _network->getPhysController()->acquireObs(_cannon2, 0);
-    }
+//    
+//    if(!_isHost){
+//        _network->getPhysController()->acquireObs(_cannon2, 0);
+//    }
 
     _factId = _network->getPhysController()->attachFactory(_crateFact);
     
@@ -358,9 +358,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     
     _network->enablePhysics(_world, linkSceneToObsFunc);
     
-    if(!isHost){
-        _network->getPhysController()->acquireObs(_cannon2, 0);
-    }
+//    if(!isHost){
+//        _network->getPhysController()->acquireObs(_cannon2, 0);
+//    }
 
     _factId = _network->getPhysController()->attachFactory(_crateFact);
     
@@ -533,8 +533,8 @@ void GameScene::populate() {
     _cannon2->setDebugColor(DYNAMIC_COLOR);
     _cannon2->setSensor(true);
 
-    addInitObstacle(_cannon1, _cannon1Node);
-    addInitObstacle(_cannon2, _cannon2Node);
+//    addInitObstacle(_cannon1, _cannon1Node);
+//    addInitObstacle(_cannon2, _cannon2Node);
 }
 void GameScene::linkSceneToObs(const std::shared_ptr<physics2::Obstacle>& obj,
     const std::shared_ptr<scene2::SceneNode>& node) {
@@ -704,39 +704,39 @@ void GameScene::beginContact(b2Contact* contact) {
  * @param  oldManfold  	The collision manifold before contact
  */
 void GameScene::beforeSolve(b2Contact* contact, const b2Manifold* oldManifold) {
-    float speed = 0;
-
-    // Use Ian Parberry's method to compute a speed threshold
-    b2Body* body1 = contact->GetFixtureA()->GetBody();
-    b2Body* body2 = contact->GetFixtureB()->GetBody();
-    b2WorldManifold worldManifold;
-    contact->GetWorldManifold(&worldManifold);
-    b2PointState state1[2], state2[2];
-    b2GetPointStates(state1, state2, oldManifold, contact->GetManifold());
-    for(int ii =0; ii < 2; ii++) {
-        if (state2[ii] == b2_addState) {
-            b2Vec2 wp = worldManifold.points[0];
-            b2Vec2 v1 = body1->GetLinearVelocityFromWorldPoint(wp);
-            b2Vec2 v2 = body2->GetLinearVelocityFromWorldPoint(wp);
-            b2Vec2 dv = v1-v2;
-            speed = b2Dot(dv,worldManifold.normal);
-        }
-    }
-    
-    // Play a sound if above threshold
-    if (speed > SOUND_THRESHOLD) {
-        // These keys result in a low number of sounds.  Too many == distortion.
-        physics2::Obstacle* data1 = reinterpret_cast<physics2::Obstacle*>(body1->GetUserData().pointer);
-        physics2::Obstacle* data2 = reinterpret_cast<physics2::Obstacle*>(body2->GetUserData().pointer);
-
-        if (data1 != nullptr && data2 != nullptr) {
-            std::string key = (data1->getName()+data2->getName());
-            auto source = _assets->get<Sound>(COLLISION_SOUND);
-            if (!AudioEngine::get()->isActive(key)) {
-                AudioEngine::get()->play(key, source, false, source->getVolume());
-            }
-        }
-    }
+//    float speed = 0;
+//
+//    // Use Ian Parberry's method to compute a speed threshold
+//    b2Body* body1 = contact->GetFixtureA()->GetBody();
+//    b2Body* body2 = contact->GetFixtureB()->GetBody();
+//    b2WorldManifold worldManifold;
+//    contact->GetWorldManifold(&worldManifold);
+//    b2PointState state1[2], state2[2];
+//    b2GetPointStates(state1, state2, oldManifold, contact->GetManifold());
+//    for(int ii =0; ii < 2; ii++) {
+//        if (state2[ii] == b2_addState) {
+//            b2Vec2 wp = worldManifold.points[0];
+//            b2Vec2 v1 = body1->GetLinearVelocityFromWorldPoint(wp);
+//            b2Vec2 v2 = body2->GetLinearVelocityFromWorldPoint(wp);
+//            b2Vec2 dv = v1-v2;
+//            speed = b2Dot(dv,worldManifold.normal);
+//        }
+//    }
+//    
+//    // Play a sound if above threshold
+//    if (speed > SOUND_THRESHOLD) {
+//        // These keys result in a low number of sounds.  Too many == distortion.
+//        physics2::Obstacle* data1 = reinterpret_cast<physics2::Obstacle*>(body1->GetUserData().pointer);
+//        physics2::Obstacle* data2 = reinterpret_cast<physics2::Obstacle*>(body2->GetUserData().pointer);
+//
+//        if (data1 != nullptr && data2 != nullptr) {
+//            std::string key = (data1->getName()+data2->getName());
+//            auto source = _assets->get<Sound>(COLLISION_SOUND);
+//            if (!AudioEngine::get()->isActive(key)) {
+//                AudioEngine::get()->play(key, source, false, source->getVolume());
+//            }
+//        }
+//    }
 }
 
 /**
