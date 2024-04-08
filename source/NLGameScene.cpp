@@ -235,6 +235,12 @@ void GameScene::reset() {
 
 void GameScene::pause(){
     // pause the game
+    
+    // might not need ?
+    setToDoPause(_input.getPause());
+    
+    // set menu to be visible and clickable
+    
 }
 
 #pragma mark -
@@ -590,19 +596,16 @@ void GameScene::preUpdate(float dt) {
 //         reset();
 //    }
     if(_input.didPressPause()){
-        setToDoPause(_input.getPause());
+        
+        CULog("Pausing game ? %d \n", _input.getPause());
         pause();
+        
     }
     
     if (_input.didPressExit()) {
         Application::get()->quit();
     }
     _input.update();
-    
-    if(needToPause()){
-        // prevents reading input
-        return;
-    }
 
     // Process the toggled key commands
     if (_input.didPressDebug()) {
