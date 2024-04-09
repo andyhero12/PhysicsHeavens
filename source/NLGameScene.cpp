@@ -238,6 +238,12 @@ void GameScene::pause(){
     
     // might not need ?
     setToDoPause(_input.getPause());
+    if(needToPause()){
+        _button->setVisible(true);
+    }
+    else{
+        _button->setVisible(false);
+    }
     
     // set menu to be visible and clickable
     
@@ -328,6 +334,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     _network = network;
     _todoReset = false;
     _todoPause = false;
+    
+    
     // Start up the input handler
     _level = assets->get<LevelModel>(LEVEL_ONE_KEY);
     _constants = assets->get<JsonValue>("constants");
@@ -397,18 +405,43 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     _active = true;
     setDebug(false);
 
-//TODO: For task 5, attach CrateEvent to the network controller
-#pragma mark BEGIN SOLUTION
+    // attach CrateEvent to the network controller
     _network->attachEventType<CrateEvent>();
     _network->attachEventType<DecoyEvent>();
     _network->attachEventType<BiteEvent>();
     _network->attachEventType<ExplodeEvent>();
     _network->attachEventType<ShootEvent>();
     _network->attachEventType<GameResEvent>();
-#pragma mark END SOLUTION
     
     // XNA nostalgia
     Application::get()->setClearColor(Color4f::CORNFLOWER);
+    
+    
+    // create the play button
+    std::shared_ptr<cugl::scene2::SceneNode> up = cugl::scene2::ProgressBar::alloc(Size(100,100));
+    up->setColor(Color4::RED);
+    
+    
+    std::shared_ptr<cugl::scene2::SceneNode> down = cugl::scene2::ProgressBar::alloc(Size(100,100));
+    down->setColor(Color4::BLUE);
+    
+    
+    _button = cugl::scene2::Button::alloc(up, down);
+    _button->addListener([=](const std::string& name, bool down) {
+        std::cout << " pressed paused -------------------------" << std::endl;
+    });
+    
+    
+    auto still = overWorld.getDog()->getUINode();
+    _button->setPushable(Path2(Rect(0,0, 2000, 2000)));
+//    _button->setPushable(Path2(Rect(_camera.getX() - 50, _camera.getY() - 50, 100, 100)));
+    
+    _button->setVisible(false);
+    still->addChild(_button);
+//    addChild(_button);
+//    _button->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    
+    
     return true;
 }
 
@@ -595,9 +628,10 @@ void GameScene::preUpdate(float dt) {
 //         CULog("Reseting\n");
 //         reset();
 //    }
+    
     if(_input.didPressPause()){
         
-        CULog("Pausing game ? %d \n", _input.getPause());
+//        CULog("Pausing game ? %d \n", _input.getPause());
         pause();
         
     }

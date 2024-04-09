@@ -150,6 +150,9 @@ protected:
     bool _todoPause;
 
     std::shared_ptr<NetEventController> _network;
+    
+    /** The "play" button */
+    std::shared_ptr<cugl::scene2::Button>  _button;
 
 #pragma mark Internal Object Management
 
