@@ -50,7 +50,7 @@
 #define BOUNDARY_FIELD      "boundary"
 
 /** The source for our level file */
-#define LEVEL_ONE_FILE      "json/levels/ugly_level.json"
+#define LEVEL_ONE_FILE      "json/levels/testerLevel.json"
 /** The key for our loaded level */
 #define LEVEL_ONE_KEY       "level1"
 

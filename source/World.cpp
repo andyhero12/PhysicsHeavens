@@ -12,8 +12,50 @@ using namespace cugl;
 #define TILE_NAME   "TILE"
 
 cugl::Size size(1,1);
-
-World::World (cugl::Vec2 bottomleft, 
+World::World(std::shared_ptr<LevelModel> _level, std::shared_ptr<cugl::AssetManager> assets){
+    _assets = assets;
+    const std::vector<std::vector<int>>& map = _level->getTiles();
+    const std::vector<std::vector<int>>& passable = _level->getBoundaries();
+    const std::vector<std::vector<int>>& decorations = _level->getDecorations();
+    const std::map<int,TileSet>& tileSetTextures = _level->getTileSetWithTextures();
+    tileWorld.resize(map.size());
+    for(int i = 0; i < map.size(); i++){
+        tileWorld.at(i).resize(map[0].size());
+    }
+    int originalRows = (int) tileWorld.size();
+    int originalCols = (int) tileWorld.at(0).size();
+    for (int i =0 ; i< originalRows; i++){
+        for (int j =0 ;j < originalCols; j++){
+            std::shared_ptr<Texture> subTexture = getBoxFromTileSet((map.at(i).at(j)),tileSetTextures);
+            Rect temp = Rect(Vec2(j,i), size); // VERY IMPORTANT DO NOT CHANGE Rotation Occurs Here
+            tileWorld.at(i).at(j) = TileInfo::alloc(temp.origin, size, Terrain::PASSABLE, getBoxFromTileSet((map.at(i).at(j)),tileSetTextures));
+        }
+    }
+    boundaryWorld.resize(map.size());
+    for(int i = 0; i < map.size(); i++){
+        boundaryWorld.at(i).resize(passable[0].size());
+    }
+    for (int i =0 ; i< originalRows; i++){
+        for (int j =0 ;j < originalCols; j++){
+            std::shared_ptr<Texture> subTexture = getBoxFromTileSet((passable.at(i).at(j)),tileSetTextures);
+            Rect temp = Rect(Vec2(j,i), size); // VERY IMPORTANT DO NOT CHANGE Rotation Occurs Here
+            boundaryWorld.at(i).at(j) = TileInfo::alloc(temp.origin, size, Terrain::IMPASSIBLE, getBoxFromTileSet((passable.at(i).at(j)),tileSetTextures));
+        }
+    }
+    
+    decorWorld.resize(map.size());
+    for(int i = 0; i < map.size(); i++){
+        decorWorld.at(i).resize(decorations.at(0).size());
+    }
+    for (int i =0 ; i< originalRows; i++){
+        for (int j =0 ;j < originalCols; j++){
+            std::shared_ptr<Texture> subTexture = getBoxFromTileSet((decorations.at(i).at(j)),tileSetTextures);
+            Rect temp = Rect(Vec2(j,i), size); // VERY IMPORTANT DO NOT CHANGE Rotation Occurs Here
+            decorWorld.at(i).at(j) = TileInfo::alloc(temp.origin, size, Terrain::IMPASSIBLE, getBoxFromTileSet((decorations.at(i).at(j)),tileSetTextures));
+        }
+    }
+}
+World::World (cugl::Vec2 bottomleft,
               const std::vector<std::vector<int>> &map,
               const std::vector<std::vector<int>> &passable, std::shared_ptr<cugl::Texture> tileset):start(bottomleft), tile(tileset){
     tileWorld.resize(map.size());
@@ -72,6 +114,44 @@ void World::draw(const std::shared_ptr<cugl::SpriteBatch>& batch){
     }
     
 }
+
+std::shared_ptr<cugl::Texture> World::getBoxFromTileSet(int position, const std::map<int,TileSet>& tileSets){
+    if (position == 0){
+        return nullptr;
+    }
+    auto it = tileSets.upper_bound(position);
+    auto neededIterator = std::prev(it);
+    const TileSet& curTile = neededIterator->second;
+//    CULog("%s", curTile.tileJson->toString().data());
+    int tileHeight = curTile.tileJson->get("tileheight")->asInt();
+    int tileWidth  = curTile.tileJson->get("tilewidth")->asInt();
+    int columns    =curTile.tileJson->get("columns")->asInt();
+    int boxSize = tileHeight;  // Each box is 32x32 pixels (currently)
+    float textureWidth = curTile.tileJson->get("imagewidth")->asFloat();
+    float textureHeight = curTile.tileJson->get("imageheight")->asFloat();
+    
+    CUAssert(textureWidth == curTile.textureTile->getWidth());
+    CUAssert(textureHeight == curTile.textureTile->getHeight());
+    int offset = position - curTile.firstGid;
+    int boxesPerRow = textureWidth / boxSize;
+    int row = offset / boxesPerRow;
+    int column = offset % boxesPerRow;
+
+    // Calculate the pixel coordinates for the kth box
+    int minS_px = (column) * boxSize;
+    int maxS_px = minS_px + boxSize;
+    int minT_px = row * boxSize;
+    int maxT_px = minT_px + boxSize;
+
+    GLfloat minS = (minS_px) / textureWidth;
+    GLfloat maxS = (maxS_px) / textureWidth;
+    GLfloat minT = (minT_px) / textureHeight;
+    GLfloat maxT = (maxT_px) / textureHeight;
+
+    // Get the subTexture
+    return curTile.textureTile->getSubTexture(minS, maxS, minT, maxT);
+}
+    
 std::shared_ptr<cugl::Texture> World::getBox(int position){
     int boxSize = 32;  // Each box is 32x32 pixels
     float textureWidth = tile->getWidth();

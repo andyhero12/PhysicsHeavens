@@ -13,11 +13,11 @@
 #define MAGIC_NUMBER_ENEMY_ANIMATION_FREQUENECY 4
 // Default physics values
 /** The density of this rocket */
-#define DEFAULT_DENSITY 1.0f
+#define DEFAULT_DENSITY 5.0f
 /** The friction of this rocket */
-#define DEFAULT_FRICTION 0.1f
+#define DEFAULT_FRICTION 0.0f
 /** The restitution of this rocket */
-#define DEFAULT_RESTITUTION 0.4f
+#define DEFAULT_RESTITUTION 0.0f
 class AbstractEnemy : public cugl::physics2::BoxObstacle {
 public:
     

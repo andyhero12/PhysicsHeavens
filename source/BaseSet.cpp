@@ -23,6 +23,16 @@ int BaseSet::getFirstHealth()
 {
     return (*_bases.begin())->getHealth();
 }
+bool BaseSet::init(const std::vector<cugl::Vec3>& basePoses)
+{
+    _bases.clear();
+    for (const cugl::Vec3& base : basePoses){
+        _bases.emplace_back(std::make_shared<Base>(base.z, cugl::Vec2(base.x,base.y)));
+    }
+    return true;
+}
+
+
 bool BaseSet::init(std::shared_ptr<cugl::JsonValue> data)
 {
     if (data)

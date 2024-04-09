@@ -241,10 +241,27 @@
                  "minfilter": "linear",
                  "magfilter": "nearest"
        },
-        "tile": {
+        "street_tiles": {
             "file": "textures/tile/tile.png",
             "magfilter": "nearest"
         },
+        
+        
+        "streets": {
+            "file": "textures/tile/streets.png",
+            "magfilter": "nearest"
+        },
+        "angelCafe": {
+            "file": "textures/tile/angelCafe.png",
+            "magfilter": "nearest"
+        },
+        "devilCafe": {
+            "file": "textures/tile/devilCafe.png",
+            "magfilter": "nearest"
+        },
+        
+        
+        
         "base": {
             "file": "textures/target.png",
               "minfilter": "linear",
@@ -271,8 +288,13 @@
         
 	},
     "jsons": {
+        "angelCafe": "json/assetsJson/angelCafe.json",
+        "devilCafe": "json/assetsJson/devilCafe.json",
+        "streets": "json/assetsJson/streets.json",
+        "street_tiles": "json/assetsJson/street_tiles.json",
         "server": "json/server.json",
         "constants": "json/constants.json"
+
     },
     "sounds": {
         "bump": {

@@ -68,7 +68,7 @@ public:
     ~MonsterController(){
         
     }
-    bool init(std::shared_ptr<cugl::JsonValue> data, OverWorld& overWorld,
+    bool init(OverWorld& overWorld,
               std::shared_ptr<cugl::scene2::SceneNode> worldNode,
               std::shared_ptr<cugl::scene2::SceneNode> _debugNode);
     
