@@ -434,7 +434,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
             std::cout << " pressed paused -------------------------" << std::endl;
         }
     });
-    _button->activate();
     
     auto still = overWorld.getDog()->getUINode();
     _button->setPushable(Path2(Rect(0,0,2000,1000)));
@@ -630,6 +629,9 @@ void GameScene::preUpdate(float dt) {
 //         CULog("Reseting\n");
 //         reset();
 //    }
+    if(_button->isVisible()){
+        _button->activate();
+    }
     
     if(_input.didPressPause()){
         // exits the game 
