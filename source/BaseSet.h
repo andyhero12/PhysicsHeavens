@@ -31,6 +31,7 @@ public:
     
     bool init(std::shared_ptr<cugl::JsonValue> data);
     
+    bool init(const std::vector<cugl::Vec3>& basePoses);
     bool baseLost();
     
     int getFirstHealth();

@@ -77,6 +77,9 @@ public:
     std::shared_ptr<BaseSet> getBaseSet(){
         return _bases;
     }
+    std::shared_ptr<LevelModel> getLevelModel(){
+        return _level;
+    }
     int getTotalTargets() const {
         return 1 + (int) _bases->_bases.size() + (int) _decoys->getCurrentDecoys().size();
     }

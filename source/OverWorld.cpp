@@ -197,7 +197,7 @@ bool OverWorld::initDogModel(){
     
     
     // MAGIC NUMBER ALERT!!
-    Vec2 dogPos = _level->getPlayerPos() / 32;
+    Vec2 dogPos = _level->getPlayerPos() / 64;
     _dog = Dog::alloc(dogPos, DOG_SIZE);
     _dog->setDebugColor(DYNAMIC_COLOR);
 
@@ -233,7 +233,8 @@ bool OverWorld::initDevil(){
 
 bool OverWorld::initBases(){
     _bases = std::make_shared<BaseSet>();
-    _bases->init(_constants->get("base"));
+    _bases->init(_level->getBasesPos()); 
+//    _bases->init(_constants->get("base"));
     _bases->setTexture(_assets->get<cugl::Texture>("base"));
     return true;
 }

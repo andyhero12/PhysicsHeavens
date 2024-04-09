@@ -88,7 +88,7 @@ bool Dog::init(const Vec2 pos, const Size size) {
         setFriction(DEFAULT_FRICTION);
         setRestitution(DEFAULT_RESTITUTION);
         setFixedRotation(true);
-        setDogSize(DogSize::MEDIUM);
+        setDogSize(DogSize::SMALL);
         _mode = 0;
         _refire = 0;
         _absorbValue = 0;
@@ -294,7 +294,7 @@ void Dog::setLargeAnimation(std::shared_ptr<AnimationSceneNode> idle, std::share
 // Decoupled so useless for now
 void Dog::setFinalDog(std::shared_ptr<cugl::scene2::SceneNode> baseNode){
     baseBlankNode = baseNode;
-    resetCurrentAnimations(DogSize::MEDIUM);
+    resetCurrentAnimations(DogSize::SMALL);
 }
 
 void Dog::resetCurrentAnimations(DogSize size){
@@ -324,6 +324,13 @@ void Dog::subAbsorb(int value) {
     setAbsorbValue(std::fmax(0.0f,getAbsorb() - value));
 }
 void Dog::setAbsorbValue(int value){
+    if (_absorbValue > 10 && value <= 10){
+        resetCurrentAnimations(DogSize::SMALL);
+    }else if (_absorbValue > 10 && _absorbValue < 20 && value <= 20){
+        resetCurrentAnimations(DogSize::MEDIUM);
+    }else if (_absorbValue >= 20 &&  value <= 30){
+        resetCurrentAnimations(DogSize::LARGE);
+    }
     _absorbValue = value;
     _absorbValue = fmin(_absorbValue, MAX_ABSORB);
     _uiController->setSizeBarTexture(_absorbValue/MAX_ABSORB);

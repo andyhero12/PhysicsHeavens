@@ -12,6 +12,7 @@
 #include <cugl/cugl.h>
 #include <unordered_set>
 #include <vector>
+#include "NLLevelModel.h"
 //
 // Might want to be more specific with tile types
 enum Terrain {
@@ -63,19 +64,31 @@ public:
 private:
     // Matrix with information about the overworld
     std::shared_ptr<cugl::Texture> tile;
+    std::shared_ptr<cugl::AssetManager> _assets;
     cugl::Vec2 start;
     
 public:
     std::vector<std::vector<std::shared_ptr<TileInfo>>> tileWorld;
+    std::vector<std::vector<std::shared_ptr<TileInfo>>> boundaryWorld;
+    std::vector<std::vector<std::shared_ptr<TileInfo>>> decorWorld;
     World () {};
+    World(std::shared_ptr<LevelModel> _level,std::shared_ptr<cugl::AssetManager> assets);
     World (cugl::Vec2 bottomleft,
            const std::vector<std::vector<int>> &map,
-           const std::vector<std::vector<int>> &passable, std::shared_ptr<cugl::Texture> tileset);
+           const std::vector<std::vector<int>> &passable, 
+           std::shared_ptr<cugl::Texture> tileset);
+    
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch);
     std::shared_ptr<cugl::Texture> getBox(int position);
-
+    std::shared_ptr<cugl::Texture> getBoxFromTileSet(int position, const std::map<int,TileSet>& tileSets);
     const std::vector<std::vector<std::shared_ptr<TileInfo>>>& getTileWorld(){
         return tileWorld;
+    }
+    const std::vector<std::vector<std::shared_ptr<TileInfo>>>& getBoundaryWorld(){
+        return boundaryWorld;
+    }
+    const std::vector<std::vector<std::shared_ptr<TileInfo>>>& getDecorWorld(){
+        return decorWorld;
     }
 };
 
