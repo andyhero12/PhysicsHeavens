@@ -318,6 +318,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     _todoReset = false;
     // Start up the input handler
     _level = assets->get<LevelModel>(LEVEL_ONE_KEY);
+    _level->setTileSetAssets(assets);
     _constants = assets->get<JsonValue>("constants");
     if (_level == nullptr) {
         // Might need to change later if too many assets Copy Tiled Demo?
@@ -336,8 +337,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
     float zoom = dimen.height / CANVAS_TILE_HEIGHT;
     
-    _backgroundWrapper = std::make_shared<World>(Vec2(0, 0), _level->getTiles(), _level->getBoundaries(), assets->get<Texture>("tile"));
-    
+//    _backgroundWrapper = std::make_shared<World>(Vec2(0, 0), _level->getTiles(), _level->getBoundaries(), assets->get<Texture>("tile"));
+    _backgroundWrapper = std::make_shared<World>(_level, _assets);
     _worldnode = scene2::SceneNode::alloc();
     _worldnode->setScale(zoom);
     _worldnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
@@ -756,8 +757,6 @@ Size GameScene::computeActiveSize() const {
     }
     return dimen;
 }
-
-
 void GameScene::addChildBackground(){
     const std::vector<std::vector<std::shared_ptr<TileInfo>>>& currentBackground = _backgroundWrapper->getTileWorld();
     int originalRows = (int) currentBackground.size();
@@ -768,12 +767,35 @@ void GameScene::addChildBackground(){
             auto image  = t->texture;
             auto sprite = scene2::PolygonNode::allocWithTexture(image);
             sprite->setContentSize(Vec2(1, 1));
-            if (i == 0 || j == 0 || i == originalRows -1 || j == originalCols - 1){
+            sprite->setPosition(t->getPosition());
+            _worldnode->addChild(sprite);
+        }
+    }
+    const std::vector<std::vector<std::shared_ptr<TileInfo>>>& currentBoundaries = _backgroundWrapper->getBoundaryWorld();
+    for (int i =0 ; i< originalRows; i++){
+        for (int j =0 ;j < originalCols; j++){
+            std::shared_ptr<TileInfo> t = currentBoundaries.at(i).at(j);
+            if (t->texture != nullptr){
+//                auto image  = t->texture;
+                auto sprite = scene2::PolygonNode::allocWithTexture(nullptr);
+                sprite->setContentSize(Vec2(1, 1));
+                sprite->setPosition(t->getPosition());
                 t->setDebugColor(DYNAMIC_COLOR);
                 addInitObstacle(t, sprite);
-            }else{
+            }
+        }
+    }
+    const std::vector<std::vector<std::shared_ptr<TileInfo>>>& decorWorld = _backgroundWrapper->getDecorWorld();
+    for (int i =0 ; i< originalRows; i++){
+        for (int j =0 ;j < originalCols; j++){
+            std::shared_ptr<TileInfo> t = decorWorld.at(i).at(j);
+            if (t->texture != nullptr){
+                auto image  = t->texture;
+                auto sprite = scene2::PolygonNode::allocWithTexture(image);
+                sprite->setContentSize(Vec2(1, 1));
                 sprite->setPosition(t->getPosition());
-                _worldnode->addChild(sprite);
+                t->setDebugColor(DYNAMIC_COLOR);
+                addInitObstacle(t, sprite);
             }
         }
     }

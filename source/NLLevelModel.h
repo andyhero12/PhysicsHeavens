@@ -28,6 +28,31 @@
 using namespace cugl;
 
 
+class TileSet{
+public:
+    int firstGid;
+    std::string source;
+    std::shared_ptr<cugl::Texture> textureTile;
+    std::shared_ptr<cugl::JsonValue> tileJson;
+    
+    TileSet(int m_gid, std::string& m_source, std::shared_ptr<cugl::AssetManager> _assets){
+        firstGid = m_gid;
+        source = m_source;
+        CULog("source %s", source.data());
+        textureTile = _assets->get<cugl::Texture>(source);
+        if (textureTile){
+            CULog("tile Found %s", source.data());
+        }else{
+            CULog("tile NOT FOUND %s", source.data());
+        }
+        tileJson = _assets->get<JsonValue>(source);
+        if (tileJson){
+            CULog("Json Found %s", source.data());
+        }else{
+            CULog("Json NOT FOUND %s", source.data());
+        }
+    }
+};
 #pragma mark -
 #pragma mark Level Model
 /**
@@ -49,13 +74,13 @@ private:
     
     std::shared_ptr<cugl::Texture> _defaultTexture;
     
-    int _levelHeight;
+    float _levelHeight;
     
-    int _levelWidth;
+    float _levelWidth;
     
-    int _tileHeight;
+    float _tileHeight;
     
-    int _tileWidth;
+    float _tileWidth;
     
     cugl::Vec2 _playerPos;
     
@@ -69,13 +94,28 @@ private:
     
     std::vector<std::vector<int>> _decors;
     
+    // ordered for lower bound
+    std::map<int,std::string> tileSetMapping;
+    std::map<int,TileSet> tilesMappingWithTextures;
 protected:
     
 #pragma mark Internal Helper
-
+    
     void loadLayer(const std::shared_ptr<JsonValue>& json);
     
 public:
+    
+    const std::map<int,std::string>& getTileSetMapping(){
+        return tileSetMapping;
+    }
+    const std::map<int,TileSet>& getTileSetWithTextures(){
+        return tilesMappingWithTextures;
+    }
+    void setTileSetAssets(std::shared_ptr<cugl::AssetManager> assets){
+        for (auto& kv : tileSetMapping){
+            tilesMappingWithTextures.insert({kv.first,TileSet(kv.first, kv.second,assets)});
+        }
+    }
     int getLevelHeight(){return _levelHeight;};
     
     int getLevelWidth(){return _levelWidth;};

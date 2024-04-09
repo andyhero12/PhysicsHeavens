@@ -197,7 +197,7 @@ bool OverWorld::initDogModel(){
     
     
     // MAGIC NUMBER ALERT!!
-    Vec2 dogPos = _level->getPlayerPos() / 32;
+    Vec2 dogPos = _level->getPlayerPos() / 64;
     _dog = Dog::alloc(dogPos, DOG_SIZE);
     _dog->setDebugColor(DYNAMIC_COLOR);
 

@@ -56,10 +56,23 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
         CUAssertLog(false, "Failed to load level file");
         return false;
     }
-    _levelHeight = json->get("height")->asInt();
-    _levelWidth = json->get("width")->asInt();
-    _tileHeight = json->get("tileheight")->asInt();
-    _tileWidth = json->get("tilewidth")->asInt();
+    _levelHeight = json->get("height")->asFloat();
+    _levelWidth = json->get("width")->asFloat();
+    _tileHeight = json->get("tileheight")->asFloat();
+    _tileWidth = json->get("tilewidth")->asFloat();
+    auto tileSetArray = json->get("tilesets");
+    for (int i =0 ; i< tileSetArray->size(); i++){
+        const std::shared_ptr<cugl::JsonValue>& tileImage = tileSetArray->get(i);
+        int firstGid = tileImage->get("firstgid")->asInt();
+        std::string source = tileImage->get("source")->asString();
+        std::string::size_type pos = source.find('.');
+        if (pos != std::string::npos){
+            source = source.substr(0, pos);
+        }else{
+            CUAssertLog(false, "failed with %s not ending with Json", source.data());
+        }
+        tileSetMapping.insert({firstGid,source});
+    }
     for (const std::shared_ptr<cugl::JsonValue>& layer: json->get("layers")->children()) {
         loadLayer(layer);
     }
@@ -109,7 +122,7 @@ bool LevelModel::loadBaseLocations(const std::shared_ptr<JsonValue>& json) {
     for (int i = 0 ; i< spawnerValues->size() ;i++){
         float baseX = json->get("objects")->get(i)->get("x")->asFloat();
         float baseY = json->get("objects")->get(i)->get("y")->asFloat();
-        auto health = json->get("objects")->get("properties")->get(0)->get("value")->asFloat();
+        auto health = json->get("objects")->get(i)->get("properties")->get(0)->get("value")->asFloat();
         _basesPos.emplace_back(cugl::Vec3(baseX,baseY, health));
     }
     return true;
@@ -120,45 +133,46 @@ bool LevelModel::loadPreSpawnedClusters(const std::shared_ptr<JsonValue>& json) 
     for (int i = 0 ; i< clusters->size() ;i++){
         float spawnX = json->get("objects")->get(i)->get("x")->asFloat();
         float spawnY = json->get("objects")->get(i)->get("y")->asFloat();
-        auto spawnNum = json->get("objects")->get("properties")->get(0)->get("value")->asFloat();
-        _preSpawnLocs.emplace_back(cugl::Vec3(spawnX,spawnY, spawnNum));
+        auto spawnNum = json->get("objects")->get(i)->get("properties")->get(0)->get("value")->asFloat();
+         
+        _preSpawnLocs.emplace_back(cugl::Vec3(spawnX/_tileWidth,(_levelHeight * _tileHeight - spawnY)/_tileWidth, spawnNum));
     }
     return true;
 }
 bool LevelModel::loadTiles(const std::shared_ptr<JsonValue>& json) {
-    int row = json->get("width")->asInt();
-    int column = json->get("height")->asInt();
+    int columns = json->get("width")->asInt();
+    int rows = json->get("height")->asInt();
     auto array = json->get("data")->children();
-    _tiles.resize(row,std::vector<int>(column,0));
-    for (int i =0 ; i< row; i++){
-        for (int j =0 ;j < column ;j ++){
-            _tiles.at(i).at(j) = array.at(i*column + j)->asInt();
+    _tiles.resize(rows,std::vector<int>(columns,0));
+    for (int i =0 ; i< rows; i++){
+        for (int j =0 ;j <columns ;j ++){
+            _tiles.at(rows - i - 1).at(j) = array.at(i*columns + j)->asInt();
         }
     }
     return true;
 }
 
 bool LevelModel::loadBoundaries(const std::shared_ptr<JsonValue>& json) {
-    int row = json->get("width")->asInt();
-    int column = json->get("height")->asInt();
+    int columns = json->get("width")->asInt();
+    int rows = json->get("height")->asInt();
     auto array = json->get("data")->children();
-    _walls.resize(row,std::vector<int>(column,0));
-    for (int i =0 ; i< row; i++){
-        for (int j =0 ;j < column ;j ++){
-            _walls.at(i).at(j) = array.at(i*column + j)->asInt();
+    _walls.resize(rows,std::vector<int>(columns,0));
+    for (int i =0 ; i< rows; i++){
+        for (int j =0 ;j <columns ;j ++){
+            _walls.at(rows - i - 1).at(j) = array.at(i*columns + j)->asInt();
         }
     }
     return true;
 }
 
 bool LevelModel::loadDecorations(const std::shared_ptr<JsonValue>& json){
-    int row = json->get("width")->asInt();
-    int column = json->get("height")->asInt();
+    int columns = json->get("width")->asInt();
+    int rows = json->get("height")->asInt();
     auto array = json->get("data")->children();
-    _decors.resize(row,std::vector<int>(column,0));
-    for (int i =0 ; i< row; i++){
-        for (int j =0 ;j < column ;j ++){
-            _decors.at(i).at(j) = array.at(i*column + j)->asInt();
+    _decors.resize(rows,std::vector<int>(columns,0));
+    for (int i =0 ; i< rows; i++){
+        for (int j =0 ;j <columns ;j ++){
+            _decors.at(rows - i - 1).at(j) = array.at(i*columns + j)->asInt();
         }
     }
     return true;
@@ -168,7 +182,7 @@ bool LevelModel::loadDecorations(const std::shared_ptr<JsonValue>& json){
 bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue>& json){
     float playerX = json->get("objects")->get(0)->get("x")->asFloat();
     float playerY = json->get("objects")->get(0)->get("y")->asFloat();
-    _playerPos = cugl::Vec2(playerX, playerY);
+    _playerPos = cugl::Vec2(playerX, _levelHeight * _tileHeight  -  playerY);
     return false;
 }
 
@@ -177,30 +191,30 @@ bool LevelModel::loadSpanwerLocations(const std::shared_ptr<JsonValue>& json){
     for (int i = 0 ; i< spawnerValues->size() ;i++){
         float spawnerX = json->get("objects")->get(i)->get("x")->asFloat();
         float spawnerY = json->get("objects")->get(i)->get("y")->asFloat();
-        int hp;
-        int initDelay;
-        int regularDelay;
-        std::string primaryEnemy = "NULL";
-        std::string secondaryEnemy = "NULL";
-        std::string tertiaryEnemy = "NULL";
-        std::shared_ptr<JsonValue> properties = json->get("objects")->get("properties");
-        for (int i = 0; i < properties->size(); i++){
-            std::string name = properties->get("name")->asString();
-            if(name == "HP") {
-                hp = properties->get("value")->asInt();
-            }else if (name == "InitDelay") {
-                initDelay = properties->get("value")->asInt();
-            }else if (name == "PrimaryEnemy"){
-                primaryEnemy = properties->get("name")->asString();
-            }else if (name == "RegDelay"){
-                regularDelay = properties->get("value")->asInt();
-            }else if (name == "SecondaryEnemy"){
-                secondaryEnemy = properties->get("name")->asString();
-            }else if (name == "TertiaryEnemy"){
-                tertiaryEnemy = properties->get("name")->asString();
-            }
-        }
-        _spawnersPos.emplace_back(cugl::Vec2(spawnerX, spawnerY));
+//        int hp;
+//        int initDelay;
+//        int regularDelay;
+//        std::string primaryEnemy = "NULL";
+//        std::string secondaryEnemy = "NULL";
+//        std::string tertiaryEnemy = "NULL";
+//        std::shared_ptr<JsonValue> properties = json->get("objects")->get("properties");
+//        for (int i = 0; i < properties->size(); i++){
+//            std::string name = properties->get("name")->asString();
+//            if(name == "HP") {
+//                hp = properties->get("value")->asInt();
+//            }else if (name == "InitDelay") {
+//                initDelay = properties->get("value")->asInt();
+//            }else if (name == "PrimaryEnemy"){
+//                primaryEnemy = properties->get("name")->asString();
+//            }else if (name == "RegDelay"){
+//                regularDelay = properties->get("value")->asInt();
+//            }else if (name == "SecondaryEnemy"){
+//                secondaryEnemy = properties->get("name")->asString();
+//            }else if (name == "TertiaryEnemy"){
+//                tertiaryEnemy = properties->get("name")->asString();
+//            }
+//        }
+        _spawnersPos.emplace_back(cugl::Vec2(spawnerX/_tileWidth, (_levelHeight * _tileHeight - spawnerY)/_tileWidth));
     }
     return true;
 }
