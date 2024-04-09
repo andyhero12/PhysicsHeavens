@@ -123,7 +123,7 @@ bool LevelModel::loadBaseLocations(const std::shared_ptr<JsonValue>& json) {
         float baseX = json->get("objects")->get(i)->get("x")->asFloat();
         float baseY = json->get("objects")->get(i)->get("y")->asFloat();
         auto health = json->get("objects")->get(i)->get("properties")->get(0)->get("value")->asFloat();
-        _basesPos.emplace_back(cugl::Vec3(baseX,baseY, health));
+        _basesPos.emplace_back(cugl::Vec3(baseX/_tileWidth,(_levelHeight * _tileHeight - baseY)/_tileWidth, health));
     }
     return true;
 }

@@ -794,8 +794,7 @@ void GameScene::addChildBackground(){
                 auto sprite = scene2::PolygonNode::allocWithTexture(image);
                 sprite->setContentSize(Vec2(1, 1));
                 sprite->setPosition(t->getPosition());
-                t->setDebugColor(DYNAMIC_COLOR);
-                addInitObstacle(t, sprite);
+                _worldnode->addChild(sprite);
             }
         }
     }

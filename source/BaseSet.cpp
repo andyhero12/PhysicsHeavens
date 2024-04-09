@@ -46,8 +46,8 @@ bool BaseSet::init(std::shared_ptr<cugl::JsonValue> data)
                 std::shared_ptr<cugl::JsonValue> entry = (*it);
                 cugl::Vec2 pos;
                 // TEMPORARY MAGIC NUMBERS
-                pos.x = entry->get(0)->get(0)->asFloat(0) / 64;
-                pos.y = entry->get(0)->get(1)->asFloat(0) / 64;
+                pos.x = entry->get(0)->get(0)->asFloat(0);
+                pos.y = entry->get(0)->get(1)->asFloat(0);
                 int health = entry->get(1)->asInt(0);
                 _bases.emplace_back(std::make_shared<Base>(health, pos));
             }
