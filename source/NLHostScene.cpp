@@ -103,6 +103,7 @@ bool HostScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::sha
 
     _startgame->addListener([this](const std::string& name, bool down) {
         if (down) {
+            std::cout << "starting game from host " << std::endl;
             startGame();
         }
     });
@@ -220,5 +221,10 @@ void HostScene::startGame(){
 #pragma mark BEGIN SOLUTION
     _network->startGame();
     _startGameClicked = true;
+    
 #pragma mark END SOLUTION
+}
+
+void HostScene::endGame(){
+    _startGameClicked = false;
 }

@@ -290,6 +290,7 @@ void NetApp::updateGameScene(float timestep) {
         _network->disconnect();
         _mainmenu.setActive(true);
         _hostgame.setActive(false);
+        _hostgame.endGame();
         _joingame.setActive(false);
         _status = MENU;
     }

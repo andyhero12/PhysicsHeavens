@@ -123,6 +123,9 @@ public:
      * Returns whether the back button is pressed
      */
     bool getBackClicked() { return _backClicked; };
+    
+    
+    void endGame();
 
 private:
     /**
@@ -142,7 +145,6 @@ private:
      * This method prompts the network controller to start the game.
      */
     void startGame();
-    
 };
 
 #endif /* __NL_HOST_SCENE_H__ */
