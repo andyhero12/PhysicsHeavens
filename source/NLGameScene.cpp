@@ -429,13 +429,15 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     
     _button = cugl::scene2::Button::alloc(up, down);
     _button->addListener([=](const std::string& name, bool down) {
-        status = Choice::EXIT;
-        std::cout << " pressed paused -------------------------" << std::endl;
+        if(needToPause()){
+            status = Choice::EXIT;
+            std::cout << " pressed paused -------------------------" << std::endl;
+        }
     });
-    
+    _button->activate();
     
     auto still = overWorld.getDog()->getUINode();
-    _button->setPushable(Path2(Rect(0,0,100,100)));
+    _button->setPushable(Path2(Rect(0,0,2000,1000)));
     
     _button->setVisible(false);
     still->addChild(_button);
@@ -636,6 +638,10 @@ void GameScene::preUpdate(float dt) {
         
     }
     
+    
+    if(_input.didPressReset()){
+        _button->setDown(true);
+    }
     if (_input.didPressExit()) {
         Application::get()->quit();
     }
