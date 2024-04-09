@@ -104,6 +104,21 @@ public:
  */
 class GameScene : public cugl::Scene2
 {
+public:
+    /**
+     * The menu choice.
+     *
+     * This state allows the top level application to know what the user
+     * chose.
+     */
+    enum Choice {
+        /** User wants to host a game */
+        GAME,
+        /** User wants to join a game */
+        EXIT
+    };
+    
+    Choice status;
 protected:
     std::shared_ptr<cugl::AssetManager> _assets;
 

@@ -150,7 +150,7 @@ void NetApp::preUpdate(float timestep){
         updateClientScene(timestep);
     }
     else if (_status == GAME){
-        _gameplay.preUpdate(timestep);
+        updateGameScene(timestep);
     }
 }
 
@@ -279,6 +279,14 @@ void NetApp::updateClientScene(float timestep) {
 		_status = MENU;
 	}
 #pragma mark END SOLUTION
+}
+
+
+void NetApp::updateGameScene(float timestep) {
+    _gameplay.preUpdate(timestep);
+    if(_gameplay.status == GameScene::EXIT){
+        _status = MENU;
+    }
 }
 
 /**

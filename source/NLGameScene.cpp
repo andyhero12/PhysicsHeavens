@@ -321,6 +321,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
  * @return  true if the controller is initialized properly, false otherwise.
  */
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rect, const Vec2 gravity, const std::shared_ptr<NetEventController> network, bool isHost) {
+    status = Choice::GAME;
     Size dimen = computeActiveSize();
 
     if (assets == nullptr) {
@@ -417,29 +418,28 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     Application::get()->setClearColor(Color4f::CORNFLOWER);
     
     
-    // create the play button
-    std::shared_ptr<cugl::scene2::SceneNode> up = cugl::scene2::ProgressBar::alloc(Size(100,100));
+    // create the EXIT button
+    std::shared_ptr<cugl::scene2::SceneNode> up = cugl::scene2::PolygonNode::allocWithPoly(Rect(0,0,100,100));
     up->setColor(Color4::RED);
     
     
-    std::shared_ptr<cugl::scene2::SceneNode> down = cugl::scene2::ProgressBar::alloc(Size(100,100));
+    std::shared_ptr<cugl::scene2::SceneNode> down = cugl::scene2::PolygonNode::allocWithPoly(Rect(0,0,100,100));
     down->setColor(Color4::BLUE);
     
     
     _button = cugl::scene2::Button::alloc(up, down);
     _button->addListener([=](const std::string& name, bool down) {
+        status = Choice::EXIT;
         std::cout << " pressed paused -------------------------" << std::endl;
     });
     
     
     auto still = overWorld.getDog()->getUINode();
-    _button->setPushable(Path2(Rect(0,0, 2000, 2000)));
-//    _button->setPushable(Path2(Rect(_camera.getX() - 50, _camera.getY() - 50, 100, 100)));
+    _button->setPushable(Path2(Rect(0,0,100,100)));
     
     _button->setVisible(false);
     still->addChild(_button);
-//    addChild(_button);
-//    _button->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    _button->setAnchor(Vec2::ANCHOR_CENTER);
     
     
     return true;
@@ -630,6 +630,8 @@ void GameScene::preUpdate(float dt) {
 //    }
     
     if(_input.didPressPause()){
+        // exits the game 
+//        status = Choice::EXIT;
         
 //        CULog("Pausing game ? %d \n", _input.getPause());
         pause();
