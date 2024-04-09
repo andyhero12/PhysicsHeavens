@@ -226,7 +226,6 @@ void GameScene::reset() {
     _monsterController.init(_constants->get("monsters"), overWorld, _worldnode, _debugnode);
     _worldnode->addChild(_monsterController.getMonsterSceneNode());
     _camera.init(overWorld.getDog()->getDogNode(), _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), overWorld.getDog()->getUINode(), 1000.0f);
-
     addChild(_worldnode);
     addChild(_debugnode);
     addChild(overWorld.getDog()->getUINode());
@@ -435,11 +434,10 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
         }
     });
     
-    auto still = overWorld.getDog()->getUINode();
     _button->setPushable(Path2(Rect(0,0,2000,1000)));
     
     _button->setVisible(false);
-    still->addChild(_button);
+    addChild(_button);
     _button->setAnchor(Vec2::ANCHOR_CENTER);
     
     
@@ -629,21 +627,15 @@ void GameScene::preUpdate(float dt) {
 //         CULog("Reseting\n");
 //         reset();
 //    }
+    _button->setPosition( getCamera()->getPosition().x,  getCamera()->getPosition().y);
     if(_button->isVisible()){
         _button->activate();
     }
     
     if(_input.didPressPause()){
-        // exits the game 
-//        status = Choice::EXIT;
         pause();
-        
     }
     
-    
-    if(_input.didPressReset()){
-        _button->setDown(true);
-    }
     if (_input.didPressExit()) {
         Application::get()->quit();
     }
