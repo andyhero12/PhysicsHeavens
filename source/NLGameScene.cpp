@@ -228,7 +228,9 @@ void GameScene::reset() {
     _camera.init(overWorld.getDog()->getDogNode(), _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), overWorld.getDog()->getUINode(), 1000.0f);
     addChild(_worldnode);
     addChild(_debugnode);
-    addChild(overWorld.getDog()->getUINode());
+    addChild(_uinode);
+    
+    _uinode->addChild(overWorld.getDog()->getUINode());
     Application::get()->resetFixedRemainder();
 }
 
@@ -369,8 +371,11 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     _debugnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _debugnode->setPosition(offset);
     
+    _uinode = scene2::SceneNode::alloc();
+    
     addChild(_worldnode);
     addChild(_debugnode);
+    addChild(_uinode);
     
     populate();
     std::function<void(const std::shared_ptr<physics2::Obstacle>&,const std::shared_ptr<scene2::SceneNode>&)> linkSceneToObsFunc = [=](const std::shared_ptr<physics2::Obstacle>& obs, const std::shared_ptr<scene2::SceneNode>& node) {
@@ -392,9 +397,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     
     overWorld.init(assets, _level, computeActiveSize(),_network, isHost);
     overWorld.setRootNode(_worldnode, _debugnode, _world);
-    addChild(overWorld.getDog()->getUINode());
+    _uinode->addChild(overWorld.getDog()->getUINode());
     
-    _camera.init(overWorld.getDog()->getDogNode(), _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), overWorld.getDog()->getUINode(), 1000.0f);
+    _camera.init(overWorld.getDog()->getDogNode(), _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), _uinode, 1000.0f);
     
     _monsterController.setNetwork(_network);
     _monsterController.setMeleeAnimationData(_constants->get("basicEnemy"), assets);

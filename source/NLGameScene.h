@@ -138,6 +138,8 @@ protected:
     /** Reference to the debug root of the scene graph */
     std::shared_ptr<cugl::scene2::SceneNode> _debugnode;
     
+    std::shared_ptr<cugl::scene2::SceneNode> _uinode;
+    
     std::shared_ptr<cugl::physics2::net::NetWorld> _world;
     
     std::shared_ptr<CrateFactory> _crateFact;
