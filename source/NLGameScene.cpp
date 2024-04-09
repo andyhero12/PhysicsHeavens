@@ -631,7 +631,7 @@ void GameScene::preUpdate(float dt) {
     
     if(_input.didPressPause()){
         // exits the game 
-//        status = Choice::EXIT;
+        status = Choice::EXIT;
         
 //        CULog("Pausing game ? %d \n", _input.getPause());
         pause();

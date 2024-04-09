@@ -127,6 +127,7 @@ void NetApp::onResume() {
 #pragma mark Application Loop
 
 void NetApp::preUpdate(float timestep){
+//    std::cout << _status << std::endl;
     if (_status == LOAD && _loading.isActive()) {
         _loading.update(0.01f);
     }
@@ -285,6 +286,11 @@ void NetApp::updateClientScene(float timestep) {
 void NetApp::updateGameScene(float timestep) {
     _gameplay.preUpdate(timestep);
     if(_gameplay.status == GameScene::EXIT){
+        _gameplay.dispose();
+        _network->disconnect();
+        _mainmenu.setActive(true);
+        _hostgame.setActive(false);
+        _joingame.setActive(false);
         _status = MENU;
     }
 }
