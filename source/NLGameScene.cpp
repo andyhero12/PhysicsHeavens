@@ -601,6 +601,7 @@ void GameScene::preUpdate(float dt) {
     _camera.update(dt);
     overWorld.update(_input, computeActiveSize(), dt);
     _spawnerController.update(_monsterController, overWorld, dt);
+    CULog("Boundary World Size in preupdate: %zu", overWorld.getWorld()->getBoundaryWorld().size());
     _monsterController.update( dt, overWorld);
     
     if (_isHost){

@@ -18,6 +18,9 @@
 #define DEFAULT_FRICTION 0.0f
 /** The restitution of this rocket */
 #define DEFAULT_RESTITUTION 0.0f
+#include "stlastar.h"
+#include "WorldSearchVertex.h"
+
 class AbstractEnemy : public cugl::physics2::BoxObstacle {
 public:
     
@@ -25,12 +28,14 @@ public:
         RUN,
         ATTACK
     };
+    
     AbstractEnemy(){}
     // Virtual destructor
     virtual ~AbstractEnemy() {}
     
     bool init(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex){
         bool result = physics2::BoxObstacle::init(m_pos,m_size);
+        
         if (result){
             _counter = 0;
             updateRate = 10;
@@ -45,6 +50,8 @@ public:
             targetIndex = m_targetIndex;
             _prevDirection =AnimationSceneNode::Directions::EAST;
             _curDirection = AnimationSceneNode::Directions::EAST;
+            _pathfinder = std::make_shared<AStarSearch<WorldSearchVertex>>();
+            
             return true;
         }
         return false;
@@ -53,6 +60,7 @@ public:
     void update(float delta) override{
         Obstacle::update(delta);
         // Decoupled so useless for now
+        //CULog("Enemy Position: (%d, %d)", static_cast<int>(getPosition().x), static_cast<int>(getPosition().y));
         _prevDirection =_curDirection;
         Vec2 direction = getLinearVelocity();
         _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
@@ -60,6 +68,7 @@ public:
         attackAnimations->animate(_curDirection, curAction == EnemyActions::ATTACK);
         //        dogActions();
     }
+    
     virtual void preUpdate(float dt, OverWorld& overWorld) = 0;
     
     virtual int getDamage() = 0;
@@ -83,6 +92,8 @@ public:
         _health = m_health;
         _healthBar->setProgress((float)_health/_maxHealth);
     }
+    
+    
     
     cugl::Vec2 getTargetPositionFromIndex(OverWorld& overWorld){
         const std::shared_ptr<Dog>& curDog = overWorld.getDog();
@@ -134,12 +145,15 @@ protected:
     int targetIndex;
     int updateRate;
     int _counter;
+    
     EnemyActions curAction;
     AnimationSceneNode::Directions _prevDirection;
     AnimationSceneNode::Directions _curDirection;
     std::shared_ptr<cugl::scene2::SceneNode> topLevelPlaceHolder;
     std::shared_ptr<AnimationSceneNode> runAnimations;
     std::shared_ptr<AnimationSceneNode> attackAnimations;
+    std::shared_ptr<AStarSearch<WorldSearchVertex>> _pathfinder;
+    
     /** The health  bar */
     std::shared_ptr<cugl::scene2::ProgressBar>  _healthBar;
 };

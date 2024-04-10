@@ -47,6 +47,7 @@ void MonsterController::retargetToDecoy( OverWorld& overWorld){
         enemy->setTargetIndex(totalTargets-1); // added pending decoy to this iteration
     }
 }
+
 void MonsterController::retargetCloset( OverWorld& overWorld){
     cugl::Vec2 dogPos = overWorld.getDog()->getPosition();
     int baseSize = (int) overWorld.getBaseSet()->_bases.size();
@@ -89,6 +90,8 @@ void MonsterController::update(float timestep, OverWorld& overWorld){
         retargetCloset(overWorld);
         return;
     }
+    
+    CULog("Boundary World Size in MonsterController: %zu", overWorld.getWorld()->getBoundaryWorld().size());
     for (std::shared_ptr<AbstractEnemy> curEnemy: _current){
         curEnemy->preUpdate(timestep, overWorld);
     }

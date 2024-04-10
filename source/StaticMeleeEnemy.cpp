@@ -120,8 +120,47 @@ void StaticMeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
     if (_counter < updateRate){
         _counter++;
     }
-    cugl::Vec2 dog_pos = overWorld.getDog()->getPosition();
+    CULog("Boundary World Size: %zu", overWorld.getWorld()->getBoundaryWorld().size());
     
+    cugl::Vec2 dog_pos = overWorld.getDog()->getPosition();
+    cugl::Vec2 my_pos = getPosition();
+    
+    
+    // Initialize start and end for the search
+    WorldSearchVertex start = WorldSearchVertex(static_cast<int>(my_pos.x), static_cast<int>(my_pos.y), overWorld.getWorld());
+    WorldSearchVertex end = WorldSearchVertex(static_cast<int>(dog_pos.x), static_cast<int>(dog_pos.y), overWorld.getWorld());
+    
+    _pathfinder->SetStartAndGoalStates(start, end);
+    
+    unsigned int SearchState = _pathfinder->SearchStep();
+    CULog("Boundary World Size after search step: %zu", overWorld.getWorld()->getBoundaryWorld().size());
+    
+    // Perform the search
+    while( SearchState == AStarSearch<WorldSearchVertex>::SEARCH_STATE_SEARCHING )
+    {
+        SearchState = _pathfinder->SearchStep();
+        CULog("Boundary World Size after search step: %zu", overWorld.getWorld()->getBoundaryWorld().size());
+    }
+        
+    // Check if the search was successful
+    if( SearchState == AStarSearch<WorldSearchVertex>::SEARCH_STATE_SUCCEEDED ){
+        
+        CULog("Found Solution from (%d, %d) to (%d, %d)", start.x, start.y, end.x, end.y);
+        
+        WorldSearchVertex *node = _pathfinder->GetSolutionStart();
+        
+        for( ;; ){
+            node = _pathfinder->GetSolutionNext();
+            
+            CULog("Next Node: (%d, %d)", static_cast<int>(node->x), static_cast<int>(node->y));
+            
+            if( !node ){
+                break;
+            }
+        };
+    }
+    
+    _pathfinder->FreeSolutionNodes();
     
     cugl::Vec2 org_dist = dog_pos - original_pos;
     float distance = org_dist.length();
