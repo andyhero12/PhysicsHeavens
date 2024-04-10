@@ -293,7 +293,8 @@
         "streets": "json/assetsJson/streets.json",
         "street_tiles": "json/assetsJson/street_tiles.json",
         "server": "json/server.json",
-        "constants": "json/constants.json"
+        "constants": "json/constants.json",
+        "mainmenu": "json/mainmenuassets.json"
 
     },
     "sounds": {

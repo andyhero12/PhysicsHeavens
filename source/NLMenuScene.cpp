@@ -54,26 +54,34 @@ bool MenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _assets = assets;
     
     // Acquire the scene built by the asset loader and resize it the scene
-    std::shared_ptr<scene2::SceneNode> scene = _assets->get<scene2::SceneNode>("menu");
-    scene->setContentSize(dimen);
-    scene->doLayout(); // Repositions the HUD
-    _choice = Choice::NONE;
-    _hostbutton = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("menu_host"));
-    _joinbutton = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("menu_join"));
+    //std::shared_ptr<scene2::SceneNode> scene = _assets->get<scene2::SceneNode>("menu");
+    //scene->setContentSize(dimen);
+    //scene->doLayout(); // Repositions the HUD
+    //_choice = Choice::NONE;
+    //_hostbutton = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("menu_host"));
+    //_joinbutton = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("menu_join"));
     
+    _assets->loadDirectory("json/mainmenuassets.json");
+    std::shared_ptr<scene2::SceneNode> layer = _assets->get<scene2::SceneNode>("Menu");
+    std::cout << dimen.width << "  " << dimen.height << std::endl;
+    layer->setContentSize(dimen);
+    layer->doLayout(); // This rearranges the children to fit the screen
+    _buttonset.push_back(_button1 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("Menu_startmenu_button1")));
+    _buttonset.push_back(_button2 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("Menu_startmenu_button2")));
+    _buttonset.push_back(_button3 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("Menu_startmenu_button3")));
     // Program the buttons
-    _hostbutton->addListener([this](const std::string& name, bool down) {
+    _button1->addListener([this](const std::string& name, bool down) {
         if (down) {
             _choice = Choice::HOST;
         }
     });
-    _joinbutton->addListener([this](const std::string& name, bool down) {
+    _button2->addListener([this](const std::string& name, bool down) {
         if (down) {
             _choice = Choice::JOIN;
         }
     });
 
-    addChild(scene);
+    addChild(layer);
     setActive(false);
     return true;
 }
