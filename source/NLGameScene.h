@@ -111,7 +111,7 @@ protected:
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
     InputController _input;
-//    CameraController _camera;
+    CameraController _camera;
     
     /** Reference to the root of the scene graph */
     std::shared_ptr<cugl::scene2::ScrollPane> _rootnode;

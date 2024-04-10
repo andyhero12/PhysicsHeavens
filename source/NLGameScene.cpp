@@ -297,17 +297,23 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     _worldnode = scene2::SceneNode::alloc();
     _worldnode->setScale(zoom);
     _worldnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-    _worldnode->setPosition(offset);
     
     _debugnode = scene2::SceneNode::alloc();
     _debugnode->setScale(zoom);
     _debugnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-    _debugnode->setPosition(offset);
     
     _uinode = scene2::SceneNode::alloc();
     
-    addChild(_worldnode);
-    addChild(_debugnode);
+    _rootnode = scene2::ScrollPane::allocWithBounds(computeActiveSize()* zoom * 10);
+    _rootnode->setContentSize(computeActiveSize()* zoom * 10);
+    _rootnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    _rootnode->setPosition(offset);
+
+    
+    addChild(_rootnode);
+    _rootnode->addChild(_worldnode);
+    _rootnode->addChild(_debugnode);
+    
     addChild(_uinode);
     
     populate();
@@ -332,7 +338,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     overWorld.setRootNode(_worldnode, _debugnode, _world);
     _uinode->addChild(overWorld.getDog()->getUINode());
     
-//    _camera.init(overWorld.getDog()->getDogNode(), _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), _uinode, 1000.0f);
+    _camera.init(overWorld.getDog()->getDogNode(), _rootnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), 1000.0f);
     
     _monsterController.setNetwork(_network);
     _monsterController.setMeleeAnimationData(_constants->get("basicEnemy"), assets);
@@ -343,6 +349,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     
     _active = true;
     setDebug(false);
+    
 
     // attach CrateEvent to the network controller
     _network->attachEventType<CrateEvent>();
@@ -361,10 +368,10 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     
 //    
     _uinode->addChild(_pause);
-    _uinode->setContentSize(dimen * zoom * 10);
+    _uinode->setContentSize(dimen);
     _uinode->doLayout();
     
-    _pause->setContentSize(dimen * zoom * 10);
+    _pause->setContentSize(dimen);
     _pause->doLayout();
     
     return true;
@@ -571,8 +578,21 @@ void GameScene::preUpdate(float dt) {
 //    if (_input.didPressFire()) {
 //        fireCrate();
 //    }
+    
+    
+//    _rootnode->setAnchor(overWorld.getDog()->getPosition());
 
-    getCamera()->update();
+//    Vec2 delta = overWorld.getDog()->getDir();
+//    delta = -delta;
+//    if (!delta.isZero()) {
+//        _rootnode->applyPan(3*delta);
+//    }
+//    
+//    panScreen(delta);
+    
+    
+    
+    _camera.update(dt);
     overWorld.update(_input, computeActiveSize(), dt);
     _spawnerController.update(_monsterController, overWorld, dt);
     _monsterController.update( dt, overWorld);

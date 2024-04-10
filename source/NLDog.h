@@ -343,6 +343,10 @@ public:
         return _curDirection;
     }
     
+    cugl::Vec2 getDir() const{
+        return dir;
+    }
+    
     float getDirInDegrees() const {
         // normalize to our coordinates
         float res =_ang.getAngle() * (180 / M_PI);
