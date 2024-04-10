@@ -285,7 +285,7 @@ void NetApp::updateClientScene(float timestep) {
 
 void NetApp::updateGameScene(float timestep) {
     _gameplay.preUpdate(timestep);
-    if(_gameplay.status == GameScene::EXIT){
+    if(_gameplay.getStatus() == PauseScene::EXIT){
         _gameplay.dispose();
         _network->disconnect();
         _mainmenu.setActive(true);

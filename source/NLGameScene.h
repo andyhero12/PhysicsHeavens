@@ -37,6 +37,7 @@
 #include "OverWorld.h"
 #include "MonsterController.h"
 #include "GlobalConstants.h"
+#include "PauseScene.h"
 
 using namespace cugl::physics2::net;
 using namespace cugl;
@@ -104,21 +105,6 @@ public:
  */
 class GameScene : public cugl::Scene2
 {
-public:
-    /**
-     * The menu choice.
-     *
-     * This state allows the top level application to know what the user
-     * chose.
-     */
-    enum Choice {
-        /** User wants to host a game */
-        GAME,
-        /** User wants to join a game */
-        EXIT
-    };
-    
-    Choice status;
 protected:
     std::shared_ptr<cugl::AssetManager> _assets;
 
@@ -145,6 +131,8 @@ protected:
     std::shared_ptr<CrateFactory> _crateFact;
     /** The level model */
     std::shared_ptr<LevelModel> _level;
+    
+    std::shared_ptr<PauseScene> _pause;
     Uint32 _factId;
 
     // Physics objects for the game
@@ -162,14 +150,9 @@ protected:
     bool _todoReset;
     /** Whether or not debug mode is active */
     bool _debug;
-    
-    /** Whether to pause */
-    bool _todoPause;
 
     std::shared_ptr<NetEventController> _network;
     
-    /** The "play" button */
-    std::shared_ptr<cugl::scene2::Button>  _button;
 
 #pragma mark Internal Object Management
 
@@ -236,6 +219,8 @@ protected:
 public:
 #pragma mark -
 #pragma mark Constructors
+    
+    PauseScene::Choice getStatus(){return _pause->getStatus();}
     /**
      * Creates a new game world with the default values.
      *
@@ -332,20 +317,6 @@ public:
      * @return true if the gameplay controller is currently active
      */
     void setToDoReset(bool value) { _todoReset = value; }
-    
-    /**
-     * Returns true if the gameplay controller is currently active
-     *
-     * @return true if the gameplay controller is currently active
-     */
-    bool needToPause() const { return _todoPause; }
-
-    /**
-     * Returns true if the gameplay controller is currently active
-     *
-     * @return true if the gameplay controller is currently active
-     */
-    void setToDoPause(bool value) { _todoPause = value; }
 
     /**
      * Returns true if debug mode is active.
@@ -388,11 +359,6 @@ public:
      * Resets the status of the game so that we can play again.
      */
     void reset();
-    
-    /**
-     * Pause the game
-     */
-    void pause();
 
 #pragma mark -
 #pragma mark Collision Handling

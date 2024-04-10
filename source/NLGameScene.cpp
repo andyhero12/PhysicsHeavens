@@ -234,22 +234,6 @@ void GameScene::reset() {
     Application::get()->resetFixedRemainder();
 }
 
-void GameScene::pause(){
-    // pause the game
-    
-    // might not need ?
-    setToDoPause(_input.getPause());
-    if(needToPause()){
-        _button->setVisible(true);
-    }
-    else{
-        _button->setVisible(false);
-    }
-    
-    // set menu to be visible and clickable
-    
-}
-
 #pragma mark -
 #pragma mark Constructors
 /**
@@ -261,8 +245,7 @@ void GameScene::pause(){
 GameScene::GameScene() : cugl::Scene2(),
 _debug(false),
 _isHost(false),
-_todoReset(false),
-_todoPause(false)
+_todoReset(false)
 {
 }
 
@@ -322,7 +305,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
  * @return  true if the controller is initialized properly, false otherwise.
  */
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rect, const Vec2 gravity, const std::shared_ptr<NetEventController> network, bool isHost) {
-    status = Choice::GAME;
     Size dimen = computeActiveSize();
 
     if (assets == nullptr) {
@@ -335,7 +317,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
 
     _network = network;
     _todoReset = false;
-    _todoPause = false;
     
     
     // Start up the input handler
@@ -422,31 +403,14 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     // XNA nostalgia
     Application::get()->setClearColor(Color4f::CORNFLOWER);
     
+    _pause = std::make_shared<PauseScene>();
+    _pause->init();
+    _pause->setPause(false);
     
-    // create the EXIT button
-    std::shared_ptr<cugl::scene2::SceneNode> up = cugl::scene2::PolygonNode::allocWithPoly(Rect(0,0,100,100));
-    up->setColor(Color4::RED);
+    _pause->setContentSize(dimen);
+    _pause->doLayout(); // This rearranges the children to fit the screen
     
-    
-    std::shared_ptr<cugl::scene2::SceneNode> down = cugl::scene2::PolygonNode::allocWithPoly(Rect(0,0,100,100));
-    down->setColor(Color4::BLUE);
-    
-    
-    _button = cugl::scene2::Button::alloc(up, down);
-    _button->addListener([=](const std::string& name, bool down) {
-        if(needToPause()){
-            status = Choice::EXIT;
-            std::cout << " pressed paused -------------------------" << std::endl;
-        }
-    });
-    
-    _button->setPushable(Path2(Rect(0,0,2000,1000)));
-    
-    _button->setVisible(false);
-    _button->activate();
-    addChild(_button);
-    _button->setAnchor(Vec2::ANCHOR_CENTER);
-    
+    addChild(_pause);
     
     return true;
 }
@@ -634,10 +598,10 @@ void GameScene::preUpdate(float dt) {
 //         CULog("Reseting\n");
 //         reset();
 //    }
-    _button->setPosition( getCamera()->getPosition().x,  getCamera()->getPosition().y);
+    _pause->updateMenu(getCamera()->getPosition().x,  getCamera()->getPosition().y);
     
     if(_input.didPressPause()){
-        pause();
+        _pause->setPause(_input.getPause());
     }
     
     if (_input.didPressExit()) {

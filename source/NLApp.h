@@ -19,6 +19,7 @@
 #include "NLMenuScene.h"
 #include "NLClientScene.h"
 #include "NLHostScene.h"
+#include "PauseScene.h"
 
 using namespace cugl::physics2::net;
 
