@@ -72,12 +72,12 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     // Program the buttons
     _button1->addListener([this](const std::string& name, bool down) {
         if (down) {
-            _choice = Choice::HOST;
+            _choice = Choice::PLAY;
         }
     });
     _button2->addListener([this](const std::string& name, bool down) {
         if (down) {
-            _choice = Choice::JOIN;
+            _choice = Choice::LEVEL;
         }
     });
 

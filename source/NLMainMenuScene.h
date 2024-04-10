@@ -8,8 +8,8 @@
 //  Author: Walker White, Aidan Hobler
 //  Version: 2/8/22
 //
-#ifndef __NL_MENU_SCENE_H__
-#define __NL_MENU_SCENE_H__
+#ifndef __NL_MAINMENU_SCENE_H__
+#define __NL_MAINMENU_SCENE_H__
 #include <cugl/cugl.h>
 #include <vector>
 #include <chrono>
@@ -33,11 +33,13 @@ public:
      */
     enum Choice {
         /** User has not yet made a choice */
-        NONE,
+        PLAY,
         /** User wants to host a game */
-        HOST,
+        LEVEL,
         /** User wants to join a game */
-        JOIN
+        SETTING,
+
+        NONE
     };
 
 protected:
@@ -49,6 +51,7 @@ protected:
     std::shared_ptr<cugl::scene2::Button> _joinbutton;
     /** The player menu choice */
     Choice _choice;
+
 
     // NO CONTROLLER (ALL IN SEPARATE THREAD)
     //InputController _input;
@@ -139,6 +142,7 @@ public:
      * @return the user's menu choice.
      */
     Choice getChoice() const { return _choice; }
+    
 
 };
 
