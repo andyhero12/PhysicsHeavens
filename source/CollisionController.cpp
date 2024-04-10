@@ -36,7 +36,7 @@ void CollisionController::intraOverWorldCollisions(OverWorld& overWorld){
 void CollisionController::overWorldMonsterControllerCollisions(OverWorld& overWorld, MonsterController& monsterController){
     std::unordered_set<std::shared_ptr<AbstractEnemy>>& monsterEnemies = monsterController.getEnemies();
     if (monsterDogCollision(overWorld.getDog(), monsterEnemies)){
-         CULog("MONSTER DOG COLLISION DETECTED\n");
+//         CULog("MONSTER DOG COLLISION DETECTED\n");
     }
     if (monsterDecoyCollision(overWorld.getDecoys(), monsterEnemies)){
 //         CULog("MONSTER DECOY COLLISION DETECTED\n");

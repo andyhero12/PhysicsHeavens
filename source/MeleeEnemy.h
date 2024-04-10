@@ -60,12 +60,12 @@ public:
         std::vector<std::shared_ptr<cugl::Texture>> textures;
         textures.push_back(_assets->get<Texture>("basicEnemy1"));
         textures.push_back(_assets->get<Texture>("basicEnemy1"));
-        textures.push_back(_assets->get<Texture>("basicEnemy0"));
-        textures.push_back(_assets->get<Texture>("basicEnemy0"));
-        textures.push_back(_assets->get<Texture>("basicEnemy0"));
-        textures.push_back(_assets->get<Texture>("basicEnemy0"));
         textures.push_back(_assets->get<Texture>("basicEnemy1"));
         textures.push_back(_assets->get<Texture>("basicEnemy1"));
+        textures.push_back(_assets->get<Texture>("basicEnemy0"));
+        textures.push_back(_assets->get<Texture>("basicEnemy0"));
+        textures.push_back(_assets->get<Texture>("basicEnemy0"));
+        textures.push_back(_assets->get<Texture>("basicEnemy0"));
         staticEnemyStruct._walkTextures  = textures;
         staticEnemyStruct._attackTextures  = textures;
         staticEnemyStruct._framesize = _framesize;

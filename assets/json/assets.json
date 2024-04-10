@@ -241,6 +241,26 @@
                  "minfilter": "linear",
                  "magfilter": "nearest"
        },
+       "bombBackLeftWalk": {
+           "file": "textures/bomb/bombBackLeftWalk.png",
+                 "minfilter": "linear",
+                 "magfilter": "nearest"
+       },
+       "bombBackRightWalk": {
+           "file": "textures/bomb/bombBackRightWalk.png",
+                 "minfilter": "linear",
+                 "magfilter": "nearest"
+       },
+       "bombFrontLeftWalk": {
+           "file": "textures/bomb/bombFrontLeftWalk.png",
+                 "minfilter": "linear",
+                 "magfilter": "nearest"
+       },
+       "bombFrontRightWalk": {
+           "file": "textures/bomb/bombFrontRightWalk.png",
+                 "minfilter": "linear",
+                 "magfilter": "nearest"
+       },
         "street_tiles": {
             "file": "textures/tile/tile.png",
             "magfilter": "nearest"
