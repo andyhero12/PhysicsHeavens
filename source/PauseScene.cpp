@@ -30,16 +30,12 @@ bool PauseScene::init(){
     exitButton = cugl::scene2::Button::alloc(exit, Color4::GRAY);
     
     resumeButton->addListener([=](const std::string& name, bool down){
-        std::cout << "resume : "<< resumeButton->isActive() << " exit " << exitButton->isActive() << std::endl;
-        std::cout << "resume ??? \n";
         if(getPause()){
             setPause(false);
         }
     });
     
     exitButton->addListener([=](const std::string& name, bool down) {
-        std::cout << "resume : "<< resumeButton->isActive() << " exit " << exitButton->isActive() << std::endl;
-        std::cout << "exit ??? \n";
         if(getPause()){
             status = Choice::EXIT;
         }
@@ -48,20 +44,14 @@ bool PauseScene::init(){
     resumeButton->activate();
     exitButton->activate();
     
-    resumeButton->setContentSize(resumeButton->getContentSize() * PAUSE_SCALE);
-    exitButton->setContentSize(exitButton->getContentSize() * PAUSE_SCALE);
-    
     addChild(resumeButton);
     addChild(exitButton);
     
     float centerX = _screenSize.width/2;
     float centerY = _screenSize.height/2;
     
-    resumeButton->setPosition(centerX - 100, centerY );
+    resumeButton->setPosition(centerX - 100, centerY);
     exitButton->setPosition(centerX + 100,centerY);
-    
-    resumeButton->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-    exitButton->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
 
     return true;
 }
