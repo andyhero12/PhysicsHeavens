@@ -48,8 +48,8 @@ bool PauseScene::init(){
     resumeButton->activate();
     exitButton->activate();
     
-//    resumeButton->setContentSize(resumeButton->getContentSize() * PAUSE_SCALE);
-//    exitButton->setContentSize(exitButton->getContentSize() * PAUSE_SCALE);
+    resumeButton->setContentSize(resumeButton->getContentSize() * PAUSE_SCALE);
+    exitButton->setContentSize(exitButton->getContentSize() * PAUSE_SCALE);
     
     addChild(resumeButton);
     addChild(exitButton);

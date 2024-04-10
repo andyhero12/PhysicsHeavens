@@ -111,9 +111,12 @@ protected:
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
     InputController _input;
-    CameraController _camera;
+//    CameraController _camera;
+    
+    /** Reference to the root of the scene graph */
+    std::shared_ptr<cugl::scene2::ScrollPane> _rootnode;
 
-    /** Reference to the physics root of the scene graph */
+    /** Reference to the physics of the scene graph */
     std::shared_ptr<cugl::scene2::SceneNode> _worldnode;
     OverWorld overWorld;
     CollisionController _collisionController;
@@ -303,21 +306,6 @@ public:
      * @return true if the gameplay controller is currently active
      */
     bool isActive() const { return _active; }
-
-    /**
-     * Returns true if the gameplay controller is currently active
-     *
-     * @return true if the gameplay controller is currently active
-     */
-    bool needToReset() const { return _todoReset; }
-
-    /**
-     * Returns true if the gameplay controller is currently active
-     *
-     * @return true if the gameplay controller is currently active
-     */
-    void setToDoReset(bool value) { _todoReset = value; }
-
     /**
      * Returns true if debug mode is active.
      *
@@ -355,10 +343,6 @@ public:
      */
     void update(float timestep);
 
-    /**
-     * Resets the status of the game so that we can play again.
-     */
-    void reset();
 
 #pragma mark -
 #pragma mark Collision Handling

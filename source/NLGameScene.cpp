@@ -187,52 +187,6 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
 #pragma mark END SOLUTION
 }
 
-/**
- * Resets the status of the game so that we can play again.
- *
- * This method disposes of the world and creates a new one.
- */
-void GameScene::reset() {
-    _todoReset = false;
-    removeAllChildren();
-    _worldnode->removeAllChildren();
-    _debugnode->removeAllChildren();
-    
-    _backgroundWrapper = std::make_shared<World>(Vec2(0, 0), _level->getTiles(), _level->getBoundaries(), _assets->get<cugl::Texture>("tile"));
-    
-    populate();
-    std::function<void(const std::shared_ptr<physics2::Obstacle>&,const std::shared_ptr<scene2::SceneNode>&)> linkSceneToObsFunc = [=](const std::shared_ptr<physics2::Obstacle>& obs, const std::shared_ptr<scene2::SceneNode>& node) {
-        this->linkSceneToObs(obs,node);
-    };
-    _network->enablePhysics(_world, linkSceneToObsFunc);
-//    
-//    if(!_isHost){
-//        _network->getPhysController()->acquireObs(_cannon2, 0);
-//    }
-
-    _factId = _network->getPhysController()->attachFactory(_crateFact);
-    
-    
-    _spawnerController.init(_level->getSpawnersPos());
-    _spawnerController.setRootNode(_worldnode, _isHost);
-    
-    overWorld.reset();
-    overWorld.setRootNode(_worldnode, _debugnode, _world);
-    
-    
-    _monsterController.setNetwork(_network);
-    _monsterController.setMeleeAnimationData(_constants->get("basicEnemy"), _assets);
-    _monsterController.setBombAnimationData(_constants->get("bomb"), _assets);
-    _monsterController.init(overWorld, _worldnode, _debugnode);
-    _worldnode->addChild(_monsterController.getMonsterSceneNode());
-//    _camera.init(overWorld.getDog()->getDogNode(), _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), overWorld.getDog()->getUINode(), 1000.0f);
-    addChild(_worldnode);
-    addChild(_debugnode);
-    addChild(_uinode);
-    
-    _uinode->addChild(overWorld.getDog()->getUINode());
-    Application::get()->resetFixedRemainder();
-}
 
 #pragma mark -
 #pragma mark Constructors
@@ -244,8 +198,7 @@ void GameScene::reset() {
  */
 GameScene::GameScene() : cugl::Scene2(),
 _debug(false),
-_isHost(false),
-_todoReset(false)
+_isHost(false)
 {
 }
 
@@ -316,7 +269,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     _isHost = isHost;
 
     _network = network;
-    _todoReset = false;
     
     
     // Start up the input handler
@@ -598,11 +550,6 @@ void GameScene::addInitObstacle(const std::shared_ptr<physics2::Obstacle>& obj,
 #pragma mark Physics Handling
 
 void GameScene::preUpdate(float dt) {
-//    if (needToReset()){
-//         CULog("Reseting\n");
-//         reset();
-//    }
-    
     if(_input.didPressPause()){
         _pause->setPause(_input.getPause());
     }
@@ -635,17 +582,6 @@ void GameScene::preUpdate(float dt) {
         _collisionController.overWorldMonsterControllerCollisions(overWorld, _monsterController);
         _collisionController.attackCollisions(overWorld, _monsterController, _spawnerController);
     }
-        
-#pragma mark BEGIN SOLUTION
-//    if (_input.didChangeMode()){
-////        CULog("BIG CRATE COMING");
-//        _network->pushOutEvent(CrateEvent::allocCrateEvent(Vec2(DEFAULT_WIDTH/2,DEFAULT_HEIGHT/2)));
-//    }
-//    if (_input.didPressReset()){
-//        CULog("RESET COMING");
-//        _network->pushOutEvent(GameResEvent::allocGameResEvent(Vec2(0,0)));
-//    }
-#pragma mark END SOLUTION
     
     float turnRate = _isHost ? DEFAULT_TURN_RATE : -DEFAULT_TURN_RATE;
     auto cannon = _isHost ? _cannon1 : _cannon2;
@@ -670,10 +606,6 @@ void GameScene::fixedUpdate() {
 //            CULog("BIG CRATE GOT");
             processCrateEvent(crateEvent);
         }
-//        if (auto resetEvent = std::dynamic_pointer_cast<GameResEvent>(e)){
-////            CULog("RESET EVENT GOT");
-//            setToDoReset(true);
-//        }
         if (auto decoyEvent = std::dynamic_pointer_cast<DecoyEvent>(e)){
 //            CULog("Decoy Event Got");
             overWorld.getDecoys()->addNewDecoy(Vec2(decoyEvent->getPos().x,decoyEvent->getPos().y));
