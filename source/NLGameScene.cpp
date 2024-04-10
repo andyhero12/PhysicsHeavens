@@ -413,17 +413,8 @@ void GameScene::preUpdate(float dt)
 {
 
     float zoom = _zoom - (ROOT_NODE_SCALE - (float)overWorld.getDog()->getAbsorb() / (float)overWorld.getDog()->getMaxAbsorb());
-
-    if (zoom > 0)
-    {
-        _zoom -= fmin(zoom, 0.01f);
-        _rootnode->setScale(_zoom);
-    }
-    else if (zoom < 0)
-    {
-        _zoom += fmin(zoom, 0.01f);
-        _rootnode->setScale(_zoom);
-    }
+    _zoom -= fmin(zoom, 0.01f);
+    _rootnode->setScale(_zoom);
 
     if (_input.didPressPause())
     {
