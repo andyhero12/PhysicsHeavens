@@ -39,7 +39,11 @@ World::World(std::shared_ptr<LevelModel> _level, std::shared_ptr<cugl::AssetMana
         for (int j =0 ;j < originalCols; j++){
             std::shared_ptr<Texture> subTexture = getBoxFromTileSet((passable.at(i).at(j)),tileSetTextures);
             Rect temp = Rect(Vec2(j,i), size); // VERY IMPORTANT DO NOT CHANGE Rotation Occurs Here
-            boundaryWorld.at(i).at(j) = TileInfo::alloc(temp.origin, size, Terrain::IMPASSIBLE, getBoxFromTileSet((passable.at(i).at(j)),tileSetTextures));
+            if (subTexture == nullptr){
+                boundaryWorld.at(i).at(j) = TileInfo::alloc(temp.origin, size, Terrain::PASSABLE, getBoxFromTileSet((passable.at(i).at(j)),tileSetTextures));
+            }else{
+                boundaryWorld.at(i).at(j) = TileInfo::alloc(temp.origin, size, Terrain::IMPASSIBLE, getBoxFromTileSet((passable.at(i).at(j)),tileSetTextures));
+            }
         }
     }
     
