@@ -159,7 +159,7 @@ protected:
     
     cugl::Affine2 _transform;
     
-    float zoom;
+    float _zoom;
 
 #pragma mark Internal Object Management
 
