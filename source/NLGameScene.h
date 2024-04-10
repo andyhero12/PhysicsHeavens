@@ -156,6 +156,10 @@ protected:
 
     std::shared_ptr<NetEventController> _network;
     
+    cugl::Vec2 dogPosition;
+    
+    cugl::Affine2 _transform;
+    
 
 #pragma mark Internal Object Management
 

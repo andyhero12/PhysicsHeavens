@@ -338,7 +338,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     overWorld.setRootNode(_worldnode, _debugnode, _world);
     _uinode->addChild(overWorld.getDog()->getUINode());
     
-    _camera.init(overWorld.getDog()->getDogNode(), _rootnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), 1000.0f);
+//    _camera.init(overWorld.getDog()->getDogNode(), _rootnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), 1000.0f);
+    dogPosition = overWorld.getDog()->getPosition();
     
     _monsterController.setNetwork(_network);
     _monsterController.setMeleeAnimationData(_constants->get("basicEnemy"), assets);
@@ -582,17 +583,23 @@ void GameScene::preUpdate(float dt) {
     
 //    _rootnode->setAnchor(overWorld.getDog()->getPosition());
 
-//    Vec2 delta = overWorld.getDog()->getDir();
-//    delta = -delta;
-//    if (!delta.isZero()) {
-//        _rootnode->applyPan(3*delta);
-//    }
+    Vec2 delta = overWorld.getDog()->getPosition() - dogPosition;
+    
+    float zoom = computeActiveSize().height / CANVAS_TILE_HEIGHT;
+    
+    dogPosition = overWorld.getDog()->getPosition();
+    
+    delta = -delta;
+    if (!delta.isZero()) {
+        _rootnode->applyPan(delta * zoom);
+    }
+    
+    
 //    
-//    panScreen(delta);
+//    _transform.translate(delta);
+//    _rootnode->chooseAlternateTransform(true);
+//    _rootnode->setAlternateTransform(_transform);
     
-    
-    
-    _camera.update(dt);
     overWorld.update(_input, computeActiveSize(), dt);
     _spawnerController.update(_monsterController, overWorld, dt);
     _monsterController.update( dt, overWorld);
