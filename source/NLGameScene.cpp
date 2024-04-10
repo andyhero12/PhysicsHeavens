@@ -225,7 +225,7 @@ void GameScene::reset() {
     _monsterController.setBombAnimationData(_constants->get("bomb"), _assets);
     _monsterController.init(overWorld, _worldnode, _debugnode);
     _worldnode->addChild(_monsterController.getMonsterSceneNode());
-    _camera.init(overWorld.getDog()->getDogNode(), _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), overWorld.getDog()->getUINode(), 1000.0f);
+//    _camera.init(overWorld.getDog()->getDogNode(), _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), overWorld.getDog()->getUINode(), 1000.0f);
     addChild(_worldnode);
     addChild(_debugnode);
     addChild(_uinode);
@@ -380,7 +380,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     overWorld.setRootNode(_worldnode, _debugnode, _world);
     _uinode->addChild(overWorld.getDog()->getUINode());
     
-    _camera.init(overWorld.getDog()->getDogNode(), _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), _uinode, 1000.0f);
+//    _camera.init(overWorld.getDog()->getDogNode(), _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), _uinode, 1000.0f);
     
     _monsterController.setNetwork(_network);
     _monsterController.setMeleeAnimationData(_constants->get("basicEnemy"), assets);
@@ -404,7 +404,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     Application::get()->setClearColor(Color4f::CORNFLOWER);
     
     _pause = std::make_shared<PauseScene>();
-    _pause->init(_assets);
+    _pause->init(_assets, computeActiveSize());
     _pause->setPause(false);
     
 //    
@@ -625,7 +625,7 @@ void GameScene::preUpdate(float dt) {
 //        fireCrate();
 //    }
 
-    _camera.update(dt);
+    getCamera()->update();
     overWorld.update(_input, computeActiveSize(), dt);
     _spawnerController.update(_monsterController, overWorld, dt);
     _monsterController.update( dt, overWorld);

@@ -39,8 +39,8 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     _shoottoggle->setAnchor(Vec2::ANCHOR_CENTER);
     _baittoggle->setAnchor(Vec2::ANCHOR_CENTER);
     
-    x = -screenSize.width/2;
-    y = -screenSize.height/2;
+    x =0;
+    y =0;
     
 
     float healthx = x + UI_SCALE * _healthframe->getTexture()->getWidth()/2;

@@ -9,8 +9,9 @@
 
 using namespace cugl;
 
-bool PauseScene::init(std::shared_ptr<cugl::AssetManager> &assets){
+bool PauseScene::init(std::shared_ptr<cugl::AssetManager> &assets, cugl::Size screenSize){
     _assets = assets;
+    _screenSize = screenSize;
     return init();
 }
 
@@ -22,7 +23,6 @@ bool PauseScene::init(){
     
     
     std::shared_ptr<cugl::scene2::SceneNode> exit =cugl::scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("mainmenu"));
-
     exit->setScale(PAUSE_SCALE);
     
     
@@ -48,36 +48,21 @@ bool PauseScene::init(){
     resumeButton->activate();
     exitButton->activate();
     
+//    resumeButton->setContentSize(resumeButton->getContentSize() * PAUSE_SCALE);
+//    exitButton->setContentSize(exitButton->getContentSize() * PAUSE_SCALE);
+    
     addChild(resumeButton);
     addChild(exitButton);
     
-    resumeButton->setPosition(-50,0);
-    exitButton->setPosition(100,0);
+    float centerX = _screenSize.width/2;
+    float centerY = _screenSize.height/2;
+    
+    resumeButton->setPosition(centerX - 100, centerY );
+    exitButton->setPosition(centerX + 100,centerY);
     
     resumeButton->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-    
-    // need to fix offset for exit i.e getPosition
-    Vec2 exitPos = exitButton->getPosition()- Vec2(exitButton->getWidth(), exitButton->getHeight()).scale(PAUSE_SCALE/2);
-    Vec2 resumePos = resumeButton->getPosition()- Vec2(resumeButton->getWidth(), resumeButton->getHeight()).scale(PAUSE_SCALE/2);
-    
-//    std::cout << "pre translate vec : " <<  exitButton->getPosition().x << " " << exitButton->getPosition().y << std::endl;
-    std::cout << "exit translate vec : " << exitPos.x << " " << exitPos.y << std::endl;
-    
-    std::cout << "resume translate vec : " << resumePos.x << " " << resumePos.y << std::endl;
-    
-    exitButton->setPushable(Path2(Rect(exitPos, PAUSE_SCALE * Size(exitButton->getWidth(), exitButton->getHeight()))));
-    
-    
-    resumeButton->setPushable(Path2(Rect(resumePos, PAUSE_SCALE * Size(resumeButton->getWidth(), resumeButton->getHeight()))));
-    
-//    resumeButton->setPushable(Path2(Rect(Vec2(0,0), PAUSE_SCALE * Size(resumeButton->getWidth(), resumeButton->getHeight()))));
-    
-    
-    auto r = cugl::scene2::PolygonNode::allocWithPoly(Rect(exitButton->getPosition(), PAUSE_SCALE * Size(exitButton->getWidth(), exitButton->getHeight())));
-    r->setPosition(exitPos);
-    addChild(r);
-//    
-//    r->setPosition(resumeButton->getPosition());
+    exitButton->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+
     return true;
 }
 

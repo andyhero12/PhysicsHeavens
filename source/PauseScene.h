@@ -40,12 +40,13 @@ private:
     std::shared_ptr<cugl::scene2::Button>  resumeButton;
     std::shared_ptr<cugl::scene2::Button>  exitButton;
     std::shared_ptr<cugl::AssetManager> _assets;
+    cugl::Size _screenSize;
     
 public:
     
     PauseScene(){};
     
-    bool init(std::shared_ptr<cugl::AssetManager> &assets);
+    bool init(std::shared_ptr<cugl::AssetManager> &assets, cugl::Size screenSize);
     bool init() override;
     
     void dispose() override;
