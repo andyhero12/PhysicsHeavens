@@ -408,7 +408,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     _pause->setPause(false);
     
     _pause->setContentSize(dimen);
-    _pause->doLayout(); // This rearranges the children to fit the screen
+    _pause->doLayout();
     
     addChild(_pause);
     

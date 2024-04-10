@@ -26,7 +26,6 @@ bool PauseScene::init(){
     _button->addListener([=](const std::string& name, bool down) {
         if(getPause()){
             status = Choice::EXIT;
-            std::cout << " pressed paused -------------------------" << std::endl;
         }
     });
     
