@@ -261,6 +261,11 @@
                  "minfilter": "linear",
                  "magfilter": "nearest"
        },
+       "spawnerFrontWalk": {
+           "file": "textures/spawnerEnemy/spawnerFrontWalk.png",
+                 "minfilter": "linear",
+                 "magfilter": "nearest"
+       },
         "street_tiles": {
             "file": "textures/tile/tile.png",
             "magfilter": "nearest"

@@ -123,10 +123,7 @@ void MeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
         setVX(direction.normalize().x * 0.5);
         setVY(direction.normalize().y * 0.5);
         _counter = 0;
+        _prevDirection =_curDirection;
+        _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
     }
-    // Animate
-    _prevDirection =_curDirection;
-    _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
-    runAnimations->animate(_curDirection, curAction == EnemyActions::RUN);
-    attackAnimations->animate(_curDirection, curAction == EnemyActions::ATTACK);
 }

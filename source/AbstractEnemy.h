@@ -53,9 +53,9 @@ public:
     void update(float delta) override{
         Obstacle::update(delta);
         // Decoupled so useless for now
-        _prevDirection =_curDirection;
         Vec2 direction = getLinearVelocity();
-        _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
+//        _prevDirection =_curDirection;
+//        _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
         runAnimations->animate(_curDirection, curAction == EnemyActions::RUN);
         attackAnimations->animate(_curDirection, curAction == EnemyActions::ATTACK);
         //        dogActions();

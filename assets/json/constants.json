@@ -49,6 +49,10 @@
         "sprite cols": 9,
         "sprite size": 9
     },
+    "spawnerEnemy": {
+        "sprite cols": 4,
+        "sprite size": 4
+    },
     "spawner": {
         "start,Rate": [
             [[150,200], 100],

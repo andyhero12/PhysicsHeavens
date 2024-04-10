@@ -384,6 +384,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     
     _monsterController.setNetwork(_network);
     _monsterController.setMeleeAnimationData(_constants->get("basicEnemy"), assets);
+    _monsterController.setSpawnerAnimationData(_constants->get("spawnerEnemy"), assets);
     _monsterController.setBombAnimationData(_constants->get("bomb"), assets);
     _monsterController.init(overWorld,_worldnode,  _debugnode);
     _worldnode->addChild(_monsterController.getMonsterSceneNode());
@@ -730,39 +731,6 @@ void GameScene::beginContact(b2Contact* contact) {
  * @param  oldManfold  	The collision manifold before contact
  */
 void GameScene::beforeSolve(b2Contact* contact, const b2Manifold* oldManifold) {
-//    float speed = 0;
-//
-//    // Use Ian Parberry's method to compute a speed threshold
-//    b2Body* body1 = contact->GetFixtureA()->GetBody();
-//    b2Body* body2 = contact->GetFixtureB()->GetBody();
-//    b2WorldManifold worldManifold;
-//    contact->GetWorldManifold(&worldManifold);
-//    b2PointState state1[2], state2[2];
-//    b2GetPointStates(state1, state2, oldManifold, contact->GetManifold());
-//    for(int ii =0; ii < 2; ii++) {
-//        if (state2[ii] == b2_addState) {
-//            b2Vec2 wp = worldManifold.points[0];
-//            b2Vec2 v1 = body1->GetLinearVelocityFromWorldPoint(wp);
-//            b2Vec2 v2 = body2->GetLinearVelocityFromWorldPoint(wp);
-//            b2Vec2 dv = v1-v2;
-//            speed = b2Dot(dv,worldManifold.normal);
-//        }
-//    }
-//    
-//    // Play a sound if above threshold
-//    if (speed > SOUND_THRESHOLD) {
-//        // These keys result in a low number of sounds.  Too many == distortion.
-//        physics2::Obstacle* data1 = reinterpret_cast<physics2::Obstacle*>(body1->GetUserData().pointer);
-//        physics2::Obstacle* data2 = reinterpret_cast<physics2::Obstacle*>(body2->GetUserData().pointer);
-//
-//        if (data1 != nullptr && data2 != nullptr) {
-//            std::string key = (data1->getName()+data2->getName());
-//            auto source = _assets->get<Sound>(COLLISION_SOUND);
-//            if (!AudioEngine::get()->isActive(key)) {
-//                AudioEngine::get()->play(key, source, false, source->getVolume());
-//            }
-//        }
-//    }
 }
 
 /**
