@@ -122,6 +122,8 @@ float CAN2_POS[] = { 30,9 };
 
 #define FIXED_TIMESTEP_S 0.02f
 
+#define ROOT_NODE_SCALE     2
+
 /**
  * Generate a pair of Obstacle and SceneNode using the given parameters
  */
@@ -374,11 +376,12 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     _pause->doLayout();
     
     
-    _zoom = 2;
+    _zoom = ROOT_NODE_SCALE;
 
     Vec2 delta = overWorld.getDog()->getDogNode()->getWorldPosition();
     delta -= (computeActiveSize()/2);
     _rootnode->applyPan(-delta/_zoom);
+    _rootnode->setScale(_zoom);
     
     return true;
 }
@@ -564,7 +567,14 @@ void GameScene::addInitObstacle(const std::shared_ptr<physics2::Obstacle>& obj,
 
 void GameScene::preUpdate(float dt) {
     
-    _zoom = 2 - (float)overWorld.getDog()->getAbsorb()/(float)overWorld.getDog()->getMaxAbsorb();
+    float zoom = _zoom - (ROOT_NODE_SCALE - (float)overWorld.getDog()->getAbsorb()/(float)overWorld.getDog()->getMaxAbsorb());
+    
+    if(zoom > 0){
+        _zoom -= fmin(zoom, 0.01f);
+    }
+    else if(zoom < 0){
+        _zoom += fmin(zoom, 0.01f);
+    }
     
     _rootnode->setScale(_zoom);
     
