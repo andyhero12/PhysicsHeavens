@@ -578,28 +578,6 @@ void GameScene::preUpdate(float dt) {
         setDebug(!isDebug());
     }
 
-//    if (_input.didPressFire()) {
-//        fireCrate();
-//    }
-    
-    
-//    _rootnode->setAnchor(overWorld.getDog()->getPosition());
-
-    Vec2 delta = overWorld.getDog()->getPosition() - dogPosition;
-    
-    
-    dogPosition = overWorld.getDog()->getPosition();
-    
-    delta = -delta;
-    if (!delta.isZero()) {
-        _rootnode->applyPan(delta * zoom);
-    }
-    
-    
-//    
-//    _transform.translate(delta);
-//    _rootnode->chooseAlternateTransform(true);
-//    _rootnode->setAlternateTransform(_transform);
     
     overWorld.update(_input, computeActiveSize(), dt);
     _spawnerController.update(_monsterController, overWorld, dt);
@@ -620,6 +598,19 @@ void GameScene::postUpdate(float dt) {
     //Nothing to do now
     _monsterController.postUpdate();
     overWorld.postUpdate();
+    
+    
+    Vec2 delta = overWorld.getDog()->getPosition() - dogPosition;
+    
+    
+    dogPosition = overWorld.getDog()->getPosition();
+    
+    delta = -delta;
+    if (!delta.isZero()) {
+        _rootnode->applyPan(delta * zoom);
+    }
+    
+
 }
 
 void GameScene::fixedUpdate() {
