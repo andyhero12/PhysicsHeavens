@@ -135,6 +135,14 @@ void StaticMeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
     unsigned int SearchState = _pathfinder->SearchStep();
     //CULog("Boundary World Size after search step: %zu", overWorld.getWorld()->getBoundaryWorld().size());
     
+//    for (const auto &row : overWorld.getWorld()->getBoundaryWorld()) {
+//        // Iterate over columns
+//        for (std::shared_ptr<TileInfo> elem : row) {
+//            std::cout << elem->type << " ";
+//        }
+//        std::cout << std::endl; // Newline after each row for better formatting
+//    }
+    
     CULog("World Size is %d by %d", overWorld.getWorld()->getRows(), overWorld.getWorld()->getCols());
     CULog("Search for path from (%d, %d) to (%d, %d)", start.x, start.y, end.x, end.y);
     
@@ -147,6 +155,10 @@ void StaticMeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
     
     if( SearchState == AStarSearch<WorldSearchVertex>::SEARCH_STATE_FAILED ){
         CULog("Search Failed");
+    }
+    
+    if( SearchState == AStarSearch<WorldSearchVertex>::SEARCH_STATE_OUT_OF_MEMORY ){
+        CULog("Search Out of Memory");
     }
     
     // Check if the search was successful
@@ -168,7 +180,7 @@ void StaticMeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
         };
     }
     
-    //_pathfinder->FreeSolutionNodes();
+    _pathfinder->FreeSolutionNodes();
     
     cugl::Vec2 org_dist = dog_pos - original_pos;
     float distance = org_dist.length();
