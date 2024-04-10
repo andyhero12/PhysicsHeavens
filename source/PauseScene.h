@@ -50,6 +50,8 @@ public:
      * @return true if the gameplay controller is currently active
      */
     bool getPause() const { return paused; }
+    
+    void exitToMain();
 
     /**
      * Returns true if the gameplay controller is currently active

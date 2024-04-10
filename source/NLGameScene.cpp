@@ -605,6 +605,10 @@ void GameScene::preUpdate(float dt) {
         _pause->setPause(_input.getPause());
     }
     
+    if(_input.didPressReset()){
+        _pause->exitToMain();
+    }
+    
     if (_input.didPressExit()) {
         Application::get()->quit();
     }

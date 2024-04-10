@@ -59,3 +59,7 @@ void PauseScene::draw(const std::shared_ptr<cugl::SpriteBatch>& batch, const cug
 void PauseScene::dispose(){
     _button->dispose();
 }
+
+void PauseScene::exitToMain(){
+    _button->setDown(true);
+}
