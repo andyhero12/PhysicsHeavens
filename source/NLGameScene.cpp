@@ -122,7 +122,7 @@ float CAN2_POS[] = { 30,9 };
 
 #define FIXED_TIMESTEP_S 0.02f
 
-#define ROOT_NODE_SCALE     2
+#define ROOT_NODE_SCALE     1.5
 
 /**
  * Generate a pair of Obstacle and SceneNode using the given parameters
@@ -571,12 +571,12 @@ void GameScene::preUpdate(float dt) {
     
     if(zoom > 0){
         _zoom -= fmin(zoom, 0.01f);
+        _rootnode->setScale(_zoom);
     }
     else if(zoom < 0){
         _zoom += fmin(zoom, 0.01f);
+        _rootnode->setScale(_zoom);
     }
-    
-    _rootnode->setScale(_zoom);
     
     
     if(_input.didPressPause()){
