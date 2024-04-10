@@ -22,7 +22,6 @@
 #include <string>
 #include <random>
 #include "NLInput.h"
-#include "NLCrateEvent.h"
 #include "NLDecoyEvent.h"
 #include "NLExplodeEvent.h"
 #include "NLShootEvent.h"
