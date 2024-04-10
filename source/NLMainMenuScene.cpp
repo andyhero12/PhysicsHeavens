@@ -12,7 +12,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "NLMenuScene.h"
+#include "NLMainMenuScene.h"
 
 using namespace cugl;
 using namespace std;
@@ -40,7 +40,7 @@ using namespace std;
  *
  * @return true if the controller is initialized properly, false otherwise.
  */
-bool MenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
+bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     // Initialize the scene to a locked width
     Size dimen = Application::get()->getDisplaySize();
     dimen *= SCENE_HEIGHT/dimen.height;
@@ -89,7 +89,7 @@ bool MenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
 /**
  * Disposes of all (non-static) resources allocated to this mode.
  */
-void MenuScene::dispose() {
+void MainMenuScene::dispose() {
     if (_active) {
         removeAllChildren();
         _active = false;
@@ -106,7 +106,7 @@ void MenuScene::dispose() {
  *
  * @param value whether the scene is currently active
  */
-void MenuScene::setActive(bool value) {
+void MainMenuScene::setActive(bool value) {
     if (isActive() != value) {
         Scene2::setActive(value);
         if (value) {

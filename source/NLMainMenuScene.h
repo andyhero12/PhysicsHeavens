@@ -23,7 +23,7 @@
  * listeners on the scene graph.  We only need getters so that the main
  * application can retrieve the state and communicate it to other scenes.
  */
-class MenuScene : public cugl::Scene2 {
+class MainMenuScene : public cugl::Scene2 {
 public:
     /**
      * The menu choice.
@@ -89,7 +89,7 @@ public:
      * This constructor does not allocate any objects or start the game.
      * This allows us to use the object without a heap pointer.
      */
-    MenuScene() : cugl::Scene2() {}
+    MainMenuScene() : cugl::Scene2() {}
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.
@@ -97,7 +97,7 @@ public:
      * This method is different from dispose() in that it ALSO shuts off any
      * static resources, like the input controller.
      */
-    ~MenuScene() { dispose(); }
+    ~MainMenuScene() { dispose(); }
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.

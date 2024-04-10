@@ -77,6 +77,7 @@ void NetApp::onStartup() {
 void NetApp::onShutdown() {
     _gameplay.dispose();
     _mainmenu.dispose();
+    _menu.dispose();
     _hostgame.dispose();
     _joingame.dispose();
     _assets = nullptr;
