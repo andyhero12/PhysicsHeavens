@@ -599,16 +599,19 @@ void GameScene::postUpdate(float dt) {
     _monsterController.postUpdate();
     overWorld.postUpdate();
     
+    _rootnode->resetPane();
+    Vec2 delta(overWorld.getDog()->getX() - computeActiveSize().width/(2 * zoom), overWorld.getDog()->getY() - computeActiveSize().height/(2 * zoom));
+    _rootnode->applyPan(-delta * zoom);
     
-    Vec2 delta = overWorld.getDog()->getPosition() - dogPosition;
+//    Vec2 delta = overWorld.getDog()->getPosition() - dogPosition;
     
     
-    dogPosition = overWorld.getDog()->getPosition();
-    
-    delta = -delta;
-    if (!delta.isZero()) {
-        _rootnode->applyPan(delta * zoom);
-    }
+//    dogPosition = overWorld.getDog()->getPosition();
+//    
+//    delta = -delta;
+//    if (!delta.isZero()) {
+//        _rootnode->applyPan(delta * zoom);
+//    }
     
 
 }
