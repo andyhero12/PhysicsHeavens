@@ -11,6 +11,7 @@
 #include "AbstractEnemy.h"
 #include "MeleeEnemy.h"
 #include "StaticMeleeEnemy.h"
+#include "SpawnerEnemy.h"
 #include "BombEnemy.h"
 #include "OverWorld.h"
 #include <unordered_set>
@@ -35,6 +36,8 @@ private:
     std::shared_ptr<BombFactory> _bombEnemyFactory;
     Uint32 _bombEnemyFactID;
     
+    std::shared_ptr<SpawnerEnemyFactory> _spawnerEnemyFactory;
+    Uint32 _spawnerEnemyFactID;
     std::unordered_set<std::shared_ptr<AbstractEnemy>> _current;
     std::unordered_set<std::shared_ptr<AbstractEnemy>> _pending;
     
@@ -86,6 +89,8 @@ public:
     void spawnBasicEnemy(cugl::Vec2 pos, OverWorld& overWorld);
     void spawnStaticBasicEnemy(cugl::Vec2 pos, OverWorld& overWorld);
     void spawnBombEnemy(cugl::Vec2 pos, OverWorld& overWorld);
+    
+    void spawnSpawnerEnemy(cugl::Vec2 pos, OverWorld& overWorld);
     void postUpdate();
     
     void setMeleeAnimationData(std::shared_ptr<cugl::JsonValue> data,
@@ -93,6 +98,8 @@ public:
     void setBombAnimationData(std::shared_ptr<cugl::JsonValue> data,
                             std::shared_ptr<cugl::AssetManager> _assets);
     
+    void setSpawnerAnimationData(std::shared_ptr<cugl::JsonValue> data,
+                                 std::shared_ptr<cugl::AssetManager> _assets);
     void setHealthBar(std::shared_ptr<cugl::scene2::ProgressBar> bar);
     
 };
