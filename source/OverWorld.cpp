@@ -270,7 +270,7 @@ bool OverWorld::init(const std::shared_ptr<cugl::AssetManager>& assets, const st
     return true;
 }
 
-bool OverWorld::setRootNode(const std::shared_ptr<scene2::SceneNode>& _worldNode, const std::shared_ptr<scene2::SceneNode>& _debugNode, std::shared_ptr<cugl::physics2::net::NetWorld> _world){
+bool OverWorld::setRootNode(const std::shared_ptr<scene2::SceneNode>& _worldNode, const std::shared_ptr<scene2::SceneNode>& _debugNode, std::shared_ptr<cugl::physics2::net::NetWorld> _worldNet){
     // Add Base Decoy node
     _worldNode->addChild(_decoys->getDecoySetNode());
     
@@ -284,10 +284,10 @@ bool OverWorld::setRootNode(const std::shared_ptr<scene2::SceneNode>& _worldNode
     }
     
     // Add Dog to Obstacle World
-    _world->initObstacle(_dog);
+    _worldNet->initObstacle(_dog);
     _dog->setDebugScene(_debugNode);
     if (_isHost){
-        _world->getOwnedObstacles().insert({_dog,0});
+        _worldNet->getOwnedObstacles().insert({_dog,0});
     }
     _worldNode->addChild(_dog->getDogNode());
     

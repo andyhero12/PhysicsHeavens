@@ -39,7 +39,7 @@ World::World(std::shared_ptr<LevelModel> _level, std::shared_ptr<cugl::AssetMana
         for (int j =0 ;j < originalCols; j++){
             std::shared_ptr<Texture> subTexture = getBoxFromTileSet((passable.at(i).at(j)),tileSetTextures);
             Rect temp = Rect(Vec2(j,i), size); // VERY IMPORTANT DO NOT CHANGE Rotation Occurs Here
-            boundaryWorld.at(i).at(j) = TileInfo::alloc(temp.origin, size, Terrain::IMPASSIBLE, getBoxFromTileSet((passable.at(i).at(j)),tileSetTextures));
+            boundaryWorld.at(i).at(j) = TileInfo::alloc(temp.origin, size, Terrain::PASSABLE, getBoxFromTileSet((passable.at(i).at(j)),tileSetTextures));
         }
     }
     
@@ -183,6 +183,12 @@ const bool World::isPassable(int x, int y){
     if(x < 0 || y < 0 || x >= getCols() || y >= getRows()){
         return false;
     }
+    
+//    for (int i = 0; i < getRows(); ++i) {
+//        for (int j = 0; j < getCols(); ++j) {
+//            CULog("IS PASSABLE: %d", getBoundaryWorld().at(i).at(j)->type);
+//        }
+//    }
     
     return getBoundaryWorld().at(y).at(x)->type == PASSABLE;
 }

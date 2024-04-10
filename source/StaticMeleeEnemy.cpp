@@ -120,7 +120,7 @@ void StaticMeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
     if (_counter < updateRate){
         _counter++;
     }
-    CULog("Boundary World Size: %zu", overWorld.getWorld()->getBoundaryWorld().size());
+    //CULog("Boundary World Size in Melee Enemy Preupdate: %zu", overWorld.getWorld()->getBoundaryWorld().size());
     
     cugl::Vec2 dog_pos = overWorld.getDog()->getPosition();
     cugl::Vec2 my_pos = getPosition();
@@ -133,15 +133,22 @@ void StaticMeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
     _pathfinder->SetStartAndGoalStates(start, end);
     
     unsigned int SearchState = _pathfinder->SearchStep();
-    CULog("Boundary World Size after search step: %zu", overWorld.getWorld()->getBoundaryWorld().size());
+    //CULog("Boundary World Size after search step: %zu", overWorld.getWorld()->getBoundaryWorld().size());
+    
+    CULog("World Size is %d by %d", overWorld.getWorld()->getRows(), overWorld.getWorld()->getCols());
+    CULog("Search for path from (%d, %d) to (%d, %d)", start.x, start.y, end.x, end.y);
     
     // Perform the search
     while( SearchState == AStarSearch<WorldSearchVertex>::SEARCH_STATE_SEARCHING )
     {
         SearchState = _pathfinder->SearchStep();
-        CULog("Boundary World Size after search step: %zu", overWorld.getWorld()->getBoundaryWorld().size());
+        //CULog("Boundary World Size after search step: %zu", overWorld.getWorld()->getBoundaryWorld().size());
     }
-        
+    
+    if( SearchState == AStarSearch<WorldSearchVertex>::SEARCH_STATE_FAILED ){
+        CULog("Search Failed");
+    }
+    
     // Check if the search was successful
     if( SearchState == AStarSearch<WorldSearchVertex>::SEARCH_STATE_SUCCEEDED ){
         
@@ -152,15 +159,16 @@ void StaticMeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
         for( ;; ){
             node = _pathfinder->GetSolutionNext();
             
-            CULog("Next Node: (%d, %d)", static_cast<int>(node->x), static_cast<int>(node->y));
-            
             if( !node ){
                 break;
             }
+            
+            CULog("Next Node: (%d, %d)", static_cast<int>(node->x), static_cast<int>(node->y));
+            
         };
     }
     
-    _pathfinder->FreeSolutionNodes();
+    //_pathfinder->FreeSolutionNodes();
     
     cugl::Vec2 org_dist = dog_pos - original_pos;
     float distance = org_dist.length();

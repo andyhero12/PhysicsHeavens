@@ -197,8 +197,8 @@ void GameScene::reset() {
     removeAllChildren();
     _worldnode->removeAllChildren();
     _debugnode->removeAllChildren();
-    
-    _backgroundWrapper = std::make_shared<World>(Vec2(0, 0), _level->getTiles(), _level->getBoundaries(), _assets->get<cugl::Texture>("tile"));
+//    
+//    _backgroundWrapper = std::make_shared<World>(Vec2(0, 0), _level->getTiles(), _level->getBoundaries(), _assets->get<cugl::Texture>("tile"));
     
     populate();
     std::function<void(const std::shared_ptr<physics2::Obstacle>&,const std::shared_ptr<scene2::SceneNode>&)> linkSceneToObsFunc = [=](const std::shared_ptr<physics2::Obstacle>& obs, const std::shared_ptr<scene2::SceneNode>& node) {
@@ -601,7 +601,7 @@ void GameScene::preUpdate(float dt) {
     _camera.update(dt);
     overWorld.update(_input, computeActiveSize(), dt);
     _spawnerController.update(_monsterController, overWorld, dt);
-    CULog("Boundary World Size in preupdate: %zu", overWorld.getWorld()->getBoundaryWorld().size());
+    //CULog("Boundary World Size in preupdate: %zu", overWorld.getWorld()->getBoundaryWorld().size());
     _monsterController.update( dt, overWorld);
     
     if (_isHost){

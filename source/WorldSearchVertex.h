@@ -24,12 +24,15 @@ public:
     // y coord of this node
     int y;
     
-    WorldSearchVertex( int px, int py,  std::shared_ptr<World> world) { x=px; y=py; _world = world; }
+    WorldSearchVertex( int px, int py,  std::shared_ptr<World> world) { x=px; y=py; 
+        _world = world; }
     
     // WARNING: This default consrtuctor is needed by the astarstl class for some reason, this implementation might be incorrect
     WorldSearchVertex(){ x = y = 0; }
     
-    ~WorldSearchVertex(){}
+    ~WorldSearchVertex(){
+        
+    }
     
     // The heurstic used to determine the distance to the goal
     float GoalDistanceEstimate( WorldSearchVertex &nodeGoal );

@@ -53,7 +53,15 @@ bool WorldSearchVertex::IsGoal( WorldSearchVertex &nodeGoal )
 // is specific to the application
 bool WorldSearchVertex::GetSuccessors( AStarSearch<WorldSearchVertex> *astarsearch, WorldSearchVertex *parent_node )
 {
-
+//    CULog("Enter GetSuccessors");
+//    CULog("This vertex coordinate: (%d, %d)", x, y);
+//    CULog("World Size: %d by %d", _world->getRows(), _world->getCols());
+//    
+//    CULog("%d", (int) _world->isPassable(x - 1, y));
+//    CULog("%d", (int) _world->isPassable(x, y - 1));
+//    CULog("%d", (int) _world->isPassable(x + 1, y));
+//    CULog("%d", (int) _world->isPassable(x, y + 1));
+    
     int parent_x = -1;
     int parent_y = -1;
 
@@ -74,6 +82,8 @@ bool WorldSearchVertex::GetSuccessors( AStarSearch<WorldSearchVertex> *astarsear
     {
         NewNode = WorldSearchVertex( x-1, y, _world);
         astarsearch->AddSuccessor( NewNode );
+        //CULog("Added Successor");
+
     }
 
     if( _world->isPassable(x, y - 1)
@@ -82,6 +92,7 @@ bool WorldSearchVertex::GetSuccessors( AStarSearch<WorldSearchVertex> *astarsear
     {
         NewNode = WorldSearchVertex( x, y-1, _world);
         astarsearch->AddSuccessor( NewNode );
+        //CULog("Added Successor");
     }
 
     if( _world->isPassable(x + 1, y)
@@ -90,6 +101,7 @@ bool WorldSearchVertex::GetSuccessors( AStarSearch<WorldSearchVertex> *astarsear
     {
         NewNode = WorldSearchVertex( x+1, y, _world );
         astarsearch->AddSuccessor( NewNode );
+        //CULog("Added Successor");
     }
 
         
@@ -99,6 +111,7 @@ bool WorldSearchVertex::GetSuccessors( AStarSearch<WorldSearchVertex> *astarsear
     {
         NewNode = WorldSearchVertex( x, y + 1, _world);
         astarsearch->AddSuccessor( NewNode );
+        //CULog("Added Successor");
     }
     
     return true;

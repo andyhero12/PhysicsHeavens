@@ -75,7 +75,9 @@ public:
     std::vector<std::vector<std::shared_ptr<TileInfo>>> decorWorld;
     
     World () {};
-    
+    ~World(){
+        CULog("Destructing World");
+    }
     World(std::shared_ptr<LevelModel> _level,std::shared_ptr<cugl::AssetManager> assets);
     
     World (cugl::Vec2 bottomleft,
@@ -106,12 +108,12 @@ public:
     
     // Get the number of rows of tiles in the world
     int getRows(){
-        return boundaryWorld.size();
+        return(int) boundaryWorld.size();
     }
     
     // Get the number of columns of tiles in the world
     int getCols(){
-        return boundaryWorld[0].size();
+        return (int) boundaryWorld[0].size();
     }
 };
 
