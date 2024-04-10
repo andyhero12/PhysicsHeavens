@@ -374,13 +374,11 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     _pause->doLayout();
     
     
-//    _rootnode->setScale(2.0f);
-    
-    _zoom = zoom;
-    
+    _zoom = 2;
+
     Vec2 delta = overWorld.getDog()->getDogNode()->getWorldPosition();
     delta -= (computeActiveSize()/2);
-    _rootnode->applyPan(-delta);
+    _rootnode->applyPan(-delta/_zoom);
     
     return true;
 }
@@ -565,6 +563,12 @@ void GameScene::addInitObstacle(const std::shared_ptr<physics2::Obstacle>& obj,
 #pragma mark Physics Handling
 
 void GameScene::preUpdate(float dt) {
+    
+    _zoom = 2 - (float)overWorld.getDog()->getAbsorb()/(float)overWorld.getDog()->getMaxAbsorb();
+    
+    _rootnode->setScale(_zoom);
+    
+    
     if(_input.didPressPause()){
         _pause->setPause(_input.getPause());
     }
@@ -607,7 +611,7 @@ void GameScene::postUpdate(float dt) {
     _rootnode->resetPane();
     Vec2 delta = overWorld.getDog()->getDogNode()->getWorldPosition();
     delta -= (computeActiveSize()/2);
-    _rootnode->applyPan(-delta);
+    _rootnode->applyPan(-delta/_zoom);
 }
 
 void GameScene::fixedUpdate() {
