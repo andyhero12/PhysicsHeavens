@@ -46,8 +46,8 @@
         ]
     },
     "bomb": {
-        "sprite cols": 8,
-        "sprite size": 8
+        "sprite cols": 9,
+        "sprite size": 9
     },
     "spawner": {
         "start,Rate": [

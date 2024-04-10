@@ -28,9 +28,10 @@ bool MonsterController::init(OverWorld& overWorld,
         float cx = cluster.x;
         float cy = cluster.y;
         int count = round(cluster.z);
-        for(int i = 0; i < count; i++) {
-            spawnStaticBasicEnemy(Vec2(cx,cy), overWorld);
-        }
+//        for(int i = 0; i < count; i++) {
+//            spawnStaticBasicEnemy(Vec2(cx,cy), overWorld);
+            spawnBombEnemy(Vec2(cx,cy), overWorld);
+//        }
     }
     return true;
 }
@@ -144,7 +145,7 @@ void MonsterController::spawnBombEnemy(cugl::Vec2 pos, OverWorld& overWorld){
     if (!overWorld._isHost){
         return;
     }
-    Size mySize(0.5,0.5);
+    Size mySize(1,1);
     auto params = _bombEnemyFactory->serializeParams(pos, mySize, 3, 0);
     auto pair = _network->getPhysController()->addSharedObstacle(_bombEnemyFactID, params);
 //        static_enemy->setHealthBar(_healthBar);
