@@ -226,10 +226,11 @@ void GameScene::reset() {
     _monsterController.init(overWorld, _worldnode, _debugnode);
     _worldnode->addChild(_monsterController.getMonsterSceneNode());
     _camera.init(overWorld.getDog()->getDogNode(), _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), overWorld.getDog()->getUINode(), 1000.0f);
-
     addChild(_worldnode);
     addChild(_debugnode);
-    addChild(overWorld.getDog()->getUINode());
+    addChild(_uinode);
+    
+    _uinode->addChild(overWorld.getDog()->getUINode());
     Application::get()->resetFixedRemainder();
 }
 
@@ -316,6 +317,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
 
     _network = network;
     _todoReset = false;
+    
+    
     // Start up the input handler
     _level = assets->get<LevelModel>(LEVEL_ONE_KEY);
     _level->setTileSetAssets(assets);
@@ -349,8 +352,11 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     _debugnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _debugnode->setPosition(offset);
     
+    _uinode = scene2::SceneNode::alloc();
+    
     addChild(_worldnode);
     addChild(_debugnode);
+    addChild(_uinode);
     
     populate();
     std::function<void(const std::shared_ptr<physics2::Obstacle>&,const std::shared_ptr<scene2::SceneNode>&)> linkSceneToObsFunc = [=](const std::shared_ptr<physics2::Obstacle>& obs, const std::shared_ptr<scene2::SceneNode>& node) {
@@ -372,9 +378,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     
     overWorld.init(assets, _level, computeActiveSize(),_network, isHost);
     overWorld.setRootNode(_worldnode, _debugnode, _world);
-    addChild(overWorld.getDog()->getUINode());
+    _uinode->addChild(overWorld.getDog()->getUINode());
     
-    _camera.init(overWorld.getDog()->getDogNode(), _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), overWorld.getDog()->getUINode(), 1000.0f);
+    _camera.init(overWorld.getDog()->getDogNode(), _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), _uinode, 1000.0f);
     
     _monsterController.setNetwork(_network);
     _monsterController.setMeleeAnimationData(_constants->get("basicEnemy"), assets);
@@ -386,18 +392,26 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     _active = true;
     setDebug(false);
 
-//TODO: For task 5, attach CrateEvent to the network controller
-#pragma mark BEGIN SOLUTION
+    // attach CrateEvent to the network controller
     _network->attachEventType<CrateEvent>();
     _network->attachEventType<DecoyEvent>();
     _network->attachEventType<BiteEvent>();
     _network->attachEventType<ExplodeEvent>();
     _network->attachEventType<ShootEvent>();
     _network->attachEventType<GameResEvent>();
-#pragma mark END SOLUTION
     
     // XNA nostalgia
     Application::get()->setClearColor(Color4f::CORNFLOWER);
+    
+    _pause = std::make_shared<PauseScene>();
+    _pause->init();
+    _pause->setPause(false);
+    
+    _pause->setContentSize(dimen);
+    _pause->doLayout();
+    
+    addChild(_pause);
+    
     return true;
 }
 
@@ -580,10 +594,16 @@ void GameScene::addInitObstacle(const std::shared_ptr<physics2::Obstacle>& obj,
 #pragma mark Physics Handling
 
 void GameScene::preUpdate(float dt) {
-    if (needToReset()){
-         CULog("Reseting\n");
-         reset();
+//    if (needToReset()){
+//         CULog("Reseting\n");
+//         reset();
+//    }
+    _pause->updateMenu(getCamera()->getPosition().x,  getCamera()->getPosition().y);
+    
+    if(_input.didPressPause()){
+        _pause->setPause(_input.getPause());
     }
+    
     if (_input.didPressExit()) {
         Application::get()->quit();
     }
@@ -643,10 +663,10 @@ void GameScene::fixedUpdate() {
 //            CULog("BIG CRATE GOT");
             processCrateEvent(crateEvent);
         }
-        if (auto resetEvent = std::dynamic_pointer_cast<GameResEvent>(e)){
-//            CULog("RESET EVENT GOT");
-            setToDoReset(true);
-        }
+//        if (auto resetEvent = std::dynamic_pointer_cast<GameResEvent>(e)){
+////            CULog("RESET EVENT GOT");
+//            setToDoReset(true);
+//        }
         if (auto decoyEvent = std::dynamic_pointer_cast<DecoyEvent>(e)){
 //            CULog("Decoy Event Got");
             overWorld.getDecoys()->addNewDecoy(Vec2(decoyEvent->getPos().x,decoyEvent->getPos().y));

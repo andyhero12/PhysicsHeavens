@@ -19,6 +19,7 @@
 #include "NLMenuScene.h"
 #include "NLClientScene.h"
 #include "NLHostScene.h"
+#include "PauseScene.h"
 
 using namespace cugl::physics2::net;
 
@@ -187,6 +188,8 @@ public:
      * @param timestep  The amount of time (in seconds) since the last frame
      */
     void updateClientScene(float timestep);
+    
+    void updateGameScene(float timestep);
 
     /**
      * The method called to draw the application to the screen.

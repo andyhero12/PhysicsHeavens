@@ -127,6 +127,7 @@ void NetApp::onResume() {
 #pragma mark Application Loop
 
 void NetApp::preUpdate(float timestep){
+//    std::cout << _status << std::endl;
     if (_status == LOAD && _loading.isActive()) {
         _loading.update(0.01f);
     }
@@ -150,7 +151,7 @@ void NetApp::preUpdate(float timestep){
         updateClientScene(timestep);
     }
     else if (_status == GAME){
-        _gameplay.preUpdate(timestep);
+        updateGameScene(timestep);
     }
 }
 
@@ -279,6 +280,20 @@ void NetApp::updateClientScene(float timestep) {
 		_status = MENU;
 	}
 #pragma mark END SOLUTION
+}
+
+
+void NetApp::updateGameScene(float timestep) {
+    _gameplay.preUpdate(timestep);
+    if(_gameplay.getStatus() == PauseScene::EXIT){
+        _gameplay.dispose();
+        _network->disconnect();
+        _mainmenu.setActive(true);
+        _hostgame.setActive(false);
+        _hostgame.endGame();
+        _joingame.setActive(false);
+        _status = MENU;
+    }
 }
 
 /**

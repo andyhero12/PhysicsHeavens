@@ -37,6 +37,7 @@
 #include "OverWorld.h"
 #include "MonsterController.h"
 #include "GlobalConstants.h"
+#include "PauseScene.h"
 
 using namespace cugl::physics2::net;
 using namespace cugl;
@@ -123,11 +124,15 @@ protected:
     /** Reference to the debug root of the scene graph */
     std::shared_ptr<cugl::scene2::SceneNode> _debugnode;
     
+    std::shared_ptr<cugl::scene2::SceneNode> _uinode;
+    
     std::shared_ptr<cugl::physics2::net::NetWorld> _world;
     
     std::shared_ptr<CrateFactory> _crateFact;
     /** The level model */
     std::shared_ptr<LevelModel> _level;
+    
+    std::shared_ptr<PauseScene> _pause;
     Uint32 _factId;
 
     // Physics objects for the game
@@ -147,6 +152,7 @@ protected:
     bool _debug;
 
     std::shared_ptr<NetEventController> _network;
+    
 
 #pragma mark Internal Object Management
 
@@ -213,6 +219,8 @@ protected:
 public:
 #pragma mark -
 #pragma mark Constructors
+    
+    PauseScene::Choice getStatus(){return _pause->getStatus();}
     /**
      * Creates a new game world with the default values.
      *

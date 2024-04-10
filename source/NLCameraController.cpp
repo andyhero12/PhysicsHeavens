@@ -11,7 +11,6 @@ bool CameraController::init(const std::shared_ptr<cugl::scene2::SceneNode> targe
     _camera = camera;
     _maxZoom = maxZoom;
     _ui = ui;
-    setZoom(0.4);
     return true;
 }
 
