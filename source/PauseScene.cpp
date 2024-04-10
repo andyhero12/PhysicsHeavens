@@ -16,50 +16,83 @@ bool PauseScene::init(std::shared_ptr<cugl::AssetManager> &assets){
 
 bool PauseScene::init(){
     _childOffset = -1;
-    // create the EXIT button
-    std::shared_ptr<cugl::scene2::SceneNode> up = cugl::scene2::PolygonNode::allocWithPoly(Rect(0,0,100,100));
-    up->setColor(Color4::RED);
+    
+    std::shared_ptr<cugl::scene2::SceneNode> resume =cugl::scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("resume"));
+    resume->setScale(PAUSE_SCALE);
     
     
-    std::shared_ptr<cugl::scene2::SceneNode> down = cugl::scene2::PolygonNode::allocWithPoly(Rect(0,0,100,100));
-    down->setColor(Color4::BLUE);
+    std::shared_ptr<cugl::scene2::SceneNode> exit =cugl::scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("mainmenu"));
+
+    exit->setScale(PAUSE_SCALE);
     
     
-    paused = false;
+    resumeButton = cugl::scene2::Button::alloc(resume, Color4::GRAY);
+    exitButton = cugl::scene2::Button::alloc(exit, Color4::GRAY);
     
-    _button = cugl::scene2::Button::alloc(up, down);
-    _button->addListener([=](const std::string& name, bool down) {
+    resumeButton->addListener([=](const std::string& name, bool down){
+        std::cout << "resume : "<< resumeButton->isActive() << " exit " << exitButton->isActive() << std::endl;
+        std::cout << "resume ??? \n";
+        if(getPause()){
+            setPause(false);
+        }
+    });
+    
+    exitButton->addListener([=](const std::string& name, bool down) {
+        std::cout << "resume : "<< resumeButton->isActive() << " exit " << exitButton->isActive() << std::endl;
+        std::cout << "exit ??? \n";
         if(getPause()){
             status = Choice::EXIT;
         }
     });
     
-    _button->setPushable(Path2(Rect(-50,-50,200,200)));
+    resumeButton->activate();
+    exitButton->activate();
     
-    _button->setVisible(false);
-    _button->activate();
-    addChild(_button);
-    _button->setAnchor(Vec2::ANCHOR_CENTER);
+    addChild(resumeButton);
+    addChild(exitButton);
+    
+    resumeButton->setPosition(-50,0);
+    exitButton->setPosition(100,0);
+    
+    resumeButton->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    
+    // need to fix offset for exit i.e getPosition
+    Vec2 exitPos = exitButton->getPosition()- Vec2(exitButton->getWidth(), exitButton->getHeight()).scale(PAUSE_SCALE/2);
+    Vec2 resumePos = resumeButton->getPosition()- Vec2(resumeButton->getWidth(), resumeButton->getHeight()).scale(PAUSE_SCALE/2);
+    
+//    std::cout << "pre translate vec : " <<  exitButton->getPosition().x << " " << exitButton->getPosition().y << std::endl;
+    std::cout << "exit translate vec : " << exitPos.x << " " << exitPos.y << std::endl;
+    
+    std::cout << "resume translate vec : " << resumePos.x << " " << resumePos.y << std::endl;
+    
+    exitButton->setPushable(Path2(Rect(exitPos, PAUSE_SCALE * Size(exitButton->getWidth(), exitButton->getHeight()))));
+    
+    
+    resumeButton->setPushable(Path2(Rect(resumePos, PAUSE_SCALE * Size(resumeButton->getWidth(), resumeButton->getHeight()))));
+    
+//    resumeButton->setPushable(Path2(Rect(Vec2(0,0), PAUSE_SCALE * Size(resumeButton->getWidth(), resumeButton->getHeight()))));
+    
+    
+    auto r = cugl::scene2::PolygonNode::allocWithPoly(Rect(exitButton->getPosition(), PAUSE_SCALE * Size(exitButton->getWidth(), exitButton->getHeight())));
+    r->setPosition(exitPos);
+    addChild(r);
+//    
+//    r->setPosition(resumeButton->getPosition());
     return true;
 }
 
 
-
-void PauseScene::updateMenu(float x, float y){
-    _button->setPosition(x,y);
-    _button->setVisible(getPause());
-}
-
-void PauseScene::draw(const std::shared_ptr<cugl::SpriteBatch>& batch, const cugl::Affine2& transform, cugl::Color4 tint){
-    if(paused){
-        SceneNode::draw(batch,transform,tint);
-    }
+void PauseScene::setPause(bool value) {
+    paused = value; 
+    setVisible(getPause());
 }
 
 void PauseScene::dispose(){
-    _button->dispose();
+    resumeButton->dispose();
+    exitButton->dispose();
 }
 
 void PauseScene::exitToMain(){
-    _button->setDown(true);
+    resumeButton->setDown(true);
+    resumeButton->setDown(false);
 }

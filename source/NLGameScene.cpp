@@ -407,10 +407,13 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     _pause->init(_assets);
     _pause->setPause(false);
     
+//    
+    _uinode->addChild(_pause);
+    _uinode->setContentSize(dimen * zoom * 10);
+    _uinode->doLayout();
+    
     _pause->setContentSize(dimen * zoom * 10);
     _pause->doLayout();
-    
-    addChild(_pause);
     
     return true;
 }
@@ -599,7 +602,6 @@ void GameScene::preUpdate(float dt) {
 //         CULog("Reseting\n");
 //         reset();
 //    }
-    _pause->updateMenu(getCamera()->getPosition().x,  getCamera()->getPosition().y);
     
     if(_input.didPressPause()){
         _pause->setPause(_input.getPause());

@@ -10,6 +10,10 @@
 #include <cugl/cugl.h>
 
 
+#define PAUSE_SCALE 6
+
+
+
 class PauseScene:  public cugl::scene2::SceneNode 
 {
     
@@ -33,7 +37,8 @@ private:
     bool paused;
 
     /** The "pause" button */
-    std::shared_ptr<cugl::scene2::Button>  _button;
+    std::shared_ptr<cugl::scene2::Button>  resumeButton;
+    std::shared_ptr<cugl::scene2::Button>  exitButton;
     std::shared_ptr<cugl::AssetManager> _assets;
     
 public:
@@ -58,26 +63,10 @@ public:
      *
      * @return true if the gameplay controller is currently active
      */
-    void setPause(bool value) { paused = value; }
-    
-    void updateMenu(float x, float y);
+    void setPause(bool value);
     
     Choice getStatus(){return status;}
     
-    
-#pragma mark -
-#pragma mark Rendering
-    /**
-     * Draws this polygon node via the given SpriteBatch.
-     *
-     * This method only worries about drawing the current node.  It does not
-     * attempt to render the children.
-     *
-     * @param batch     The SpriteBatch to draw with.
-     * @param transform The global transformation matrix.
-     * @param tint      The tint to blend with the Node color.
-     */
-    virtual void draw(const std::shared_ptr<cugl::SpriteBatch>& batch, const cugl::Affine2& transform, cugl::Color4 tint) override;
     
 };
 #include <stdio.h>

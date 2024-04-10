@@ -1,9 +1,19 @@
 {
 	"textures": {
+        "resume":{
+            "file": "textures/game_ui/resume_button.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "mainmenu":{
+            "file": "textures/game_ui/back_to_menu_button.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
         "spawner": {
             "file": "textures/spawner.png",
-              "minfilter": "linear",
-              "magfilter": "nearest"
+            "minfilter": "linear",
+            "magfilter": "nearest"
         },
         "healthframe": {
             "file": "textures/game_ui/HEALTH_FRAME.png",
