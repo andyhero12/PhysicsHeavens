@@ -12,6 +12,8 @@
 #define __NL_MENU_SCENE_H__
 #include <cugl/cugl.h>
 #include <vector>
+#include <chrono>
+#include "GlobalConstants.h"
 
 
 /**
@@ -47,6 +49,36 @@ protected:
     std::shared_ptr<cugl::scene2::Button> _joinbutton;
     /** The player menu choice */
     Choice _choice;
+
+    // NO CONTROLLER (ALL IN SEPARATE THREAD)
+    //InputController _input;
+    std::chrono::steady_clock::time_point lastInputTime;
+    // VIEW
+    ///** The animated progress bar */
+    //std::shared_ptr<cugl::scene2::ProgressBar>  _bar;
+    ///** The engine name */
+    //std::shared_ptr<cugl::scene2::SceneNode>  _brand;
+    /** The "play" button */
+    std::shared_ptr<cugl::scene2::Button>    _button1;
+    std::shared_ptr<cugl::scene2::Button>    _button2;
+    std::shared_ptr<cugl::scene2::Button>    _button3;
+    std::vector<std::shared_ptr<cugl::scene2::Button>> _buttonset;
+
+    // MODEL
+    /** The progress displayed on the screen */
+    float _progress;
+    /** Whether or not the player has pressed play to continue */
+    bool  _completed;
+
+    bool _firstset;
+
+    int _counter;
+
+    float timeSinceLastSwitch;
+
+    float switchFreq;
+
+    ScreenEnums transition;
     
 public:
 #pragma mark -
