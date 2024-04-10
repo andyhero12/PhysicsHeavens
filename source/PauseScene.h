@@ -34,13 +34,16 @@ private:
 
     /** The "pause" button */
     std::shared_ptr<cugl::scene2::Button>  _button;
+    std::shared_ptr<cugl::AssetManager> _assets;
     
 public:
     
     PauseScene(){};
     
+    bool init(std::shared_ptr<cugl::AssetManager> &assets);
     bool init() override;
     
+    void dispose() override;
     /**
      * Returns true if the gameplay controller is currently active
      *

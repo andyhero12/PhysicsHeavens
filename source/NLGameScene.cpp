@@ -404,7 +404,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     Application::get()->setClearColor(Color4f::CORNFLOWER);
     
     _pause = std::make_shared<PauseScene>();
-    _pause->init();
+    _pause->init(_assets);
     _pause->setPause(false);
     
     _pause->setContentSize(dimen);
@@ -421,6 +421,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
 void GameScene::dispose() {
     if (_active) {
         removeAllChildren();
+        _pause->dispose();
 //        _input.dispose();
         _world = nullptr;
         _worldnode = nullptr;

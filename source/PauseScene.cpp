@@ -9,6 +9,11 @@
 
 using namespace cugl;
 
+bool PauseScene::init(std::shared_ptr<cugl::AssetManager> &assets){
+    _assets = assets;
+    return init();
+}
+
 bool PauseScene::init(){
     _childOffset = -1;
     // create the EXIT button
@@ -51,3 +56,6 @@ void PauseScene::draw(const std::shared_ptr<cugl::SpriteBatch>& batch, const cug
     }
 }
 
+void PauseScene::dispose(){
+    _button->dispose();
+}
