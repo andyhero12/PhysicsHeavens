@@ -226,11 +226,28 @@ void GameScene::reset() {
     _monsterController.init(overWorld, _worldnode, _debugnode);
     _worldnode->addChild(_monsterController.getMonsterSceneNode());
     _camera.init(overWorld.getDog()->getDogNode(), _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), overWorld.getDog()->getUINode(), 1000.0f);
-
     addChild(_worldnode);
     addChild(_debugnode);
-    addChild(overWorld.getDog()->getUINode());
+    addChild(_uinode);
+    
+    _uinode->addChild(overWorld.getDog()->getUINode());
     Application::get()->resetFixedRemainder();
+}
+
+void GameScene::pause(){
+    // pause the game
+    
+    // might not need ?
+    setToDoPause(_input.getPause());
+    if(needToPause()){
+        _button->setVisible(true);
+    }
+    else{
+        _button->setVisible(false);
+    }
+    
+    // set menu to be visible and clickable
+    
 }
 
 #pragma mark -
@@ -244,7 +261,8 @@ void GameScene::reset() {
 GameScene::GameScene() : cugl::Scene2(),
 _debug(false),
 _isHost(false),
-_todoReset(false)
+_todoReset(false),
+_todoPause(false)
 {
 }
 
@@ -304,6 +322,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
  * @return  true if the controller is initialized properly, false otherwise.
  */
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rect, const Vec2 gravity, const std::shared_ptr<NetEventController> network, bool isHost) {
+    status = Choice::GAME;
     Size dimen = computeActiveSize();
 
     if (assets == nullptr) {
@@ -316,6 +335,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
 
     _network = network;
     _todoReset = false;
+    _todoPause = false;
+    
+    
     // Start up the input handler
     _level = assets->get<LevelModel>(LEVEL_ONE_KEY);
     _level->setTileSetAssets(assets);
@@ -349,8 +371,11 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     _debugnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _debugnode->setPosition(offset);
     
+    _uinode = scene2::SceneNode::alloc();
+    
     addChild(_worldnode);
     addChild(_debugnode);
+    addChild(_uinode);
     
     populate();
     std::function<void(const std::shared_ptr<physics2::Obstacle>&,const std::shared_ptr<scene2::SceneNode>&)> linkSceneToObsFunc = [=](const std::shared_ptr<physics2::Obstacle>& obs, const std::shared_ptr<scene2::SceneNode>& node) {
@@ -372,9 +397,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     
     overWorld.init(assets, _level, computeActiveSize(),_network, isHost);
     overWorld.setRootNode(_worldnode, _debugnode, _world);
-    addChild(overWorld.getDog()->getUINode());
+    _uinode->addChild(overWorld.getDog()->getUINode());
     
-    _camera.init(overWorld.getDog()->getDogNode(), _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), overWorld.getDog()->getUINode(), 1000.0f);
+    _camera.init(overWorld.getDog()->getDogNode(), _worldnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), _uinode, 1000.0f);
     
     _monsterController.setNetwork(_network);
     _monsterController.setMeleeAnimationData(_constants->get("basicEnemy"), assets);
@@ -386,18 +411,42 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     _active = true;
     setDebug(false);
 
-//TODO: For task 5, attach CrateEvent to the network controller
-#pragma mark BEGIN SOLUTION
+    // attach CrateEvent to the network controller
     _network->attachEventType<CrateEvent>();
     _network->attachEventType<DecoyEvent>();
     _network->attachEventType<BiteEvent>();
     _network->attachEventType<ExplodeEvent>();
     _network->attachEventType<ShootEvent>();
     _network->attachEventType<GameResEvent>();
-#pragma mark END SOLUTION
     
     // XNA nostalgia
     Application::get()->setClearColor(Color4f::CORNFLOWER);
+    
+    
+    // create the EXIT button
+    std::shared_ptr<cugl::scene2::SceneNode> up = cugl::scene2::PolygonNode::allocWithPoly(Rect(0,0,100,100));
+    up->setColor(Color4::RED);
+    
+    
+    std::shared_ptr<cugl::scene2::SceneNode> down = cugl::scene2::PolygonNode::allocWithPoly(Rect(0,0,100,100));
+    down->setColor(Color4::BLUE);
+    
+    
+    _button = cugl::scene2::Button::alloc(up, down);
+    _button->addListener([=](const std::string& name, bool down) {
+        if(needToPause()){
+            status = Choice::EXIT;
+            std::cout << " pressed paused -------------------------" << std::endl;
+        }
+    });
+    
+    _button->setPushable(Path2(Rect(0,0,2000,1000)));
+    
+    _button->setVisible(false);
+    addChild(_button);
+    _button->setAnchor(Vec2::ANCHOR_CENTER);
+    
+    
     return true;
 }
 
@@ -580,10 +629,19 @@ void GameScene::addInitObstacle(const std::shared_ptr<physics2::Obstacle>& obj,
 #pragma mark Physics Handling
 
 void GameScene::preUpdate(float dt) {
-    if (needToReset()){
-         CULog("Reseting\n");
-         reset();
+//    if (needToReset()){
+//         CULog("Reseting\n");
+//         reset();
+//    }
+    _button->setPosition( getCamera()->getPosition().x,  getCamera()->getPosition().y);
+    if(_button->isVisible()){
+        _button->activate();
     }
+    
+    if(_input.didPressPause()){
+        pause();
+    }
+    
     if (_input.didPressExit()) {
         Application::get()->quit();
     }
@@ -643,10 +701,10 @@ void GameScene::fixedUpdate() {
 //            CULog("BIG CRATE GOT");
             processCrateEvent(crateEvent);
         }
-        if (auto resetEvent = std::dynamic_pointer_cast<GameResEvent>(e)){
-//            CULog("RESET EVENT GOT");
-            setToDoReset(true);
-        }
+//        if (auto resetEvent = std::dynamic_pointer_cast<GameResEvent>(e)){
+////            CULog("RESET EVENT GOT");
+//            setToDoReset(true);
+//        }
         if (auto decoyEvent = std::dynamic_pointer_cast<DecoyEvent>(e)){
 //            CULog("Decoy Event Got");
             overWorld.getDecoys()->addNewDecoy(Vec2(decoyEvent->getPos().x,decoyEvent->getPos().y));

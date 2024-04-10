@@ -109,6 +109,9 @@ public:
     * @return The camera
     */
     std::shared_ptr<cugl::OrthographicCamera> getCamera() { return _camera; };
+    
+    float getX(){return _camera->getPosition().x; }
+    float getY(){return _camera->getPosition().y; }
 };
 
 #endif /* NLCameraController_h */

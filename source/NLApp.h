@@ -187,6 +187,8 @@ public:
      * @param timestep  The amount of time (in seconds) since the last frame
      */
     void updateClientScene(float timestep);
+    
+    void updateGameScene(float timestep);
 
     /**
      * The method called to draw the application to the screen.
