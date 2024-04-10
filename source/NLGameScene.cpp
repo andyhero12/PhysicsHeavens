@@ -120,7 +120,7 @@ float CAN2_POS[] = {30, 9};
 #define SOUND_THRESHOLD 3
 
 #define FIXED_TIMESTEP_S 0.02f
-#define ROOT_NODE_SCALE 1.5
+#define ROOT_NODE_SCALE 1
 
 
 #pragma mark -
@@ -412,8 +412,8 @@ void GameScene::addInitObstacle(const std::shared_ptr<physics2::Obstacle> &obj,
 void GameScene::preUpdate(float dt)
 {
 
-    float zoom = _zoom - (ROOT_NODE_SCALE - (float)overWorld.getDog()->getAbsorb() / (float)overWorld.getDog()->getMaxAbsorb());
-    _zoom -= fmin(zoom, 0.01f);
+    float zoom = _zoom - (ROOT_NODE_SCALE - 0.25f* (float)overWorld.getDog()->getAbsorb() / (float)overWorld.getDog()->getMaxAbsorb());
+    _zoom -= fmin(zoom, 0.01f) * (zoom < 0 ? 0.12f : 0.3f);
     _rootnode->setScale(_zoom);
 
     if (_input.didPressPause())
