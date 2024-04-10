@@ -111,14 +111,23 @@ void MenuScene::setActive(bool value) {
         Scene2::setActive(value);
         if (value) {
             _choice = NONE;
-            _hostbutton->activate();
-            _joinbutton->activate();
+            //_hostbutton->activate();
+            //_joinbutton->activate();
+            _button1->activate();
+            _button2->activate();
+            _button3->activate();
         } else {
-            _hostbutton->deactivate();
-            _joinbutton->deactivate();
+            _button1->deactivate();
+            _button2->deactivate();
+            _button3->deactivate();
+            _button1->setDown(false);
+            _button2->setDown(false);
+            _button3->setDown(false);
+            //_hostbutton->deactivate();
+            //_joinbutton->deactivate();
             // If any were pressed, reset them
-            _hostbutton->setDown(false);
-            _joinbutton->setDown(false);
+            //_hostbutton->setDown(false);
+            //_joinbutton->setDown(false);
         }
     }
 }
