@@ -370,7 +370,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     _spawnerController.init(_level->getSpawnersPos());
     _spawnerController.setRootNode(_worldnode, _isHost);
     
-    overWorld.init(assets, _level, computeActiveSize(),_network, isHost);
+    overWorld.init(assets, _level, computeActiveSize(),_network, isHost, _backgroundWrapper);
     overWorld.setRootNode(_worldnode, _debugnode, _world);
     addChild(overWorld.getDog()->getUINode());
     

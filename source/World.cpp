@@ -55,6 +55,7 @@ World::World(std::shared_ptr<LevelModel> _level, std::shared_ptr<cugl::AssetMana
         }
     }
 }
+
 World::World (cugl::Vec2 bottomleft,
               const std::vector<std::vector<int>> &map,
               const std::vector<std::vector<int>> &passable, std::shared_ptr<cugl::Texture> tileset):start(bottomleft), tile(tileset){
@@ -175,6 +176,13 @@ std::shared_ptr<cugl::Texture> World::getBox(int position){
     // Get the subTexture
     return tile->getSubTexture(minS, maxS, minT, maxT);
 }
+
+const bool World::isPassable(int x, int y){
     
-
-
+    // If the coord is outside the bounds of the world, the tile is impassible
+    if(x < 0 || y < 0 || x >= getCols() || y >= getRows()){
+        return false;
+    }
+    
+    return getBoundaryWorld().at(y).at(x)->type == PASSABLE;
+}

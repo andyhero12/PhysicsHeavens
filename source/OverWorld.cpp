@@ -246,14 +246,22 @@ bool OverWorld::initDecoys(){
     return true;
 }
 
-bool OverWorld::init(const std::shared_ptr<cugl::AssetManager>& assets, const std::shared_ptr<LevelModel>& level, cugl::Size activeSize,std::shared_ptr<cugl::physics2::net::NetEventController> network, bool isHost){
+
+// Placeholder function if we want to move world instantiation into here later, imo moving it here makes more sense - Colin
+bool OverWorld::initWorld(){
+    return true;
+}
+
+bool OverWorld::init(const std::shared_ptr<cugl::AssetManager>& assets, const std::shared_ptr<LevelModel>& level, cugl::Size activeSize,std::shared_ptr<cugl::physics2::net::NetEventController> network, bool isHost, std::shared_ptr<World> world){
     _assets = assets;
     _level = level;
     _network = network;
     _isHost = isHost;
     _activeSize = activeSize;
     _constants = assets->get<cugl::JsonValue>("constants");
+    _world = world;
     
+    initWorld();
     initDogModel();
     initBases();
     initDecoys();
