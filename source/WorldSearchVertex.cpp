@@ -63,12 +63,12 @@ bool WorldSearchVertex::GetSuccessors( AStarSearch<WorldSearchVertex> *astarsear
         parent_y = parent_node->y;
     }
     
-
+    
     WorldSearchVertex NewNode(0, 0, _world);
 
     // push each possible move except allowing the search to go backwards
 
-    if( (GetMap( x-1, y ) < 9)
+    if( _world->isPassable(x - 1, y)
         && !((parent_x == x-1) && (parent_y == y))
       )
     {
@@ -76,7 +76,7 @@ bool WorldSearchVertex::GetSuccessors( AStarSearch<WorldSearchVertex> *astarsear
         astarsearch->AddSuccessor( NewNode );
     }
 
-    if( (GetMap( x, y-1 ) < 9)
+    if( _world->isPassable(x, y - 1)
         && !((parent_x == x) && (parent_y == y-1))
       )
     {
@@ -84,7 +84,7 @@ bool WorldSearchVertex::GetSuccessors( AStarSearch<WorldSearchVertex> *astarsear
         astarsearch->AddSuccessor( NewNode );
     }
 
-    if( (GetMap( x+1, y ) < 9)
+    if( _world->isPassable(x + 1, y)
         && !((parent_x == x+1) && (parent_y == y))
       )
     {
@@ -93,14 +93,14 @@ bool WorldSearchVertex::GetSuccessors( AStarSearch<WorldSearchVertex> *astarsear
     }
 
         
-    if( (GetMap( x, y+1 ) < 9)
+    if( _world->isPassable(x, y + 1)
         && !((parent_x == x) && (parent_y == y+1))
         )
     {
-        NewNode = WorldSearchVertex( x, y+1, _world);
+        NewNode = WorldSearchVertex( x, y + 1, _world);
         astarsearch->AddSuccessor( NewNode );
     }
-
+    
     return true;
 }
 
