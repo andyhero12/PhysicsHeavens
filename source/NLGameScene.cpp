@@ -407,7 +407,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     _pause->init(_assets);
     _pause->setPause(false);
     
-    _pause->setContentSize(dimen);
+    _pause->setContentSize(dimen * zoom * 10);
     _pause->doLayout();
     
     addChild(_pause);

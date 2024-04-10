@@ -34,7 +34,7 @@ bool PauseScene::init(){
         }
     });
     
-    _button->setPushable(Path2(Rect(0,0,100,100)));
+    _button->setPushable(Path2(Rect(-50,-50,200,200)));
     
     _button->setVisible(false);
     _button->activate();

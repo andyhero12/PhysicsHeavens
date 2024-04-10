@@ -11,6 +11,16 @@ bool CameraController::init(const std::shared_ptr<cugl::scene2::SceneNode> targe
     _camera = camera;
     _maxZoom = maxZoom;
     _ui = ui;
+    
+    
+    Vec2 cameraPos = Vec2(_camera->getPosition().x, _camera->getPosition().y);
+    
+    // fixes ui
+    Vec2* dst = new Vec2();
+    _camera->translate((*dst).x - cameraPos.x, (*dst).y - cameraPos.y);
+    _camera->update();
+    delete dst;
+    
     return true;
 }
 

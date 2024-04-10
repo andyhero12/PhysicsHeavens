@@ -508,6 +508,8 @@ void Button::setColor(Color4 color) {
  * @param bounds    The region responding to mouse clicks.
  */
 void Button::setPushable(const Path2& bounds) {
+    std::shared_ptr<cugl::scene2::SceneNode> up = cugl::scene2::PolygonNode::allocWithPoly(bounds);
+    addChild(up);
     _bounds = bounds;
 }
 
