@@ -443,6 +443,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     _button->setPushable(Path2(Rect(0,0,2000,1000)));
     
     _button->setVisible(false);
+    _button->activate();
     addChild(_button);
     _button->setAnchor(Vec2::ANCHOR_CENTER);
     
@@ -634,9 +635,6 @@ void GameScene::preUpdate(float dt) {
 //         reset();
 //    }
     _button->setPosition( getCamera()->getPosition().x,  getCamera()->getPosition().y);
-    if(_button->isVisible()){
-        _button->activate();
-    }
     
     if(_input.didPressPause()){
         pause();
