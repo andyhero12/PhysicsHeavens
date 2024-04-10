@@ -111,7 +111,6 @@ protected:
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
     InputController _input;
-    CameraController _camera;
     
     /** Reference to the root of the scene graph */
     std::shared_ptr<cugl::scene2::ScrollPane> _rootnode;
@@ -160,6 +159,7 @@ protected:
     
     cugl::Affine2 _transform;
     
+    float zoom;
 
 #pragma mark Internal Object Management
 

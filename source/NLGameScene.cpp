@@ -290,7 +290,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     // This means that we cannot change the aspect ratio of the physics world
     // Shift to center if a bad fit
     Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
-    float zoom = dimen.height / CANVAS_TILE_HEIGHT;
+    zoom = dimen.height / CANVAS_TILE_HEIGHT;
     
 //    _backgroundWrapper = std::make_shared<World>(Vec2(0, 0), _level->getTiles(), _level->getBoundaries(), assets->get<Texture>("tile"));
     _backgroundWrapper = std::make_shared<World>(_level, _assets);
@@ -338,7 +338,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     overWorld.setRootNode(_worldnode, _debugnode, _world);
     _uinode->addChild(overWorld.getDog()->getUINode());
     
-//    _camera.init(overWorld.getDog()->getDogNode(), _rootnode, std::dynamic_pointer_cast<OrthographicCamera>(getCamera()), 1000.0f);
     dogPosition = overWorld.getDog()->getPosition();
     
     _monsterController.setNetwork(_network);
@@ -374,6 +373,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect rec
     
     _pause->setContentSize(dimen);
     _pause->doLayout();
+    
+    Vec2 delta(overWorld.getDog()->getX() - computeActiveSize().width/(2 * zoom), overWorld.getDog()->getY() - computeActiveSize().height/(2 * zoom));
+    _rootnode->applyPan(-delta * zoom);
     
     return true;
 }
@@ -585,7 +587,6 @@ void GameScene::preUpdate(float dt) {
 
     Vec2 delta = overWorld.getDog()->getPosition() - dogPosition;
     
-    float zoom = computeActiveSize().height / CANVAS_TILE_HEIGHT;
     
     dogPosition = overWorld.getDog()->getPosition();
     
