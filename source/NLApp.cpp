@@ -201,7 +201,13 @@ void NetApp::update(float timestep) {
  */
 void NetApp::updateMenuScene(float timestep) {
     _menu.update(timestep);
-    switch (_menu.getChoice()) {
+    if (_menu.getBackclick()) {
+        _menu.setActive(false);
+        _mainmenu.setActive(true);
+        _status = MAINMENU;
+    }
+    else{
+        switch (_menu.getChoice()) {
         case MenuScene::Choice::HOST:
             _menu.setActive(false);
             _hostgame.setActive(true);
@@ -215,7 +221,9 @@ void NetApp::updateMenuScene(float timestep) {
         case MenuScene::Choice::NONE:
             // DO NOTHING
             break;
+        }
     }
+    
 }
 
 /**
@@ -309,6 +317,7 @@ void NetApp::updateMainScene(float timestep)
         _mainmenu.setActive(false);
         _menu.setActive(true);
         _status = MENU;
+
         break;
     case MainMenuScene::Choice::LEVEL:
         _mainmenu.setActive(false);

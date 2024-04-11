@@ -60,7 +60,7 @@ bool MenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _choice = Choice::NONE;
     _hostbutton = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("menu_host"));
     _joinbutton = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("menu_join"));
-    
+    _back = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("menu_back"));
     // _assets->loadDirectory("json/mainmenuassets.json");
     // std::shared_ptr<scene2::SceneNode> layer = _assets->get<scene2::SceneNode>("Menu");
     // std::cout << dimen.width << "  " << dimen.height << std::endl;
@@ -81,6 +81,14 @@ bool MenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
         }
     });
 
+    _back->addListener([this](const std::string& name, bool down) {
+        if (down) {
+            //_choice = Choice::JOIN;
+            _backclicked = true;
+        }
+    });
+
+    _backclicked = false;
     addChild(scene);
     setActive(false);
     return true;
@@ -113,6 +121,8 @@ void MenuScene::setActive(bool value) {
             _choice = NONE;
             _hostbutton->activate();
             _joinbutton->activate();
+            _back->activate();
+            _backclicked = false;
             // _button1->activate();
             // _button2->activate();
             // _button3->activate();
@@ -125,9 +135,11 @@ void MenuScene::setActive(bool value) {
             // _button3->setDown(false);
             _hostbutton->deactivate();
             _joinbutton->deactivate();
+            _back->deactivate();
             // If any were pressed, reset them
             _hostbutton->setDown(false);
             _joinbutton->setDown(false);
+            _back->setDown(false);
         }
     }
 }

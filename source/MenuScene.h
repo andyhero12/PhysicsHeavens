@@ -48,7 +48,10 @@ protected:
     /** The menu button for joining a game */
     std::shared_ptr<cugl::scene2::Button> _joinbutton;
     /** The player menu choice */
+    std::shared_ptr<cugl::scene2::Button> _back;
     Choice _choice;
+
+    bool _backclicked;
     
 public:
 #pragma mark -
@@ -110,6 +113,7 @@ public:
      */
     Choice getChoice() const { return _choice; }
 
+    bool getBackclick(){ return _backclicked; }
 };
 
 #endif /* __NL_MENU_SCENE_H__ */
