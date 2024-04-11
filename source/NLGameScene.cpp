@@ -286,6 +286,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _network->attachEventType<DecoyEvent>();
     _network->attachEventType<BiteEvent>();
     _network->attachEventType<ExplodeEvent>();
+    _network->attachEventType<DashEvent>();
     _network->attachEventType<ShootEvent>();
     _network->attachEventType<GameResEvent>();
 
@@ -495,6 +496,11 @@ void GameScene::fixedUpdate()
         {
             //            CULog("Explode Event Got");
             overWorld.processShootEvent(shootEvent);
+        }
+        if (auto dashEvent = std::dynamic_pointer_cast<DashEvent>(e))
+        {
+            //            CULog("Explode Event Got");
+            overWorld.processDashEvent(dashEvent); 
         }
     }
 #pragma mark END SOLUTION

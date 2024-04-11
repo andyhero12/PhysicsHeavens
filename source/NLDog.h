@@ -59,7 +59,8 @@ public:
         IDLE,
         RUN,
         SHOOT,
-        BITE
+        BITE,
+        DASH
     };
     enum class DogSize : int {
         SMALL,
@@ -82,25 +83,32 @@ protected:
     std::shared_ptr<AnimationSceneNode> runAnimation;
     std::shared_ptr<AnimationSceneNode> biteAnimation;
     std::shared_ptr<AnimationSceneNode> shootAnimation;
+    std::shared_ptr<AnimationSceneNode> dashAnimation;
     
     std::shared_ptr<AnimationSceneNode> idleAnimationSmall;
     std::shared_ptr<AnimationSceneNode> runAnimationSmall;
     std::shared_ptr<AnimationSceneNode> biteAnimationSmall;
     std::shared_ptr<AnimationSceneNode> shootAnimationSmall;
+    std::shared_ptr<AnimationSceneNode> dashAnimationSmall;
     
     std::shared_ptr<AnimationSceneNode> idleAnimationMedium;
     std::shared_ptr<AnimationSceneNode> runAnimationMedium;
     std::shared_ptr<AnimationSceneNode> biteAnimationMedium;
     std::shared_ptr<AnimationSceneNode> shootAnimationMedium;
+    std::shared_ptr<AnimationSceneNode> dashAnimationMedium;
     
     std::shared_ptr<AnimationSceneNode> idleAnimationLarge;
     std::shared_ptr<AnimationSceneNode> runAnimationLarge;
     std::shared_ptr<AnimationSceneNode> biteAnimationLarge;
     std::shared_ptr<AnimationSceneNode> shootAnimationLarge;
+    std::shared_ptr<AnimationSceneNode> dashAnimationLarge;
     
     std::shared_ptr<UIController> _uiController;
 
     std::array<std::string,3> modes = {"SHOOT", "BAIT", "BOMB"};
+    bool _startDash;
+    int _dashCounter;
+    int _dashRate;
     int _mode;
     int _refire;
     int _absorbValue;
@@ -187,9 +195,9 @@ public:
     virtual bool init(const cugl::Vec2 pos, const cugl::Size size) override;
     
     
-    void setSmallAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot);
-    void setMediumAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot);
-    void setLargeAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot);
+    void setSmallAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot,std::shared_ptr<AnimationSceneNode> dash);
+    void setMediumAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot,std::shared_ptr<AnimationSceneNode> dash);
+    void setLargeAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot,std::shared_ptr<AnimationSceneNode> dash);
     
     void setUIController(std::shared_ptr<UIController> controller){ _uiController = controller; }
     
@@ -257,7 +265,9 @@ public:
 #pragma mark -
 #pragma mark Accessors
     
-    
+    void startDash(){
+        _startDash = true;
+    }
     std::shared_ptr<scene2::SceneNode> getDogNode(){
         return baseBlankNode;
     }
@@ -315,6 +325,13 @@ public:
         return _refire > _firerate;
     }
     
+    
+    bool canDash() const{
+        return _dashCounter > _dashRate;
+    }
+    void resetDash() {
+        _dashCounter = 0;
+    }
     void reloadWeapon() {
         _refire = 0;
     }

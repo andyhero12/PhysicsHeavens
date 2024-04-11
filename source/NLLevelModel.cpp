@@ -182,7 +182,7 @@ bool LevelModel::loadDecorations(const std::shared_ptr<JsonValue>& json){
 bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue>& json){
     float playerX = json->get("objects")->get(0)->get("x")->asFloat();
     float playerY = json->get("objects")->get(0)->get("y")->asFloat();
-    _playerPos = cugl::Vec2(playerX, _levelHeight * _tileHeight  -  playerY);
+    _playerPos = cugl::Vec2(playerX/_tileWidth, (_levelHeight * _tileHeight  -  playerY)/_tileWidth);
     return false;
 }
 

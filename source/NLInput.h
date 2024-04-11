@@ -44,6 +44,7 @@ private:
     bool _didSpecial;
     bool _didDebug;
     bool _didExit;
+    bool _didDash;
     cugl::Vec2 _Vel;
 
     bool _UseKeyboard;
@@ -120,6 +121,9 @@ public:
     
     bool didPressExit() const {
         return _didExit;
+    }
+    bool didPressDash() const {
+        return _didDash;
     }
     
     bool didPressPause() const {

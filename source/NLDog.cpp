@@ -61,7 +61,7 @@ using namespace cugl;
 #define BITE_RADIUS 3.5f
 #define SHOOT_RADIUS 8.5f
 #define EXPLOSION_RADIUS 1.4f
-
+#define DASH_RATE 50
 #pragma mark -
 #pragma mark Constructors
 
@@ -89,6 +89,9 @@ bool Dog::init(const Vec2 pos, const Size size) {
         setRestitution(DEFAULT_RESTITUTION);
         setFixedRotation(true);
         setDogSize(DogSize::SMALL);
+        _startDash = false;
+        _dashCounter = 0;
+        _dashRate = DASH_RATE;
         _mode = 0;
         _refire = 0;
         _absorbValue = 0;
@@ -121,6 +124,19 @@ void Dog::dispose() {
     biteAnimationMedium = nullptr;
     idleAnimationMedium = nullptr;
     shootAnimationMedium = nullptr;
+    dashAnimationMedium = nullptr;
+    
+    runAnimationSmall = nullptr;
+    biteAnimationSmall = nullptr;
+    idleAnimationSmall = nullptr;
+    shootAnimationSmall = nullptr;
+    dashAnimationSmall = nullptr;
+    
+    runAnimationLarge = nullptr;
+    biteAnimationLarge = nullptr;
+    idleAnimationLarge = nullptr;
+    shootAnimationLarge = nullptr;
+    dashAnimationLarge = nullptr;
 }
 
 
@@ -135,6 +151,10 @@ void Dog::updateUI(){
 void Dog::updateClientAnimations(){
     prevDirection =_curDirection;
     if (getVX() != 0 || getVY() != 0){
+        if (_startDash){
+            _startDash = false;
+            action = Actions::DASH;
+        }
         _curDirection = AnimationSceneNode::convertRadiansToDirections(getLinearVelocity().getAngle());
     }
 }
@@ -146,6 +166,9 @@ void Dog::moveOnInputSetAction(InputController& _input){
     if (_refire <= _firerate) {
         _refire++;
     }
+    if (_dashCounter <= _dashRate){
+        _dashCounter++;
+    }
     if (_healCooldown <= _healRate) {
         _healCooldown++;
     }
@@ -156,13 +179,24 @@ void Dog::moveOnInputSetAction(InputController& _input){
         _vel = Vec2(_input.getTurn(), _input.getForward());
     }
     prevDirection =_curDirection;
-    setVX(_vel.x*getThrust());
-    setVY(_vel.y*getThrust());
-    dir.x =_vel.x*getThrust();
-    dir.y = _vel.y*getThrust();
+    bool startingDash = _startDash;
+    if (action != Actions::DASH){
+        if (_startDash){
+            _startDash = false;
+            setVX(_vel.x*getThrust()*2.5);
+            setVY(_vel.y*getThrust()*2.5);
+            dir.x =_vel.x*getThrust()*2.5;
+            dir.y = _vel.y*getThrust()*2.5;
+        }else{
+            setVX(_vel.x*getThrust());
+            setVY(_vel.y*getThrust());
+            dir.x =_vel.x*getThrust();
+            dir.y = _vel.y*getThrust();
+        }
+    }
     
     // keep same direction until movement
-    if (_vel.x != 0 || _vel.y != 0){
+    if (_vel.x != 0 || _vel.y != 0 && (action != Actions::DASH)){
         _ang = dir;
         _curDirection = AnimationSceneNode::convertRadiansToDirections(dir.getAngle());
     }
@@ -170,7 +204,7 @@ void Dog::moveOnInputSetAction(InputController& _input){
     if (_input.didChangeMode()){
         toggleMode();
     }
-    if (action == Actions::BITE || action == Actions::SHOOT){ // wait for them to finish
+    if (action == Actions::BITE || action == Actions::SHOOT || action == Actions::DASH){ // wait for them to finish
         return;
     }
     if (_input.didPressFire() && canFireWeapon()){ // bite
@@ -179,7 +213,11 @@ void Dog::moveOnInputSetAction(InputController& _input){
         action = Actions::SHOOT;
     }else if (_input.didPressSpecial() && getMode() == "EXPLODE" && getAbsorb() >= 5){
         // maybe add explode animation later
-    }else if (_vel.x != 0 || _vel.y != 0){ // walking
+    }
+    else if (startingDash){
+        action = Actions::DASH;
+    }
+    else if (_vel.x != 0 || _vel.y != 0){ // walking
         action = Actions::RUN;
     }else{ // idle
         action = Actions::IDLE;
@@ -192,6 +230,7 @@ void Dog::setDogSize(DogSize size){
         runAnimation->animate(AnimationSceneNode::Directions::SOUTH, false);
         biteAnimation->animate(AnimationSceneNode::Directions::SOUTH, false);
         shootAnimation->animate(AnimationSceneNode::Directions::SOUTH, false);
+        dashAnimation->animate(AnimationSceneNode::Directions::SOUTH, false);
     }
     switch (size) {
 
@@ -200,18 +239,21 @@ void Dog::setDogSize(DogSize size){
             runAnimation =  runAnimationSmall;
             biteAnimation = biteAnimationSmall;
             shootAnimation = shootAnimationSmall;
+            dashAnimation = dashAnimationSmall;
             break;
         case DogSize::MEDIUM:
             idleAnimation =  idleAnimationMedium;
             runAnimation =  runAnimationMedium;
             biteAnimation = biteAnimationMedium;
             shootAnimation = shootAnimationMedium;
+            dashAnimation = dashAnimationMedium;
             break;
         case DogSize::LARGE:
             idleAnimation =  idleAnimationLarge;
             runAnimation =  runAnimationLarge;
             biteAnimation = biteAnimationLarge;
             shootAnimation = shootAnimationLarge;
+            dashAnimation = dashAnimationLarge;
             break;
         default:
             CULog("INVALID SETDOGSIZE INPUT");
@@ -229,8 +271,11 @@ void Dog::dogActions(){
         // shoot is finished
         action = Actions::RUN;
     }
+    else if (action == Actions::DASH && dashAnimation->getFrame() == dashAnimation->getSize() - 1){
+        action = Actions::RUN;
+    }
     
-    bool attack = action == Actions::BITE || action==Actions::SHOOT;
+    bool attack = action == Actions::BITE || action==Actions::SHOOT || action == Actions::DASH;
     
     if(dir.x == 0 && dir.y == 0 && !attack){
         action = Actions::IDLE;
@@ -238,13 +283,14 @@ void Dog::dogActions(){
         runAnimation->animate(prevDirection, false);
         biteAnimation->animate(prevDirection, false);
         shootAnimation->animate(prevDirection, false);
+        dashAnimation->animate(prevDirection, false);
     }
     else{
         idleAnimation->animate(direction, false);
         runAnimation->animate(direction, action == Actions::RUN);
         biteAnimation->animate(direction, action == Actions::BITE);
         shootAnimation->animate(direction, action == Actions::SHOOT);
-        
+        dashAnimation->animate(direction, action == Actions::DASH);
     }
 }
 /**
@@ -271,25 +317,28 @@ void Dog::update(float delta) {
 }
 
 
-void Dog::setSmallAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot){
+void Dog::setSmallAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot, std::shared_ptr<AnimationSceneNode> dash){
     runAnimationSmall = run;
     idleAnimationSmall = idle;
     shootAnimationSmall = shoot;
     biteAnimationSmall = bite;
+    dashAnimationSmall = dash;
 }
 
-void Dog::setMediumAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot){
+void Dog::setMediumAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot,std::shared_ptr<AnimationSceneNode> dash){
     runAnimationMedium = run;
     idleAnimationMedium = idle;
     shootAnimationMedium = shoot;
     biteAnimationMedium = bite;
+    dashAnimationMedium = dash;
 }
 
-void Dog::setLargeAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot){
+void Dog::setLargeAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot,std::shared_ptr<AnimationSceneNode> dash){
     runAnimationLarge = run;
     idleAnimationLarge = idle;
     shootAnimationLarge = shoot;
     biteAnimationLarge = bite;
+    dashAnimationLarge = dash;
 }
 // Decoupled so useless for now
 void Dog::setFinalDog(std::shared_ptr<cugl::scene2::SceneNode> baseNode){
@@ -305,8 +354,13 @@ void Dog::resetCurrentAnimations(DogSize size){
     biteAnimation->setPosition(baseBlankNode->getAnchor());
     baseBlankNode->addChild(biteAnimation);
     shootAnimation->setPosition(baseBlankNode->getAnchor());
+    
     baseBlankNode->addChild(shootAnimation);
     runAnimation->setPosition(baseBlankNode->getAnchor());
+    
+    baseBlankNode->addChild(dashAnimation);
+    dashAnimation->setPosition(baseBlankNode->getAnchor());
+    
     baseBlankNode->addChild(runAnimation);
     baseBlankNode->setPosition(getPosition());
 }
