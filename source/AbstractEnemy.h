@@ -54,11 +54,8 @@ public:
         Obstacle::update(delta);
         // Decoupled so useless for now
         Vec2 direction = getLinearVelocity();
-//        _prevDirection =_curDirection;
-//        _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
         runAnimations->animate(_curDirection, curAction == EnemyActions::RUN);
         attackAnimations->animate(_curDirection, curAction == EnemyActions::ATTACK);
-        //        dogActions();
     }
     virtual void preUpdate(float dt, OverWorld& overWorld) = 0;
     

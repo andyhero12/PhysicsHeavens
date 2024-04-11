@@ -107,6 +107,8 @@ protected:
 
     std::array<std::string,3> modes = {"SHOOT", "BAIT", "BOMB"};
     bool _startDash;
+    bool _startBite;
+    bool _startShoot;
     int _dashCounter;
     int _dashRate;
     int _mode;
@@ -267,6 +269,12 @@ public:
     
     void startDash(){
         _startDash = true;
+    }
+    void startBite(){
+        _startBite = true;
+    }
+    void startShoot(){
+        _startShoot = true;
     }
     std::shared_ptr<scene2::SceneNode> getDogNode(){
         return baseBlankNode;

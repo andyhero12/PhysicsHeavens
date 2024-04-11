@@ -20,12 +20,13 @@ std::shared_ptr<NetEvent> BiteEvent::newEvent(){
     return std::make_shared<BiteEvent>();
 }
 
-std::shared_ptr<NetEvent> BiteEvent::allocBiteEvent(Vec2 pos, float ang){
+std::shared_ptr<NetEvent> BiteEvent::allocBiteEvent(Vec2 pos, float ang, bool m_isHost){
     //TODO: make a new shared copy of the event and set its _pos to pos.
 #pragma mark BEGIN SOLUTION
     auto event = std::make_shared<BiteEvent>();
     event->_pos = pos;
     event->_ang = ang;
+    event->_isHost = m_isHost;
     return event;
 #pragma mark END SOLUTION
 }
@@ -40,6 +41,7 @@ std::vector<std::byte> BiteEvent::serialize(){
     _serializer.writeFloat(_pos.x);
     _serializer.writeFloat(_pos.y);
     _serializer.writeFloat(_ang);
+    _serializer.writeBool(_isHost);
     return _serializer.serialize();
 #pragma mark END SOLUTION
 }
@@ -64,5 +66,7 @@ void BiteEvent::deserialize(const std::vector<std::byte>& data){
     _pos = Vec2(x,y);
     float ang = _deserializer.readFloat();
     _ang = ang;
+    bool host = _deserializer.readBool();
+    _isHost = host;
 #pragma mark END SOLUTION
 }

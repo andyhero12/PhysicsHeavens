@@ -90,6 +90,8 @@ bool Dog::init(const Vec2 pos, const Size size) {
         setFixedRotation(true);
         setDogSize(DogSize::SMALL);
         _startDash = false;
+        _startBite = false;
+        _startShoot = false;
         _dashCounter = 0;
         _dashRate = DASH_RATE;
         _mode = 0;
@@ -150,10 +152,22 @@ void Dog::updateUI(){
 
 void Dog::updateClientAnimations(){
     prevDirection =_curDirection;
-    if (getVX() != 0 || getVY() != 0){
+    if (_refire <= 10) { // using a counter for client cause not used otherwise update rate
+        _refire++;
+    }
+    if ((getVX() != 0 || getVY() != 0) && _refire >= 10){
+        _refire = 0;
         if (_startDash){
             _startDash = false;
             action = Actions::DASH;
+        }
+        if (_startBite){
+            _startBite = false;
+            action = Actions::BITE;
+        }
+        if (_startShoot){
+            _startShoot = false;
+            action = Actions::SHOOT;
         }
         _curDirection = AnimationSceneNode::convertRadiansToDirections(getLinearVelocity().getAngle());
     }
@@ -196,7 +210,7 @@ void Dog::moveOnInputSetAction(InputController& _input){
     }
     
     // keep same direction until movement
-    if (_vel.x != 0 || _vel.y != 0 && (action != Actions::DASH)){
+    if ((_vel.x != 0 || _vel.y != 0) && (action != Actions::DASH)){
         _ang = dir;
         _curDirection = AnimationSceneNode::convertRadiansToDirections(dir.getAngle());
     }

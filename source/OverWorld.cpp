@@ -337,12 +337,20 @@ void OverWorld::processBiteEvent(const std::shared_ptr<BiteEvent>& biteEvent){
     Vec2 center = biteEvent->getPos();
     float ang = biteEvent->getAng();
     _attackPolygonSet.addBite(center,ang, _dog->getBiteRadius());
+    bool overWorldHost = biteEvent->isHost();
+    if (overWorldHost){
+        _dog->startBite();
+    }
 }
 
 void OverWorld::processShootEvent(const std::shared_ptr<ShootEvent>& shootEvent){
     Vec2 center = shootEvent->getPos();
     float ang = shootEvent->getAng();
     _attackPolygonSet.addShoot(center,ang, _dog->getShootRadius());
+    bool overWorldHost = shootEvent->isHost();
+    if (overWorldHost){
+        _dog->startShoot();
+    }
 }
 void OverWorld::processExplodeEvent(const std::shared_ptr<ExplodeEvent>& explodeEvent){
     Vec2 center = explodeEvent->getPos();
@@ -358,14 +366,14 @@ void OverWorld::dogUpdate(InputController& _input, cugl::Size totalSize){
         }
         if (_input.didPressFire() && _dog->canFireWeapon()){
             CULog("Send Attack");
-            _network->pushOutEvent(BiteEvent::allocBiteEvent(_dog->getBiteCenter(), _dog->getDirInDegrees()));
+            _network->pushOutEvent(BiteEvent::allocBiteEvent(_dog->getBiteCenter(), _dog->getDirInDegrees(), _isHost));
             _dog->reloadWeapon();
         }
         if (_input.didPressSpecial() && _dog->canFireWeapon()){
             _dog->reloadWeapon();
             if (_dog->getMode() == "SHOOT" && _dog->getAbsorb() >= 5){
                 _dog->subAbsorb(5);
-                _network->pushOutEvent(ShootEvent::allocShootEvent(_dog->getShootCenter(), _dog->getDirInDegrees()));
+                _network->pushOutEvent(ShootEvent::allocShootEvent(_dog->getShootCenter(), _dog->getDirInDegrees(),_isHost));
             }else if (_dog->getMode() == "BAIT" && _dog->getAbsorb() >= 5){
                 _dog->subAbsorb(5);
                 //            _decoys->addNewDecoy(_dog->getPosition());
