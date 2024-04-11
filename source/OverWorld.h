@@ -23,6 +23,7 @@
 #include "NLExplodeEvent.h"
 #include "NLShootEvent.h"
 #include "NLDashEvent.h"
+#include "NLSizeEvent.h"
 
 class OverWorld{
 private:
@@ -62,6 +63,7 @@ public:
     void postUpdate();
     
     void processShootEvent(const std::shared_ptr<ShootEvent>& shootEvent);
+    void processSizeEvent(const std::shared_ptr<SizeEvent>& sizeEvent);
     void processBiteEvent(const std::shared_ptr<BiteEvent>& biteEvent);
     void processExplodeEvent(const std::shared_ptr<ExplodeEvent>& explodeEvent);
     void processDashEvent(const std::shared_ptr<DashEvent>& dashEvent);

@@ -161,9 +161,9 @@ bool OverWorld::initDogModel(){
     textures.push_back(_assets->get<cugl::Texture>("mediumdogbackshoot"));
     textures.push_back(_assets->get<cugl::Texture>("mediumdogbackshoot"));
     
-    std::shared_ptr<AnimationSceneNode> mediumDogDash = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
-    mediumDogShoot->setAnchor(Vec2::ANCHOR_CENTER);
-    mediumDogShoot->setContentSize(DOG_SIZE);
+    std::shared_ptr<AnimationSceneNode> mediumDogDash = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 15);
+    mediumDogDash->setAnchor(Vec2::ANCHOR_CENTER);
+    mediumDogDash->setContentSize(DOG_SIZE);
     
     textures.clear();
     textures.push_back(_assets->get<cugl::Texture>("largedogrightrun"));
@@ -232,9 +232,9 @@ bool OverWorld::initDogModel(){
     textures.push_back(_assets->get<cugl::Texture>("largedogbackshoot"));
     textures.push_back(_assets->get<cugl::Texture>("largedogbackshoot"));
     
-    std::shared_ptr<AnimationSceneNode> largeDogDash = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
-    largeDogShoot->setAnchor(Vec2::ANCHOR_CENTER);
-    largeDogShoot->setContentSize(DOG_SIZE);
+    std::shared_ptr<AnimationSceneNode> largeDogDash = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 15);
+    largeDogDash->setAnchor(Vec2::ANCHOR_CENTER);
+    largeDogDash->setContentSize(DOG_SIZE);
     
     // MAGIC NUMBER ALERT!!
     Vec2 dogPos = _level->getPlayerPos();
@@ -333,6 +333,16 @@ void OverWorld::processDashEvent(const std::shared_ptr<DashEvent>& dashEvent){
         _dog->startDash();
     }
 }
+void OverWorld::processSizeEvent(const std::shared_ptr<SizeEvent>& sizeEvent){
+    bool incomingHost = sizeEvent->isHost();
+    bool currentHost = _isHost;
+    CULog("processing Size Event %d %d", incomingHost, currentHost);
+    if (incomingHost != currentHost){ // means we received from other person
+        if (incomingHost){ // means incoming is from Original host
+            _dog->updateDogSize(sizeEvent->getSize());
+        }
+    }
+}
 void OverWorld::processBiteEvent(const std::shared_ptr<BiteEvent>& biteEvent){
     Vec2 center = biteEvent->getPos();
     float ang = biteEvent->getAng();
@@ -360,6 +370,10 @@ void OverWorld::dogUpdate(InputController& _input, cugl::Size totalSize){
     if (_isHost){
         _dog->moveOnInputSetAction(_input);
         _dog->updateUI();
+        if (_dog->shouldSendSize()){
+            _dog->resetSendSize();
+            _network->pushOutEvent(SizeEvent::allocSizeEvent(_dog->getAbsorb(),_isHost));
+        }
         if (_input.didPressDash() && _dog->canDash()){
             _network->pushOutEvent(DashEvent::allocDashEvent(_isHost));
             _dog->resetDash();

@@ -287,6 +287,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _network->attachEventType<BiteEvent>();
     _network->attachEventType<ExplodeEvent>();
     _network->attachEventType<DashEvent>();
+    _network->attachEventType<SizeEvent>();
     _network->attachEventType<ShootEvent>();
     _network->attachEventType<GameResEvent>();
 
@@ -474,7 +475,7 @@ void GameScene::fixedUpdate()
     // Hint: You can check if ptr points to an object of class A using std::dynamic_pointer_cast<A>(ptr). You should always check isInAvailable() before popInEvent().
 
 #pragma mark BEGIN SOLUTION
-    if (_network->isInAvailable())
+    while (_network->isInAvailable())
     {
         auto e = _network->popInEvent();
         if (auto decoyEvent = std::dynamic_pointer_cast<DecoyEvent>(e))
@@ -501,6 +502,11 @@ void GameScene::fixedUpdate()
         {
             //            CULog("Explode Event Got");
             overWorld.processDashEvent(dashEvent); 
+        }
+        if (auto sizeEvent = std::dynamic_pointer_cast<SizeEvent>(e))
+        {
+            //            CULog("Explode Event Got");
+            overWorld.processSizeEvent(sizeEvent);
         }
     }
 #pragma mark END SOLUTION

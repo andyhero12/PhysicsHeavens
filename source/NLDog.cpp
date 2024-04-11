@@ -92,6 +92,7 @@ bool Dog::init(const Vec2 pos, const Size size) {
         _startDash = false;
         _startBite = false;
         _startShoot = false;
+        _sendSize = false;
         _dashCounter = 0;
         _dashRate = DASH_RATE;
         _mode = 0;
@@ -155,21 +156,25 @@ void Dog::updateClientAnimations(){
     if (_refire <= 10) { // using a counter for client cause not used otherwise update rate
         _refire++;
     }
-    if ((getVX() != 0 || getVY() != 0) && _refire >= 10){
-        _refire = 0;
-        if (_startDash){
-            _startDash = false;
-            action = Actions::DASH;
+    if (_refire >= 10){
+        if ((getVX() != 0 || getVY() != 0)){
+            _refire = 0;
+            if (_startDash){
+                _startDash = false;
+                action = Actions::DASH;
+            }else if (_startBite){
+                _startBite = false;
+                action = Actions::BITE;
+            }else if (_startShoot){
+                _startShoot = false;
+                action = Actions::SHOOT;
+            }else{
+                action = Actions::RUN;
+            }
+            _curDirection = AnimationSceneNode::convertRadiansToDirections(getLinearVelocity().getAngle());
+        }else{
+            action = Actions::IDLE;
         }
-        if (_startBite){
-            _startBite = false;
-            action = Actions::BITE;
-        }
-        if (_startShoot){
-            _startShoot = false;
-            action = Actions::SHOOT;
-        }
-        _curDirection = AnimationSceneNode::convertRadiansToDirections(getLinearVelocity().getAngle());
     }
 }
 /**
@@ -357,10 +362,21 @@ void Dog::setLargeAnimation(std::shared_ptr<AnimationSceneNode> idle, std::share
 // Decoupled so useless for now
 void Dog::setFinalDog(std::shared_ptr<cugl::scene2::SceneNode> baseNode){
     baseBlankNode = baseNode;
-    resetCurrentAnimations(DogSize::SMALL);
+    updateLocalAnimations(DogSize::SMALL);
 }
 
-void Dog::resetCurrentAnimations(DogSize size){
+
+void Dog::updateDogSize(int absorbValue){
+    if (absorbValue <= 10){
+        updateLocalAnimations(DogSize::SMALL);
+    }else if (absorbValue <= 20){
+        updateLocalAnimations(DogSize::MEDIUM);
+    }else if (absorbValue <= 30){
+        updateLocalAnimations(DogSize::LARGE);
+    }
+}
+
+void Dog::updateLocalAnimations(DogSize size){
     baseBlankNode->removeAllChildren();
     setDogSize(size);
     idleAnimation->setPosition(baseBlankNode->getAnchor());
@@ -370,13 +386,19 @@ void Dog::resetCurrentAnimations(DogSize size){
     shootAnimation->setPosition(baseBlankNode->getAnchor());
     
     baseBlankNode->addChild(shootAnimation);
+    
     runAnimation->setPosition(baseBlankNode->getAnchor());
-    
-    baseBlankNode->addChild(dashAnimation);
-    dashAnimation->setPosition(baseBlankNode->getAnchor());
-    
     baseBlankNode->addChild(runAnimation);
+    
+    dashAnimation->setPosition(baseBlankNode->getAnchor());
+    baseBlankNode->addChild(dashAnimation);
+    
     baseBlankNode->setPosition(getPosition());
+}
+
+void Dog::resetCurrentAnimations(DogSize size){
+    _sendSize = true;
+    updateLocalAnimations(size);
 }
 
 void Dog::setHealth(int value){
@@ -394,7 +416,7 @@ void Dog::subAbsorb(int value) {
 void Dog::setAbsorbValue(int value){
     if (_absorbValue > 10 && value <= 10){
         resetCurrentAnimations(DogSize::SMALL);
-    }else if (_absorbValue > 10 && _absorbValue < 20 && value <= 20){
+    }else if ((_absorbValue < 10 && value >= 10) || (_absorbValue > 20 && value <= 20)){
         resetCurrentAnimations(DogSize::MEDIUM);
     }else if (_absorbValue >= 20 &&  value <= 30){
         resetCurrentAnimations(DogSize::LARGE);

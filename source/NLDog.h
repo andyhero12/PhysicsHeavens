@@ -109,6 +109,7 @@ protected:
     bool _startDash;
     bool _startBite;
     bool _startShoot;
+    bool _sendSize;
     int _dashCounter;
     int _dashRate;
     int _mode;
@@ -205,6 +206,9 @@ public:
     
     void setFinalDog(std::shared_ptr<cugl::scene2::SceneNode> baseNode);
     void resetCurrentAnimations(DogSize dogSize);
+    void updateLocalAnimations(DogSize dogSize);
+    
+    void updateDogSize(int absorbValue);
 #pragma mark Static Constructors
     /**
      * Returns a newly allocate rocket at the origin.
@@ -269,6 +273,12 @@ public:
     
     void startDash(){
         _startDash = true;
+    }
+    void resetSendSize(){
+        _sendSize = false;
+    }
+    bool shouldSendSize(){
+        return _sendSize;
     }
     void startBite(){
         _startBite = true;
