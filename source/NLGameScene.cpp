@@ -360,8 +360,6 @@ void GameScene::populate()
         beforeSolve(contact, oldManifold);
     };
 
-    std::shared_ptr<Texture> image;
-
 #pragma mark : Background
     addChildBackground();
 }
@@ -439,11 +437,6 @@ void GameScene::preUpdate(float dt)
     {
         setDebug(!isDebug());
     }
-
-    //    if (_input.didPressFire()) {
-    //        fireCrate();
-    //    }
-
     overWorld.update(_input, computeActiveSize(), dt);
     _spawnerController.update(_monsterController, overWorld, dt);
     _monsterController.update(dt, overWorld);
