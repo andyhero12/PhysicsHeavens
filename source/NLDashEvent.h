@@ -1,5 +1,5 @@
 //
-//  NLCrateEvent.h
+//  NLDashEvent.h
 //  Networked Physics Lab
 //
 //  This class represents an event of creating an extra-large crate
@@ -7,20 +7,20 @@
 //  Created by Barry Lyu  on 12/15/23.
 //
 
-#ifndef NLCrateEvent_h
-#define NLCrateEvent_h
+#ifndef NLDashEvent_h
+#define NLDashEvent_h
 
 #include <cugl/cugl.h>
 using namespace cugl::physics2::net;
 using namespace cugl;
 
-class CrateEvent : public NetEvent {
+class DashEvent : public NetEvent {
     
 protected:
     LWSerializer _serializer;
     LWDeserializer _deserializer;
     
-    Vec2 _pos;
+    bool isHost;
     
     
 public:
@@ -33,7 +33,7 @@ public:
      */
     std::shared_ptr<NetEvent> newEvent() override;
     
-    static std::shared_ptr<NetEvent> allocCrateEvent(Vec2 pos);
+    static std::shared_ptr<NetEvent> allocDashEvent(bool m_isHost);
     
     /**
      * Serialize any paramater that the event contains to a vector of bytes.
@@ -51,8 +51,8 @@ public:
     void deserialize(const std::vector<std::byte>& data) override;
     
     /** Gets the position of the event. */
-    Vec2 getPos() { return _pos; }
+    bool getHost() { return isHost; }
 };
 
 
-#endif /* NLCrateEvent_h */
+#endif /* NLDashEvent_h */

@@ -9,45 +9,65 @@
 
 using namespace cugl;
 
+bool PauseScene::init(std::shared_ptr<cugl::AssetManager> &assets, cugl::Size screenSize){
+    _assets = assets;
+    _screenSize = screenSize;
+    return init();
+}
+
 bool PauseScene::init(){
     _childOffset = -1;
-    // create the EXIT button
-    std::shared_ptr<cugl::scene2::SceneNode> up = cugl::scene2::PolygonNode::allocWithPoly(Rect(0,0,100,100));
-    up->setColor(Color4::RED);
+    
+    std::shared_ptr<cugl::scene2::SceneNode> resume =cugl::scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("resume"));
+    resume->setScale(PAUSE_SCALE);
     
     
-    std::shared_ptr<cugl::scene2::SceneNode> down = cugl::scene2::PolygonNode::allocWithPoly(Rect(0,0,100,100));
-    down->setColor(Color4::BLUE);
+    std::shared_ptr<cugl::scene2::SceneNode> exit =cugl::scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("mainmenu"));
+    exit->setScale(PAUSE_SCALE);
     
     
-    paused = false;
+    resumeButton = cugl::scene2::Button::alloc(resume, Color4::GRAY);
+    exitButton = cugl::scene2::Button::alloc(exit, Color4::GRAY);
     
-    _button = cugl::scene2::Button::alloc(up, down);
-    _button->addListener([=](const std::string& name, bool down) {
+    resumeButton->addListener([=](const std::string& name, bool down){
+        if(getPause()){
+            setPause(false);
+        }
+    });
+    
+    exitButton->addListener([=](const std::string& name, bool down) {
         if(getPause()){
             status = Choice::EXIT;
         }
     });
     
-    _button->setPushable(Path2(Rect(0,0,100,100)));
+    resumeButton->activate();
+    exitButton->activate();
     
-    _button->setVisible(false);
-    _button->activate();
-    addChild(_button);
-    _button->setAnchor(Vec2::ANCHOR_CENTER);
+    addChild(resumeButton);
+    addChild(exitButton);
+    
+    float centerX = _screenSize.width/2;
+    float centerY = _screenSize.height/2;
+    
+    resumeButton->setPosition(centerX - 100, centerY);
+    exitButton->setPosition(centerX + 100,centerY);
+
     return true;
 }
 
 
-
-void PauseScene::updateMenu(float x, float y){
-    _button->setPosition(x,y);
-    _button->setVisible(getPause());
+void PauseScene::setPause(bool value) {
+    paused = value; 
+    setVisible(getPause());
 }
 
-void PauseScene::draw(const std::shared_ptr<cugl::SpriteBatch>& batch, const cugl::Affine2& transform, cugl::Color4 tint){
-    if(paused){
-        SceneNode::draw(batch,transform,tint);
-    }
+void PauseScene::dispose(){
+    resumeButton->dispose();
+    exitButton->dispose();
 }
 
+void PauseScene::exitToMain(){
+    resumeButton->setDown(true);
+    resumeButton->setDown(false);
+}

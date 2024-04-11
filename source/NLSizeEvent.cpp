@@ -1,5 +1,5 @@
 //
-//  NLBiteEvent.cpp
+//  NLSizeEvent.cpp
 //  Networked Physics Lab
 //
 //  This class represents an event of creating an extra-large crate
@@ -7,7 +7,7 @@
 //  Created by Andrew Cheng.
 //
 
-#include "NLBiteEvent.h"
+#include "NLSizeEvent.h"
 
 /**
  * This method is used by the NetEventController to create a new event of using a
@@ -16,16 +16,15 @@
  * Not that this method is not static, it differs from the static alloc() method
  * and all methods must implement this method.
  */
-std::shared_ptr<NetEvent> BiteEvent::newEvent(){
-    return std::make_shared<BiteEvent>();
+std::shared_ptr<NetEvent> SizeEvent::newEvent(){
+    return std::make_shared<SizeEvent>();
 }
 
-std::shared_ptr<NetEvent> BiteEvent::allocBiteEvent(Vec2 pos, float ang, bool m_isHost){
+std::shared_ptr<NetEvent> SizeEvent::allocSizeEvent(int size, bool m_isHost){
     //TODO: make a new shared copy of the event and set its _pos to pos.
 #pragma mark BEGIN SOLUTION
-    auto event = std::make_shared<BiteEvent>();
-    event->_pos = pos;
-    event->_ang = ang;
+    auto event = std::make_shared<SizeEvent>();
+    event->_size = size;
     event->_isHost = m_isHost;
     return event;
 #pragma mark END SOLUTION
@@ -34,13 +33,11 @@ std::shared_ptr<NetEvent> BiteEvent::allocBiteEvent(Vec2 pos, float ang, bool m_
 /**
  * Serialize any paramater that the event contains to a vector of bytes.
  */
-std::vector<std::byte> BiteEvent::serialize(){
+std::vector<std::byte> SizeEvent::serialize(){
     //TODO: serialize _pos
 #pragma mark BEGIN SOLUTION
     _serializer.reset();
-    _serializer.writeFloat(_pos.x);
-    _serializer.writeFloat(_pos.y);
-    _serializer.writeFloat(_ang);
+    _serializer.writeSint32(_size);
     _serializer.writeBool(_isHost);
     return _serializer.serialize();
 #pragma mark END SOLUTION
@@ -54,18 +51,15 @@ std::vector<std::byte> BiteEvent::serialize(){
  * should be able to recreate a serialized event entirely, setting all the
  * useful parameters of this class.
  */
-void BiteEvent::deserialize(const std::vector<std::byte>& data){
+void SizeEvent::deserialize(const std::vector<std::byte>& data){
     //TODO: deserialize data and set _pos
     //NOTE: You might be tempted to write Vec2(_deserializer.readFloat(),_deserializer.readFloat()), however, C++ doesn't specify the order in which function arguments are evaluated, so you might end up with <y,x> instead of <x,y>.
     
 #pragma mark BEGIN SOLUTION
     _deserializer.reset();
     _deserializer.receive(data);
-    float x = _deserializer.readFloat();
-    float y = _deserializer.readFloat();
-    _pos = Vec2(x,y);
-    float ang = _deserializer.readFloat();
-    _ang = ang;
+    int x = _deserializer.readSint32();
+    _size = x;
     bool host = _deserializer.readBool();
     _isHost = host;
 #pragma mark END SOLUTION

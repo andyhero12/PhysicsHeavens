@@ -24,9 +24,7 @@ protected:
     /* The pointer to current scene graph object that the camera is targeting */
     std::shared_ptr<scene2::SceneNode> _target;
     /* The pointer to root node of the scene */
-    std::shared_ptr<scene2::SceneNode> _root;
-    /* The UI layer that will move with the camera */
-    std::shared_ptr<scene2::SceneNode> _ui;
+    std::shared_ptr<cugl::scene2::ScrollPane> _root;
     /* The camera for this scene */
     std::shared_ptr <cugl::OrthographicCamera> _camera;
     /* The time to cancel the pan if someone is panning */
@@ -53,9 +51,9 @@ public:
     */
     virtual ~CameraController(void) {};
 
-    static std::shared_ptr<CameraController> alloc(const std::shared_ptr<cugl::scene2::SceneNode> target, const std::shared_ptr<cugl::scene2::SceneNode> root, std::shared_ptr <cugl::OrthographicCamera> camera, std::shared_ptr<scene2::SceneNode> ui, float maxZoom) {
+    static std::shared_ptr<CameraController> alloc(const std::shared_ptr<cugl::scene2::SceneNode> target, const std::shared_ptr<cugl::scene2::ScrollPane> root, std::shared_ptr <cugl::OrthographicCamera> camera, float maxZoom) {
         std::shared_ptr<CameraController> result = std::make_shared<CameraController>();
-        return (result->init(target, root, camera, ui, maxZoom) ? result : nullptr);
+        return (result->init(target, root, camera, maxZoom) ? result : nullptr);
     }
 
     /*
@@ -68,7 +66,7 @@ public:
     *
     * @return true if the controller is initialized properly, false otherwise
     */
-    bool init(const std::shared_ptr<cugl::scene2::SceneNode> target, const std::shared_ptr<cugl::scene2::SceneNode> root, std::shared_ptr <cugl::OrthographicCamera> camera, std::shared_ptr<scene2::SceneNode> ui, float maxZoom);
+    bool init(const std::shared_ptr<cugl::scene2::SceneNode> target, const std::shared_ptr<cugl::scene2::ScrollPane> root, std::shared_ptr <cugl::OrthographicCamera> camera, float maxZoom);
 #pragma mark -
 #pragma mark Camera Handling
 
