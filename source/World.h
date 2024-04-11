@@ -73,13 +73,7 @@ public:
     std::vector<std::vector<std::shared_ptr<TileInfo>>> decorWorld;
     World () {};
     World(std::shared_ptr<LevelModel> _level,std::shared_ptr<cugl::AssetManager> assets);
-    World (cugl::Vec2 bottomleft,
-           const std::vector<std::vector<int>> &map,
-           const std::vector<std::vector<int>> &passable, 
-           std::shared_ptr<cugl::Texture> tileset);
     
-    void draw(const std::shared_ptr<cugl::SpriteBatch>& batch);
-    std::shared_ptr<cugl::Texture> getBox(int position);
     std::shared_ptr<cugl::Texture> getBoxFromTileSet(int position, const std::map<int,TileSet>& tileSets);
     const std::vector<std::vector<std::shared_ptr<TileInfo>>>& getTileWorld(){
         return tileWorld;

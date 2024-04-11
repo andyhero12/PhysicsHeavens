@@ -28,6 +28,7 @@ InputController::InputController() :
 _forward(0),
 _turning(0),
 _didReset(false),
+_didDash(false),
 _didChangeMode(false),
 _didSpecial(false),
 _didDebug(false),
@@ -90,7 +91,7 @@ void InputController::readInput() {
     KeyCode debug = KeyCode::D;
     KeyCode exit = KeyCode::ESCAPE;
     KeyCode pause = KeyCode::P;
-
+    KeyCode dash = KeyCode::LEFT_SHIFT;
     Keyboard* keys = Input::get<Keyboard>();
 
 
@@ -144,7 +145,10 @@ void InputController::readInput() {
         _didExit = true;
         _UseKeyboard = true;
     }
-
+    if (keys->keyPressed(dash)) {
+        _didDash = true;
+        _UseKeyboard = true;
+    }
     if (keys->keyDown(up) && !keys->keyDown(down)) {
         _forward = 1;
         _UseKeyboard = true;
@@ -165,6 +169,7 @@ void InputController::resetKeys(){
     _didSpecial = false;
     _didDebug = false;
     _didExit = false;
+    _didDash = false;
     _UseJoystick = false;
     _UseKeyboard = false;
     _forward  = 0;

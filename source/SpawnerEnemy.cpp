@@ -1,18 +1,14 @@
 //
-//  StaticMeleeEnemy.cpp
-//  Heavan
+//  SpawnerEnemy.cpp
+//  Heaven
 //
-//  Created by Andrew Cheng on 3/24/24.
+//  Created by Andrew Cheng on 4/9/24.
 //
 
-#include "StaticMeleeEnemy.h"
-#define DISTANCE_CUTOFF 5
 
+#include "SpawnerEnemy.h"
 #define DYNAMIC_COLOR   Color4::YELLOW
-/**
- * Generate a pair of Obstacle and SceneNode using the given parameters
- */
-std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode>> StaticMeleeFactory::createObstacle(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex) {
+std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode>> SpawnerEnemyFactory::createObstacle(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex) {
     std::vector<std::shared_ptr<cugl::Texture>>& _textures = staticEnemyStruct._walkTextures;
     if (_textures.size() == 0){
         CULog("EMPTY TEXTURES");
@@ -25,7 +21,7 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
     {
         rows++;
     }
-    std::shared_ptr<StaticMeleeEnemy> static_enemy = StaticMeleeEnemy::alloc(m_pos, m_size, m_health, m_targetIndex);
+    std::shared_ptr<SpawnerEnemy> static_enemy = SpawnerEnemy::alloc(m_pos, m_size, m_health, m_targetIndex);
     
     // used to create progress bars
     std::shared_ptr<cugl::Texture> barImage = _assets->get<Texture>("progress");
@@ -41,6 +37,8 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
     std::shared_ptr<cugl::scene2::ProgressBar> _bar = cugl::scene2::ProgressBar::allocWithCaps(bg, fg, left_cap, right_cap);
     _bar->setProgress(1.0f);
     static_enemy->setHealthBar(_bar);
+    
+    
     static_enemy->setDebugColor(DYNAMIC_COLOR);
     static_enemy->setAngleSnap(0); // Snap to the nearest degree
     
@@ -59,8 +57,7 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
     static_enemy->setFinalEnemy(topLevel);
     topLevel->setScale(m_size.height / _textures.at(0)->getHeight());
     static_enemy->setShared(true);
-    
-//        static_enemy->setHealthBar(_healthBar);
+
     return std::make_pair(static_enemy, topLevel);
 #pragma mark END SOLUTION
 }
@@ -68,7 +65,7 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
 /**
  * Helper method for converting normal parameters into byte vectors used for syncing.
  */
-std::shared_ptr<std::vector<std::byte>> StaticMeleeFactory::serializeParams(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex) {
+std::shared_ptr<std::vector<std::byte>> SpawnerEnemyFactory::serializeParams(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex) {
     // TODO: Use _serializer to serialize pos and scale (remember to make a shared copy of the serializer reference, otherwise it will be lost if the serializer is reset).
 #pragma mark BEGIN SOLUTION
     _serializer.reset();
@@ -85,7 +82,7 @@ std::shared_ptr<std::vector<std::byte>> StaticMeleeFactory::serializeParams(cugl
 /**
  * Generate a pair of Obstacle and SceneNode using serialized parameters.
  */
-std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode>> StaticMeleeFactory::createObstacle(const std::vector<std::byte>& params) {
+std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode>> SpawnerEnemyFactory::createObstacle(const std::vector<std::byte>& params) {
     // TODO: Use _deserializer to deserialize byte vectors packed by {@link serializeParams()} and call the regular createObstacle() method with them.
 #pragma mark BEGIN SOLUTION
     _deserializer.reset();
@@ -102,53 +99,30 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
 #pragma mark END SOLUTION
 }
 
-StaticMeleeEnemy::StaticMeleeEnemy(){}
-bool StaticMeleeEnemy::init(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex){
-    if (MeleeEnemy::init(m_pos, m_size, m_health, m_targetIndex)){
-        std::string name("Static Melee Enemy");
+SpawnerEnemy::SpawnerEnemy(){}
+bool SpawnerEnemy::init(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex){
+    if (AbstractEnemy::init(m_pos, m_size, m_health, m_targetIndex)){
+        std::string name("Spawner Enemy");
         setName(name);
-        original_pos = m_pos;
         return true;
     }
     return false;
 }
-void StaticMeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
-    if (_attackCooldown < 60){
+void SpawnerEnemy::preUpdate(float dt, OverWorld& overWorld){
+    if (_attackCooldown < 300){
         _attackCooldown++;
     }
-    
+     
     if (_counter < updateRate){
         _counter++;
     }
-    cugl::Vec2 dog_pos = overWorld.getDog()->getPosition();
-    
-    
-    cugl::Vec2 org_dist = dog_pos - original_pos;
-    float distance = org_dist.length();
-    cugl::Vec2 direction;
-//    CULog("distance %f %d", distance, DISTANCE_CUTOFF);
-    if (distance > DISTANCE_CUTOFF){ // too far from origin return
-        direction = original_pos - getPosition();
-        if (overWorld._isHost && _counter >= updateRate){
-            _counter = 0;
-            if (direction.lengthSquared() >= 1){
-                setVX(direction.normalize().x);
-                setVY(direction.normalize().y);
-            }else{
-                setVX(0);
-                setVY(0);
-            }
-            _prevDirection =_curDirection;
-            _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
-        }
-    }else{ // chase dog
-        direction = dog_pos - getPosition();
-        if (overWorld._isHost && _counter >= updateRate){
-            _counter = 0;
-            setVX(direction.normalize().x);
-            setVY(direction.normalize().y);
-            _prevDirection =_curDirection;
-            _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
-        }
+    cugl::Vec2 target_pos = getTargetPositionFromIndex(overWorld);
+    cugl::Vec2 direction = target_pos - getPosition();
+    if (overWorld._isHost && _counter >= updateRate){
+        setVX(direction.normalize().x * 0.1);
+        setVY(direction.normalize().y * 0.1);
+        _counter = 0;
+        _prevDirection =_curDirection;
+        _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
     }
 }

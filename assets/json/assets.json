@@ -1,9 +1,19 @@
 {
 	"textures": {
+        "resume":{
+            "file": "textures/game_ui/resume_button.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "mainmenu":{
+            "file": "textures/game_ui/back_to_menu_button.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
         "spawner": {
             "file": "textures/spawner.png",
-              "minfilter": "linear",
-              "magfilter": "nearest"
+            "minfilter": "linear",
+            "magfilter": "nearest"
         },
         "healthframe": {
             "file": "textures/game_ui/HEALTH_FRAME.png",
@@ -261,6 +271,11 @@
                  "minfilter": "linear",
                  "magfilter": "nearest"
        },
+       "spawnerFrontWalk": {
+           "file": "textures/spawnerEnemy/spawnerFrontWalk.png",
+                 "minfilter": "linear",
+                 "magfilter": "nearest"
+       },
         "street_tiles": {
             "file": "textures/tile/tile.png",
             "magfilter": "nearest"
@@ -286,15 +301,6 @@
             "file": "textures/target.png",
               "minfilter": "linear",
               "magfilter": "nearest"
-        },
-        "crate01": {
-            "file":     "textures/crate01.png"
-        },
-        "crate02": {
-            "file":     "textures/crate02.png"
-        },
-        "rocket": {
-            "file":     "textures/rocket.png"
         },
         "button": {
             "file":  "textures/button.png"

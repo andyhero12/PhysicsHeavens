@@ -22,11 +22,12 @@
 #include <string>
 #include <random>
 #include "NLInput.h"
-#include "NLCrateEvent.h"
 #include "NLDecoyEvent.h"
 #include "NLExplodeEvent.h"
 #include "NLShootEvent.h"
 #include "NLGameResEvent.h"
+#include "NLDashEvent.h"
+#include "NLSizeEvent.h"
 #include "NLCameraController.h"
 #include "NLLevelModel.h"
 #include "World.h"
@@ -43,60 +44,6 @@ using namespace cugl::physics2::net;
 using namespace cugl;
 
 /**
- * The factory class for crate objects.
- *
- * This class is used to support automatically syncing newly added obstacle mid-simulation.
- * Obstacles added throught the ObstacleFactory class from one client will be added to all
- * clients in the simulations.
- */
-class CrateFactory : public ObstacleFactory
-{
-public:
-    /** Pointer to the AssetManager for texture access, etc. */
-    std::shared_ptr<cugl::AssetManager> _assets;
-    /** Deterministic random generator for crate type */
-    std::mt19937 _rand;
-    /** Serializer for supporting parameters */
-    LWSerializer _serializer;
-    /** Deserializer for supporting parameters */
-    LWDeserializer _deserializer;
-
-    /**
-     * Allocates a new instance of the factory using the given AssetManager.
-     */
-    static std::shared_ptr<CrateFactory> alloc(std::shared_ptr<AssetManager> &assets)
-    {
-        auto f = std::make_shared<CrateFactory>();
-        f->init(assets);
-        return f;
-    };
-
-    /**
-     * Initializes empty factories using the given AssetManager.
-     */
-    void init(std::shared_ptr<AssetManager> &assets)
-    {
-        _assets = assets;
-        _rand.seed(0xdeadbeef);
-    }
-
-    /**
-     * Generate a pair of Obstacle and SceneNode using the given parameters
-     */
-    std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode>> createObstacle(Vec2 pos, float scale);
-
-    /**
-     * Helper method for converting normal parameters into byte vectors used for syncing.
-     */
-    std::shared_ptr<std::vector<std::byte>> serializeParams(Vec2 pos, float scale);
-
-    /**
-     * Generate a pair of Obstacle and SceneNode using serialized parameters.
-     */
-    std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode>> createObstacle(const std::vector<std::byte> &params) override;
-};
-
-/**
  * This class is the primary gameplay constroller for the demo.
  *
  * A world has its own objects, assets, and input controller.  Thus this is
@@ -111,37 +58,28 @@ protected:
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
     InputController _input;
-    CameraController _camera;
 
-    /** Reference to the physics root of the scene graph */
+    /** Reference to the root of the scene graph */
+    std::shared_ptr<cugl::scene2::ScrollPane> _rootnode;
+
+    /** Reference to the physics of the scene graph */
     std::shared_ptr<cugl::scene2::SceneNode> _worldnode;
     OverWorld overWorld;
     CollisionController _collisionController;
     SpawnerController _spawnerController;
     MonsterController _monsterController;
-    
+
     std::shared_ptr<cugl::JsonValue> _constants;
     /** Reference to the debug root of the scene graph */
     std::shared_ptr<cugl::scene2::SceneNode> _debugnode;
-    
+
     std::shared_ptr<cugl::scene2::SceneNode> _uinode;
-    
+
     std::shared_ptr<cugl::physics2::net::NetWorld> _world;
-    
-    std::shared_ptr<CrateFactory> _crateFact;
     /** The level model */
     std::shared_ptr<LevelModel> _level;
-    
-    std::shared_ptr<PauseScene> _pause;
-    Uint32 _factId;
 
-    // Physics objects for the game
-    /** Reference to the player1 cannon */
-    std::shared_ptr<cugl::scene2::SceneNode> _cannon1Node;
-    std::shared_ptr<cugl::physics2::BoxObstacle> _cannon1;
-    /** Reference to the player2 cannon */
-    std::shared_ptr<cugl::scene2::SceneNode> _cannon2Node;
-    std::shared_ptr<cugl::physics2::BoxObstacle> _cannon2;
+    std::shared_ptr<PauseScene> _pause;
 
     std::shared_ptr<World> _backgroundWrapper;
     /** Host is by default the left cannon */
@@ -152,14 +90,12 @@ protected:
     bool _debug;
 
     std::shared_ptr<NetEventController> _network;
-    
 
-#pragma mark Internal Object Management
+    cugl::Vec2 dogPosition;
 
-    /**
-     * This method adds a crate at the given position during the init process.
-     */
-    std::shared_ptr<cugl::physics2::Obstacle> addInitCrate(cugl::Vec2 pos, float scale);
+    cugl::Affine2 _transform;
+
+    float _zoom;
 
     /**
      * Lays out the game geography.
@@ -197,18 +133,6 @@ protected:
                         const std::shared_ptr<cugl::scene2::SceneNode> &node);
 
     /**
-     * This method adds a crate that had been fired by the player's cannon amid the simulation.
-     *
-     * If this machine is host, the crate should be fire from the left cannon (_cannon1), vice versa.
-     */
-    void fireCrate();
-
-    /**
-     * This method takes a crateEvent and processes it.
-     */
-    void processCrateEvent(const std::shared_ptr<CrateEvent> &event);
-
-    /**
      * Returns the active screen size of this scene.
      *
      * This method is for graceful handling of different aspect
@@ -219,8 +143,8 @@ protected:
 public:
 #pragma mark -
 #pragma mark Constructors
-    
-    PauseScene::Choice getStatus(){return _pause->getStatus();}
+
+    PauseScene::Choice getStatus() { return _pause->getStatus(); }
     /**
      * Creates a new game world with the default values.
      *
@@ -303,21 +227,6 @@ public:
      * @return true if the gameplay controller is currently active
      */
     bool isActive() const { return _active; }
-
-    /**
-     * Returns true if the gameplay controller is currently active
-     *
-     * @return true if the gameplay controller is currently active
-     */
-    bool needToReset() const { return _todoReset; }
-
-    /**
-     * Returns true if the gameplay controller is currently active
-     *
-     * @return true if the gameplay controller is currently active
-     */
-    void setToDoReset(bool value) { _todoReset = value; }
-
     /**
      * Returns true if debug mode is active.
      *
@@ -354,11 +263,6 @@ public:
      * @param timestep  The amount of time (in seconds) since the last frame
      */
     void update(float timestep);
-
-    /**
-     * Resets the status of the game so that we can play again.
-     */
-    void reset();
 
 #pragma mark -
 #pragma mark Collision Handling

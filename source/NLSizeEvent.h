@@ -1,5 +1,5 @@
 //
-//  NLBiteEvent.h
+//  NLSizeEvent.h
 //  Networked Physics Lab
 //
 //  This class represents an event of creating an extra-large crate
@@ -7,21 +7,20 @@
 //  Created by Barry Lyu  on 12/15/23.
 //
 
-#ifndef NLBiteEvent_h
-#define NLBiteEvent_h
+#ifndef NLSizeEvent_h
+#define NLSizeEvent_h
 
 #include <cugl/cugl.h>
 using namespace cugl::physics2::net;
 using namespace cugl;
 
-class BiteEvent : public NetEvent {
+class SizeEvent : public NetEvent {
     
 protected:
     LWSerializer _serializer;
     LWDeserializer _deserializer;
     
-    Vec2 _pos;
-    float _ang;
+    int _size;
     bool _isHost;
     
 public:
@@ -34,7 +33,7 @@ public:
      */
     std::shared_ptr<NetEvent> newEvent() override;
     
-    static std::shared_ptr<NetEvent> allocBiteEvent(Vec2 pos, float ang, bool m_isHost);
+    static std::shared_ptr<NetEvent> allocSizeEvent(int m_size, bool m_isHost);
     
     /**
      * Serialize any paramater that the event contains to a vector of bytes.
@@ -51,14 +50,10 @@ public:
      */
     void deserialize(const std::vector<std::byte>& data) override;
     
-    /** Gets the position of the event. */
-    Vec2 getPos() { return _pos; }
-    
-    /** Gets the position of the event. */
-    float getAng() { return _ang; }
+    int getSize() {return _size;}
     
     bool isHost() {return _isHost; }
 };
 
 
-#endif /* NLBiteEvent_h */
+#endif /* NLSizeEvent_h */
