@@ -52,7 +52,7 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     
     // Start up the input handler
     _assets = assets;
-    
+    _input.init_withlistener();
     // Acquire the scene built by the asset loader and resize it the scene
     //std::shared_ptr<scene2::SceneNode> scene = _assets->get<scene2::SceneNode>("menu");
     //scene->setContentSize(dimen);
@@ -71,16 +71,25 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _buttonset.push_back(_button3 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("Menu_startmenu_button3")));
     // Program the buttons
     _button1->addListener([this](const std::string& name, bool down) {
-        if (down) {
-            _choice = Choice::PLAY;
+        //std::cout << _input._confirm << std::endl;
+        if (down) {  
+            _isdown = Isdown::isPLAY;
         }
     });
     _button2->addListener([this](const std::string& name, bool down) {
         if (down) {
-            _choice = Choice::LEVEL;
+            //_choice = Choice::LEVEL;
         }
     });
 
+    _button3->addListener([this](const std::string& name, bool down) {
+        if (down) {
+            //_choice = Choice::LEVEL;
+        }
+        });
+    _counter = 0;
+    switchFreq = 0.2;
+    _isdown = Isdown::isNONE;
     addChild(layer);
     setActive(false);
     return true;
@@ -110,7 +119,8 @@ void MainMenuScene::setActive(bool value) {
     if (isActive() != value) {
         Scene2::setActive(value);
         if (value) {
-            _choice = NONE;
+            _choice = Choice::NONE;
+            _isdown = Isdown::isNONE;
             //_hostbutton->activate();
             //_joinbutton->activate();
             _button1->activate();
@@ -130,4 +140,41 @@ void MainMenuScene::setActive(bool value) {
             //_joinbutton->setDown(false);
         }
     }
+}
+
+void MainMenuScene::update(float timestep)
+{
+    timeSinceLastSwitch += timestep;
+    //std::cout << timeSinceLastSwitch << std::endl;
+    if (timeSinceLastSwitch >= switchFreq) {
+        if (_input._updown != 0) {
+            if (_input._updown == 1 && _counter > 0) {
+                _buttonset.at(_counter)->setDown(false);
+                _counter--;
+                _buttonset.at(_counter)->setDown(true);
+            }
+            else if (_input._updown == -1 && _counter < _buttonset.size() - 1) {
+                _buttonset.at(_counter)->setDown(false);
+                _counter++;
+                _buttonset.at(_counter)->setDown(true);
+            }
+            timeSinceLastSwitch = 0;
+
+        }
+    }
+    std::cout << _input._confirm << std::endl;
+    if (_isdown == Isdown::isPLAY&&_input._confirm) {
+        _choice = Choice::PLAY;
+       
+    }
+    else if(_isdown == Isdown::isLEVEL && _input._confirm){
+        _choice = Choice::LEVEL;
+    }
+    else if (_isdown == Isdown::isSETTING && _input._confirm) {
+        _choice = Choice::SETTING;
+    }
+    else if (_isdown == Isdown::isNONE && _input._confirm) {
+    }
+
+    _input.resetcontroller();
 }

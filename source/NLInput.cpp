@@ -35,7 +35,11 @@ _didDebug(false),
 _didExit(false),
 _didFire(false),
 _didPause(false),
-_pause(false)
+_pause(false),
+_updown(0.0),
+_Leftright(0.0),
+_confirm(false),
+_controllerKey(0)
 {
 }
 
@@ -55,12 +59,41 @@ bool InputController::init() {
     return false;
 
 }
+bool InputController::init_withlistener() {
+    bool contSuccess = Input::activate<GameControllerInput>();
+    if (contSuccess) {
+        GameControllerInput* controller = Input::get<GameControllerInput>();
+        std::vector<std::string> deviceUUIDs = controller->devices();
+        _gameContrl = controller->open(deviceUUIDs.at(0));
+        if (deviceUUIDs.size() == 0) {
+            return false;
+        }
+        _controllerKey = controller->acquireKey();
+        //std::cout << _controllerKey << std::endl;
+        _gameContrl->addAxisListener(_controllerKey, [=](const GameControllerAxisEvent& event, bool focus) {
+            this->getAxisAngle(event, focus);
+            });
+        _gameContrl->addButtonListener(_controllerKey, [=](const GameControllerButtonEvent& event, bool focus) {
+            this->getButton(event, focus);
+            });
+        return true;
+    }
+
+    return false;
+
+}
 
 
 void InputController::update(){
     resetKeys();
     readInput_joystick();
     readInput();
+}
+void InputController::resetcontroller()
+{
+    _updown = 0;
+    _Leftright = 0;
+    _confirm = false;
 }
 /**
  * Reads the input for this player and converts the result into game logic.
@@ -215,13 +248,43 @@ void InputController::readInput_joystick() {
             _Vel = cugl::Vec2(LR, -UD);
             _UseJoystick = true;
 
-            if (LR > 0) {
+           /* if (LR > 0) {
                 _turning = 1;
             }
             else if (LR < 0) {
                 _turning = -1;
-            }
+            }*/
         }
     }
 }
+
+void InputController::getAxisAngle(const cugl::GameControllerAxisEvent& event, bool focus) {
+    if (event.axis == cugl::GameController::Axis::LEFT_Y || event.axis == cugl::GameController::Axis::RIGHT_Y) {
+        float UD = event.value;
+        if (UD < -0.2) {
+            _updown = 1; //Up
+        }
+        else if (UD > 0.2) {
+            _updown = -1; //down
+        }
+    }
+    else if (event.axis == cugl::GameController::Axis::LEFT_X || event.axis == cugl::GameController::Axis::RIGHT_X) {
+        float LR = event.value;
+        if (LR < -0.2) {
+            _Leftright = -1; //Left
+        }
+        else if (LR > 0.2) {
+            _Leftright = 1; //Right
+        }
+    }
+}
+
+
+void InputController::getButton(const cugl::GameControllerButtonEvent& event, bool focus) {
+    if (event.button == cugl::GameController::Button::A) {
+        _confirm = true;
+        std::cout << "buttonA" << std::endl;
+    }
+}
+
 

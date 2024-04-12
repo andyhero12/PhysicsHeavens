@@ -54,7 +54,18 @@ private:
 public:
 
     std::shared_ptr<cugl::GameController> _gameContrl;
+    Uint32 _controllerKey;
+    float _updown;
+    float _Leftright;
+    bool _confirm;
+
     bool init();
+
+    bool init_withlistener();
+
+    void getAxisAngle(const cugl::GameControllerAxisEvent& event, bool focus);
+
+    void getButton(const cugl::GameControllerButtonEvent& event, bool focus);
 
     //GameController _gamecontr;
     /**
@@ -168,7 +179,9 @@ public:
     bool getKeyboardState() {
         return _UseKeyboard;
     }
+    //void updatemainmenubutton();
 
+    void resetcontroller();
 };
 
 #endif /* __GL_INPUT_CONTROLLER_H__ */
