@@ -157,23 +157,26 @@ void Dog::updateClientAnimations(){
         _refire++;
     }
     if (_refire >= 10){
-        if ((getVX() != 0 || getVY() != 0)){
-            _refire = 0;
-            if (_startDash){
-                _startDash = false;
-                action = Actions::DASH;
-            }else if (_startBite){
-                _startBite = false;
-                action = Actions::BITE;
-            }else if (_startShoot){
-                _startShoot = false;
-                action = Actions::SHOOT;
-            }else{
-                action = Actions::RUN;
-            }
-            _curDirection = AnimationSceneNode::convertRadiansToDirections(getLinearVelocity().getAngle());
-        }else{
+        _refire = 0;
+        if (action == Actions::SHOOT || action == Actions::BITE || action == Actions::DASH){
+            return;
+        }
+        if (_startDash){
+            _startDash = false;
+            action = Actions::DASH;
+        }else if (_startBite){
+            _startBite = false;
+            action = Actions::BITE;
+        }else if (_startShoot){
+            _startShoot = false;
+            action = Actions::SHOOT;
+        }else if ((getVX() == 0 && getVY() != 0)){
             action = Actions::IDLE;
+        }else{
+            action = Actions::RUN;
+        }
+        if ((getVX() != 0 || getVY() != 0)){
+            _curDirection = AnimationSceneNode::convertRadiansToDirections(getLinearVelocity().getAngle());
         }
     }
 }
