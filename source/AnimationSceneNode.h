@@ -66,6 +66,8 @@ protected:
     int _timeSinceLastAnim;
     /** Attack animation frequency; represents the number of frames until update */
     int _animFreq;
+    float _height;
+    float _width;
 public:
 #pragma mark -
 #pragma mark Constructors
@@ -287,6 +289,9 @@ public:
 
     /** Convert Angle to Direction */
     static Directions convertAngleToDirections(float ang);
+    
+    float getWidth(){ return _width;}
+    float getHeight(){ return _height;}
 };
     
 #endif /* AnimationScene_h */
