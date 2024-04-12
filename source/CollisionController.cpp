@@ -26,6 +26,7 @@
 /** Impulse for giving collisions a slight bounce. */
 #define COLLISION_COEFF     0.1f
 #define DEFAULT_RADIUS  0.13f
+#define BUFFER  0.05f
 
 using namespace cugl;
 void CollisionController::intraOverWorldCollisions(OverWorld& overWorld){
@@ -130,7 +131,7 @@ bool CollisionController::monsterDogCollision(std::shared_ptr<Dog> curDog, std::
         float enemyRadius = fmin(enemy->getWidth(), enemy->getHeight())/2;
         Vec2 norm = curDog->getPosition() - enemy->getPosition();
         float distance = norm.length();
-        float impactDistance = dogRadius + enemyRadius;
+        float impactDistance = dogRadius + enemyRadius + BUFFER;
         it++;
         if (distance < impactDistance) {
             if (enemy->canAttack()){
