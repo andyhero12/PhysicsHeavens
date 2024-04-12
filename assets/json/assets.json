@@ -319,7 +319,8 @@
         "streets": "json/assetsJson/streets.json",
         "street_tiles": "json/assetsJson/street_tiles.json",
         "server": "json/server.json",
-        "constants": "json/constants.json"
+        "constants": "json/constants.json",
+        "mainmenu": "json/mainmenuassets.json"
 
     },
     "sounds": {
@@ -383,6 +384,28 @@
                     "layout" : {
                         "priority" : 1,
                         "padding"  : [0,0,0,0]
+                    }
+                },
+                "back" : {
+                    "type"      : "Button",
+                    "data"   : {
+                        "upnode"  : "up",
+                        "anchor":   [0.0,0.0]
+                    },
+                    "children": {
+                        "up" : {
+                            "type": "Image",
+                            "data": {
+                                "texture":  "left"
+                            }
+                        }
+                    },
+                    "layout" : {
+                        "x_anchor" : "left",
+                        "y_anchor" : "bottom",
+                        "y_offset" : 10,
+                        "x_offset" : 10,
+                        "absolute" : true
                     }
                 }
             }

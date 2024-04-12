@@ -8,10 +8,12 @@
 //  Author: Walker White, Aidan Hobler
 //  Version: 2/8/22
 //
-#ifndef __NL_MENU_SCENE_H__
-#define __NL_MENU_SCENE_H__
+#ifndef __NL_MAINMENU_SCENE_H__
+#define __NL_MAINMENU_SCENE_H__
 #include <cugl/cugl.h>
 #include <vector>
+#include <chrono>
+#include "GlobalConstants.h"
 
 
 /**
@@ -21,7 +23,7 @@
  * listeners on the scene graph.  We only need getters so that the main
  * application can retrieve the state and communicate it to other scenes.
  */
-class MenuScene : public cugl::Scene2 {
+class MainMenuScene : public cugl::Scene2 {
 public:
     /**
      * The menu choice.
@@ -31,11 +33,13 @@ public:
      */
     enum Choice {
         /** User has not yet made a choice */
-        NONE,
+        PLAY,
         /** User wants to host a game */
-        HOST,
+        LEVEL,
         /** User wants to join a game */
-        JOIN
+        SETTING,
+
+        NONE
     };
 
 protected:
@@ -47,6 +51,37 @@ protected:
     std::shared_ptr<cugl::scene2::Button> _joinbutton;
     /** The player menu choice */
     Choice _choice;
+
+
+    // NO CONTROLLER (ALL IN SEPARATE THREAD)
+    //InputController _input;
+    std::chrono::steady_clock::time_point lastInputTime;
+    // VIEW
+    ///** The animated progress bar */
+    //std::shared_ptr<cugl::scene2::ProgressBar>  _bar;
+    ///** The engine name */
+    //std::shared_ptr<cugl::scene2::SceneNode>  _brand;
+    /** The "play" button */
+    std::shared_ptr<cugl::scene2::Button>    _button1;
+    std::shared_ptr<cugl::scene2::Button>    _button2;
+    std::shared_ptr<cugl::scene2::Button>    _button3;
+    std::vector<std::shared_ptr<cugl::scene2::Button>> _buttonset;
+
+    // MODEL
+    /** The progress displayed on the screen */
+    float _progress;
+    /** Whether or not the player has pressed play to continue */
+    bool  _completed;
+
+    bool _firstset;
+
+    int _counter;
+
+    float timeSinceLastSwitch;
+
+    float switchFreq;
+
+    ScreenEnums transition;
     
 public:
 #pragma mark -
@@ -57,7 +92,7 @@ public:
      * This constructor does not allocate any objects or start the game.
      * This allows us to use the object without a heap pointer.
      */
-    MenuScene() : cugl::Scene2() {}
+    MainMenuScene() : cugl::Scene2() {}
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.
@@ -65,7 +100,7 @@ public:
      * This method is different from dispose() in that it ALSO shuts off any
      * static resources, like the input controller.
      */
-    ~MenuScene() { dispose(); }
+    ~MainMenuScene() { dispose(); }
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.
@@ -107,6 +142,7 @@ public:
      * @return the user's menu choice.
      */
     Choice getChoice() const { return _choice; }
+    
 
 };
 

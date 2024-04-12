@@ -77,6 +77,7 @@ void NetApp::onStartup() {
 void NetApp::onShutdown() {
     _gameplay.dispose();
     _mainmenu.dispose();
+    _menu.dispose();
     _hostgame.dispose();
     _joingame.dispose();
     _assets = nullptr;
@@ -135,11 +136,15 @@ void NetApp::preUpdate(float timestep){
         _network = NetEventController::alloc(_assets);
         _loading.dispose(); // Disables the input listeners in this mode
         _mainmenu.init(_assets);
+        _menu.init(_assets);
         _mainmenu.setActive(true);
         _hostgame.init(_assets,_network);
         _joingame.init(_assets,_network);
         //_gameplay.init(_assets);
-        _status = MENU;
+        _status = MAINMENU;
+    }
+    else if(_status == MAINMENU){
+        updateMainScene(timestep);
     }
     else if (_status == MENU) {
         updateMenuScene(timestep);
@@ -195,22 +200,30 @@ void NetApp::update(float timestep) {
  * @param timestep  The amount of time (in seconds) since the last frame
  */
 void NetApp::updateMenuScene(float timestep) {
-    _mainmenu.update(timestep);
-    switch (_mainmenu.getChoice()) {
+    _menu.update(timestep);
+    if (_menu.getBackclick()) {
+        _menu.setActive(false);
+        _mainmenu.setActive(true);
+        _status = MAINMENU;
+    }
+    else{
+        switch (_menu.getChoice()) {
         case MenuScene::Choice::HOST:
-            _mainmenu.setActive(false);
+            _menu.setActive(false);
             _hostgame.setActive(true);
             _status = HOST;
             break;
         case MenuScene::Choice::JOIN:
-            _mainmenu.setActive(false);
+            _menu.setActive(false);
             _joingame.setActive(true);
             _status = CLIENT;
             break;
         case MenuScene::Choice::NONE:
             // DO NOTHING
             break;
+        }
     }
+    
 }
 
 /**
@@ -226,7 +239,7 @@ void NetApp::updateHostScene(float timestep) {
     if(_hostgame.getBackClicked()){
         _status = MENU;
         _hostgame.setActive(false);
-        _mainmenu.setActive(true);
+        _menu.setActive(true);
     }
     else if (_network->getStatus() == NetEventController::Status::HANDSHAKE && _network->getShortUID()) {
         _gameplay.init(_assets, _network, true);
@@ -240,7 +253,7 @@ void NetApp::updateHostScene(float timestep) {
     else if (_network->getStatus() == NetEventController::Status::NETERROR) {
         _network->disconnect();
 		_hostgame.setActive(false);
-		_mainmenu.setActive(true);
+		_menu.setActive(true);
         _gameplay.dispose();
 		_status = MENU;
 	}
@@ -261,7 +274,7 @@ void NetApp::updateClientScene(float timestep) {
     if(_joingame.getBackClicked()){
         _status = MENU;
         _joingame.setActive(false);
-        _mainmenu.setActive(true);
+        _menu.setActive(true);
     }
     else if (_network->getStatus() == NetEventController::Status::HANDSHAKE && _network->getShortUID()) {
         _gameplay.init(_assets, _network, false);
@@ -275,7 +288,7 @@ void NetApp::updateClientScene(float timestep) {
     else if (_network->getStatus() == NetEventController::Status::NETERROR) {
         _network->disconnect();
 		_joingame.setActive(false);
-		_mainmenu.setActive(true);
+		_menu.setActive(true);
         _gameplay.dispose();
 		_status = MENU;
 	}
@@ -292,7 +305,33 @@ void NetApp::updateGameScene(float timestep) {
         _hostgame.setActive(false);
         _hostgame.endGame();
         _joingame.setActive(false);
+        _status = MAINMENU;
+    }
+}
+
+void NetApp::updateMainScene(float timestep)
+{
+    _mainmenu.update(timestep);
+    switch (_mainmenu.getChoice()) {
+    case MainMenuScene::Choice::PLAY:
+        _mainmenu.setActive(false);
+        _menu.setActive(true);
         _status = MENU;
+
+        break;
+    case MainMenuScene::Choice::LEVEL:
+        _mainmenu.setActive(false);
+        _menu.setActive(true);
+        _status = MENU;
+        break;
+    case MainMenuScene::Choice::SETTING:
+        _mainmenu.setActive(false);
+        _menu.setActive(true);
+        _status = MENU;
+        break;
+    case MainMenuScene::Choice::NONE:
+        // DO NOTHING
+        break;
     }
 }
 
@@ -310,8 +349,11 @@ void NetApp::draw() {
         case LOAD:
             _loading.render(_batch);
             break;
-        case MENU:
+        case MAINMENU:
             _mainmenu.render(_batch);
+            break;
+        case MENU:
+            _menu.render(_batch);
             break;
         case HOST:
             _hostgame.render(_batch);
