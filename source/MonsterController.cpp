@@ -24,14 +24,17 @@ bool MonsterController::init(OverWorld& overWorld,
     monsterControllerSceneNode = cugl::scene2::SceneNode::alloc();
     _debugNode = debugNode;
     _worldnode = worldNode;
-//    for (const cugl::Vec3& cluster : overWorld.getLevelModel()->preSpawnLocs()){
-//        float cx = cluster.x;
-//        float cy = cluster.y;
-//        int count = round(cluster.z);
+
+    for (const cugl::Vec3& cluster : overWorld.getLevelModel()->preSpawnLocs()){
+        float cx = cluster.x;
+        float cy = cluster.y;
+        int count = round(cluster.z);
 //        for(int i = 0; i < count; i++) {
-//            spawnStaticBasicEnemy(Vec2(cx,cy), overWorld);
+            spawnStaticBasicEnemy(Vec2(cx,cy), overWorld);
+//            spawnBombEnemy(Vec2(cx,cy), overWorld);
+        spawnSpawnerEnemy(Vec2(cx,cy), overWorld); // TODO SPAWN ENEMY IN MONSTER CONTROLLER
 //        }
-//    }
+    }
     
     spawnStaticBasicEnemy(Vec2(5,6), overWorld);
     return true;
@@ -96,6 +99,12 @@ void MonsterController::update(float timestep, OverWorld& overWorld){
     //CULog("Boundary World Size in MonsterController: %zu", overWorld.getWorld()->getBoundaryWorld().size());
     for (std::shared_ptr<AbstractEnemy> curEnemy: _current){
         curEnemy->preUpdate(timestep, overWorld);
+        if (std::shared_ptr<SpawnerEnemy> spawnerEnemy = std::dynamic_pointer_cast<SpawnerEnemy>(curEnemy)){
+            if (spawnerEnemy->canAttack()){
+                spawnerEnemy->resetAttack();
+                spawnBasicEnemy(spawnerEnemy->getPosition() - Vec2(0.2,0.2), overWorld);
+            }
+        }
     }
 }
 void MonsterController::setMeleeAnimationData(std::shared_ptr<cugl::JsonValue> data,
@@ -104,6 +113,12 @@ void MonsterController::setMeleeAnimationData(std::shared_ptr<cugl::JsonValue> d
     _staticMeleeFactID = _network->getPhysController()->attachFactory(_staticMeleeFactory);
     _meleeFactory = MeleeFactory::alloc(data, _assets);
     _meleeFactID = _network->getPhysController()->attachFactory(_meleeFactory);
+}
+
+void MonsterController::setSpawnerAnimationData(std::shared_ptr<cugl::JsonValue> data,
+                           std::shared_ptr<cugl::AssetManager> _assets){
+    _spawnerEnemyFactory = SpawnerEnemyFactory::alloc(data, _assets);
+    _spawnerEnemyFactID = _network->getPhysController()->attachFactory(_spawnerEnemyFactory);
 }
 
 void MonsterController::setBombAnimationData(std::shared_ptr<cugl::JsonValue> data,
@@ -131,11 +146,26 @@ void MonsterController::spawnBasicEnemy(cugl::Vec2 pos, OverWorld& overWorld){
     }
 }
 
+void MonsterController::spawnSpawnerEnemy(cugl::Vec2 pos, OverWorld& overWorld){
+    if (!overWorld._isHost){
+        return;
+    }
+    int chosenTarget = 0;
+    Size mySize(0.8,0.8);
+    auto params = _meleeFactory->serializeParams(pos, mySize, 3, chosenTarget);
+    auto pair = _network->getPhysController()->addSharedObstacle(_spawnerEnemyFactID, params);
+//        static_enemy->setHealthBar(_healthBar);
+    pair.first->setDebugScene(_debugNode);
+    if (auto static_enemy = std::dynamic_pointer_cast<AbstractEnemy>(pair.first)){
+        _pending.emplace(static_enemy);
+    }
+}
+
 void MonsterController::spawnStaticBasicEnemy(cugl::Vec2 pos, OverWorld& overWorld){
     if (!overWorld._isHost){
         return;
     }
-    Size mySize(0.5,0.5);
+    Size mySize(0.8,0.8);
     auto params = _staticMeleeFactory->serializeParams(pos, mySize, 3, 0);
     auto pair = _network->getPhysController()->addSharedObstacle(_staticMeleeFactID, params);
 //        static_enemy->setHealthBar(_healthBar);
@@ -149,7 +179,7 @@ void MonsterController::spawnBombEnemy(cugl::Vec2 pos, OverWorld& overWorld){
     if (!overWorld._isHost){
         return;
     }
-    Size mySize(0.5,0.5);
+    Size mySize(0.8,0.8);
     auto params = _bombEnemyFactory->serializeParams(pos, mySize, 3, 0);
     auto pair = _network->getPhysController()->addSharedObstacle(_bombEnemyFactID, params);
 //        static_enemy->setHealthBar(_healthBar);

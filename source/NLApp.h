@@ -16,9 +16,11 @@
 #include <cugl/cugl.h>
 #include "NLGameScene.h"
 #include "NLLoadingScene.h"
-#include "NLMenuScene.h"
+#include "MenuScene.h"
 #include "NLClientScene.h"
 #include "NLHostScene.h"
+#include "PauseScene.h"
+#include "NLMainMenuScene.h"
 
 using namespace cugl::physics2::net;
 
@@ -29,6 +31,7 @@ class NetApp : public cugl::Application {
     
 enum Status {
     LOAD,
+    MAINMENU,
     MENU,
     HOST,
     CLIENT,
@@ -48,8 +51,10 @@ protected:
     GameScene _gameplay;
     /** The controller for the loading screen */
     LoadingScene _loading;
-    
-    MenuScene _mainmenu;
+
+    MenuScene _menu;
+
+    MainMenuScene _mainmenu;
     
     ClientScene _joingame;
     
@@ -187,6 +192,10 @@ public:
      * @param timestep  The amount of time (in seconds) since the last frame
      */
     void updateClientScene(float timestep);
+    
+    void updateGameScene(float timestep);
+
+    void updateMainScene(float timestep);
 
     /**
      * The method called to draw the application to the screen.

@@ -56,19 +56,19 @@ public:
         int _framecols = data->getFloat("sprite cols", 0);
         int _framesize = data->getFloat("sprite size", 0);
         std::vector<std::shared_ptr<cugl::Texture>> textures;
-        textures.push_back(_assets->get<Texture>("bombEnemyIdle"));
-        textures.push_back(_assets->get<Texture>("bombEnemyIdle"));
-        textures.push_back(_assets->get<Texture>("bombEnemyIdle"));
-        textures.push_back(_assets->get<Texture>("bombEnemyIdle"));
-        textures.push_back(_assets->get<Texture>("bombEnemyIdle"));
-        textures.push_back(_assets->get<Texture>("bombEnemyIdle"));
-        textures.push_back(_assets->get<Texture>("bombEnemyIdle"));
-        textures.push_back(_assets->get<Texture>("bombEnemyIdle"));
+        textures.push_back(_assets->get<Texture>("bombFrontRightWalk"));
+        textures.push_back(_assets->get<Texture>("bombFrontRightWalk"));
+        textures.push_back(_assets->get<Texture>("bombFrontRightWalk"));
+        textures.push_back(_assets->get<Texture>("bombFrontRightWalk"));
+        textures.push_back(_assets->get<Texture>("bombFrontLeftWalk"));
+        textures.push_back(_assets->get<Texture>("bombFrontLeftWalk"));
+        textures.push_back(_assets->get<Texture>("bombFrontLeftWalk"));
+        textures.push_back(_assets->get<Texture>("bombFrontLeftWalk"));
         staticEnemyStruct._walkTextures  = textures;
         staticEnemyStruct._attackTextures  = textures;
         staticEnemyStruct._framesize = _framesize;
         staticEnemyStruct._framecols = _framecols;
-        staticEnemyStruct._freqAnimations = 5;
+        staticEnemyStruct._freqAnimations = 15;
     }
 
     /**

@@ -60,14 +60,15 @@ public:
     
     void update(float delta) override{
         Obstacle::update(delta);
+
         // Decoupled so useless for now
         //CULog("Enemy Position: (%d, %d)", static_cast<int>(getPosition().x), static_cast<int>(getPosition().y));
         _prevDirection =_curDirection;
         Vec2 direction = getLinearVelocity();
         _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
+
         runAnimations->animate(_curDirection, curAction == EnemyActions::RUN);
         attackAnimations->animate(_curDirection, curAction == EnemyActions::ATTACK);
-        //        dogActions();
     }
     
     virtual void preUpdate(float dt, OverWorld& overWorld) = 0;
@@ -125,8 +126,7 @@ public:
         topLevelPlaceHolder->addChild(runAnimations);
         attackAnimations->setPosition(topLevelPlaceHolder->getAnchor());
         topLevelPlaceHolder->addChild(attackAnimations);
-        
-        _healthBar->setPosition(getPosition() + Vec2(-5,16));
+        _healthBar->setPosition(0, runAnimations->getHeight()/2);
         topLevelPlaceHolder->addChild(_healthBar);
     }
     void setWalkingSceneNode(std::shared_ptr<AnimationSceneNode> walkingNode){

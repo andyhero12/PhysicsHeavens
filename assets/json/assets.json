@@ -1,9 +1,19 @@
 {
 	"textures": {
+        "resume":{
+            "file": "textures/game_ui/resume_button.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "mainmenu":{
+            "file": "textures/game_ui/back_to_menu_button.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
         "spawner": {
             "file": "textures/spawner.png",
-              "minfilter": "linear",
-              "magfilter": "nearest"
+            "minfilter": "linear",
+            "magfilter": "nearest"
         },
         "healthframe": {
             "file": "textures/game_ui/HEALTH_FRAME.png",
@@ -241,6 +251,31 @@
                  "minfilter": "linear",
                  "magfilter": "nearest"
        },
+       "bombBackLeftWalk": {
+           "file": "textures/bomb/bombBackLeftWalk.png",
+                 "minfilter": "linear",
+                 "magfilter": "nearest"
+       },
+       "bombBackRightWalk": {
+           "file": "textures/bomb/bombBackRightWalk.png",
+                 "minfilter": "linear",
+                 "magfilter": "nearest"
+       },
+       "bombFrontLeftWalk": {
+           "file": "textures/bomb/bombFrontLeftWalk.png",
+                 "minfilter": "linear",
+                 "magfilter": "nearest"
+       },
+       "bombFrontRightWalk": {
+           "file": "textures/bomb/bombFrontRightWalk.png",
+                 "minfilter": "linear",
+                 "magfilter": "nearest"
+       },
+       "spawnerFrontWalk": {
+           "file": "textures/spawnerEnemy/spawnerFrontWalk.png",
+                 "minfilter": "linear",
+                 "magfilter": "nearest"
+       },
         "street_tiles": {
             "file": "textures/tile/tile.png",
             "magfilter": "nearest"
@@ -267,15 +302,6 @@
               "minfilter": "linear",
               "magfilter": "nearest"
         },
-        "crate01": {
-            "file":     "textures/crate01.png"
-        },
-        "crate02": {
-            "file":     "textures/crate02.png"
-        },
-        "rocket": {
-            "file":     "textures/rocket.png"
-        },
         "button": {
             "file":  "textures/button.png"
         },
@@ -293,7 +319,8 @@
         "streets": "json/assetsJson/streets.json",
         "street_tiles": "json/assetsJson/street_tiles.json",
         "server": "json/server.json",
-        "constants": "json/constants.json"
+        "constants": "json/constants.json",
+        "mainmenu": "json/mainmenuassets.json"
 
     },
     "sounds": {
@@ -357,6 +384,28 @@
                     "layout" : {
                         "priority" : 1,
                         "padding"  : [0,0,0,0]
+                    }
+                },
+                "back" : {
+                    "type"      : "Button",
+                    "data"   : {
+                        "upnode"  : "up",
+                        "anchor":   [0.0,0.0]
+                    },
+                    "children": {
+                        "up" : {
+                            "type": "Image",
+                            "data": {
+                                "texture":  "left"
+                            }
+                        }
+                    },
+                    "layout" : {
+                        "x_anchor" : "left",
+                        "y_anchor" : "bottom",
+                        "y_offset" : 10,
+                        "x_offset" : 10,
+                        "absolute" : true
                     }
                 }
             }

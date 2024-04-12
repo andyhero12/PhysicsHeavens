@@ -28,11 +28,14 @@ InputController::InputController() :
 _forward(0),
 _turning(0),
 _didReset(false),
+_didDash(false),
 _didChangeMode(false),
 _didSpecial(false),
 _didDebug(false),
 _didExit(false),
-_didFire(false)
+_didFire(false),
+_didPause(false),
+_pause(false)
 {
 }
 
@@ -87,7 +90,8 @@ void InputController::readInput() {
     KeyCode special = KeyCode::G;
     KeyCode debug = KeyCode::D;
     KeyCode exit = KeyCode::ESCAPE;
-
+    KeyCode pause = KeyCode::P;
+    KeyCode dash = KeyCode::LEFT_SHIFT;
     Keyboard* keys = Input::get<Keyboard>();
 
 
@@ -111,6 +115,16 @@ void InputController::readInput() {
         _didReset = true;
         _UseKeyboard = true;
     }
+    
+    // Pause the game
+    if (keys->keyPressed(pause)) {
+//        CULog(" pressed P before : %d", _pause);
+        _pause = !_pause;
+//        CULog(" pressed P after : %d", _pause);
+        _didPause = true;
+        _UseKeyboard = true;
+    }
+    
     // Movement forward/backward
 
     if (keys->keyPressed(mode)) {
@@ -131,7 +145,10 @@ void InputController::readInput() {
         _didExit = true;
         _UseKeyboard = true;
     }
-
+    if (keys->keyPressed(dash)) {
+        _didDash = true;
+        _UseKeyboard = true;
+    }
     if (keys->keyDown(up) && !keys->keyDown(down)) {
         _forward = 1;
         _UseKeyboard = true;
@@ -147,10 +164,12 @@ void InputController::readInput() {
 void InputController::resetKeys(){
     _didFire = false;
     _didReset = false;
+    _didPause = false;
     _didChangeMode = false;
     _didSpecial = false;
     _didDebug = false;
     _didExit = false;
+    _didDash = false;
     _UseJoystick = false;
     _UseKeyboard = false;
     _forward  = 0;

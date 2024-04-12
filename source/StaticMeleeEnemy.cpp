@@ -230,13 +230,29 @@ void StaticMeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
     CULog("Direction: (%f, %f)", direction.normalize().x, direction.normalize().y);
     
         if (overWorld._isHost){
+//=======
+//    if (distance > DISTANCE_CUTOFF){ // too far from origin return
+//        direction = original_pos - getPosition();
+//        if (overWorld._isHost && _counter >= updateRate){
+//            _counter = 0;
+//            if (direction.lengthSquared() >= 1){
+//                setVX(direction.normalize().x);
+//                setVY(direction.normalize().y);
+//            }else{
+//                setVX(0);
+//                setVY(0);
+//            }
+//            _prevDirection =_curDirection;
+//            _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
+//        }
+//    }else{ // chase dog
+//        direction = dog_pos - getPosition();
+//        if (overWorld._isHost && _counter >= updateRate){
+//            _counter = 0;
+//>>>>>>> main
             setVX(direction.normalize().x);
             setVY(direction.normalize().y);
+            _prevDirection =_curDirection;
+            _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
         }
-    //}
-    // Animate
-//    _prevDirection =_curDirection;
-//    _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
-//    runAnimations->animate(_curDirection, curAction == EnemyActions::RUN);
-//    attackAnimations->animate(_curDirection, curAction == EnemyActions::ATTACK);
 }

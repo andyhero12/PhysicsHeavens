@@ -35,12 +35,16 @@ private:
     /** Did we press the reset button? */
     bool _didReset;
     
+    /** Did we press the pause button? */
+    bool _didPause;
+    bool _pause;
     /** Did press the change mode button */
     bool _didChangeMode;
     /** Did we press the special button? */
     bool _didSpecial;
     bool _didDebug;
     bool _didExit;
+    bool _didDash;
     cugl::Vec2 _Vel;
 
     bool _UseKeyboard;
@@ -74,6 +78,10 @@ public:
      */
     float getTurn() const {
         return _turning;
+    }
+    
+    bool getPause() const{
+        return _pause;
     }
 
     /**
@@ -113,6 +121,13 @@ public:
     
     bool didPressExit() const {
         return _didExit;
+    }
+    bool didPressDash() const {
+        return _didDash;
+    }
+    
+    bool didPressPause() const {
+        return _didPause;
     }
     /**
      * Creates a new input controller with the default settings

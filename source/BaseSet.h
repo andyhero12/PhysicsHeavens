@@ -35,6 +35,8 @@ public:
     bool baseLost();
     
     int getFirstHealth();
+    
+    const std::shared_ptr<cugl::Texture> getTexture() const { return _texture; }
 private:
     
 

@@ -20,12 +20,13 @@ std::shared_ptr<NetEvent> ShootEvent::newEvent(){
     return std::make_shared<ShootEvent>();
 }
 
-std::shared_ptr<NetEvent> ShootEvent::allocShootEvent(Vec2 pos, float ang){
+std::shared_ptr<NetEvent> ShootEvent::allocShootEvent(Vec2 pos, float ang, bool isHost){
     //TODO: make a new shared copy of the event and set its _pos to pos.
 #pragma mark BEGIN SOLUTION
     auto event = std::make_shared<ShootEvent>();
     event->_pos = pos;
     event->_ang = ang;
+    event->_isHost = isHost;
     return event;
 #pragma mark END SOLUTION
 }
@@ -40,6 +41,7 @@ std::vector<std::byte> ShootEvent::serialize(){
     _serializer.writeFloat(_pos.x);
     _serializer.writeFloat(_pos.y);
     _serializer.writeFloat(_ang);
+    _serializer.writeBool(_isHost);
     return _serializer.serialize();
 #pragma mark END SOLUTION
 }
@@ -64,5 +66,6 @@ void ShootEvent::deserialize(const std::vector<std::byte>& data){
     _pos = Vec2(x,y);
     float ang = _deserializer.readFloat();
     _ang = ang;
+    _isHost = _deserializer.readBool();
 #pragma mark END SOLUTION
 }
