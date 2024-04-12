@@ -98,7 +98,7 @@ public:
     void setHealthBar(std::shared_ptr<cugl::scene2::ProgressBar> bar){
         _healthBar = bar;
         _healthBar->setScale(0.1);
-        _healthBar->setAnchor(Vec2::ANCHOR_CENTER);
+        _healthBar->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     }
     
     void setFinalEnemy(std::shared_ptr<cugl::scene2::SceneNode> baseNode){
