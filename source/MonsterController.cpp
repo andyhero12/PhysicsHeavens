@@ -21,6 +21,7 @@ bool MonsterController::init(OverWorld& overWorld,
      std::shared_ptr<cugl::scene2::SceneNode> debugNode){
     _current.clear();
     _pending.clear();
+    _absorbEnem.clear();
     monsterControllerSceneNode = cugl::scene2::SceneNode::alloc();
     _debugNode = debugNode;
     _worldnode = worldNode;
@@ -30,7 +31,8 @@ bool MonsterController::init(OverWorld& overWorld,
         int count = round(cluster.z);
 //        for(int i = 0; i < count; i++) {
             spawnStaticBasicEnemy(Vec2(cx,cy), overWorld);
-//            spawnBombEnemy(Vec2(cx,cy), overWorld);
+            spawnBombEnemy(Vec2(cx,cy), overWorld);
+            spawnAbsorbEnemy(Vec2(cx,cy), overWorld);
         spawnSpawnerEnemy(Vec2(cx,cy), overWorld); // TODO SPAWN ENEMY IN MONSTER CONTROLLER
 //        }
     }
@@ -121,6 +123,12 @@ void MonsterController::setBombAnimationData(std::shared_ptr<cugl::JsonValue> da
     _bombEnemyFactID = _network->getPhysController()->attachFactory(_bombEnemyFactory);
 }
 
+void MonsterController::setAbsorbAnimationData(std::shared_ptr<cugl::JsonValue> data,
+                        std::shared_ptr<cugl::AssetManager> _assets){
+    _absorbEnemyFactory = AbsorbFactory::alloc(data, _assets);
+    _absorbEnemyFactID = _network->getPhysController()->attachFactory(_absorbEnemyFactory);
+}
+
 void MonsterController::setHealthBar(std::shared_ptr<cugl::scene2::ProgressBar> bar){
     _healthBar = bar;
 }
@@ -182,6 +190,22 @@ void MonsterController::spawnBombEnemy(cugl::Vec2 pos, OverWorld& overWorld){
         _pending.emplace(static_enemy);
     }
 }
+
+void MonsterController::spawnAbsorbEnemy(cugl::Vec2 pos, OverWorld& overWorld){
+    if (!overWorld._isHost){
+        return;
+    }
+    Size mySize(0.8,0.8);
+    auto params = _absorbEnemyFactory->serializeParams(pos, mySize, 3, 0);
+    auto pair = _network->getPhysController()->addSharedObstacle(_absorbEnemyFactID, params);
+//        static_enemy->setHealthBar(_healthBar);
+    pair.first->setDebugScene(_debugNode);
+    if (auto static_enemy = std::dynamic_pointer_cast<AbstractEnemy>(pair.first)){
+        _pending.emplace(static_enemy);
+        _absorbEnem.emplace(std::dynamic_pointer_cast<AbsorbEnemy>(static_enemy));
+    }
+}
+
 void MonsterController::removeEnemy(std::shared_ptr<AbstractEnemy> enemy){
     getNetwork()->getPhysController()->removeSharedObstacle(enemy);
     enemy->getTopLevelNode()->removeFromParent();

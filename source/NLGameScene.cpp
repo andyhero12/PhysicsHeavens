@@ -276,6 +276,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _monsterController.setMeleeAnimationData(_constants->get("basicEnemy"), assets);
     _monsterController.setSpawnerAnimationData(_constants->get("spawnerEnemy"), assets);
     _monsterController.setBombAnimationData(_constants->get("bomb"), assets);
+    _monsterController.setAbsorbAnimationData(_constants->get("absorbEnemy"), assets);
     _monsterController.init(overWorld, _worldnode, _debugnode);
     _worldnode->addChild(_monsterController.getMonsterSceneNode());
     _collisionController.init();
