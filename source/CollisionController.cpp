@@ -72,13 +72,15 @@ bool CollisionController::monsterBaseCollsion(OverWorld& overWorld, std::shared_
     auto itP = curBases->_bases.begin();
     while (itP != curBases->_bases.end()){
         std::shared_ptr<Base> base = *itP;
+        float baseRadius = fmin(base->getTexture()->getWidth(),base->getTexture()->getHeight());
         auto itA = curEnemies.begin();
         bool hitSomething = false;
         while ( itA != curEnemies.end()){
             const std::shared_ptr<AbstractEnemy>& enemy = *itA;
+            float enemyRadius = fmin(enemy->getWidth(), enemy->getHeight());
             Vec2 norm = base->getPos() - enemy->getPosition();
             float distance = norm.length();
-            float impactDistance = 0.25;
+            float impactDistance = baseRadius + enemyRadius;
             auto curA = itA;
             itA++;
             if (distance < impactDistance) {
