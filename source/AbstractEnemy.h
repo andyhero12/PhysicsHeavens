@@ -22,6 +22,7 @@
 #include "WorldSearchVertex.h"
 
 class AbstractEnemy : public cugl::physics2::BoxObstacle {
+    
 public:
     
     enum class EnemyActions : int {
@@ -139,12 +140,18 @@ public:
     std::shared_ptr<cugl::scene2::SceneNode> getTopLevelNode(){
         return topLevelPlaceHolder;
     }
+    
+    void setGoal(Vec2 goal){
+        _goal = goal;
+    }
+    
 protected:
     int _maxHealth;
     int _health;
     int targetIndex;
     int updateRate;
     int _counter;
+    Vec2 _goal = Vec2(-1, -1);
     
     EnemyActions curAction;
     AnimationSceneNode::Directions _prevDirection;

@@ -16,6 +16,7 @@ class WorldSearchVertex{
 private:
     // the world this node is in
     std::shared_ptr<World> _world;
+    
 public:
     
     // x coord of this node

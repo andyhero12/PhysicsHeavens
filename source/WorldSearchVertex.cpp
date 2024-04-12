@@ -53,14 +53,21 @@ bool WorldSearchVertex::IsGoal( WorldSearchVertex &nodeGoal )
 // is specific to the application
 bool WorldSearchVertex::GetSuccessors( AStarSearch<WorldSearchVertex> *astarsearch, WorldSearchVertex *parent_node )
 {
-//    CULog("Enter GetSuccessors");
-//    CULog("This vertex coordinate: (%d, %d)", x, y);
-//    CULog("World Size: %d by %d", _world->getRows(), _world->getCols());
-//    
-//    CULog("%d", (int) _world->isPassable(x - 1, y));
-//    CULog("%d", (int) _world->isPassable(x, y - 1));
-//    CULog("%d", (int) _world->isPassable(x + 1, y));
-//    CULog("%d", (int) _world->isPassable(x, y + 1));
+    
+    //Create list of all possible next tiles
+    std::list<std::pair<int, int>> adj_list;
+    
+    // Left, right, top, bottom
+    adj_list.push_back(std::make_pair(0, 1));
+    adj_list.push_back(std::make_pair(0, -1));
+    adj_list.push_back(std::make_pair(1, 0));
+    adj_list.push_back(std::make_pair(-1, 0));
+    
+    //Diagonals
+    adj_list.push_back(std::make_pair(-1, -1));
+    adj_list.push_back(std::make_pair(1, 1));
+    adj_list.push_back(std::make_pair(-1, 1));
+    adj_list.push_back(std::make_pair(1, -1));
     
     int parent_x = -1;
     int parent_y = -1;
@@ -71,47 +78,15 @@ bool WorldSearchVertex::GetSuccessors( AStarSearch<WorldSearchVertex> *astarsear
         parent_y = parent_node->y;
     }
     
-    
     WorldSearchVertex NewNode(0, 0, _world);
-
+    
     // push each possible move except allowing the search to go backwards
-
-    if( _world->isPassable(x - 1, y)
-        && !((parent_x == x-1) && (parent_y == y))
-      )
-    {
-        NewNode = WorldSearchVertex( x-1, y, _world);
-        astarsearch->AddSuccessor( NewNode );
-        //CULog("Added Successor");
-
-    }
-
-    if( _world->isPassable(x, y - 1)
-        && !((parent_x == x) && (parent_y == y-1))
-      )
-    {
-        NewNode = WorldSearchVertex( x, y-1, _world);
-        astarsearch->AddSuccessor( NewNode );
-        //CULog("Added Successor");
-    }
-
-    if( _world->isPassable(x + 1, y)
-        && !((parent_x == x+1) && (parent_y == y))
-      )
-    {
-        NewNode = WorldSearchVertex( x+1, y, _world );
-        astarsearch->AddSuccessor( NewNode );
-        //CULog("Added Successor");
-    }
-
+    for (const auto& diff : adj_list) {
+        NewNode = WorldSearchVertex( x - diff.first, y - diff.second, _world);
         
-    if( _world->isPassable(x, y + 1)
-        && !((parent_x == x) && (parent_y == y+1))
-        )
-    {
-        NewNode = WorldSearchVertex( x, y + 1, _world);
-        astarsearch->AddSuccessor( NewNode );
-        //CULog("Added Successor");
+        if(_world->isPassable(NewNode.x, NewNode.y) && !((parent_x == NewNode.x) && (parent_y == NewNode.y))){
+            astarsearch->AddSuccessor( NewNode );
+        }
     }
     
     return true;

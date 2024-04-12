@@ -48,7 +48,7 @@ bool SpawnerController::init(const std::vector<cugl::Vec2>& startLocs) {
     for (int i =0; i< startLocs.size(); i++){
         cugl::Vec2 pos;
         pos = startLocs.at(i);
-        int spawnRate = 50;
+        int spawnRate = 50000;
         int health = 10;
         std::shared_ptr<MeleeSpawner> curSpawner = std::make_shared<MeleeSpawner>(spawnRate,pos,health,0);
         curSpawner->setSceneNode(_texture);

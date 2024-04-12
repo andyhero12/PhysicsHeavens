@@ -24,14 +24,16 @@ bool MonsterController::init(OverWorld& overWorld,
     monsterControllerSceneNode = cugl::scene2::SceneNode::alloc();
     _debugNode = debugNode;
     _worldnode = worldNode;
-    for (const cugl::Vec3& cluster : overWorld.getLevelModel()->preSpawnLocs()){
-        float cx = cluster.x;
-        float cy = cluster.y;
-        int count = round(cluster.z);
-        for(int i = 0; i < count; i++) {
-            spawnStaticBasicEnemy(Vec2(cx,cy), overWorld);
-        }
-    }
+//    for (const cugl::Vec3& cluster : overWorld.getLevelModel()->preSpawnLocs()){
+//        float cx = cluster.x;
+//        float cy = cluster.y;
+//        int count = round(cluster.z);
+//        for(int i = 0; i < count; i++) {
+//            spawnStaticBasicEnemy(Vec2(cx,cy), overWorld);
+//        }
+//    }
+    
+    spawnStaticBasicEnemy(Vec2(5,6), overWorld);
     return true;
 }
 void MonsterController::postUpdate(){

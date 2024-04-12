@@ -203,7 +203,7 @@ const bool World::isPassable(int x, int y){
 //        std::cout << std::endl; // Newline after each row for better formatting
 //    }
     
-    std::cout << std::endl;
+//    std::cout << std::endl;
     
     return getBoundaryWorld().at(y).at(x)->type == PASSABLE;
 }
