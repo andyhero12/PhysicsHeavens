@@ -25,6 +25,8 @@
 
 /** Impulse for giving collisions a slight bounce. */
 #define COLLISION_COEFF     0.1f
+#define DEFAULT_RADIUS  0.13f
+#define BUFFER  0.05f
 
 using namespace cugl;
 void CollisionController::intraOverWorldCollisions(OverWorld& overWorld){
@@ -69,6 +71,7 @@ void CollisionController::attackCollisions(OverWorld& overWorld, MonsterControll
 bool CollisionController::monsterBaseCollsion(OverWorld& overWorld, std::shared_ptr<BaseSet> curBases, MonsterController& monsterController){
     std::unordered_set<std::shared_ptr<AbstractEnemy>>& curEnemies = monsterController.getEnemies();
     bool collision = false;
+    float baseRadius = DEFAULT_RADIUS;
     auto itP = curBases->_bases.begin();
     while (itP != curBases->_bases.end()){
         std::shared_ptr<Base> base = *itP;
@@ -76,9 +79,10 @@ bool CollisionController::monsterBaseCollsion(OverWorld& overWorld, std::shared_
         bool hitSomething = false;
         while ( itA != curEnemies.end()){
             const std::shared_ptr<AbstractEnemy>& enemy = *itA;
+            float enemyRadius = fmin(enemy->getWidth(), enemy->getHeight())/2;
             Vec2 norm = base->getPos() - enemy->getPosition();
             float distance = norm.length();
-            float impactDistance = 0.25;
+            float impactDistance = baseRadius + enemyRadius;
             auto curA = itA;
             itA++;
             if (distance < impactDistance) {
@@ -101,10 +105,12 @@ bool CollisionController::monsterDecoyCollision(std::shared_ptr<DecoySet> decoyS
     bool collide = false;
     std::vector<std::shared_ptr<Decoy>> decoys = decoySet->getCurrentDecoys();
     for (std::shared_ptr<Decoy> curDecoy: decoys){
+        float decoyRadius = DEFAULT_RADIUS;
         for (std::shared_ptr<AbstractEnemy> enemy: curEnemies){
             Vec2 norm = curDecoy->getPos() - enemy->getPosition();
+            float enemyRadius = fmin(enemy->getWidth(), enemy->getHeight())/2;
             float distance = norm.length();
-            float impactDistance = 0.5;
+            float impactDistance = decoyRadius + enemyRadius;
             if (distance < impactDistance){ // need noise
                 if (enemy->canAttack()){
                     collide = true;
@@ -117,13 +123,15 @@ bool CollisionController::monsterDecoyCollision(std::shared_ptr<DecoySet> decoyS
     return collide;
 }
 bool CollisionController::monsterDogCollision(std::shared_ptr<Dog> curDog, std::unordered_set<std::shared_ptr<AbstractEnemy>>& curEnemies){
+    float dogRadius = fmin(curDog->getWidth(), curDog->getHeight())/2;
     bool collision = false;
     auto it = curEnemies.begin();
     while (it != curEnemies.end()){
         std::shared_ptr<AbstractEnemy> enemy = *it;
+        float enemyRadius = fmin(enemy->getWidth(), enemy->getHeight())/2;
         Vec2 norm = curDog->getPosition() - enemy->getPosition();
         float distance = norm.length();
-        float impactDistance = 1.2;
+        float impactDistance = dogRadius + enemyRadius + BUFFER;
         it++;
         if (distance < impactDistance) {
             if (enemy->canAttack()){

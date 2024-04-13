@@ -108,8 +108,7 @@ public:
         topLevelPlaceHolder->addChild(runAnimations);
         attackAnimations->setPosition(topLevelPlaceHolder->getAnchor());
         topLevelPlaceHolder->addChild(attackAnimations);
-        
-        _healthBar->setPosition(getPosition() + Vec2(-5,16));
+        _healthBar->setPosition(0, runAnimations->getHeight()/2);
         topLevelPlaceHolder->addChild(_healthBar);
     }
     void setWalkingSceneNode(std::shared_ptr<AnimationSceneNode> walkingNode){
