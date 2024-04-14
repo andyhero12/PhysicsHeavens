@@ -132,6 +132,8 @@ bool AnimationSceneNode::createSpriteNodes(const std::vector<std::shared_ptr<cug
     for (size_t i = 0; i < textures.size(); ++i) {
         _animationSprites.at(i) = cugl::scene2::SpriteNode::allocWithSheet(textures.at(i), rows, cols);
     }
+    _height = _animationSprites.at(0)->getHeight()/rows;
+    _width = _animationSprites.at(0)->getHeight()/cols;
     return true;
 }
 
