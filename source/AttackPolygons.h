@@ -29,12 +29,14 @@ public:
     bool _polygon;
     
     ActionPolygon(Action curAction, Poly2& mintPoly, int mx);
+    ActionPolygon(std::shared_ptr<cugl::scene2::PolygonNode> actionSprite, Action curAction, Poly2& mintPoly, int mx);
     
     float getScale() const { return _scale; }
     
     int getAge() const { return _age; }
     Action getAction() const {return polygonAction;}
     const Poly2& getPolygon() const {return internalPolygon;}
+//    const Poly2& getPolygon() const {return actionNode->getPolygon();}
     bool expired() const { return _age >= _maxage;}
     void update();
     std::shared_ptr<cugl::scene2::SceneNode> getActionNode(){
@@ -43,7 +45,7 @@ public:
     void draw(const std::shared_ptr<SpriteBatch>& batch, const Affine2& transform, Color4 tint);
     
 private:
-    std::shared_ptr<cugl::scene2::SceneNode> actionNode;
+    std::shared_ptr<cugl::scene2::PolygonNode> actionNode;
 };
 
 class AttackPolygons{

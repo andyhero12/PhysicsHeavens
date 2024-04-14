@@ -20,6 +20,12 @@ void ActionPolygon::update(){
     // update animation when needed
 }
 
+ActionPolygon::ActionPolygon(std::shared_ptr<cugl::scene2::PolygonNode> actionSprite, Action curAction, Poly2& mintPoly, int mx)
+: ActionPolygon(curAction, mintPoly, mx)
+{
+    actionNode = actionSprite;
+}
+
 ActionPolygon::ActionPolygon(Action curAction, Poly2& mintPoly, int mx)
 : polygonAction{curAction}
 , internalPolygon{mintPoly}
