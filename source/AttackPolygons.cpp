@@ -14,6 +14,9 @@
 
 void ActionPolygon::update(){
     _age++;
+    if(!_polygon){
+        
+    }
     // update animation when needed
 }
 
@@ -23,41 +26,14 @@ ActionPolygon::ActionPolygon(Action curAction, Poly2& mintPoly, int mx)
 , _age{0}
 , _maxage{mx}
 , _scale{1.0}
+, _polygon(true)
 {
     actionNode = cugl::scene2::PolygonNode::allocWithPoly(mintPoly);
 }
-void ActionPolygon::drawShoot(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl::Size size){
-    batch->setTexture(nullptr);
-    batch->setColor(Color4::RED);
-    batch->fill(internalPolygon);
-}
-void ActionPolygon::drawExplode(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl::Size size){
-    batch->setTexture(nullptr);
-    batch->setColor(Color4::BLUE);
-    batch->fill(internalPolygon);
-}
-void ActionPolygon::drawBite(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl::Size size){
-    batch->setTexture(nullptr);
-    batch->setColor(Color4::GREEN);
-    batch->fill(internalPolygon);
-}
-void ActionPolygon::draw(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl::Size size){
-    switch (polygonAction){
-        case Action::BITE:
-            drawBite(batch,size);
-            break;
-        case Action::SHOOT:
-            drawShoot(batch,size);
-            break;
-        case Action::EXPLODE:
-            drawExplode(batch,size);
-            break;
-        default:
-            CULog("action not used %d\n", polygonAction);
-            break;
-    };
-}
 
+void ActionPolygon::draw(const std::shared_ptr<SpriteBatch>& batch, const Affine2& transform, Color4 tint){
+    actionNode->draw(batch, transform, tint);
+}
 
 AttackPolygons::AttackPolygons()
 : max_age{25}
@@ -80,12 +56,6 @@ void AttackPolygons::update(){
             attackPolygonNode->removeChild(curAction->getActionNode());
             currentAttacks.erase(curIt);
         }
-    }
-}
-
-void AttackPolygons::draw(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl::Size size){
-    for (const std::shared_ptr<ActionPolygon>& action : currentAttacks){
-        action->draw(batch, size);
     }
 }
 
@@ -118,4 +88,9 @@ void AttackPolygons::addBite(Vec2 center, float angle, float explosionRad){
     Vec2 offset = Vec2(SDL_cosf((angle + 90) * 3.14f / 180), SDL_sinf((angle + 90) * 3.14f / 180)) * DOG_SIZE.x * BITE_HEAD_OFFSET_RATIO;
     curPtr->getActionNode()->setPosition(center.add(offset));
     currentAttacks.insert(curPtr);
+}
+
+bool AttackPolygons::setSprite(std::shared_ptr<cugl::scene2::SpriteNode> bite){
+    biteSprite = bite;
+    return true;
 }
