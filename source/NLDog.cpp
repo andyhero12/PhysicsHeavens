@@ -62,6 +62,7 @@ using namespace cugl;
 #define SHOOT_RADIUS 8.5f
 #define EXPLOSION_RADIUS 1.4f
 #define DASH_RATE 50
+#define FIXED_TIMESTEP_S 0.02f
 #pragma mark -
 #pragma mark Constructors
 
@@ -205,16 +206,25 @@ void Dog::moveOnInputSetAction(InputController& _input){
     if (action != Actions::DASH){
         if (_startDash){
             _startDash = false;
-            setVX(_vel.x*getThrust()*2.5);
-            setVY(_vel.y*getThrust()*2.5);
-            dir.x =_vel.x*getThrust()*2.5;
-            dir.y = _vel.y*getThrust()*2.5;
+            setX(getX() + _vel.x*getThrust()*2.5 * FIXED_TIMESTEP_S);
+            setY(getY() + _vel.y*getThrust()*2.5 * FIXED_TIMESTEP_S);
+            setVX(_vel.x*getThrust()*2.5 * FIXED_TIMESTEP_S);
+            setVY(_vel.y*getThrust()*2.5 * FIXED_TIMESTEP_S);
+            dir.x =_vel.x;
+            dir.y = _vel.y;
         }else{
-            setVX(_vel.x*getThrust());
-            setVY(_vel.y*getThrust());
-            dir.x =_vel.x*getThrust();
-            dir.y = _vel.y*getThrust();
+            setX(getX() + _vel.x*getThrust() * FIXED_TIMESTEP_S);
+            setY(getY() +_vel.y*getThrust() * FIXED_TIMESTEP_S);
+            setVX(_vel.x*getThrust() * FIXED_TIMESTEP_S);
+            setVY(_vel.y*getThrust() * FIXED_TIMESTEP_S);
+            dir.x =_vel.x;
+            dir.y = _vel.y;
         }
+    }else{
+        setX(getX() + dir.x*getThrust()*2.5 * FIXED_TIMESTEP_S);
+        setY(getY() + dir.y*getThrust()*2.5 * FIXED_TIMESTEP_S);
+        setVX(_vel.x*getThrust()*2.5 * FIXED_TIMESTEP_S);
+        setVY(_vel.y*getThrust()*2.5 * FIXED_TIMESTEP_S);
     }
     
     // keep same direction until movement
