@@ -64,6 +64,10 @@ protected:
     bool _loaded;
     
     Status _status;
+
+    float timeSinceLastSwitch;
+
+    float switchFreq;
     
 public:
 #pragma mark Constructors
