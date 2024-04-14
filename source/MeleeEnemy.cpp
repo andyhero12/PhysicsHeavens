@@ -6,6 +6,7 @@
 //
 
 #define MELEE_DAMAGE 5
+#define FIXED_TIMESTEP_S 0.02f
 #include "MeleeEnemy.h"
 #define DYNAMIC_COLOR   Color4::YELLOW
 std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode>> MeleeFactory::createObstacle(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex) {
@@ -120,6 +121,10 @@ void MeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
     cugl::Vec2 target_pos = getTargetPositionFromIndex(overWorld);
     cugl::Vec2 direction = target_pos - getPosition();
     if (overWorld._isHost && _counter >= updateRate){
+//        setX(getX() + direction.normalize().x * 0.5 * FIXED_TIMESTEP_S * updateRate);
+//        setY(getY() + direction.normalize().y * 0.5 * FIXED_TIMESTEP_S * updateRate);
+//        setVX(direction.normalize().x * 0.5 * FIXED_TIMESTEP_S );
+//        setVY(direction.normalize().y * 0.5 * FIXED_TIMESTEP_S );
         setVX(direction.normalize().x * 0.5);
         setVY(direction.normalize().y * 0.5);
         _counter = 0;
