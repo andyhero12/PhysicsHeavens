@@ -144,6 +144,8 @@ void BombEnemy::preUpdate(float dt, OverWorld& overWorld){
     if (overWorld._isHost && _counter >= updateRate){
         setVX(direction.normalize().x * 0.5);
         setVY(direction.normalize().y * 0.5);
+        setX(getX());
+        setY(getY());
     }
     
     _prevDirection =_curDirection;

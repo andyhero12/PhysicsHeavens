@@ -33,7 +33,7 @@ public:
         bool result = physics2::BoxObstacle::init(m_pos,m_size);
         if (result){
             _counter = 0;
-            updateRate = 10;
+            updateRate = 15;
             setDensity(DEFAULT_DENSITY);
             setFriction(DEFAULT_FRICTION);
             setRestitution(DEFAULT_RESTITUTION);
