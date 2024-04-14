@@ -11,6 +11,7 @@
 #include <unordered_set>
 #include <vector>
 #include "Base.h"
+#include "NLDog.h"
 
 
 class BaseSet{
@@ -37,6 +38,9 @@ public:
     int getFirstHealth();
     
     const std::shared_ptr<cugl::Texture> getTexture() const { return _texture; }
+    
+    Vec2 recallBase(std::shared_ptr<Dog> dog);
+    
 private:
     
 

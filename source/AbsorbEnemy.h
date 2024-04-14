@@ -108,6 +108,11 @@ public:
     virtual int getDamage() override{
         return _contactDamage;
     }
+    
+    void setDamage(int damage){
+        _contactDamage += damage;
+    }
+    
     bool canAttack() const override{
         return _attackCooldown >= 60;
     }

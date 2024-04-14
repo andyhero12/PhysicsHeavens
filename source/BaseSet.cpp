@@ -4,6 +4,7 @@
 //  Created by Andrew Cheng on 2/26/24.
 //
 #include "BaseSet.h"
+#include <limits>
 
 BaseSet::BaseSet()
 {
@@ -78,4 +79,22 @@ bool BaseSet::baseLost()
         }
     }
     return false;
+}
+
+Vec2 BaseSet::recallBase(std::shared_ptr<Dog> dog){
+    float shortestDist = std::numeric_limits<float>::max();
+    std::shared_ptr<Base> nearest;
+    for (auto& base : _bases){
+        Vec2 norm = base->getPos() - dog->getPosition();
+        float dist = norm.length();
+        if (dist < shortestDist){
+            shortestDist = dist;
+            nearest = base;
+        }
+    }
+    CULog("Nearest base x: %fu", nearest->getPos().x);
+    CULog("Nearest base y: %fu", nearest->getPos().y);
+    dog->setPosition(nearest->getPos());
+    return nearest->getPos();
+    
 }

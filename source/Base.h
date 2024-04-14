@@ -31,8 +31,11 @@ public:
     std::shared_ptr<cugl::scene2::SceneNode> getSceneNode(){
         return drawNode;
     }
+    
     Base(int health, cugl::Vec2 pos);
+    
     void update();
+    
     void reduceHealth(int val);
     
     bool lost(){

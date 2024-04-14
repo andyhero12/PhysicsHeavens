@@ -45,6 +45,7 @@ private:
     bool _didDebug;
     bool _didExit;
     bool _didDash;
+    bool _didRecall;
     cugl::Vec2 _Vel;
 
     bool _UseKeyboard;
@@ -128,6 +129,10 @@ public:
     
     bool didPressPause() const {
         return _didPause;
+    }
+    
+    bool didPressRecall() const{
+        return _didRecall;
     }
     /**
      * Creates a new input controller with the default settings

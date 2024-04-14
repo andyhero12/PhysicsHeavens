@@ -431,6 +431,10 @@ void GameScene::preUpdate(float dt)
     {
         Application::get()->quit();
     }
+    if (_input.didPressRecall())
+    {
+        overWorld.getBaseSet()->recallBase(overWorld.getDog());
+    }
     _input.update();
 
     // Process the toggled key commands

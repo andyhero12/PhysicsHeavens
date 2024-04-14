@@ -245,6 +245,14 @@
            "file": "textures/absorbEnemy/absorbRightWalk.PNG",
                  "minfilter": "linear",
                  "magfilter": "nearest"
+        },
+       "chompleft":{
+           "file": "textures/dog/effects/magic_chomp_left.png",
+            "magfilter": "nearest"
+       },
+       "chompright":{
+           "file": "textures/dog/effects/magic_chomp_right.png",
+            "magfilter": "nearest"
        },
        "basicEnemy0": {
            "file": "textures/basicEnemy/basicWalkLeft.PNG",

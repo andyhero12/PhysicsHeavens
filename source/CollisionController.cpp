@@ -184,13 +184,18 @@ bool CollisionController::absorbEnemMonsterCollision(MonsterController& monsterC
             float impactDistance = 1.2;
             if (distance < impactDistance){ // need noise
                 if (curAbsorbEnemy->canAttack() && curAbsorbEnemy != enemy){
+//                    CULog("ABSORPTION IN PROGRESS");
                     collision = true;
                     curAbsorbEnemy->resetAttack();
+                    // INCREASE ABSORB ENEMY STRENGTH
+//                    CULog("Prev damage: %d", curDamage);
+//                    curAbsorbEnemy->setDamage(curDamage + 1);
+//                    CULog("New damage: %d", curAbsorbEnemy->getDamage());
                     // SCALE ABSORB ENEMY
-                    float newWidth = curAbsorbEnemy->getDimension().width + 0.02;
-                    float newHeight = curAbsorbEnemy->getDimension().height + 0.02;
-                    cugl::Size newSize(newWidth,newHeight);
-                    curAbsorbEnemy->setDimension(newSize);
+//                    float newWidth = curAbsorbEnemy->getDimension().width + 0.02;
+//                    float newHeight = curAbsorbEnemy->getDimension().height + 0.02;
+//                    cugl::Size newSize(newWidth,newHeight);
+//                    curAbsorbEnemy->setDimension(newSize);
                     // ERASE CURRENT ENEMY
                     monsterController.removeEnemy(enemy);
 //                    monsterEnemies.erase(enemy);
