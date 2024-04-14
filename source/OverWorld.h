@@ -54,6 +54,7 @@ public:
     bool initDevil();
     bool initBases();
     bool initDecoys();
+    bool initPolygons();
     
     bool setRootNode(const std::shared_ptr<scene2::SceneNode>& _worldNode, const std::shared_ptr<scene2::SceneNode>& _debugNode, std::shared_ptr<cugl::physics2::net::NetWorld> _world);
     // will add Obstacle nodes too

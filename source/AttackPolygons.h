@@ -59,7 +59,7 @@ public:
     std::unordered_set<std::shared_ptr<ActionPolygon>> currentAttacks;
     AttackPolygons();
     bool init();
-    bool setSprite(std::shared_ptr<cugl::scene2::SpriteNode> bite);
+    bool setTexture(const std::shared_ptr<cugl::Texture> &bite);
     bool isEmpty() const { return currentAttacks.empty(); }
     void update();
     void addShoot(Vec2 center, float angle, float shootRadius);

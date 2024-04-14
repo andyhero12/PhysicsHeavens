@@ -286,6 +286,12 @@ bool OverWorld::initDecoys(){
     return true;
 }
 
+bool OverWorld::initPolygons(){
+    _attackPolygonSet.init();
+    _attackPolygonSet.setSprite(_assets->get<cugl::Texture>("base"));
+    return true;
+}
+
 bool OverWorld::init(const std::shared_ptr<cugl::AssetManager>& assets, const std::shared_ptr<LevelModel>& level, cugl::Size activeSize,std::shared_ptr<cugl::physics2::net::NetEventController> network, bool isHost){
     _assets = assets;
     _level = level;
@@ -297,7 +303,7 @@ bool OverWorld::init(const std::shared_ptr<cugl::AssetManager>& assets, const st
     initDogModel();
     initBases();
     initDecoys();
-    _attackPolygonSet.init();
+    initPolygons();
 //    initDevil();
     return true;
 }

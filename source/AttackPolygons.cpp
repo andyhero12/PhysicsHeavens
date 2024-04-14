@@ -96,7 +96,7 @@ void AttackPolygons::addBite(Vec2 center, float angle, float explosionRad){
     currentAttacks.insert(curPtr);
 }
 
-bool AttackPolygons::setSprite(std::shared_ptr<cugl::scene2::SpriteNode> bite){
-    biteSprite = bite;
+bool AttackPolygons::setTexture(const std::shared_ptr<cugl::Texture> &bite){
+    biteSprite = cugl::scene2::SpriteNode::allocWithSheets(bite, 1, 10);
     return true;
 }
