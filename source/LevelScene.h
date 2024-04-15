@@ -12,8 +12,8 @@
 //  Author: Walker White
 //  Version: 1/10/17
 //
-#ifndef __NL_LOADING_SCENE_H__
-#define __NL_LOADING_SCENE_H__
+#ifndef __NL_LEVEL_SCENE_H__
+#define __NL_LEVEL_SCENE_H__
 #include <cugl/cugl.h>
 #include "GlobalConstants.h"
 #include "NLInput.h"
@@ -31,7 +31,7 @@
  * this button will inform the application root to switch to the gameplay mode.
  */
 class LevelScene : public cugl::Scene2 {
-pubilc:
+public:
     enum Level {
             /** User has not yet made a choice */
             L1,
@@ -133,7 +133,7 @@ public:
 
     virtual void setActive(bool value) override;
 
-    Level getLevel(return _level);
+    Level getLevel() const { return _level; }
 
     
 };

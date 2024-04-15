@@ -138,8 +138,8 @@ void LevelScene::setActive(bool value)
     if (isActive() != value) {
             Scene2::setActive(value);
             if (value) {
-                _choice = Choice::NONE;
-                _isdown = Isdown::isNONE;
+                _level = Level::NONE;
+                _button->activate();
             } else {
                 _button->deactivate();
                 _button->setDown(false);

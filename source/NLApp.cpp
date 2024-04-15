@@ -321,11 +321,12 @@ void NetApp::updateMainScene(float timestep)
     switch (_mainmenu.getChoice()) {
     case MainMenuScene::Choice::SINGLE:
         _mainmenu.setActive(false);
+        _level.setActive(false);
         //_menu.setActive(true);
 
         //_menu.setActive(false);
-        _hostgame.setActive(true);
-        _status = HOST;
+        //_hostgame.setActive(true);
+        _status = LEVEL;
         break;
     case MainMenuScene::Choice::COOP:
         _mainmenu.setActive(false);
@@ -342,6 +343,28 @@ void NetApp::updateMainScene(float timestep)
         // DO NOTHING
         break;
     }
+}
+
+void NetApp::updateLevelScene(float timestep)
+{
+    _level.update(timestep);
+    switch (_level.getLevel()) {
+    case LevelScene::Level::L1:
+        _level.setActive(false);
+        _hostgame.setActive(true);
+        _status = HOST;
+        break;
+    case LevelScene::Level::L2:
+
+        break;
+    case LevelScene::Level::L3:
+
+        break;
+    case LevelScene::Level::NONE:
+        // DO NOTHING
+        break;
+    }
+    
 }
 
 /**
@@ -363,6 +386,9 @@ void NetApp::draw() {
             break;
         case MENU:
             _menu.render(_batch);
+            break;
+        case LEVEL:
+            _level.render(_batch);
             break;
         case HOST:
             _hostgame.render(_batch);
