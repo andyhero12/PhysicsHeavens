@@ -90,9 +90,6 @@ protected:
     bool _debug;
 
     std::shared_ptr<NetEventController> _network;
-
-    cugl::Vec2 dogPosition;
-
     cugl::Affine2 _transform;
 
     float _zoom;

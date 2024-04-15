@@ -22,6 +22,9 @@
 /** The number of frames before a new goal can be set */
 #define PATHFIND_COOLDOWN 20
 
+
+#define CHASE_DISTANCE 2
+
 #include "stlastar.h"
 #include "WorldSearchVertex.h"
 
@@ -43,7 +46,7 @@ public:
         
         if (result){
             _counter = 0;
-            updateRate = 10;
+            updateRate = 15;
             setDensity(DEFAULT_DENSITY);
             setFriction(DEFAULT_FRICTION);
             setRestitution(DEFAULT_RESTITUTION);
@@ -204,8 +207,13 @@ protected:
             
             _pathfinder->GetSolutionStart();
             WorldSearchVertex* nextNode = _pathfinder->GetSolutionNext();
-            _nextStep = Vec2((int) nextNode->x, (int) nextNode->y);
-
+            
+            if(nextNode){
+                _nextStep = Vec2((int) nextNode->x, (int) nextNode->y);
+            } else{
+                _nextStep = my_pos;
+            }
+            
             return true;
         }
         
@@ -225,31 +233,45 @@ protected:
         
         // Get the goal
         WorldSearchVertex* goalNode = _pathfinder->GetSolutionEnd();
+        cugl::Vec2 direction;
         
         // If there is no goal or we are already at the goal, do nothing
         if(!goalNode || atGoal() || _nextStep.x == -1){
             return;
         }
         
-        // If we reached the next step, get the next node along the path and set it as the next tile
-        if(atTile(_nextStep)){
-            WorldSearchVertex* nextNode = _pathfinder->GetSolutionNext();
+        Vec2 goalTile = Vec2(goalNode->x + 0.5, goalNode->y + 0.5);
+        
+        // If we are very close to the goal, go directly to it instead of using pathfinding
+        if(getPosition().distance(goalTile) < CHASE_DISTANCE){
+            direction = goalTile - getPosition();
+        }
+        
+        else {
             
-            if(nextNode){
-                _nextStep = Vec2((int) nextNode->x, (int) nextNode->y);
-            } else{
-                return;
+            // If we reached the next step, get the next node along the path and set it as the next tile
+            if(atTile(_nextStep)){
+                
+                WorldSearchVertex* nextNode = _pathfinder->GetSolutionNext();
+                
+                if(nextNode){
+                    _nextStep = Vec2((int) nextNode->x, (int) nextNode->y);
+                } else{
+                    return;
+                }
+            
             }
+            
+            direction = _nextStep - getPosition();
         }
         
         //Move towards the next tile
-        cugl::Vec2 direction = _nextStep - getPosition();
         setVX(direction.normalize().x);
         setVY(direction.normalize().y);
         _prevDirection =_curDirection;
         _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
         
-        // If we are very close to the goal, go directly to it instead of using pathfinding
+        
         
         // If we strayed too far from the pathfinding path, restart pathfinding
         

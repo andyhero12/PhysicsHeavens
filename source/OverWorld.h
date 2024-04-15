@@ -32,6 +32,7 @@ private:
     std::shared_ptr<NetEventController> _network;
     cugl::Size _activeSize;
     std::shared_ptr<Dog> _dog;
+    std::shared_ptr<Dog> _dogClient;
     std::shared_ptr<Devil> _devil;
     std::shared_ptr<DecoySet> _decoys;
     std::shared_ptr<BaseSet> _bases;
@@ -64,7 +65,7 @@ public:
     void devilUpdate(InputController& _input,cugl::Size totalSize);
     void update(InputController& input, cugl::Size totalSize, float timestep);
     void postUpdate();
-    
+    void ownedDogUpdate(InputController& _input, cugl::Size, std::shared_ptr<Dog> _curDog);
     void processShootEvent(const std::shared_ptr<ShootEvent>& shootEvent);
     void processSizeEvent(const std::shared_ptr<SizeEvent>& sizeEvent);
     void processBiteEvent(const std::shared_ptr<BiteEvent>& biteEvent);
@@ -74,6 +75,9 @@ public:
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch,cugl::Size totalSize);
     std::shared_ptr<Dog> getDog() const {
         return _dog;
+    }
+    std::shared_ptr<Dog> getClientDog() const {
+        return _dogClient;
     }
     std::shared_ptr<Devil> getDevil()const {
         return _devil;
