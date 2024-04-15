@@ -122,7 +122,6 @@ float CAN2_POS[] = {30, 9};
 #define FIXED_TIMESTEP_S 0.02f
 #define ROOT_NODE_SCALE 1
 
-
 #pragma mark -
 #pragma mark Constructors
 /**
@@ -266,7 +265,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _spawnerController.init(_level->getSpawnersPos());
     _spawnerController.setRootNode(_worldnode, _isHost);
 
-    overWorld.init(assets, _level, computeActiveSize(), _network, isHost);
+    overWorld.init(assets, _level, computeActiveSize(),_network, isHost, _backgroundWrapper);
     overWorld.setRootNode(_worldnode, _debugnode, _world);
     if (isHost){
         _uinode->addChild(overWorld.getDog()->getUINode());
@@ -454,10 +453,9 @@ void GameScene::preUpdate(float dt)
     }
     overWorld.update(_input, computeActiveSize(), dt);
     _spawnerController.update(_monsterController, overWorld, dt);
-    _monsterController.update(dt, overWorld);
+    _monsterController.update( dt, overWorld);
 
-    if (_isHost)
-    {
+    if (_isHost){
         _collisionController.intraOverWorldCollisions(overWorld);
         _collisionController.overWorldMonsterControllerCollisions(overWorld, _monsterController);
         _collisionController.attackCollisions(overWorld, _monsterController, _spawnerController);
@@ -515,7 +513,7 @@ void GameScene::fixedUpdate()
         if (auto dashEvent = std::dynamic_pointer_cast<DashEvent>(e))
         {
             //            CULog("Explode Event Got");
-            overWorld.processDashEvent(dashEvent); 
+            overWorld.processDashEvent(dashEvent);
         }
         if (auto sizeEvent = std::dynamic_pointer_cast<SizeEvent>(e))
         {
