@@ -70,19 +70,19 @@
             "magfilter": "nearest"
         },
         "smalldogleftshoot": {
-            "file": "textures/dog/shoot/medium-left-shoot.png",
+            "file": "textures/dog/shoot/small-left-shoot.png",
             "magfilter": "nearest"
         },
         "smalldogrightshoot": {
-            "file": "textures/dog/shoot/medium-right-shoot.png",
+            "file": "textures/dog/shoot/small-right-shoot.png",
             "magfilter": "nearest"
         },
         "smalldogfrontshoot": {
-            "file": "textures/dog/shoot/medium-front-shoot.png",
+            "file": "textures/dog/shoot/small-front-shoot.png",
             "magfilter": "nearest"
         },
         "smalldogbackshoot": {
-            "file": "textures/dog/shoot/medium-back-shoot.png",
+            "file": "textures/dog/shoot/small-back-shoot.png",
             "magfilter": "nearest"
         },
         "smalldogleftrun": {
@@ -102,19 +102,19 @@
             "magfilter": "nearest"
         },
         "smalldogfrontbite": {
-            "file": "textures/dog/bite/medium-front-bite.png",
+            "file": "textures/dog/bite/small-front-bite.png",
             "magfilter": "nearest"
         },
         "smalldogbackbite": {
-            "file": "textures/dog/bite/medium-back-bite.png",
+            "file": "textures/dog/bite/small-back-bite.png",
             "magfilter": "nearest"
         },
         "smalldogleftbite": {
-            "file": "textures/dog/bite/medium-left-bite.png",
+            "file": "textures/dog/bite/small-left-bite.png",
             "magfilter": "nearest"
         },
         "smalldogrightbite": {
-            "file": "textures/dog/bite/medium-right-bite.png",
+            "file": "textures/dog/bite/small-right-bite.png",
             "magfilter": "nearest"
         },
         "mediumdogleftidle": {

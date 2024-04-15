@@ -11,19 +11,47 @@
 // used to translate attacks to originate from the dog's head
 #define BITE_HEAD_OFFSET_RATIO 0.8f
 #define SHOOT_HEAD_OFFSET_RATIO 1.5f
+#define ANIM_FREQ 1
 
 void ActionPolygon::update(){
-    _age++;
     if(!_polygon){
-        
+        if(_freq == ANIM_FREQ){
+            _expired = (spriteActionNode->getFrame() + 1) == spriteActionNode->getSpan();
+            if(_expired){
+                return;
+            }
+            _freq = 0;
+            spriteActionNode->setFrame((spriteActionNode->getFrame() + 1) % spriteActionNode->getSpan());
+        }
+        else{
+            _freq += 1;
+        }
+    }
+    else{
+        _age++;
+        _expired = _age >= _maxage;
     }
     // update animation when needed
 }
 
-ActionPolygon::ActionPolygon(std::shared_ptr<cugl::scene2::PolygonNode> actionSprite, Action curAction, Poly2& mintPoly, int mx)
+
+std::shared_ptr<cugl::scene2::SceneNode> ActionPolygon::getActionNode(){
+    if(_polygon){
+        return polyActionNode;
+    }
+    else{
+        return spriteActionNode;
+    }
+}
+
+
+ActionPolygon::ActionPolygon(std::shared_ptr<cugl::scene2::SpriteNode> actionSprite, Action curAction, Poly2& mintPoly, int mx)
 : ActionPolygon(curAction, mintPoly, mx)
 {
-    actionNode = actionSprite;
+    _expired = false;
+    _polygon = false;
+    spriteActionNode = actionSprite;
+    spriteActionNode->setScale(0.025);
 }
 
 ActionPolygon::ActionPolygon(Action curAction, Poly2& mintPoly, int mx)
@@ -34,11 +62,16 @@ ActionPolygon::ActionPolygon(Action curAction, Poly2& mintPoly, int mx)
 , _scale{1.0}
 , _polygon(true)
 {
-    actionNode = cugl::scene2::PolygonNode::allocWithPoly(mintPoly);
+    polyActionNode = cugl::scene2::SpriteNode::allocWithPoly(mintPoly);
 }
 
 void ActionPolygon::draw(const std::shared_ptr<SpriteBatch>& batch, const Affine2& transform, Color4 tint){
-    actionNode->draw(batch, transform, tint);
+    if(_polygon){
+        polyActionNode->draw(batch, transform, tint);
+    }
+    else{
+        spriteActionNode->draw(batch, transform, tint);
+    }
 }
 
 AttackPolygons::AttackPolygons()
@@ -87,9 +120,10 @@ void AttackPolygons::addExplode(Vec2 center, float explosionRad){
 }
 
 void AttackPolygons::addBite(Vec2 center, float angle, float explosionRad){
+    std::shared_ptr<cugl::scene2::SpriteNode> biteSprite = cugl::scene2::SpriteNode::allocWithSheet(biteTexture, 1, 13);
     PolyFactory curFactory;
     Poly2 resultingPolygon = curFactory.makeArc(center, explosionRad, angle, 180);
-    std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(Action::BITE, resultingPolygon,BITE_AGE);
+    std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(biteSprite, Action::BITE, resultingPolygon,BITE_AGE);
     attackPolygonNode->addChild(curPtr->getActionNode());
     Vec2 offset = Vec2(SDL_cosf((angle + 90) * 3.14f / 180), SDL_sinf((angle + 90) * 3.14f / 180)) * DOG_SIZE.x * BITE_HEAD_OFFSET_RATIO;
     curPtr->getActionNode()->setPosition(center.add(offset));
@@ -97,6 +131,6 @@ void AttackPolygons::addBite(Vec2 center, float angle, float explosionRad){
 }
 
 bool AttackPolygons::setTexture(const std::shared_ptr<cugl::Texture> &bite){
-    biteSprite = cugl::scene2::SpriteNode::allocWithSheets(bite, 1, 10);
+    biteTexture = bite;
     return true;
 }
