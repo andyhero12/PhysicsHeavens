@@ -81,7 +81,7 @@ bool BaseSet::baseLost()
     return false;
 }
 
-Vec2 BaseSet::recallBase(std::shared_ptr<Dog> dog){
+void BaseSet::recallBase(std::shared_ptr<Dog> dog){
     float shortestDist = std::numeric_limits<float>::max();
     std::shared_ptr<Base> nearest;
     for (auto& base : _bases){
@@ -92,9 +92,7 @@ Vec2 BaseSet::recallBase(std::shared_ptr<Dog> dog){
             nearest = base;
         }
     }
-    CULog("Nearest base x: %fu", nearest->getPos().x);
-    CULog("Nearest base y: %fu", nearest->getPos().y);
+//    CULog("Nearest base x: %fu", nearest->getPos().x);
+//    CULog("Nearest base y: %fu", nearest->getPos().y);
     dog->setPosition(nearest->getPos());
-    return nearest->getPos();
-    
 }

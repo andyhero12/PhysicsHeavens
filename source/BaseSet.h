@@ -39,7 +39,7 @@ public:
     
     const std::shared_ptr<cugl::Texture> getTexture() const { return _texture; }
     
-    Vec2 recallBase(std::shared_ptr<Dog> dog);
+    void recallBase(std::shared_ptr<Dog> dog);
     
 private:
     

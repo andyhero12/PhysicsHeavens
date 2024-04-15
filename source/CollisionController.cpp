@@ -180,17 +180,18 @@ bool CollisionController::absorbEnemMonsterCollision(MonsterController& monsterC
     for (std::shared_ptr<AbsorbEnemy> curAbsorbEnemy: absorbCurEnemies){
         for (std::shared_ptr<AbstractEnemy> enemy: monsterEnemies){
             Vec2 norm = curAbsorbEnemy->getPosition() - enemy->getPosition();
+            int curDamage = curAbsorbEnemy->getDamage();
             float distance = norm.length();
             float impactDistance = 1.2;
             if (distance < impactDistance){ // need noise
                 if (curAbsorbEnemy->canAttack() && curAbsorbEnemy != enemy){
-//                    CULog("ABSORPTION IN PROGRESS");
+                    CULog("ABSORPTION IN PROGRESS");
                     collision = true;
                     curAbsorbEnemy->resetAttack();
                     // INCREASE ABSORB ENEMY STRENGTH
-//                    CULog("Prev damage: %d", curDamage);
-//                    curAbsorbEnemy->setDamage(curDamage + 1);
-//                    CULog("New damage: %d", curAbsorbEnemy->getDamage());
+                    CULog("Prev damage: %d", curDamage);
+                    curAbsorbEnemy->setDamage(curDamage + 1/64);
+                    CULog("New damage: %d", curAbsorbEnemy->getDamage());
                     // SCALE ABSORB ENEMY
 //                    float newWidth = curAbsorbEnemy->getDimension().width + 0.02;
 //                    float newHeight = curAbsorbEnemy->getDimension().height + 0.02;

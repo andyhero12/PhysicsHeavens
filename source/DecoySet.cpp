@@ -23,6 +23,7 @@ void DecoySet::update(float timestep){
         std::shared_ptr<Decoy> curDecoy = *itD;
         curDecoy->update(timestep);
         if (curDecoy->destroyed()){
+            // ADD EXPLOSION CODE HERE
             _removedDecoys.emplace_back(curDecoy);
             itD = _currentDecoys.erase(itD);
         }else {
