@@ -12,7 +12,7 @@
 #define BITE_HEAD_OFFSET_RATIO 0.8f
 #define SHOOT_HEAD_OFFSET_RATIO 1.5f
 #define ANIM_FREQ 1
-#define BITE_SCALE 0.02f
+#define BITE_SCALE 1.0f/32.0f
 
 void ActionPolygon::update(){
     if(!_polygon){
@@ -52,9 +52,10 @@ ActionPolygon::ActionPolygon(std::shared_ptr<cugl::scene2::SpriteNode> actionSpr
     _expired = false;
     _polygon = false;
     spriteActionNode = actionSprite;
-    _scale = BITE_SCALE * scale;
+    _scale = scale * BITE_SCALE;
     spriteActionNode->setScale(_scale);
-    internalPolygon = spriteActionNode->getPolygon() * _scale;
+//    internalPolygon = spriteActionNode->getPolygon() * _scale;
+//    polyActionNode = cugl::scene2::SpriteNode::allocWithPoly(internalPolygon);
 }
 
 ActionPolygon::ActionPolygon(Action curAction, Poly2& mintPoly, int mx, float scale)
@@ -86,6 +87,7 @@ AttackPolygons::AttackPolygons()
 bool AttackPolygons::init(){
     currentAttacks.clear();
     attackPolygonNode = cugl::scene2::SceneNode::alloc();
+//    attackPolygonNode->setScale(BITE_SCALE);
     return true;
 }
 void AttackPolygons::update(){
@@ -123,11 +125,28 @@ void AttackPolygons::addExplode(Vec2 center, float explosionRad){
 }
 
 void AttackPolygons::addBite(Vec2 center, float angle, float explosionRad, float scale){
-    std::shared_ptr<cugl::scene2::SpriteNode> biteSprite = cugl::scene2::SpriteNode::allocWithSheet(biteTexture, 1, 13);
+    std::shared_ptr<cugl::Texture> bite;
+    
+    
+    float ang = std::fmod(angle, 2*M_PI);
+    
+    if (ang < 0) {
+        ang += 2*M_PI;
+    }
+    
+    if (ang >= 0 && ang < M_PI_2) {
+        bite = biteBackTexture;
+     } else if (ang >= M_PI_2 && ang < M_PI) {
+         bite = biteLeftTexture;
+     } else if (ang >= M_PI && ang < 3 * M_PI_2) {
+         bite = biteFrontTexture;
+     } else if (ang >= 3 * M_PI_2 && ang < 2 * M_PI) {
+         bite = biteRightTexture;
+     }
+    
+    std::shared_ptr<cugl::scene2::SpriteNode> biteSprite = cugl::scene2::SpriteNode::allocWithSheet(bite, 3, 5);
     PolyFactory curFactory;
     Poly2 resultingPolygon = curFactory.makeArc(center, explosionRad, angle, 180);
-    
-    
     std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(biteSprite, Action::BITE, resultingPolygon, BITE_AGE, 1 + scale);
     attackPolygonNode->addChild(curPtr->getActionNode());
     Vec2 offset = Vec2(SDL_cosf((angle + 90) * 3.14f / 180), SDL_sinf((angle + 90) * 3.14f / 180)) * DOG_SIZE.x * BITE_HEAD_OFFSET_RATIO;
@@ -135,7 +154,10 @@ void AttackPolygons::addBite(Vec2 center, float angle, float explosionRad, float
     currentAttacks.insert(curPtr);
 }
 
-bool AttackPolygons::setTexture(const std::shared_ptr<cugl::Texture> &bite){
-    biteTexture = bite;
+bool AttackPolygons::setTexture(const std::shared_ptr<cugl::Texture> &biteL, const std::shared_ptr<cugl::Texture> &biteR, const std::shared_ptr<cugl::Texture> &biteF, const std::shared_ptr<cugl::Texture> &biteB){
+    biteRightTexture = biteR;
+    biteLeftTexture = biteL;
+    biteFrontTexture = biteF;
+    biteBackTexture = biteB;
     return true;
 }

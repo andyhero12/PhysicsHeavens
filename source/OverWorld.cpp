@@ -288,7 +288,7 @@ bool OverWorld::initDecoys(){
 
 bool OverWorld::initPolygons(){
     _attackPolygonSet.init();
-    _attackPolygonSet.setTexture(_assets->get<cugl::Texture>("rightbite"));
+    _attackPolygonSet.setTexture(_assets->get<cugl::Texture>("leftbite"),_assets->get<cugl::Texture>("rightbite"),_assets->get<cugl::Texture>("frontbite"),_assets->get<cugl::Texture>("leftbite"));
     return true;
 }
 

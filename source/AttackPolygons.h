@@ -55,14 +55,17 @@ class AttackPolygons{
     
 private:
     std::shared_ptr<cugl::scene2::SceneNode> attackPolygonNode;
-    std::shared_ptr<cugl::Texture> biteTexture;
+    std::shared_ptr<cugl::Texture> biteRightTexture;
+    std::shared_ptr<cugl::Texture> biteLeftTexture;
+    std::shared_ptr<cugl::Texture> biteFrontTexture;
+    std::shared_ptr<cugl::Texture> biteBackTexture;
 public:
     // Have AttackPolygon Set hold all possible textures for bite, shoot, explode
     int max_age;
     std::unordered_set<std::shared_ptr<ActionPolygon>> currentAttacks;
     AttackPolygons();
     bool init();
-    bool setTexture(const std::shared_ptr<cugl::Texture> &bite);
+    bool setTexture(const std::shared_ptr<cugl::Texture> &biteL, const std::shared_ptr<cugl::Texture> &biteR, const std::shared_ptr<cugl::Texture> &biteF, const std::shared_ptr<cugl::Texture> &biteB);
     bool isEmpty() const { return currentAttacks.empty(); }
     void update();
     void addShoot(Vec2 center, float angle, float shootRadius);
