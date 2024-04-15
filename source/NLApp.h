@@ -21,6 +21,7 @@
 #include "NLHostScene.h"
 #include "PauseScene.h"
 #include "NLMainMenuScene.h"
+#include "LevelScene.h"
 
 using namespace cugl::physics2::net;
 
@@ -32,6 +33,7 @@ class NetApp : public cugl::Application {
 enum Status {
     LOAD,
     MAINMENU,
+    LEVEL,
     MENU,
     HOST,
     CLIENT,
@@ -59,6 +61,8 @@ protected:
     ClientScene _joingame;
     
     HostScene _hostgame;
+
+    LevelScene _level;
     
     /** Whether or not we have finished loading all assets */
     bool _loaded;
@@ -200,6 +204,8 @@ public:
     void updateGameScene(float timestep);
 
     void updateMainScene(float timestep);
+
+    void updateLevelScene(float timestep);
 
     /**
      * The method called to draw the application to the screen.

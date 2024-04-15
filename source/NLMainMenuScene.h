@@ -34,9 +34,9 @@ public:
      */
     enum Choice {
         /** User has not yet made a choice */
-        PLAY,
+        SINGLE,
         /** User wants to host a game */
-        LEVEL,
+        COOP,
         /** User wants to join a game */
         SETTING,
 
@@ -44,9 +44,9 @@ public:
     };
     enum Isdown {
         /** User has not yet made a choice */
-        isPLAY,
+        isSINGLE,
         /** User wants to host a game */
-        isLEVEL,
+        isCOOP,
         /** User wants to join a game */
         isSETTING,
 

@@ -64,19 +64,19 @@ bool InputController::init_withlistener() {
     if (contSuccess) {
         GameControllerInput* controller = Input::get<GameControllerInput>();
         std::vector<std::string> deviceUUIDs = controller->devices();
-        _gameContrl = controller->open(deviceUUIDs.at(0));
-        if (deviceUUIDs.size() == 0) {
-            return false;
-        }
-        _controllerKey = controller->acquireKey();
-        //std::cout << _controllerKey << std::endl;
-        _gameContrl->addAxisListener(_controllerKey, [=](const GameControllerAxisEvent& event, bool focus) {
+        if (deviceUUIDs.size() > 0) {
+            _gameContrl = controller->open(deviceUUIDs.at(0));
+            _controllerKey = controller->acquireKey();
+            //std::cout << _controllerKey << std::endl;
+            _gameContrl->addAxisListener(_controllerKey, [=](const GameControllerAxisEvent& event, bool focus) {
             this->getAxisAngle(event, focus);
             });
-        _gameContrl->addButtonListener(_controllerKey, [=](const GameControllerButtonEvent& event, bool focus) {
+            _gameContrl->addButtonListener(_controllerKey, [=](const GameControllerButtonEvent& event, bool focus) {
             this->getButton(event, focus);
             });
         return true;
+        }
+        
     }
 
     return false;
