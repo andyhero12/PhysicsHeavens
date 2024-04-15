@@ -268,9 +268,11 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 
     overWorld.init(assets, _level, computeActiveSize(), _network, isHost);
     overWorld.setRootNode(_worldnode, _debugnode, _world);
-    _uinode->addChild(overWorld.getDog()->getUINode());
-
-    dogPosition = overWorld.getDog()->getPosition();
+    if (isHost){
+        _uinode->addChild(overWorld.getDog()->getUINode());
+    }else{
+        _uinode->addChild(overWorld.getClientDog()->getUINode());
+    }
 
     _monsterController.setNetwork(_network);
     _monsterController.setMeleeAnimationData(_constants->get("basicEnemy"), assets);
@@ -308,10 +310,17 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 
     _zoom = ROOT_NODE_SCALE;
 
-    Vec2 delta = overWorld.getDog()->getDogNode()->getWorldPosition();
-    delta -= (computeActiveSize() / 2);
-    _rootnode->applyPan(-delta / _zoom);
-    _rootnode->setScale(_zoom);
+    if (isHost){
+        Vec2 delta = overWorld.getDog()->getDogNode()->getWorldPosition();
+        delta -= (computeActiveSize() / 2);
+        _rootnode->applyPan(-delta / _zoom);
+        _rootnode->setScale(_zoom);
+    }else{
+        Vec2 delta = overWorld.getClientDog()->getDogNode()->getWorldPosition();
+        delta -= (computeActiveSize() / 2);
+        _rootnode->applyPan(-delta / _zoom);
+        _rootnode->setScale(_zoom);
+    }
 
     return true;
 }
@@ -412,9 +421,15 @@ void GameScene::addInitObstacle(const std::shared_ptr<physics2::Obstacle> &obj,
 void GameScene::preUpdate(float dt)
 {
 
-    float zoom = _zoom - (ROOT_NODE_SCALE - 0.25f* (float)overWorld.getDog()->getAbsorb() / (float)overWorld.getDog()->getMaxAbsorb());
-    _zoom -= fmin(zoom, 0.01f) * (zoom < 0 ? 0.12f : 0.3f);
-    _rootnode->setScale(_zoom);
+    if (_isHost){
+        float zoom = _zoom - (ROOT_NODE_SCALE - 0.25f* (float)overWorld.getDog()->getAbsorb() / (float)overWorld.getDog()->getMaxAbsorb());
+        _zoom -= fmin(zoom, 0.01f) * (zoom < 0 ? 0.12f : 0.3f);
+        _rootnode->setScale(_zoom);
+    }else{
+        float zoom = _zoom - (ROOT_NODE_SCALE - 0.25f* (float)overWorld.getClientDog()->getAbsorb() / (float)overWorld.getClientDog()->getMaxAbsorb());
+        _zoom -= fmin(zoom, 0.01f) * (zoom < 0 ? 0.12f : 0.3f);
+        _rootnode->setScale(_zoom);
+    }
 
     if (_input.didPressPause())
     {
@@ -456,9 +471,15 @@ void GameScene::postUpdate(float dt)
     overWorld.postUpdate();
 
     _rootnode->resetPane();
-    Vec2 delta = overWorld.getDog()->getDogNode()->getWorldPosition();
-    delta -= (computeActiveSize() / 2);
-    _rootnode->applyPan(-delta / _zoom);
+    if (_isHost){
+        Vec2 delta = overWorld.getDog()->getDogNode()->getWorldPosition();
+        delta -= (computeActiveSize() / 2);
+        _rootnode->applyPan(-delta / _zoom);
+    }else{
+        Vec2 delta = overWorld.getClientDog()->getDogNode()->getWorldPosition();
+        delta -= (computeActiveSize() / 2);
+        _rootnode->applyPan(-delta / _zoom);
+    }
 }
 
 void GameScene::fixedUpdate()

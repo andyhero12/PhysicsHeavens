@@ -130,7 +130,7 @@ void MonsterController::spawnBasicEnemy(cugl::Vec2 pos, OverWorld& overWorld){
     }
     int numTargets =  overWorld.getTotalTargets();
     int chosenTarget = generateRandomInclusiveHighLow(0, numTargets-1);
-    Size mySize(0.5,0.5);
+    Size mySize(1,1);
     auto params = _meleeFactory->serializeParams(pos, mySize, 3, chosenTarget);
     auto pair = _network->getPhysController()->addSharedObstacle(_meleeFactID, params);
 //        static_enemy->setHealthBar(_healthBar);
@@ -145,7 +145,7 @@ void MonsterController::spawnSpawnerEnemy(cugl::Vec2 pos, OverWorld& overWorld){
         return;
     }
     int chosenTarget = 0;
-    Size mySize(0.8,0.8);
+    Size mySize(1,1);
     auto params = _meleeFactory->serializeParams(pos, mySize, 3, chosenTarget);
     auto pair = _network->getPhysController()->addSharedObstacle(_spawnerEnemyFactID, params);
 //        static_enemy->setHealthBar(_healthBar);
@@ -159,7 +159,7 @@ void MonsterController::spawnStaticBasicEnemy(cugl::Vec2 pos, OverWorld& overWor
     if (!overWorld._isHost){
         return;
     }
-    Size mySize(0.8,0.8);
+    Size mySize(1,1);
     auto params = _staticMeleeFactory->serializeParams(pos, mySize, 3, 0);
     auto pair = _network->getPhysController()->addSharedObstacle(_staticMeleeFactID, params);
 //        static_enemy->setHealthBar(_healthBar);
@@ -173,7 +173,7 @@ void MonsterController::spawnBombEnemy(cugl::Vec2 pos, OverWorld& overWorld){
     if (!overWorld._isHost){
         return;
     }
-    Size mySize(0.8,0.8);
+    Size mySize(1,1);
     auto params = _bombEnemyFactory->serializeParams(pos, mySize, 3, 0);
     auto pair = _network->getPhysController()->addSharedObstacle(_bombEnemyFactID, params);
 //        static_enemy->setHealthBar(_healthBar);

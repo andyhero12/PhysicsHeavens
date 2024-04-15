@@ -37,6 +37,10 @@ bool OverWorld::initDogModel(){
     //surely there is a more intelligent way to do this??
     smallDogRun->setContentSize(DOG_SIZE);
     
+    std::shared_ptr<AnimationSceneNode> clientSmallDogRun = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
+    clientSmallDogRun->setAnchor(Vec2::ANCHOR_CENTER);
+    //surely there is a more intelligent way to do this??
+    clientSmallDogRun->setContentSize(DOG_SIZE);
     
     textures.clear();
     textures.push_back(_assets->get<cugl::Texture>("smalldogrightidle"));
@@ -52,6 +56,10 @@ bool OverWorld::initDogModel(){
     smallDogIdle->setAnchor(Vec2::ANCHOR_CENTER);
     smallDogIdle->setContentSize(DOG_SIZE);
     
+    std::shared_ptr<AnimationSceneNode> clientSmallDogIdle = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 15);
+    clientSmallDogIdle->setAnchor(Vec2::ANCHOR_CENTER);
+    clientSmallDogIdle->setContentSize(DOG_SIZE);
+    
     textures.clear();
     textures.push_back(_assets->get<cugl::Texture>("smalldogrightbite"));
     textures.push_back(_assets->get<cugl::Texture>("smalldogrightbite"));
@@ -65,6 +73,10 @@ bool OverWorld::initDogModel(){
     std::shared_ptr<AnimationSceneNode> smallDogBite = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 3);
     smallDogBite->setAnchor(Vec2::ANCHOR_CENTER);
     smallDogBite->setContentSize(DOG_SIZE);
+    
+    std::shared_ptr<AnimationSceneNode> clientSmallDogBite = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 15);
+    clientSmallDogBite->setAnchor(Vec2::ANCHOR_CENTER);
+    clientSmallDogBite->setContentSize(DOG_SIZE);
     
     textures.clear();
     textures.push_back(_assets->get<cugl::Texture>("smalldogrightshoot"));
@@ -80,6 +92,10 @@ bool OverWorld::initDogModel(){
     smallDogShoot->setAnchor(Vec2::ANCHOR_CENTER);
     smallDogShoot->setContentSize(DOG_SIZE);
     
+    std::shared_ptr<AnimationSceneNode> clientSmallDogShoot = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 15);
+    clientSmallDogShoot->setAnchor(Vec2::ANCHOR_CENTER);
+    clientSmallDogShoot->setContentSize(DOG_SIZE);
+    
     textures.clear();
     textures.push_back(_assets->get<cugl::Texture>("smalldogrightshoot"));
     textures.push_back(_assets->get<cugl::Texture>("smalldogrightshoot"));
@@ -93,6 +109,10 @@ bool OverWorld::initDogModel(){
     std::shared_ptr<AnimationSceneNode> smallDogDash = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 15);
     smallDogDash->setAnchor(Vec2::ANCHOR_CENTER);
     smallDogDash->setContentSize(DOG_SIZE);
+    
+    std::shared_ptr<AnimationSceneNode> clientSmallDogDash = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 15);
+    clientSmallDogDash->setAnchor(Vec2::ANCHOR_CENTER);
+    clientSmallDogDash->setContentSize(DOG_SIZE);
 
     textures.clear();
     textures.push_back(_assets->get<cugl::Texture>("mediumdogrightrun"));
@@ -108,6 +128,9 @@ bool OverWorld::initDogModel(){
     mediumDogRun->setAnchor(Vec2::ANCHOR_CENTER);
     mediumDogRun->setContentSize(DOG_SIZE);
     
+    std::shared_ptr<AnimationSceneNode> clientMediumDogRun = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
+    clientMediumDogRun->setAnchor(Vec2::ANCHOR_CENTER);
+    clientMediumDogRun->setContentSize(DOG_SIZE);
     
     textures.clear();
     textures.push_back(_assets->get<cugl::Texture>("mediumdogrightidle"));
@@ -123,6 +146,10 @@ bool OverWorld::initDogModel(){
     mediumDogIdle->setAnchor(Vec2::ANCHOR_CENTER);
     mediumDogIdle->setContentSize(DOG_SIZE);
     
+    std::shared_ptr<AnimationSceneNode> clientMediumDogIdle = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 15);
+    clientMediumDogIdle->setAnchor(Vec2::ANCHOR_CENTER);
+    clientMediumDogIdle->setContentSize(DOG_SIZE);
+    
     textures.clear();
     textures.push_back(_assets->get<cugl::Texture>("mediumdogrightbite"));
     textures.push_back(_assets->get<cugl::Texture>("mediumdogrightbite"));
@@ -136,6 +163,11 @@ bool OverWorld::initDogModel(){
     std::shared_ptr<AnimationSceneNode> mediumDogBite = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 3);
     mediumDogBite->setAnchor(Vec2::ANCHOR_CENTER);
     mediumDogBite->setContentSize(DOG_SIZE);
+    
+    std::shared_ptr<AnimationSceneNode> clientMediumDogBite = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
+    clientMediumDogBite->setAnchor(Vec2::ANCHOR_CENTER);
+    clientMediumDogBite->setContentSize(DOG_SIZE);
+    
     
     textures.clear();
     textures.push_back(_assets->get<cugl::Texture>("mediumdogrightshoot"));
@@ -151,6 +183,10 @@ bool OverWorld::initDogModel(){
     mediumDogShoot->setAnchor(Vec2::ANCHOR_CENTER);
     mediumDogShoot->setContentSize(DOG_SIZE);
     
+    std::shared_ptr<AnimationSceneNode> clientMediumDogShoot = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
+    clientMediumDogShoot->setAnchor(Vec2::ANCHOR_CENTER);
+    clientMediumDogShoot->setContentSize(DOG_SIZE);
+    
     textures.clear();
     textures.push_back(_assets->get<cugl::Texture>("mediumdogrightshoot"));
     textures.push_back(_assets->get<cugl::Texture>("mediumdogrightshoot"));
@@ -164,6 +200,11 @@ bool OverWorld::initDogModel(){
     std::shared_ptr<AnimationSceneNode> mediumDogDash = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 15);
     mediumDogDash->setAnchor(Vec2::ANCHOR_CENTER);
     mediumDogDash->setContentSize(DOG_SIZE);
+    
+    
+    std::shared_ptr<AnimationSceneNode> clientMediumDogDash = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 15);
+    clientMediumDogDash->setAnchor(Vec2::ANCHOR_CENTER);
+    clientMediumDogDash->setContentSize(DOG_SIZE);
     
     textures.clear();
     textures.push_back(_assets->get<cugl::Texture>("largedogrightrun"));
@@ -179,6 +220,9 @@ bool OverWorld::initDogModel(){
     largeDogRun->setAnchor(Vec2::ANCHOR_CENTER);
     largeDogRun->setContentSize(DOG_SIZE);
     
+    std::shared_ptr<AnimationSceneNode> clientLargeDogRun = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
+    clientLargeDogRun->setAnchor(Vec2::ANCHOR_CENTER);
+    clientLargeDogRun->setContentSize(DOG_SIZE);
     
     textures.clear();
     textures.push_back(_assets->get<cugl::Texture>("largedogrightidle"));
@@ -194,6 +238,10 @@ bool OverWorld::initDogModel(){
     largeDogIdle->setAnchor(Vec2::ANCHOR_CENTER);
     largeDogIdle->setContentSize(DOG_SIZE);
     
+    std::shared_ptr<AnimationSceneNode> clientLargeDogIdle = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 15);
+    clientLargeDogIdle->setAnchor(Vec2::ANCHOR_CENTER);
+    clientLargeDogIdle->setContentSize(DOG_SIZE);
+    
     textures.clear();
     textures.push_back(_assets->get<cugl::Texture>("largedogrightbite"));
     textures.push_back(_assets->get<cugl::Texture>("largedogrightbite"));
@@ -207,6 +255,10 @@ bool OverWorld::initDogModel(){
     std::shared_ptr<AnimationSceneNode> largeDogBite = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 3);
     largeDogBite->setAnchor(Vec2::ANCHOR_CENTER);
     largeDogBite->setContentSize(DOG_SIZE);
+    
+    std::shared_ptr<AnimationSceneNode> clientLargeDogBite = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
+    clientLargeDogBite->setAnchor(Vec2::ANCHOR_CENTER);
+    clientLargeDogBite->setContentSize(DOG_SIZE);
     
     textures.clear();
     textures.push_back(_assets->get<cugl::Texture>("largedogrightshoot"));
@@ -222,6 +274,10 @@ bool OverWorld::initDogModel(){
     largeDogShoot->setAnchor(Vec2::ANCHOR_CENTER);
     largeDogShoot->setContentSize(DOG_SIZE);
     
+    std::shared_ptr<AnimationSceneNode> clientLargeDogShoot = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
+    clientLargeDogShoot->setAnchor(Vec2::ANCHOR_CENTER);
+    clientLargeDogShoot->setContentSize(DOG_SIZE);
+    
     textures.clear();
     textures.push_back(_assets->get<cugl::Texture>("largedogrightshoot"));
     textures.push_back(_assets->get<cugl::Texture>("largedogrightshoot"));
@@ -236,6 +292,11 @@ bool OverWorld::initDogModel(){
     largeDogDash->setAnchor(Vec2::ANCHOR_CENTER);
     largeDogDash->setContentSize(DOG_SIZE);
     
+    
+    std::shared_ptr<AnimationSceneNode> clientLargeDogDash = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 15);
+    clientLargeDogDash->setAnchor(Vec2::ANCHOR_CENTER);
+    clientLargeDogDash->setContentSize(DOG_SIZE);
+    
     // MAGIC NUMBER ALERT!!
     Vec2 dogPos = _level->getPlayerPos();
     _dog = Dog::alloc(dogPos, DOG_SIZE);
@@ -245,7 +306,6 @@ bool OverWorld::initDogModel(){
     _dog->setMediumAnimation(mediumDogIdle, mediumDogRun, mediumDogBite, mediumDogShoot, mediumDogDash);
     _dog->setLargeAnimation(largeDogIdle, largeDogRun, largeDogBite, largeDogShoot, largeDogDash);
     
-    //std::shared_ptr<AnimationSceneNode> placeHolderDrawOver = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 5);
     std::shared_ptr<cugl::scene2::SceneNode> placeHolderDrawOver = scene2::SceneNode::allocWithBounds(DOG_SIZE);
     // MORE MAGIC NUMBER ALERT
     
@@ -259,6 +319,29 @@ bool OverWorld::initDogModel(){
     std::shared_ptr<UIController> _uiController = std::make_shared<UIController>();
     _uiController->init(_uinode, _assets, _activeSize);
     _dog->setUIController(_uiController);
+    
+    
+    Vec2 dogClientPos = _level->getPlayerPos() + Vec2(2,0);
+    _dogClient = Dog::alloc(dogClientPos, DOG_SIZE);
+    _dogClient->setDebugColor(DYNAMIC_COLOR);
+
+    _dogClient->setSmallAnimation(clientSmallDogIdle, clientSmallDogRun, clientSmallDogBite, clientSmallDogShoot, clientSmallDogDash);
+    _dogClient->setMediumAnimation(clientMediumDogIdle, clientMediumDogRun, clientMediumDogBite, clientMediumDogShoot, clientMediumDogDash);
+    _dogClient->setLargeAnimation(clientLargeDogIdle, clientLargeDogRun, clientLargeDogBite, clientLargeDogShoot, clientLargeDogDash);
+    
+    std::shared_ptr<cugl::scene2::SceneNode> clientPlaceHolderDrawOver = scene2::SceneNode::allocWithBounds(DOG_SIZE);
+    // MORE MAGIC NUMBER ALERT
+    
+    //placeHolderDrawOver->setContentSize(DOG_SIZE);
+    _dogClient->setFinalDog(clientPlaceHolderDrawOver);
+    clientPlaceHolderDrawOver->setScale(DOG_SIZE.y / textures.at(0)->getHeight());
+    
+    std::shared_ptr<scene2::SceneNode> _clientUINode = scene2::SceneNode::alloc();
+    _uinode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    std::shared_ptr<UIController> _clientUIController = std::make_shared<UIController>();
+    _uiController->init(_clientUINode, _assets, _activeSize);
+    _dogClient->setUIController(_uiController);
+    
     return true;
 }
 
@@ -329,14 +412,26 @@ bool OverWorld::setRootNode(const std::shared_ptr<scene2::SceneNode>& _worldNode
     }
     _worldNode->addChild(_dog->getDogNode());
     
+    if (_network->getNumPlayers() == 2){
+        _world->initObstacle(_dogClient);
+        _dogClient->setDebugScene(_debugNode);
+        if (_isHost){
+            _world->getOwnedObstacles().insert({_dogClient,0});
+        }
+        _worldNode->addChild(_dogClient->getDogNode());
+        if(!_isHost){
+            _network->getPhysController()->acquireObs(_dogClient, 0);
+        }
+    }
     // Add Obstacles
     return true;
 }
 void OverWorld::processDashEvent(const std::shared_ptr<DashEvent>& dashEvent){
-    bool overWorldHost = dashEvent->getHost();
-    if (overWorldHost){
-        CULog("Process Dash");
+    bool incomingHost = dashEvent->getHost();
+    if (incomingHost){
         _dog->startDash();
+    }else{
+        _dogClient->startDash();
     }
 }
 void OverWorld::processSizeEvent(const std::shared_ptr<SizeEvent>& sizeEvent){
@@ -353,9 +448,12 @@ void OverWorld::processBiteEvent(const std::shared_ptr<BiteEvent>& biteEvent){
     Vec2 center = biteEvent->getPos();
     float ang = biteEvent->getAng();
     _attackPolygonSet.addBite(center, ang, _dog->getBiteRadius(), _dog->getAbsorb()/_dog->getMaxAbsorb());
-    bool overWorldHost = biteEvent->isHost();
-    if (overWorldHost){
+    bool incomingHost = biteEvent->isHost();
+    if (incomingHost){
+
         _dog->startBite();
+    }else{
+        _dogClient->startBite();
     }
 }
 
@@ -363,50 +461,57 @@ void OverWorld::processShootEvent(const std::shared_ptr<ShootEvent>& shootEvent)
     Vec2 center = shootEvent->getPos();
     float ang = shootEvent->getAng();
     _attackPolygonSet.addShoot(center,ang, _dog->getShootRadius());
-    bool overWorldHost = shootEvent->isHost();
-    if (overWorldHost){
+    bool incomingHost = shootEvent->isHost();
+    if (incomingHost){
         _dog->startShoot();
+    }else{
+        _dogClient->startShoot();
     }
 }
 void OverWorld::processExplodeEvent(const std::shared_ptr<ExplodeEvent>& explodeEvent){
     Vec2 center = explodeEvent->getPos();
     _attackPolygonSet.addExplode(center, _dog->getExplosionRadius());
 }
+
+void OverWorld::ownedDogUpdate(InputController& _input, cugl::Size, std::shared_ptr<Dog> _curDog){
+    _curDog->moveOnInputSetAction(_input);
+    _curDog->updateUI();
+    if (_curDog->shouldSendSize()){
+        _curDog->resetSendSize();
+        _network->pushOutEvent(SizeEvent::allocSizeEvent(_curDog->getAbsorb(),_isHost));
+    }
+    if (_input.didPressDash() && _curDog->canDash()){
+        _network->pushOutEvent(DashEvent::allocDashEvent(_isHost));
+        _curDog->resetDash();
+    }
+    if (_input.didPressFire() && _curDog->canFireWeapon()){
+        CULog("Send Attack");
+        _network->pushOutEvent(BiteEvent::allocBiteEvent(_curDog->getBiteCenter(), _curDog->getDirInDegrees(), _isHost));
+        _curDog->reloadWeapon();
+    }
+    if (_input.didPressSpecial() && _curDog->canFireWeapon()){
+        _curDog->reloadWeapon();
+        if (_curDog->getMode() == "SHOOT" && _curDog->getAbsorb() >= 5){
+            _curDog->subAbsorb(5);
+            _network->pushOutEvent(ShootEvent::allocShootEvent(_curDog->getShootCenter(), _curDog->getDirInDegrees(),_isHost));
+        }else if (_curDog->getMode() == "BAIT" && _curDog->getAbsorb() >= 5){
+            _curDog->subAbsorb(5);
+            _network->pushOutEvent(DecoyEvent::allocDecoyEvent(_curDog->getPosition()));
+        }else if (_curDog->getMode() == "BOMB" && _curDog->getAbsorb() >= 5){
+            _curDog->subAbsorb(5);
+            _network->pushOutEvent(ExplodeEvent::allocExplodeEvent(_curDog->getPosition()));
+        }else {
+            CULog("NOTHING\n");
+        }
+    }
+}
 void OverWorld::dogUpdate(InputController& _input, cugl::Size totalSize){
     if (_isHost){
-        _dog->moveOnInputSetAction(_input);
-        _dog->updateUI();
-        if (_dog->shouldSendSize()){
-            _dog->resetSendSize();
-            _network->pushOutEvent(SizeEvent::allocSizeEvent(_dog->getAbsorb(),_isHost));
-        }
-        if (_input.didPressDash() && _dog->canDash()){
-            _network->pushOutEvent(DashEvent::allocDashEvent(_isHost));
-            _dog->resetDash();
-        }
-        if (_input.didPressFire() && _dog->canFireWeapon()){
-            CULog("Send Attack");
-            _network->pushOutEvent(BiteEvent::allocBiteEvent(_dog->getBiteCenter(), _dog->getDirInDegrees(), _isHost));
-            _dog->reloadWeapon();
-        }
-        if (_input.didPressSpecial() && _dog->canFireWeapon()){
-            _dog->reloadWeapon();
-            if (_dog->getMode() == "SHOOT" && _dog->getAbsorb() >= 5){
-                _dog->subAbsorb(5);
-                _network->pushOutEvent(ShootEvent::allocShootEvent(_dog->getShootCenter(), _dog->getDirInDegrees(),_isHost));
-            }else if (_dog->getMode() == "BAIT" && _dog->getAbsorb() >= 5){
-                _dog->subAbsorb(5);
-                //            _decoys->addNewDecoy(_dog->getPosition());
-                _network->pushOutEvent(DecoyEvent::allocDecoyEvent(_dog->getPosition()));
-            }else if (_dog->getMode() == "BOMB" && _dog->getAbsorb() >= 5){
-                _dog->subAbsorb(5);
-                _network->pushOutEvent(ExplodeEvent::allocExplodeEvent(_dog->getPosition()));
-            }else {
-                CULog("NOTHING\n");
-            }
-        }
+        _dogClient->updateClientAnimations();
+        ownedDogUpdate(_input,totalSize, _dog);
     }else{
         _dog->updateClientAnimations();
+        ownedDogUpdate(_input,totalSize, _dogClient);
     }
 }
 
