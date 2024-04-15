@@ -125,7 +125,6 @@ void StaticMeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
     //CULog("Boundary World Size in Melee Enemy Preupdate: %zu", overWorld.getWorld()->getBoundaryWorld().size());
     
     cugl::Vec2 dog_pos = overWorld.getDog()->getPosition();
-    cugl::Vec2 my_pos = getPosition();
     
     setGoal(dog_pos, overWorld.getWorld());
     goToGoal();

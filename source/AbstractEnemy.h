@@ -173,9 +173,9 @@ protected:
     bool setGoal(Vec2 goal, std::shared_ptr<World> world){
         
         // If we already pathfound recently, don't path find again
-//        if(_pathfindTimer < PATHFIND_COOLDOWN){
-//            return searchSuccess();
-//        }
+        if(_pathfindTimer < PATHFIND_COOLDOWN){
+            return searchSuccess();
+        }
         
         // Garbage collect the nodes used for the previous path if they exist
         if(_pathfinder->GetSolutionEnd() && _pathfinder->SearchStep() == AStarSearch<WorldSearchVertex>::SEARCH_STATE_SUCCEEDED){
@@ -242,7 +242,7 @@ protected:
             }
         }
         
-        //Move towards the next node
+        //Move towards the next tile
         cugl::Vec2 direction = _nextStep - getPosition();
         setVX(direction.normalize().x);
         setVY(direction.normalize().y);
