@@ -151,7 +151,8 @@ protected:
     int targetIndex;
     int updateRate;
     int _counter;
-    Vec2 _goal = Vec2(-1, -1);
+    
+    /** The next step along the enemy's path */
     Vec2 _nextStep = Vec2(-1, -1);
     
     EnemyActions curAction;
@@ -166,21 +167,22 @@ protected:
     std::shared_ptr<cugl::scene2::ProgressBar>  _healthBar;
     
     /** Timers */
-    int _pathfindTimer;
-    
-    void setGoal(Vec2 goal){
-        _goal = goal;
-    };
+    int _pathfindTimer = PATHFIND_COOLDOWN;
     
     /** Sets a new goal for this enemy to go to. Returns true if pathfinding to the goal was successful */
     bool setGoal(Vec2 goal, std::shared_ptr<World> world){
         
-        // If we already pathfound recently, don't pathfind again
-        if(_pathfindTimer < PATHFIND_COOLDOWN){
-            return !!_pathfinder->GetSolutionEnd();
+        // If we already pathfound recently, don't path find again
+//        if(_pathfindTimer < PATHFIND_COOLDOWN){
+//            return searchSuccess();
+//        }
+        
+        // Garbage collect the nodes used for the previous path if they exist
+        if(_pathfinder->GetSolutionEnd() && _pathfinder->SearchStep() == AStarSearch<WorldSearchVertex>::SEARCH_STATE_SUCCEEDED){
+            CULog("Garbage Collecting Path...");
+            _pathfinder->FreeSolutionNodes();
         }
         
-        _goal = goal;
         cugl::Vec2 my_pos = getPosition();
         
         // Initialize start and end for the search
@@ -190,7 +192,6 @@ protected:
         
         // Perform the search
         unsigned int SearchState = _pathfinder->SearchStep();
-        
         while( SearchState == AStarSearch<WorldSearchVertex>::SEARCH_STATE_SEARCHING )
         {
             SearchState = _pathfinder->SearchStep();
@@ -202,6 +203,9 @@ protected:
             CULog("Found Solution from (%d, %d) to (%d, %d)", start.x, start.y, end.x, end.y);
             
             _pathfinder->GetSolutionStart();
+            WorldSearchVertex* nextNode = _pathfinder->GetSolutionNext();
+            _nextStep = Vec2((int) nextNode->x, (int) nextNode->y);
+
             return true;
         }
         
@@ -223,13 +227,27 @@ protected:
         WorldSearchVertex* goalNode = _pathfinder->GetSolutionEnd();
         
         // If there is no goal or we are already at the goal, do nothing
-        if(!goalNode || atGoal()){
+        if(!goalNode || atGoal() || _nextStep.x == -1){
             return;
         }
         
+        // If we reached the next step, get the next node along the path and set it as the next tile
+        if(atTile(_nextStep)){
+            WorldSearchVertex* nextNode = _pathfinder->GetSolutionNext();
+            
+            if(nextNode){
+                _nextStep = Vec2((int) nextNode->x, (int) nextNode->y);
+            } else{
+                return;
+            }
+        }
         
-        // Get the next node along the path
-        WorldSearchVertex* next_node = _pathfinder->GetSolutionNext();
+        //Move towards the next node
+        cugl::Vec2 direction = _nextStep - getPosition();
+        setVX(direction.normalize().x);
+        setVY(direction.normalize().y);
+        _prevDirection =_curDirection;
+        _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
         
         // If we are very close to the goal, go directly to it instead of using pathfinding
         
@@ -264,9 +282,9 @@ protected:
     };
     
     /** Returns whether the last pathfind was successful */
-//    bool searchSuccess(){
-//        return _pathfinder->m_State == AStarSearch<WorldSearchVertex>::SEARCH_STATE_SUCCEEDED;
-//    }
+    bool searchSuccess(){
+        return _pathfinder->GetSolutionEnd() && _pathfinder->SearchStep() == AStarSearch<WorldSearchVertex>::SEARCH_STATE_SUCCEEDED;
+    }
     
 };
 #endif /* AbstractEnemy_h */
