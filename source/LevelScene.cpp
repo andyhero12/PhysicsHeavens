@@ -102,11 +102,12 @@ void LevelScene::dispose() {
  * @param timestep  The amount of time (in seconds) since the last frame
  */
 void LevelScene::update(float progress) {
-    if (frame == 10){
+    if (frame >= 10){
         background->setFrame((background->getFrame()+ 1) % 18);
         frame = 0;
     }
     else{
+        std::cout<<"frame"<<std::endl;
         frame += 1;
     }
     
@@ -144,6 +145,7 @@ void LevelScene::setActive(bool value)
                 _button->deactivate();
                 _button->setDown(false);
                 _progress = 0.0f;
+                frame = 0.0f;
             }
     }
 

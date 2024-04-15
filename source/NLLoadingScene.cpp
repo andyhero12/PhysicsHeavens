@@ -100,9 +100,10 @@ void LoadingScene::dispose() {
  * @param timestep  The amount of time (in seconds) since the last frame
  */
 void LoadingScene::update(float progress) {
-    if (frame == 10){
+    if (frame >= 10){
         background->setFrame((background->getFrame()+ 1) % 18);
         frame = 0;
+        std::cout<<"frame"<<std::endl;
     }
     else{
         frame += 1;

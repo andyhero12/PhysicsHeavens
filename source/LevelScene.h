@@ -84,7 +84,7 @@ public:
      * This constructor does not allocate any objects or start the game.
      * This allows us to use the object without a heap pointer.
      */
-    LevelScene() : cugl::Scene2(), _progress(0.0f) {}
+    LevelScene() : cugl::Scene2(), _progress(0.0f), frame(0.0f) {}
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.
