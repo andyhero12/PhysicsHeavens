@@ -408,6 +408,9 @@ bool OverWorld::setRootNode(const std::shared_ptr<scene2::SceneNode>& _worldNode
         _world->getOwnedObstacles().insert({_dog,0});
     }
     _worldNode->addChild(_dog->getDogNode());
+    _dog->addEffects(_attackPolygonSet.getAttackPolygonNode());
+//    _dog->getDogNode()->addChildWithTag(_attackPolygonSet.getAttackPolygonNode(), 0);
+//    _attackPolygonSet.getAttackPolygonNode()->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     
     if (_network->getNumPlayers() == 2){
         _world->initObstacle(_dogClient);
@@ -422,7 +425,7 @@ bool OverWorld::setRootNode(const std::shared_ptr<scene2::SceneNode>& _worldNode
     }
     
     // Attack Polygon base to the world nOde
-    _worldNode->addChild(_attackPolygonSet.getAttackPolygonNode());
+//    _worldNode->addChild(_attackPolygonSet.getAttackPolygonNode());
     
     
     // Add Obstacles
@@ -526,7 +529,7 @@ void OverWorld::update(InputController& _input, cugl::Size totalSize, float time
     _decoys->update(timestep);
 //    devilUpdate(_input, totalSize);
     _attackPolygonSet.update();
-} 
+}
 
 void OverWorld::postUpdate(){
     _decoys->postUpdate();

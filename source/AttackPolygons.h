@@ -41,7 +41,7 @@ public:
     Action getAction() const {return polygonAction;}
     const Poly2& getPolygon() const {return internalPolygon;}
     
-    std::shared_ptr<cugl::scene2::SceneNode> getPolyNode(){ return polyActionNode; }
+//    std::shared_ptr<cugl::scene2::SceneNode> getPolyNode(){ return polyActionNode; }
     bool expired() const { return _expired;}
     void update();
     std::shared_ptr<cugl::scene2::SceneNode> getActionNode();

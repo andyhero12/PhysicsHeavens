@@ -12,7 +12,7 @@
 #define BITE_HEAD_OFFSET_RATIO 0.8f
 #define SHOOT_HEAD_OFFSET_RATIO 1.5f
 #define ANIM_FREQ 1
-#define BITE_SCALE 1.0f/64.0f
+#define BITE_SCALE 1
 
 void ActionPolygon::update(){
     if(!_polygon){
@@ -98,7 +98,7 @@ void AttackPolygons::update(){
         auto curIt = it++;
         if (curAction->expired()){
             attackPolygonNode->removeChild(curAction->getActionNode());
-            attackPolygonNode->removeChild(curAction->getPolyNode());
+//            attackPolygonNode->removeChild(curAction->getPolyNode());
             currentAttacks.erase(curIt);
         }
     }
@@ -149,11 +149,13 @@ void AttackPolygons::addBite(Vec2 center, float angle, float explosionRad, float
     PolyFactory curFactory;
     Poly2 resultingPolygon = curFactory.makeArc(center, explosionRad, angle, 180);
     std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(biteSprite, Action::BITE, resultingPolygon, BITE_AGE, 1 + scale);
-    attackPolygonNode->addChild(curPtr->getPolyNode());
+//    attackPolygonNode->addChild(curPtr->getPolyNode());
     attackPolygonNode->addChild(curPtr->getActionNode());
     Vec2 offset = Vec2(SDL_cosf((angle + 90) * 3.14f / 180), SDL_sinf((angle + 90) * 3.14f / 180)) * DOG_SIZE.x * BITE_HEAD_OFFSET_RATIO;
-    curPtr->getPolyNode()->setPosition(center.add(offset));
-    curPtr->getActionNode()->setPosition(center.add(offset/4));
+//    curPtr->getPolyNode()->setPosition(center.add(offset));
+//    std::cout << offset.x << " " << offset.y << std::endl;
+    curPtr->getActionNode()->setPosition(attackPolygonNode->getPosition() + (30*offset));
+    
     currentAttacks.insert(curPtr);
 }
 

@@ -406,6 +406,10 @@ void Dog::updateLocalAnimations(DogSize size){
     baseBlankNode->addChild(dashAnimation);
     
     baseBlankNode->setPosition(getPosition());
+    
+    if(effectsNode){
+        baseBlankNode->addChild(effectsNode);
+    }
 }
 
 void Dog::resetCurrentAnimations(DogSize size){
@@ -445,4 +449,9 @@ void Dog::setAbsorbValue(int value){
 void Dog::setMode(int mode){
     _mode = mode;
     _uiController->setToggle(modes.at(_mode));
+}
+
+void Dog::addEffects(std::shared_ptr<cugl::scene2::SceneNode> node){
+    effectsNode = node;
+    baseBlankNode->addChild(effectsNode);
 }
