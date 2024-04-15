@@ -52,14 +52,14 @@ bool LevelScene::init(const std::shared_ptr<AssetManager>& assets) {
     
     // IMMEDIATELY load the splash screen assets
     _assets = assets;
-    _assets->loadDirectory("json/loading.json");
-    std::shared_ptr<cugl::scene2::SceneNode> layer = assets->get<scene2::SceneNode>("load");
+    _assets->loadDirectory("json/level.json");
+    std::shared_ptr<cugl::scene2::SceneNode> layer = assets->get<scene2::SceneNode>("level");
     layer->setContentSize(dimen);
     layer->doLayout(); // This rearranges the children to fit the screen
     
-    _bar = std::dynamic_pointer_cast<scene2::ProgressBar>(assets->get<scene2::SceneNode>("load_bar"));
+    _bar = std::dynamic_pointer_cast<scene2::ProgressBar>(assets->get<scene2::SceneNode>("level_bar"));
     _brand = assets->get<scene2::SceneNode>("load_name");
-    _button = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("load_play"));
+    _button = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("level_play"));
     _button->addListener([=](const std::string& name, bool down) {
         if(down){
             _level = Level::L1;
