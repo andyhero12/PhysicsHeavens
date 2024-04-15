@@ -122,6 +122,8 @@ void MeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
     if (overWorld._isHost && _counter >= updateRate){
         setVX(direction.normalize().x * 0.5);
         setVY(direction.normalize().y * 0.5);
+        setX(getX());
+        setY(getY());
         _counter = 0;
         _prevDirection =_curDirection;
         _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
