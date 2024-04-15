@@ -23,7 +23,8 @@
 #define PATHFIND_COOLDOWN 20
 
 
-#define CHASE_DISTANCE 2
+#define CLOSE_DISTANCE 2
+#define STRAY_DISTANCE 3
 
 #include "stlastar.h"
 #include "WorldSearchVertex.h"
@@ -243,13 +244,19 @@ protected:
         Vec2 goalTile = Vec2(goalNode->x + 0.5, goalNode->y + 0.5);
         
         // If we are very close to the goal, go directly to it instead of using pathfinding
-        if(getPosition().distance(goalTile) < CHASE_DISTANCE){
+        if(getPosition().distance(goalTile) < CLOSE_DISTANCE){
             direction = goalTile - getPosition();
         }
-        
         else {
             
-            // If we reached the next step, get the next node along the path and set it as the next tile
+            // If we strayed too far from the pathfinding path, restart pathfinding
+            Vec2 nextTile = Vec2(_nextStep.x + 0.5, _nextStep.y + 0.5);
+            if(getPosition().distance(nextTile) > STRAY_DISTANCE){
+                CULog("Recalculating Path...");
+                setGoal(Vec2(goalNode->x, goalNode->y), goalNode->_world);
+            }
+            
+            // If we already reached the next tile, get the next node along the path and set it as the next tile
             if(atTile(_nextStep)){
                 
                 WorldSearchVertex* nextNode = _pathfinder->GetSolutionNext();
@@ -273,7 +280,7 @@ protected:
         
         
         
-        // If we strayed too far from the pathfinding path, restart pathfinding
+        
         
         // If we have been stuck on the same tile for too long, move randomly and then restart pathfinding
         
@@ -296,7 +303,7 @@ protected:
         Vec2 tileCenter = Vec2(tile.x + 0.5, tile.y + 0.5);
         
         // Check if the enemy position is close to the center
-        if(getPosition().distance(tileCenter) < 0.02 ){
+        if(getPosition().distance(tileCenter) < 0.05 ){
             return true;
         };
         
