@@ -287,7 +287,7 @@
                                     "angle": 0,
                                     "visible": true,
                                     "font": "04b3038.6204719543457",
-                                    "text": "LEVELS",
+                                    "text": "COOP",
                                     "foreground": "#ffffffff",
                                     "background": "#00000000",
                                     "padding": [
@@ -385,7 +385,7 @@
                                     "angle": 0,
                                     "visible": true,
                                     "font": "04b3038.6204719543457",
-                                    "text": "Play",
+                                    "text": "PLAY",
                                     "foreground": "#ffffffff",
                                     "background": "#00000000",
                                     "padding": [

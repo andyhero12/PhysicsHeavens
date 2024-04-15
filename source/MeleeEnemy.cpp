@@ -117,6 +117,7 @@ void MeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
     if (_counter < updateRate){
         _counter++;
     }
+    
     cugl::Vec2 target_pos = getTargetPositionFromIndex(overWorld);
     cugl::Vec2 direction = target_pos - getPosition();
     if (overWorld._isHost && _counter >= updateRate){
@@ -128,7 +129,7 @@ void MeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
 //        setVY(direction.normalize().y * 0.5);
 //        setX(getX());
 //        setY(getY());
-        _counter = 0;
+//        _counter = 0;
 //        _prevDirection =_curDirection;
 //        _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
     }

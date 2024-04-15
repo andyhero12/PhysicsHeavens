@@ -14,7 +14,7 @@
 //  Author: Walker White
 //  Version: 1/10/17
 //
-#include "NLLoadingScene.h"
+#include "LevelScene.h"
 
 using namespace cugl;
 
@@ -35,7 +35,7 @@ using namespace cugl;
  *
  * @return true if the controller is initialized properly, false otherwise.
  */
-bool LoadingScene::init(const std::shared_ptr<AssetManager>& assets) {
+bool LevelScene::init(const std::shared_ptr<AssetManager>& assets) {
     // Initialize the scene to a locked width
     Size dimen = Application::get()->getDisplaySize();
     // Lock the scene to a reasonable resolution
@@ -52,16 +52,18 @@ bool LoadingScene::init(const std::shared_ptr<AssetManager>& assets) {
     
     // IMMEDIATELY load the splash screen assets
     _assets = assets;
-    _assets->loadDirectory("json/loading.json");
-    std::shared_ptr<cugl::scene2::SceneNode> layer = assets->get<scene2::SceneNode>("load");
+    _assets->loadDirectory("json/level.json");
+    std::shared_ptr<cugl::scene2::SceneNode> layer = assets->get<scene2::SceneNode>("level");
     layer->setContentSize(dimen);
     layer->doLayout(); // This rearranges the children to fit the screen
     
-    _bar = std::dynamic_pointer_cast<scene2::ProgressBar>(assets->get<scene2::SceneNode>("load_bar"));
+    _bar = std::dynamic_pointer_cast<scene2::ProgressBar>(assets->get<scene2::SceneNode>("level_bar"));
     _brand = assets->get<scene2::SceneNode>("load_name");
-    _button = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("load_play"));
+    _button = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("level_play"));
     _button->addListener([=](const std::string& name, bool down) {
-        this->_active = down;
+        if(down){
+            _level = Level::L1;
+        }
     });
     background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("backgroundl"), 1, 18);
     background->setScale(6.5);
@@ -76,7 +78,7 @@ bool LoadingScene::init(const std::shared_ptr<AssetManager>& assets) {
 /**
  * Disposes of all (non-static) resources allocated to this mode.
  */
-void LoadingScene::dispose() {
+void LevelScene::dispose() {
     // Deactivate the button (platform dependent)
     if (isPending()) {
         _button->deactivate();
@@ -99,13 +101,13 @@ void LoadingScene::dispose() {
  *
  * @param timestep  The amount of time (in seconds) since the last frame
  */
-void LoadingScene::update(float progress) {
+void LevelScene::update(float progress) {
     if (frame >= 10){
         background->setFrame((background->getFrame()+ 1) % 18);
         frame = 0;
-        std::cout<<"frame"<<std::endl;
     }
     else{
+        std::cout<<"frame"<<std::endl;
         frame += 1;
     }
     
@@ -127,7 +129,24 @@ void LoadingScene::update(float progress) {
  *
  * @return true if loading is complete, but the player has not pressed play
  */
-bool LoadingScene::isPending( ) const {
+bool LevelScene::isPending( ) const {
     return _button != nullptr && _button->isVisible();
 }
 
+void LevelScene::setActive(bool value)
+{
+
+    if (isActive() != value) {
+            Scene2::setActive(value);
+            if (value) {
+                _level = Level::NONE;
+                _button->activate();
+            } else {
+                _button->deactivate();
+                _button->setDown(false);
+                _progress = 0.0f;
+                frame = 0.0f;
+            }
+    }
+
+}

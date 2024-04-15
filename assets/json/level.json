@@ -41,7 +41,7 @@
         }
 	},
     "scene2s" : {
-        "load" : {
+        "level" : {
             "type"      : "Solid",
             "format"    : {
                 "type" : "Anchored"

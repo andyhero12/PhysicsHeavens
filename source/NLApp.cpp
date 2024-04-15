@@ -137,6 +137,7 @@ void NetApp::preUpdate(float timestep){
         _loading.dispose(); // Disables the input listeners in this mode
         _mainmenu.init(_assets);
         _menu.init(_assets);
+        _level.init(_assets);
         _mainmenu.setActive(true);
         _hostgame.init(_assets,_network);
         _joingame.init(_assets,_network);
@@ -149,6 +150,9 @@ void NetApp::preUpdate(float timestep){
     else if (_status == MENU) {
         updateMenuScene(timestep);
     }
+    else if(_status == LEVEL){
+        updateLevelScene(timestep);
+    }
     else if (_status == HOST){
         updateHostScene(timestep);
     }
@@ -158,6 +162,7 @@ void NetApp::preUpdate(float timestep){
     else if (_status == GAME){
         updateGameScene(timestep);
     }
+
 }
 
 void NetApp::postUpdate(float timestep) {
@@ -237,9 +242,11 @@ void NetApp::updateMenuScene(float timestep) {
 void NetApp::updateHostScene(float timestep) {
     _hostgame.update(timestep);
     if(_hostgame.getBackClicked()){
-        _status = MENU;
+        _status = MAINMENU;
         _hostgame.setActive(false);
-        _menu.setActive(true);
+        _mainmenu.setActive(true);
+        _level.setActive(false);
+        //_menu.setActive(true);
     }
     else if (_network->getStatus() == NetEventController::Status::HANDSHAKE && _network->getShortUID()) {
         _gameplay.init(_assets, _network, true);
@@ -253,9 +260,9 @@ void NetApp::updateHostScene(float timestep) {
     else if (_network->getStatus() == NetEventController::Status::NETERROR) {
         _network->disconnect();
 		_hostgame.setActive(false);
-		_menu.setActive(true);
+		_mainmenu.setActive(true);
         _gameplay.dispose();
-		_status = MENU;
+		_status = MAINMENU;
 	}
 }
 
@@ -272,9 +279,9 @@ void NetApp::updateClientScene(float timestep) {
 #pragma mark SOLUTION
     _joingame.update(timestep);
     if(_joingame.getBackClicked()){
-        _status = MENU;
+        _status = MAINMENU;
         _joingame.setActive(false);
-        _menu.setActive(true);
+        _mainmenu.setActive(true);
     }
     else if (_network->getStatus() == NetEventController::Status::HANDSHAKE && _network->getShortUID()) {
         _gameplay.init(_assets, _network, false);
@@ -288,9 +295,9 @@ void NetApp::updateClientScene(float timestep) {
     else if (_network->getStatus() == NetEventController::Status::NETERROR) {
         _network->disconnect();
 		_joingame.setActive(false);
-		_menu.setActive(true);
+		_mainmenu.setActive(true);
         _gameplay.dispose();
-		_status = MENU;
+		_status = MAINMENU;
 	}
 #pragma mark END SOLUTION
 }
@@ -313,26 +320,52 @@ void NetApp::updateMainScene(float timestep)
 {
     _mainmenu.update(timestep);
     switch (_mainmenu.getChoice()) {
-    case MainMenuScene::Choice::PLAY:
+    case MainMenuScene::Choice::SINGLE:
         _mainmenu.setActive(false);
-        _menu.setActive(true);
-        _status = MENU;
+        _level.setActive(true);
+        //_menu.setActive(true);
 
+        //_menu.setActive(false);
+        //_hostgame.setActive(true);
+        _status = LEVEL;
         break;
-    case MainMenuScene::Choice::LEVEL:
+    case MainMenuScene::Choice::COOP:
         _mainmenu.setActive(false);
-        _menu.setActive(true);
-        _status = MENU;
+        //_menu.setActive(true);
+        _joingame.setActive(true);
+        _status = CLIENT;
         break;
     case MainMenuScene::Choice::SETTING:
-        _mainmenu.setActive(false);
-        _menu.setActive(true);
-        _status = MENU;
+        //_mainmenu.setActive(false);
+        //_menu.setActive(true);
+        //_status = MENU;
         break;
     case MainMenuScene::Choice::NONE:
         // DO NOTHING
         break;
     }
+}
+
+void NetApp::updateLevelScene(float timestep)
+{
+    _level.update(timestep);
+    switch (_level.getLevel()) {
+    case LevelScene::Level::L1:
+        _level.setActive(false);
+        _hostgame.setActive(true);
+        _status = HOST;
+        break;
+    case LevelScene::Level::L2:
+
+        break;
+    case LevelScene::Level::L3:
+
+        break;
+    case LevelScene::Level::NONE:
+        // DO NOTHING
+        break;
+    }
+    
 }
 
 /**
@@ -354,6 +387,9 @@ void NetApp::draw() {
             break;
         case MENU:
             _menu.render(_batch);
+            break;
+        case LEVEL:
+            _level.render(_batch);
             break;
         case HOST:
             _hostgame.render(_batch);
