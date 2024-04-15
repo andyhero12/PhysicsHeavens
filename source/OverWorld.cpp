@@ -395,9 +395,6 @@ bool OverWorld::setRootNode(const std::shared_ptr<scene2::SceneNode>& _worldNode
     // Add Base Decoy node
     _worldNode->addChild(_decoys->getDecoySetNode());
     
-    
-    // Attack Polygon base to the world nOde
-    _worldNode->addChild(_attackPolygonSet.getAttackPolygonNode());
     // Add Bases to the World Node
     for (auto& base : _bases->_bases){
         std::shared_ptr<scene2::SceneNode> baseNode = base->getSceneNode();
@@ -423,6 +420,11 @@ bool OverWorld::setRootNode(const std::shared_ptr<scene2::SceneNode>& _worldNode
             _network->getPhysController()->acquireObs(_dogClient, 0);
         }
     }
+    
+    // Attack Polygon base to the world nOde
+    _worldNode->addChild(_attackPolygonSet.getAttackPolygonNode());
+    
+    
     // Add Obstacles
     return true;
 }

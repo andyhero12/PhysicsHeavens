@@ -471,15 +471,32 @@ void GameScene::postUpdate(float dt)
     overWorld.postUpdate();
 
     _rootnode->resetPane();
+    if(_decorToHide){
+        _decorToHide->setColor(Color4::WHITE);
+    }
+    
     if (_isHost){
         Vec2 delta = overWorld.getDog()->getDogNode()->getWorldPosition();
         delta -= (computeActiveSize() / 2);
         _rootnode->applyPan(-delta / _zoom);
+        
+        
+        delta = overWorld.getDog()->getPosition();
+        _decorToHide = getChildByName("decoration"  + std::to_string(int(delta.x))  + " "+ std::to_string(int(delta.y)));
     }else{
         Vec2 delta = overWorld.getClientDog()->getDogNode()->getWorldPosition();
         delta -= (computeActiveSize() / 2);
         _rootnode->applyPan(-delta / _zoom);
+        
+        delta = overWorld.getClientDog()->getPosition();
+        _decorToHide = getChildByName("decoration"  + std::to_string(int(delta.x))  + " "+ std::to_string(int(delta.y)));
     }
+    
+    if(_decorToHide){
+        _decorToHide->setColor(Color4f(1,1,1,0.3f));
+    }
+    
+    // hiding decorations
 }
 
 void GameScene::fixedUpdate()
@@ -603,7 +620,7 @@ void GameScene::addChildBackground()
             auto sprite = scene2::PolygonNode::allocWithTexture(image);
             sprite->setContentSize(Vec2(1, 1));
             sprite->setPosition(t->getPosition());
-            _worldnode->addChild(sprite);
+            _worldnode->addChildWithName(sprite, "tileworld" + std::to_string(i) + std::to_string(j));
         }
     }
     const std::vector<std::vector<std::shared_ptr<TileInfo>>> &currentBoundaries = _backgroundWrapper->getBoundaryWorld();
@@ -635,8 +652,12 @@ void GameScene::addChildBackground()
                 auto sprite = scene2::PolygonNode::allocWithTexture(image);
                 sprite->setContentSize(Vec2(1, 1));
                 sprite->setPosition(t->getPosition());
-                _worldnode->addChild(sprite);
+                _worldnode->addChildWithName(sprite, "decoration" + std::to_string(i) + " " + std::to_string(j));
+//                _worldnode->getChildByName("decoration" + std::to_string(i) + " " + std::to_string(j))->setColor(Color4f(1,1,1,0.5));
+//                _decorToHide->setColor(Color4(0,0,0,0.9f));
+//                std::cout <<  "decoration" + std::to_string(i) + " " + std::to_string(j) << std::endl;
             }
         }
     }
+    std::cout << "\n";
 }

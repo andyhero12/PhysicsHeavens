@@ -82,6 +82,9 @@ protected:
     std::shared_ptr<PauseScene> _pause;
 
     std::shared_ptr<World> _backgroundWrapper;
+    
+    std::shared_ptr<scene2::SceneNode> _decorToHide;
+    
     /** Host is by default the left cannon */
     bool _isHost;
 

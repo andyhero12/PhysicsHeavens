@@ -40,7 +40,8 @@ public:
     int getAge() const { return _age; }
     Action getAction() const {return polygonAction;}
     const Poly2& getPolygon() const {return internalPolygon;}
-//    const Poly2& getPolygon() const {return actionNode->getPolygon();}
+    
+    std::shared_ptr<cugl::scene2::SceneNode> getPolyNode(){ return polyActionNode; }
     bool expired() const { return _expired;}
     void update();
     std::shared_ptr<cugl::scene2::SceneNode> getActionNode();
