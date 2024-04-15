@@ -122,7 +122,6 @@ float CAN2_POS[] = {30, 9};
 #define FIXED_TIMESTEP_S 0.02f
 #define ROOT_NODE_SCALE 1
 
-
 #pragma mark -
 #pragma mark Constructors
 /**
@@ -266,11 +265,14 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _spawnerController.init(_level->getSpawnersPos());
     _spawnerController.setRootNode(_worldnode, _isHost);
 
-    overWorld.init(assets, _level, computeActiveSize(), _network, isHost);
+    overWorld.init(assets, _level, computeActiveSize(), _network, isHost, _backgroundWrapper);
     overWorld.setRootNode(_worldnode, _debugnode, _world);
-    if (isHost){
+    if (isHost)
+    {
         _uinode->addChild(overWorld.getDog()->getUINode());
-    }else{
+    }
+    else
+    {
         _uinode->addChild(overWorld.getClientDog()->getUINode());
     }
 
@@ -310,12 +312,15 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 
     _zoom = ROOT_NODE_SCALE;
 
-    if (isHost){
+    if (isHost)
+    {
         Vec2 delta = overWorld.getDog()->getDogNode()->getWorldPosition();
         delta -= (computeActiveSize() / 2);
         _rootnode->applyPan(-delta / _zoom);
         _rootnode->setScale(_zoom);
-    }else{
+    }
+    else
+    {
         Vec2 delta = overWorld.getClientDog()->getDogNode()->getWorldPosition();
         delta -= (computeActiveSize() / 2);
         _rootnode->applyPan(-delta / _zoom);
@@ -421,12 +426,15 @@ void GameScene::addInitObstacle(const std::shared_ptr<physics2::Obstacle> &obj,
 void GameScene::preUpdate(float dt)
 {
 
-    if (_isHost){
-        float zoom = _zoom - (ROOT_NODE_SCALE - 0.25f* (float)overWorld.getDog()->getAbsorb() / (float)overWorld.getDog()->getMaxAbsorb());
+    if (_isHost)
+    {
+        float zoom = _zoom - (ROOT_NODE_SCALE - 0.25f * (float)overWorld.getDog()->getAbsorb() / (float)overWorld.getDog()->getMaxAbsorb());
         _zoom -= fmin(zoom, 0.01f) * (zoom < 0 ? 0.12f : 0.3f);
         _rootnode->setScale(_zoom);
-    }else{
-        float zoom = _zoom - (ROOT_NODE_SCALE - 0.25f* (float)overWorld.getClientDog()->getAbsorb() / (float)overWorld.getClientDog()->getMaxAbsorb());
+    }
+    else
+    {
+        float zoom = _zoom - (ROOT_NODE_SCALE - 0.25f * (float)overWorld.getClientDog()->getAbsorb() / (float)overWorld.getClientDog()->getMaxAbsorb());
         _zoom -= fmin(zoom, 0.01f) * (zoom < 0 ? 0.12f : 0.3f);
         _rootnode->setScale(_zoom);
     }
@@ -471,31 +479,35 @@ void GameScene::postUpdate(float dt)
     overWorld.postUpdate();
 
     _rootnode->resetPane();
-    if(_decorToHide){
+    if (_decorToHide)
+    {
         _decorToHide->setColor(Color4::WHITE);
     }
-    
-    if (_isHost){
+
+    if (_isHost)
+    {
         Vec2 delta = overWorld.getDog()->getDogNode()->getWorldPosition();
         delta -= (computeActiveSize() / 2);
         _rootnode->applyPan(-delta / _zoom);
-        
-        
+
         delta = overWorld.getDog()->getPosition();
-        _decorToHide = getChildByName("decoration"  + std::to_string(int(delta.x))  + " "+ std::to_string(int(delta.y)));
-    }else{
+        _decorToHide = getChildByName("decoration" + std::to_string(int(delta.x)) + " " + std::to_string(int(delta.y)));
+    }
+    else
+    {
         Vec2 delta = overWorld.getClientDog()->getDogNode()->getWorldPosition();
         delta -= (computeActiveSize() / 2);
         _rootnode->applyPan(-delta / _zoom);
-        
+
         delta = overWorld.getClientDog()->getPosition();
-        _decorToHide = getChildByName("decoration"  + std::to_string(int(delta.x))  + " "+ std::to_string(int(delta.y)));
+        _decorToHide = getChildByName("decoration" + std::to_string(int(delta.x)) + " " + std::to_string(int(delta.y)));
     }
-    
-    if(_decorToHide){
-        _decorToHide->setColor(Color4f(1,1,1,0.3f));
+
+    if (_decorToHide)
+    {
+        _decorToHide->setColor(Color4f(1, 1, 1, 0.3f));
     }
-    
+
     // hiding decorations
 }
 
@@ -532,7 +544,7 @@ void GameScene::fixedUpdate()
         if (auto dashEvent = std::dynamic_pointer_cast<DashEvent>(e))
         {
             //            CULog("Explode Event Got");
-            overWorld.processDashEvent(dashEvent); 
+            overWorld.processDashEvent(dashEvent);
         }
         if (auto sizeEvent = std::dynamic_pointer_cast<SizeEvent>(e))
         {
@@ -653,9 +665,9 @@ void GameScene::addChildBackground()
                 sprite->setContentSize(Vec2(1, 1));
                 sprite->setPosition(t->getPosition());
                 _worldnode->addChildWithName(sprite, "decoration" + std::to_string(i) + " " + std::to_string(j));
-//                _worldnode->getChildByName("decoration" + std::to_string(i) + " " + std::to_string(j))->setColor(Color4f(1,1,1,0.5));
-//                _decorToHide->setColor(Color4(0,0,0,0.9f));
-//                std::cout <<  "decoration" + std::to_string(i) + " " + std::to_string(j) << std::endl;
+                //                _worldnode->getChildByName("decoration" + std::to_string(i) + " " + std::to_string(j))->setColor(Color4f(1,1,1,0.5));
+                //                _decorToHide->setColor(Color4(0,0,0,0.9f));
+                //                std::cout <<  "decoration" + std::to_string(i) + " " + std::to_string(j) << std::endl;
             }
         }
     }

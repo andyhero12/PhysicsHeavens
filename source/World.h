@@ -19,6 +19,7 @@ enum Terrain {
     PASSABLE,
     IMPASSIBLE
 };
+
 // Information for a tile, add to this later since idk what this will include
 class TileInfo : public cugl::physics2::BoxObstacle{
 public:
@@ -53,7 +54,7 @@ public:
         
     }
     ~TileInfo(){
-        std::cout <<"TODO DISPOSE\n";
+//        std::cout <<"TODO DISPOSE\n";
     }
 private:
 };
@@ -68,21 +69,42 @@ private:
     cugl::Vec2 start;
     
 public:
+    
     std::vector<std::vector<std::shared_ptr<TileInfo>>> tileWorld;
     std::vector<std::vector<std::shared_ptr<TileInfo>>> boundaryWorld;
     std::vector<std::vector<std::shared_ptr<TileInfo>>> decorWorld;
-    World () {};
-    World(std::shared_ptr<LevelModel> _level,std::shared_ptr<cugl::AssetManager> assets);
     
+    World () {};
+    ~World(){
+        CULog("Destructing World");
+    }
+    World(std::shared_ptr<LevelModel> _level,std::shared_ptr<cugl::AssetManager> assets);
+
     std::shared_ptr<cugl::Texture> getBoxFromTileSet(int position, const std::map<int,TileSet>& tileSets);
+    
     const std::vector<std::vector<std::shared_ptr<TileInfo>>>& getTileWorld(){
         return tileWorld;
     }
+    
     const std::vector<std::vector<std::shared_ptr<TileInfo>>>& getBoundaryWorld(){
         return boundaryWorld;
     }
+    
     const std::vector<std::vector<std::shared_ptr<TileInfo>>>& getDecorWorld(){
         return decorWorld;
+    }
+    
+    // Get whether a tile is passible or not
+    const bool isPassable(int x, int y);
+    
+    // Get the number of rows of tiles in the world
+    int getRows(){
+        return(int) boundaryWorld.size();
+    }
+    
+    // Get the number of columns of tiles in the world
+    int getCols(){
+        return (int) boundaryWorld[0].size();
     }
 };
 
