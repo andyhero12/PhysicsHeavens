@@ -143,6 +143,7 @@ void LevelScene::setActive(bool value)
             } else {
                 _button->deactivate();
                 _button->setDown(false);
+                _progress = 0.0f;
             }
     }
 

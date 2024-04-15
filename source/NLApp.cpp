@@ -245,6 +245,7 @@ void NetApp::updateHostScene(float timestep) {
         _status = MAINMENU;
         _hostgame.setActive(false);
         _mainmenu.setActive(true);
+        _level.setActive(false);
         //_menu.setActive(true);
     }
     else if (_network->getStatus() == NetEventController::Status::HANDSHAKE && _network->getShortUID()) {
@@ -321,7 +322,7 @@ void NetApp::updateMainScene(float timestep)
     switch (_mainmenu.getChoice()) {
     case MainMenuScene::Choice::SINGLE:
         _mainmenu.setActive(false);
-        _level.setActive(false);
+        _level.setActive(true);
         //_menu.setActive(true);
 
         //_menu.setActive(false);
