@@ -335,6 +335,7 @@ bool OverWorld::initDogModel(){
     //placeHolderDrawOver->setContentSize(DOG_SIZE);
     _dogClient->setFinalDog(clientPlaceHolderDrawOver);
     clientPlaceHolderDrawOver->setScale(DOG_SIZE.y / textures.at(0)->getHeight());
+//    std::cout <<"scale " << DOG_SIZE.y / textures.at(0)->getHeight() << std::endl;
     
     std::shared_ptr<scene2::SceneNode> _clientUINode = scene2::SceneNode::alloc();
     _uinode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);

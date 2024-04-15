@@ -13,6 +13,7 @@
 #define SHOOT_HEAD_OFFSET_RATIO 1.5f
 #define ANIM_FREQ 1
 #define BITE_SCALE 1
+#define OFFSET_SCALE 1/0.0234375f
 
 void ActionPolygon::update(){
     if(!_polygon){
@@ -154,7 +155,7 @@ void AttackPolygons::addBite(Vec2 center, float angle, float explosionRad, float
     Vec2 offset = Vec2(SDL_cosf((angle + 90) * 3.14f / 180), SDL_sinf((angle + 90) * 3.14f / 180)) * DOG_SIZE.x * BITE_HEAD_OFFSET_RATIO;
 //    curPtr->getPolyNode()->setPosition(center.add(offset));
 //    std::cout << offset.x << " " << offset.y << std::endl;
-    curPtr->getActionNode()->setPosition(attackPolygonNode->getPosition() + (30*offset));
+    curPtr->getActionNode()->setPosition(attackPolygonNode->getPosition() + (offset * (OFFSET_SCALE)));
     
     currentAttacks.insert(curPtr);
 }

@@ -454,4 +454,5 @@ void Dog::setMode(int mode){
 void Dog::addEffects(std::shared_ptr<cugl::scene2::SceneNode> node){
     effectsNode = node;
     baseBlankNode->addChild(effectsNode);
+    
 }
