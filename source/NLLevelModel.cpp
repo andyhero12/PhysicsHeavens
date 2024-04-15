@@ -191,30 +191,31 @@ bool LevelModel::loadSpanwerLocations(const std::shared_ptr<JsonValue>& json){
     for (int i = 0 ; i< spawnerValues->size() ;i++){
         float spawnerX = json->get("objects")->get(i)->get("x")->asFloat();
         float spawnerY = json->get("objects")->get(i)->get("y")->asFloat();
-//        int hp;
-//        int initDelay;
-//        int regularDelay;
-//        std::string primaryEnemy = "NULL";
-//        std::string secondaryEnemy = "NULL";
-//        std::string tertiaryEnemy = "NULL";
-//        std::shared_ptr<JsonValue> properties = json->get("objects")->get("properties");
-//        for (int i = 0; i < properties->size(); i++){
-//            std::string name = properties->get("name")->asString();
-//            if(name == "HP") {
-//                hp = properties->get("value")->asInt();
-//            }else if (name == "InitDelay") {
-//                initDelay = properties->get("value")->asInt();
-//            }else if (name == "PrimaryEnemy"){
-//                primaryEnemy = properties->get("name")->asString();
-//            }else if (name == "RegDelay"){
-//                regularDelay = properties->get("value")->asInt();
-//            }else if (name == "SecondaryEnemy"){
-//                secondaryEnemy = properties->get("name")->asString();
-//            }else if (name == "TertiaryEnemy"){
-//                tertiaryEnemy = properties->get("name")->asString();
-//            }
-//        }
-        _spawnersPos.emplace_back(cugl::Vec2(spawnerX/_tileWidth, (_levelHeight * _tileHeight - spawnerY)/_tileWidth));
+        float hp;
+        float initDelay;
+        float regularDelay;
+        std::string primaryEnemy;
+        std::string secondaryEnemy;
+        std::string tertiaryEnemy;
+        std::shared_ptr<JsonValue> properties = json->get("objects")->get(i)->get("properties");
+        for (int i = 0; i < properties->size(); i++){
+            std::string name = properties->get(i)->get("name")->asString();
+            if(name == "HP") {
+                hp = properties->get(i)->get("value")->asFloat();
+            }else if (name == "InitDelay") {
+                initDelay = properties->get(i)->get("value")->asFloat();
+            }else if (name == "PrimaryEnemy"){
+                primaryEnemy = properties->get(i)->get("value")->asString();
+            }else if (name == "RegDelay"){
+                regularDelay = properties->get(i)->get("value")->asFloat();
+            }else if (name == "SecondaryEnemy"){
+                secondaryEnemy = properties->get(i)->get("value")->asString();
+            }else if (name == "TertiaryEnemy"){
+                tertiaryEnemy = properties->get(i)->get("value")->asString();
+            }
+        }
+        Spawner spawner = { spawnerX / _tileWidth, (_levelHeight * _tileHeight - spawnerY) / _tileWidth, hp, initDelay, regularDelay, primaryEnemy, secondaryEnemy, tertiaryEnemy };
+        _spawnersPos.emplace_back(spawner);
     }
     return true;
 }
