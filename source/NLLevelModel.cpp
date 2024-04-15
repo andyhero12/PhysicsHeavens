@@ -191,7 +191,7 @@ bool LevelModel::loadSpanwerLocations(const std::shared_ptr<JsonValue>& json){
     for (int i = 0 ; i< spawnerValues->size() ;i++){
         float spawnerX = json->get("objects")->get(i)->get("x")->asFloat();
         float spawnerY = json->get("objects")->get(i)->get("y")->asFloat();
-        float hp;
+        int hp;
         float initDelay;
         float regularDelay;
         std::string primaryEnemy;

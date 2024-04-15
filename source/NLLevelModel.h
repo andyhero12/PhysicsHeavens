@@ -71,8 +71,8 @@ public:
         float spawnerX;
         float spawnerY;
         int hp;
-        int initDelay;
-        int regularDelay;
+        float initDelay;
+        float regularDelay;
         std::string primaryEnemy;
         std::string secondaryEnemy;
         std::string tertiaryEnemy;
