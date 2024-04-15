@@ -802,8 +802,8 @@ private: // data
     int m_Steps;
 
     // Start and goal state pointers
-    Node *m_Start;
-    Node *m_Goal;
+    Node *m_Start = NULL;
+    Node *m_Goal = NULL;
 
     Node *m_CurrentSolutionNode;
 

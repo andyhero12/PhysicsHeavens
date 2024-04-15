@@ -14,6 +14,7 @@
 #include <vector>
 #include <chrono>
 #include "GlobalConstants.h"
+#include "NLInput.h"
 
 
 /**
@@ -33,13 +34,23 @@ public:
      */
     enum Choice {
         /** User has not yet made a choice */
-        PLAY,
+        SINGLE,
         /** User wants to host a game */
-        LEVEL,
+        COOP,
         /** User wants to join a game */
         SETTING,
 
         NONE
+    };
+    enum Isdown {
+        /** User has not yet made a choice */
+        isSINGLE,
+        /** User wants to host a game */
+        isCOOP,
+        /** User wants to join a game */
+        isSETTING,
+
+        isNONE
     };
 
 protected:
@@ -51,8 +62,9 @@ protected:
     std::shared_ptr<cugl::scene2::Button> _joinbutton;
     /** The player menu choice */
     Choice _choice;
+    Isdown _isdown;
 
-
+    InputController _input;
     // NO CONTROLLER (ALL IN SEPARATE THREAD)
     //InputController _input;
     std::chrono::steady_clock::time_point lastInputTime;
@@ -143,7 +155,7 @@ public:
      */
     Choice getChoice() const { return _choice; }
     
-
+    virtual void update(float timestep) override;
 };
 
 #endif /* __NL_MENU_SCENE_H__ */

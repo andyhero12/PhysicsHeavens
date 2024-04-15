@@ -126,67 +126,34 @@ void StaticMeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
     
     cugl::Vec2 dog_pos = overWorld.getDog()->getPosition();
     
-    setGoal(dog_pos, overWorld.getWorld());
-    goToGoal();
-    
-
-//    cugl::Vec2 org_dist = dog_pos - original_pos;
-//    float distance = org_dist.length();
-//    
-//    cugl::Vec2 direction;
-////    CULog("distance %f %d", distance, DISTANCE_CUTOFF);
-////    if (distance > DISTANCE_CUTOFF){ // too far from origin return
-////        direction = original_pos - getPosition();
-////        if (overWorld._isHost && _counter >= updateRate){
-////            _counter = 0;
-////            if (direction.lengthSquared() >= 1){
-////                setVX(direction.normalize().x);
-////                setVY(direction.normalize().y);
-////            }else{
-////                setVX(0);
-////                setVY(0);
-////            }
-////        }
-////    }else{ // chase dog
-//        //CULog("Chasing Dog at (%f, %f)", dog_pos.x, dog_pos.y);
-//    
-//    CULog("Going to Goal: (%f, %f)", _goal.x, _goal.y);
-//    CULog("Dog Position: (%f, %f)", dog_pos.x, dog_pos.y);
-//    CULog("Enemy Position: (%f, %f)", getPosition().x, getPosition().y);
-//    CULog("Enemy Position rounded: (%d, %d)", (int) getPosition().x, (int) getPosition().y);
-//    CULog("-----------------------");
-////        if(_goal.distance(getPosition()) < 0.4){
-////            return;
-////        }
-//
-//    
-//    direction = _goal - getPosition(); //Vec2((int) getPosition().x, (int) getPosition().y);
-//    CULog("Direction: (%f, %f)", direction.normalize().x, direction.normalize().y);
-//    
-//        if (overWorld._isHost){
-////=======
-////    if (distance > DISTANCE_CUTOFF){ // too far from origin return
-////        direction = original_pos - getPosition();
-////        if (overWorld._isHost && _counter >= updateRate){
-////            _counter = 0;
-////            if (direction.lengthSquared() >= 1){
-////                setVX(direction.normalize().x);
-////                setVY(direction.normalize().y);
-////            }else{
-////                setVX(0);
-////                setVY(0);
-////            }
-////            _prevDirection =_curDirection;
-////            _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
-////        }
-////    }else{ // chase dog
-////        direction = dog_pos - getPosition();
-////        if (overWorld._isHost && _counter >= updateRate){
-////            _counter = 0;
-////>>>>>>> main
-//            setVX(direction.normalize().x);
-//            setVY(direction.normalize().y);
-//            _prevDirection =_curDirection;
-//            _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
-//        }
+//    setGoal(dog_pos, overWorld.getWorld());
+//    goToGoal();
+    cugl::Vec2 org_dist = dog_pos - original_pos;
+    float distance = org_dist.length();
+    cugl::Vec2 direction;
+//    CULog("distance %f %d", distance, DISTANCE_CUTOFF);
+    if (distance > DISTANCE_CUTOFF){ // too far from origin return
+        direction = original_pos - getPosition();
+        if (overWorld._isHost && _counter >= updateRate){
+            _counter = 0;
+            if (direction.lengthSquared() >= 1){
+                setVX(direction.normalize().x);
+                setVY(direction.normalize().y);
+            }else{
+                setVX(0);
+                setVY(0);
+            }
+            _prevDirection =_curDirection;
+            _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
+        }
+    }else{ // chase dog
+        direction = dog_pos - getPosition();
+        if (overWorld._isHost && _counter >= updateRate){
+            _counter = 0;
+            setVX(direction.normalize().x);
+            setVY(direction.normalize().y);
+            _prevDirection =_curDirection;
+            _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
+        }
+    }
 }

@@ -43,12 +43,15 @@ protected:
     /** The "play" button */
     std::shared_ptr<cugl::scene2::Button>    _button;
 
+    std::shared_ptr<cugl::scene2::SpriteNode> background;
+
     // MODEL
     /** The progress displayed on the screen */
     float _progress;
     /** Whether or not the player has pressed play to continue */
     bool  _completed;
     
+    int frame;
     /**
      * Returns the active screen size of this scene.
      *
@@ -66,7 +69,7 @@ public:
      * This constructor does not allocate any objects or start the game.
      * This allows us to use the object without a heap pointer.
      */
-    LoadingScene() : cugl::Scene2(), _progress(0.0f) {}
+    LoadingScene() : cugl::Scene2(), _progress(0.0f), frame(0){}
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.
