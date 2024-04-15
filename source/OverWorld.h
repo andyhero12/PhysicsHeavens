@@ -22,6 +22,7 @@
 #include "NLBiteEvent.h"
 #include "NLExplodeEvent.h"
 #include "NLShootEvent.h"
+#include "World.h"
 #include "NLDashEvent.h"
 #include "NLSizeEvent.h"
 
@@ -31,12 +32,14 @@ private:
     std::shared_ptr<NetEventController> _network;
     cugl::Size _activeSize;
     std::shared_ptr<Dog> _dog;
+    std::shared_ptr<Dog> _dogClient;
     std::shared_ptr<Devil> _devil;
     std::shared_ptr<DecoySet> _decoys;
     std::shared_ptr<BaseSet> _bases;
     std::shared_ptr<cugl::JsonValue> _constants;
     std::shared_ptr<cugl::AssetManager> _assets;
     AttackPolygons _attackPolygonSet;
+    std::shared_ptr<World> _world;
     
     void drawDecoy(const std::shared_ptr<cugl::SpriteBatch>& batch);
 public:
@@ -49,11 +52,12 @@ public:
     }
     
     void reset();
-    bool init(const std::shared_ptr<cugl::AssetManager>& assets, const std::shared_ptr<LevelModel>& _level, cugl::Size activeSize, std::shared_ptr<cugl::physics2::net::NetEventController> network, bool isHost);
+    bool init(const std::shared_ptr<cugl::AssetManager>& assets, const std::shared_ptr<LevelModel>& _level, cugl::Size activeSize, std::shared_ptr<cugl::physics2::net::NetEventController> network, bool isHost, std::shared_ptr<World> world);
     bool initDogModel();
     bool initDevil();
     bool initBases();
     bool initDecoys();
+    bool initWorld();
     
     bool setRootNode(const std::shared_ptr<scene2::SceneNode>& _worldNode, const std::shared_ptr<scene2::SceneNode>& _debugNode, std::shared_ptr<cugl::physics2::net::NetWorld> _world);
     // will add Obstacle nodes too
@@ -61,7 +65,7 @@ public:
     void devilUpdate(InputController& _input,cugl::Size totalSize);
     void update(InputController& input, cugl::Size totalSize, float timestep);
     void postUpdate();
-    
+    void ownedDogUpdate(InputController& _input, cugl::Size, std::shared_ptr<Dog> _curDog);
     void processShootEvent(const std::shared_ptr<ShootEvent>& shootEvent);
     void processSizeEvent(const std::shared_ptr<SizeEvent>& sizeEvent);
     void processBiteEvent(const std::shared_ptr<BiteEvent>& biteEvent);
@@ -71,6 +75,9 @@ public:
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch,cugl::Size totalSize);
     std::shared_ptr<Dog> getDog() const {
         return _dog;
+    }
+    std::shared_ptr<Dog> getClientDog() const {
+        return _dogClient;
     }
     std::shared_ptr<Devil> getDevil()const {
         return _devil;
@@ -84,6 +91,10 @@ public:
     std::shared_ptr<LevelModel> getLevelModel(){
         return _level;
     }
+    std::shared_ptr<World> getWorld(){
+        return _world;
+    }
+    
     int getTotalTargets() const {
         return 1 + (int) _bases->_bases.size() + (int) _decoys->getCurrentDecoys().size();
     }

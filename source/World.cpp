@@ -110,4 +110,30 @@ std::shared_ptr<cugl::Texture> World::getBoxFromTileSet(int position, const std:
     // Get the subTexture
     return curTile.textureTile->getSubTexture(minS, maxS, minT, maxT);
 }
+
+const bool World::isPassable(int x, int y){
     
+    // If the coord is outside the bounds of the world, the tile is impassible
+    if(x < 0 || y < 0 || x >= getCols() || y >= getRows()){
+        return false;
+    }
+    
+//    for (int i = 0; i < getRows(); ++i) {
+//        for (int j = 0; j < getCols(); ++j) {
+//            CULog("IS PASSABLE: %d", (int) (getBoundaryWorld().at(i).at(j)->type == PASSABLE));
+//        }
+//    }
+    
+    // Iterate over rows
+//    for (const auto &row : getBoundaryWorld()) {
+//        // Iterate over columns
+//        for (std::shared_ptr<TileInfo> elem : row) {
+//            std::cout << elem->type << " ";
+//        }
+//        std::cout << std::endl; // Newline after each row for better formatting
+//    }
+    
+//    std::cout << std::endl;
+    
+    return getBoundaryWorld().at(y).at(x)->type == PASSABLE;
+}

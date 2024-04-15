@@ -112,7 +112,9 @@ bool StaticMeleeEnemy::init(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, i
     }
     return false;
 }
+
 void StaticMeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
+    
     if (_attackCooldown < 60){
         _attackCooldown++;
     }
@@ -120,9 +122,12 @@ void StaticMeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
     if (_counter < updateRate){
         _counter++;
     }
+    //CULog("Boundary World Size in Melee Enemy Preupdate: %zu", overWorld.getWorld()->getBoundaryWorld().size());
+    
     cugl::Vec2 dog_pos = overWorld.getDog()->getPosition();
     
-    
+//    setGoal(dog_pos, overWorld.getWorld());
+//    goToGoal();
     cugl::Vec2 org_dist = dog_pos - original_pos;
     float distance = org_dist.length();
     cugl::Vec2 direction;

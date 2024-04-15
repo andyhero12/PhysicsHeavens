@@ -52,7 +52,7 @@ public:
         
     }
     ~TileInfo(){
-        std::cout <<"TODO DISPOSE\n";
+//        std::cout <<"TODO DISPOSE\n";
     }
 private:
 };
