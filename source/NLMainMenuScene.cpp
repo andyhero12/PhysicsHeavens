@@ -73,12 +73,13 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _button1->addListener([this](const std::string& name, bool down) {
         //std::cout << _input._confirm << std::endl;
         if (down) {  
-            _isdown = Isdown::isPLAY;
+            _choice = Choice::SINGLE;
+            //_isdown = Isdown::isSINGLE;
         }
     });
     _button2->addListener([this](const std::string& name, bool down) {
         if (down) {
-            //_choice = Choice::LEVEL;
+            _choice = Choice::COOP;
         }
     });
 
@@ -162,13 +163,12 @@ void MainMenuScene::update(float timestep)
 
         }
     }
-    std::cout << _input._confirm << std::endl;
-    if (_isdown == Isdown::isPLAY&&_input._confirm) {
-        _choice = Choice::PLAY;
-       
+    //std::cout << _input._confirm << std::endl;
+    if (_isdown == Isdown::isSINGLE&&_input._confirm) {
+        _choice = Choice::SINGLE;
     }
-    else if(_isdown == Isdown::isLEVEL && _input._confirm){
-        _choice = Choice::LEVEL;
+    else if(_isdown == Isdown::isCOOP && _input._confirm){
+        _choice = Choice::COOP;
     }
     else if (_isdown == Isdown::isSETTING && _input._confirm) {
         _choice = Choice::SETTING;

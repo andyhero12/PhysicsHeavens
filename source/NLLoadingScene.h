@@ -43,12 +43,15 @@ protected:
     /** The "play" button */
     std::shared_ptr<cugl::scene2::Button>    _button;
 
+    std::shared_ptr<cugl::scene2::SpriteNode> background;
+
     // MODEL
     /** The progress displayed on the screen */
     float _progress;
     /** Whether or not the player has pressed play to continue */
     bool  _completed;
     
+    int frame;
     /**
      * Returns the active screen size of this scene.
      *
