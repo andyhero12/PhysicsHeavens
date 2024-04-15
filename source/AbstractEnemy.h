@@ -182,7 +182,7 @@ protected:
         
         // Garbage collect the nodes used for the previous path if they exist
         if(_pathfinder->GetSolutionEnd() && _pathfinder->SearchStep() == AStarSearch<WorldSearchVertex>::SEARCH_STATE_SUCCEEDED){
-            CULog("Garbage Collecting Path...");
+//            CULog("Garbage Collecting Path...");
             _pathfinder->FreeSolutionNodes();
         }
         
@@ -203,7 +203,7 @@ protected:
         // Check if the search was successful
         if( SearchState == AStarSearch<WorldSearchVertex>::SEARCH_STATE_SUCCEEDED ){
             
-            CULog("Found Solution from (%d, %d) to (%d, %d)", start.x, start.y, end.x, end.y);
+//            CULog("Found Solution from (%d, %d) to (%d, %d)", start.x, start.y, end.x, end.y);
             
             _pathfinder->GetSolutionStart();
             WorldSearchVertex* nextNode = _pathfinder->GetSolutionNext();
