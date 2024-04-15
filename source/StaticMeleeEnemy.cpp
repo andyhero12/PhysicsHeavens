@@ -169,7 +169,7 @@ void StaticMeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
             
             CULog("Found Solution from (%d, %d) to (%d, %d)", start.x, start.y, end.x, end.y);
             
-           _pathfinder->GetSolutionStart();
+            WorldSearchVertex* node = _pathfinder->GetSolutionStart();
             
             WorldSearchVertex* next_node = _pathfinder->GetSolutionNext();
             
@@ -177,18 +177,26 @@ void StaticMeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
                 next_pos = Vec2((int) next_node->x + 0.5, (int) next_node->y + 0.5);
             }
             
-            //        for( ;; ){
-            //            node = _pathfinder->GetSolutionNext();
-            //
-            //            if( !node ){
-            //                break;
-            //            }
-            //
-            //            CULog("Next Node: (%d, %d)", static_cast<int>(node->x), static_cast<int>(node->y));
-            //
-            //        };
+                    for( ;; ){
+                        
+                        WorldSearchVertex* prev_node = _pathfinder->GetSolutionPrev();
+                        _pathfinder->GetSolutionNext();
+                        node = _pathfinder->GetSolutionNext();
+            
+                        if( !node ){
+                            break;
+                        }
+                        
+                        CULog("Prev Node: (%d, %d)", static_cast<int>(prev_node->x), static_cast<int>(prev_node->y));
+                        CULog("Next Node: (%d, %d)", static_cast<int>(node->x), static_cast<int>(node->y));
+            
+                    };
             
             _pathfinder->FreeSolutionNodes();
+            CULog("Found Solution from (%d, %d) to (%d, %d) test", _pathfinder->GetSolutionStart()->x, _pathfinder->GetSolutionStart()->y, _pathfinder->GetSolutionEnd()->x, _pathfinder->GetSolutionEnd()->y);
+            CULog("Found Solution from (%d, %d) to (%d, %d) test2", _pathfinder->GetSolutionStart()->x, _pathfinder->GetSolutionStart()->y, _pathfinder->GetSolutionEnd()->x, _pathfinder->GetSolutionEnd()->y);
+            _pathfinder->GetSolutionNext();
+            CULog("%d", _pathfinder->SearchStep());
         }
         
         setGoal(next_pos);

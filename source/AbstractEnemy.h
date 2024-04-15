@@ -18,6 +18,10 @@
 #define DEFAULT_FRICTION 0.0f
 /** The restitution of this rocket */
 #define DEFAULT_RESTITUTION 0.0f
+
+/** The number of frames before a new goal can be set */
+#define PATHFIND_COOLDOWN 20
+
 #include "stlastar.h"
 #include "WorldSearchVertex.h"
 
@@ -141,10 +145,6 @@ public:
         return topLevelPlaceHolder;
     }
     
-    void setGoal(Vec2 goal){
-        _goal = goal;
-    }
-    
 protected:
     int _maxHealth;
     int _health;
@@ -152,6 +152,7 @@ protected:
     int updateRate;
     int _counter;
     Vec2 _goal = Vec2(-1, -1);
+    Vec2 _nextStep = Vec2(-1, -1);
     
     EnemyActions curAction;
     AnimationSceneNode::Directions _prevDirection;
@@ -163,5 +164,109 @@ protected:
     
     /** The health  bar */
     std::shared_ptr<cugl::scene2::ProgressBar>  _healthBar;
+    
+    /** Timers */
+    int _pathfindTimer;
+    
+    void setGoal(Vec2 goal){
+        _goal = goal;
+    };
+    
+    /** Sets a new goal for this enemy to go to. Returns true if pathfinding to the goal was successful */
+    bool setGoal(Vec2 goal, std::shared_ptr<World> world){
+        
+        // If we already pathfound recently, don't pathfind again
+        if(_pathfindTimer < PATHFIND_COOLDOWN){
+            return !!_pathfinder->GetSolutionEnd();
+        }
+        
+        _goal = goal;
+        cugl::Vec2 my_pos = getPosition();
+        
+        // Initialize start and end for the search
+        WorldSearchVertex start = WorldSearchVertex(static_cast<int>(my_pos.x), static_cast<int>(my_pos.y), world);
+        WorldSearchVertex end = WorldSearchVertex(static_cast<int>(goal.x), static_cast<int>(goal.y), world);
+        _pathfinder->SetStartAndGoalStates(start, end);
+        
+        // Perform the search
+        unsigned int SearchState = _pathfinder->SearchStep();
+        
+        while( SearchState == AStarSearch<WorldSearchVertex>::SEARCH_STATE_SEARCHING )
+        {
+            SearchState = _pathfinder->SearchStep();
+        }
+        
+        // Check if the search was successful
+        if( SearchState == AStarSearch<WorldSearchVertex>::SEARCH_STATE_SUCCEEDED ){
+            
+            CULog("Found Solution from (%d, %d) to (%d, %d)", start.x, start.y, end.x, end.y);
+            
+            _pathfinder->GetSolutionStart();
+            return true;
+        }
+        
+        if( SearchState == AStarSearch<WorldSearchVertex>::SEARCH_STATE_FAILED ){
+            CULog("Search Failed");
+        }
+        
+        if( SearchState == AStarSearch<WorldSearchVertex>::SEARCH_STATE_OUT_OF_MEMORY ){
+            CULog("Search Out of Memory");
+        }
+        
+        return false;
+    };
+    
+    /** Goes towards the goal. If there is no goal, do nothing. */
+    void goToGoal(){
+        
+        // Get the goal
+        WorldSearchVertex* goalNode = _pathfinder->GetSolutionEnd();
+        
+        // If there is no goal or we are already at the goal, do nothing
+        if(!goalNode || atGoal()){
+            return;
+        }
+        
+        
+        // Get the next node along the path
+        WorldSearchVertex* next_node = _pathfinder->GetSolutionNext();
+        
+        // If we are very close to the goal, go directly to it instead of using pathfinding
+        
+        // If we strayed too far from the pathfinding path, restart pathfinding
+        
+        // If we have been stuck on the same tile for too long, move randomly and then restart pathfinding
+        
+    };
+    
+    /** Returns whether the enemy is at its goal */
+    bool atGoal(){
+        // Get the goal
+        WorldSearchVertex* goalNode = _pathfinder->GetSolutionEnd();
+        
+        Vec2 goal = Vec2(goalNode->x, goalNode->y);
+        
+        return atTile(goal);
+    };
+    
+    /** Returns whether the enemy is on the given tile , i. e. close  to its center. Tiles should have integer coordinates*/
+    bool atTile(Vec2 tile){
+        
+        // Get the center of the tile
+        Vec2 tileCenter = Vec2(tile.x + 0.5, tile.y + 0.5);
+        
+        // Check if the enemy position is close to the center
+        if(getPosition().distance(tileCenter) < 0.02 ){
+            return true;
+        };
+        
+        return false;
+    };
+    
+    /** Returns whether the last pathfind was successful */
+//    bool searchSuccess(){
+//        return _pathfinder->m_State == AStarSearch<WorldSearchVertex>::SEARCH_STATE_SUCCEEDED;
+//    }
+    
 };
 #endif /* AbstractEnemy_h */
