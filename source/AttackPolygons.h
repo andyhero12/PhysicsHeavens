@@ -32,8 +32,8 @@ public:
     int _frame;
     int _freq;
     
-    ActionPolygon(Action curAction, Poly2& mintPoly, int mx);
-    ActionPolygon(std::shared_ptr<cugl::scene2::SpriteNode> actionSprite, Action curAction, Poly2& mintPoly, int mx);
+    ActionPolygon(Action curAction, Poly2& mintPoly, int mx, float scale);
+    ActionPolygon(std::shared_ptr<cugl::scene2::SpriteNode> actionSprite, Action curAction, Poly2& mintPoly, int mx, float scale);
     
     float getScale() const { return _scale; }
     
@@ -67,7 +67,7 @@ public:
     void update();
     void addShoot(Vec2 center, float angle, float shootRadius);
     void addExplode(cugl::Vec2 center, float explosionRadius);
-    void addBite(cugl::Vec2 center, float angle, float explosionRad);
+    void addBite(cugl::Vec2 center, float angle, float explosionRad, float scale);
     std::shared_ptr<cugl::scene2::SceneNode> getAttackPolygonNode(){
         return attackPolygonNode;
     }

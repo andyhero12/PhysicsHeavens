@@ -352,7 +352,7 @@ void OverWorld::processSizeEvent(const std::shared_ptr<SizeEvent>& sizeEvent){
 void OverWorld::processBiteEvent(const std::shared_ptr<BiteEvent>& biteEvent){
     Vec2 center = biteEvent->getPos();
     float ang = biteEvent->getAng();
-    _attackPolygonSet.addBite(center,ang, _dog->getBiteRadius());
+    _attackPolygonSet.addBite(center, ang, _dog->getBiteRadius(), _dog->getAbsorb()/_dog->getMaxAbsorb());
     bool overWorldHost = biteEvent->isHost();
     if (overWorldHost){
         _dog->startBite();
