@@ -15,6 +15,15 @@
 #define BITE_SCALE 1
 #define OFFSET_SCALE 1/0.0234375f
 
+bool ActionPolygon::dealDamage(){
+    if(!_polygon){
+        return (spriteActionNode->getFrame() == spriteActionNode->getSpan()/2) && _freq == 0;
+    }
+    else{
+        return true;
+    }
+}
+
 void ActionPolygon::update(){
     if(!_polygon){
         if(_freq == ANIM_FREQ){

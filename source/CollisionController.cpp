@@ -55,13 +55,13 @@ void CollisionController::attackCollisions(OverWorld& overWorld, MonsterControll
     for (const std::shared_ptr<ActionPolygon>& action: attacks.currentAttacks){
         switch (action->getAction()){
             case (Action::SHOOT):
-                hugeBlastCollision(action->getPolygon(), monsterController); // Play blast sound
+                hugeBlastCollision(action, monsterController); // Play blast sound
                 break;
             case (Action::EXPLODE):
-                resolveBlowup(action->getPolygon(),monsterController, spawners); // play boom sound
+                resolveBlowup(action,monsterController, spawners); // play boom sound
                 break;
             case (Action::BITE):
-                resolveBiteAttack(action->getPolygon(), monsterController, overWorld);
+                resolveBiteAttack(action, monsterController, overWorld);
                 break;
             default:
                 CULog("Action not used in Collisions\n");
@@ -147,7 +147,8 @@ bool CollisionController::monsterDogCollision(std::shared_ptr<Dog> curDog, std::
     return false;
 }
 
-void CollisionController::resolveBiteAttack(const cugl::Poly2& bitePolygon, MonsterController& monsterController, OverWorld& overWorld){
+void CollisionController::resolveBiteAttack(const std::shared_ptr<ActionPolygon>& action, MonsterController& monsterController, OverWorld& overWorld){
+    Poly2 bitePolygon = action->getPolygon();
     std::unordered_set<std::shared_ptr<AbstractEnemy>>& monsterEnemies = monsterController.getEnemies();
     auto itA = monsterEnemies.begin();
     bool hitSomething = false;
@@ -155,7 +156,7 @@ void CollisionController::resolveBiteAttack(const cugl::Poly2& bitePolygon, Mons
         const std::shared_ptr<AbstractEnemy>& enemy = *itA;
         auto curA = itA;
         itA++;
-        if (bitePolygon.contains(enemy->getPosition())){
+        if (bitePolygon.contains(enemy->getPosition()) && action->dealDamage()){
             hitSomething = true;
             enemy->setHealth(enemy->getHealth() - 1);
             if(enemy->getHealth() <= 0){
@@ -187,7 +188,8 @@ bool CollisionController::healFromBaseCollsion( BaseSet& bset, std::shared_ptr<D
     }
     return false;
 }
-void CollisionController::hugeBlastCollision(const cugl::Poly2& blastRectangle, MonsterController& monsterController){
+void CollisionController::hugeBlastCollision(const std::shared_ptr<ActionPolygon>& action, MonsterController& monsterController){
+    Poly2 blastRectangle = action->getPolygon();
     std::unordered_set<std::shared_ptr<AbstractEnemy>>& enemies = monsterController.getEnemies();
     auto itA = enemies.begin();
     while (itA != enemies.end()){
@@ -201,7 +203,8 @@ void CollisionController::hugeBlastCollision(const cugl::Poly2& blastRectangle, 
         }
     }
 }
-void CollisionController::resolveBlowup(const cugl::Poly2& blastCircle, MonsterController& monsterController, std::unordered_set<std::shared_ptr<AbstractSpawner>>& spawners){
+void CollisionController::resolveBlowup(const std::shared_ptr<ActionPolygon>& action, MonsterController& monsterController, std::unordered_set<std::shared_ptr<AbstractSpawner>>& spawners){
+    Poly2 blastCircle = action->getPolygon();
     std::unordered_set<std::shared_ptr<AbstractEnemy>>& monsterEnemies = monsterController.getEnemies();
     auto itA = monsterEnemies.begin();
     while (itA != monsterEnemies.end()){

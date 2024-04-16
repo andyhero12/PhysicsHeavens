@@ -46,6 +46,7 @@ public:
     void update();
     std::shared_ptr<cugl::scene2::SceneNode> getActionNode();
     void draw(const std::shared_ptr<SpriteBatch>& batch, const Affine2& transform, Color4 tint);
+    bool dealDamage();
     
 private:
     std::shared_ptr<cugl::scene2::SpriteNode> spriteActionNode;
