@@ -60,6 +60,8 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
     _levelWidth = json->get("width")->asFloat();
     _tileHeight = json->get("tileheight")->asFloat();
     _tileWidth = json->get("tilewidth")->asFloat();
+    _numLowerDecorLayers = 0;
+    _numUpperDecorLayers = 0;
     auto tileSetArray = json->get("tilesets");
     for (int i =0 ; i< tileSetArray->size(); i++){
         const std::shared_ptr<cugl::JsonValue>& tileImage = tileSetArray->get(i);
@@ -83,12 +85,21 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
  */
 void LevelModel::loadLayer(const std::shared_ptr<JsonValue>& json){
     std::string type = json->get("name")->asString();
-    if (type == "DrawTiles"){
+    
+    if (type == "numDecor"){
+        loadNumDecor(json);
+    }else if (type == "DrawTiles"){
         loadTiles(json);
     }else if (type == "Boundaries"){
         loadBoundaries(json);
-    }else if (type == "Decor"){
+    }else if (type == "Decor"){ // see if exactly Decor (old)
         loadDecorations(json);
+    }else if (type.rfind("DecorUpper", 0) == 0){ // see if type starts with DecorUpper
+        int value = stoi(type.substr(10)) -1;
+        loadUpperDecorLayer(json, value);
+    }else if (type.rfind("Decor", 0) == 0){ // see if type starts with Decor
+        int value = stoi(type.substr(5)) - 1;
+        loadLowerDecorLayer(json, value);
     }else if (type == "PlayerSpawn"){
         loadPlayer(json);
     }else if (type == "SpawnerLocs"){
@@ -111,7 +122,8 @@ void LevelModel::loadLayer(const std::shared_ptr<JsonValue>& json){
 void LevelModel::unload() {
     _tiles.clear();
     _walls.clear();
-    _decors.clear();
+    _lowerDecorLayers.clear();
+    _upperDecorLayers.clear();
 }
 
 #pragma mark -
@@ -165,14 +177,40 @@ bool LevelModel::loadBoundaries(const std::shared_ptr<JsonValue>& json) {
     return true;
 }
 
+bool LevelModel::loadUpperDecorLayer(const std::shared_ptr<JsonValue>& json, int index){
+    int columns = json->get("width")->asInt();
+    int rows = json->get("height")->asInt();
+    auto array = json->get("data")->children();
+    _upperDecorLayers.at(index).resize(rows,std::vector<int>(columns,0));
+    for (int i =0 ; i< rows; i++){
+        for (int j =0 ;j <columns ;j ++){
+            _upperDecorLayers.at(index).at(rows - i - 1).at(j) = array.at(i*columns + j)->asInt();
+        }
+    }
+    return true;
+}
+bool LevelModel::loadLowerDecorLayer(const std::shared_ptr<JsonValue>& json, int index){
+    int columns = json->get("width")->asInt();
+    int rows = json->get("height")->asInt();
+    auto array = json->get("data")->children();
+    _lowerDecorLayers.at(index).resize(rows,std::vector<int>(columns,0));
+    for (int i =0 ; i< rows; i++){
+        for (int j =0 ;j <columns ;j ++){
+            _lowerDecorLayers.at(index).at(rows - i - 1).at(j) = array.at(i*columns + j)->asInt();
+        }
+    }
+    return true;
+}
 bool LevelModel::loadDecorations(const std::shared_ptr<JsonValue>& json){
     int columns = json->get("width")->asInt();
     int rows = json->get("height")->asInt();
     auto array = json->get("data")->children();
-    _decors.resize(rows,std::vector<int>(columns,0));
+    _numLowerDecorLayers = 1;
+    _lowerDecorLayers.resize(_numLowerDecorLayers);
+    _lowerDecorLayers.at(0).resize(rows,std::vector<int>(columns,0));
     for (int i =0 ; i< rows; i++){
         for (int j =0 ;j <columns ;j ++){
-            _decors.at(rows - i - 1).at(j) = array.at(i*columns + j)->asInt();
+            _lowerDecorLayers.at(0).at(rows - i - 1).at(j) = array.at(i*columns + j)->asInt();
         }
     }
     return true;
@@ -186,35 +224,53 @@ bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue>& json){
     return false;
 }
 
+bool LevelModel::loadNumDecor(const std::shared_ptr<JsonValue>& json){
+    auto decorValues = json->get("objects");
+    for (int i = 0 ; i< decorValues->size() ;i++){
+        std::shared_ptr<JsonValue> properties = json->get("objects")->get(i)->get("properties");
+        std::string name = json->get("objects")->get(i)->get("name")->asString();
+        if (name == "lower"){
+            _numLowerDecorLayers = properties->get(0)->get("value")->asInt();
+            _lowerDecorLayers.resize(_numLowerDecorLayers);
+        }else if (name == "upper"){
+            _numUpperDecorLayers = properties->get(0)->get("value")->asInt();
+            _upperDecorLayers.resize(_numUpperDecorLayers);
+        }else{
+            CUAssertLog("name not lower or upper %s", name.data());
+        }
+    }
+    return true;
+}
 bool LevelModel::loadSpanwerLocations(const std::shared_ptr<JsonValue>& json){
     auto spawnerValues = json->get("objects");
     for (int i = 0 ; i< spawnerValues->size() ;i++){
         float spawnerX = json->get("objects")->get(i)->get("x")->asFloat();
         float spawnerY = json->get("objects")->get(i)->get("y")->asFloat();
-//        int hp;
-//        int initDelay;
-//        int regularDelay;
-//        std::string primaryEnemy = "NULL";
-//        std::string secondaryEnemy = "NULL";
-//        std::string tertiaryEnemy = "NULL";
-//        std::shared_ptr<JsonValue> properties = json->get("objects")->get("properties");
-//        for (int i = 0; i < properties->size(); i++){
-//            std::string name = properties->get("name")->asString();
-//            if(name == "HP") {
-//                hp = properties->get("value")->asInt();
-//            }else if (name == "InitDelay") {
-//                initDelay = properties->get("value")->asInt();
-//            }else if (name == "PrimaryEnemy"){
-//                primaryEnemy = properties->get("name")->asString();
-//            }else if (name == "RegDelay"){
-//                regularDelay = properties->get("value")->asInt();
-//            }else if (name == "SecondaryEnemy"){
-//                secondaryEnemy = properties->get("name")->asString();
-//            }else if (name == "TertiaryEnemy"){
-//                tertiaryEnemy = properties->get("name")->asString();
-//            }
-//        }
-        _spawnersPos.emplace_back(cugl::Vec2(spawnerX/_tileWidth, (_levelHeight * _tileHeight - spawnerY)/_tileWidth));
+        int hp = 100;
+        float initDelay = 0.0f;
+        float regularDelay = 200.0f;
+        std::string primaryEnemy;
+        std::string secondaryEnemy;
+        std::string tertiaryEnemy;
+        std::shared_ptr<JsonValue> properties = json->get("objects")->get(i)->get("properties");
+        for (int i = 0; i < properties->size(); i++){
+            std::string name = properties->get(i)->get("name")->asString();
+            if(name == "HP") {
+                hp = properties->get(i)->get("value")->asFloat();
+            }else if (name == "InitDelay") {
+                initDelay = properties->get(i)->get("value")->asFloat();
+            }else if (name == "PrimaryEnemy"){
+                primaryEnemy = properties->get(i)->get("value")->asString();
+            }else if (name == "RegDelay"){
+                regularDelay = properties->get(i)->get("value")->asFloat();
+            }else if (name == "SecondaryEnemy"){
+                secondaryEnemy = properties->get(i)->get("value")->asString();
+            }else if (name == "TertiaryEnemy"){
+                tertiaryEnemy = properties->get(i)->get("value")->asString();
+            }
+        }
+        Spawner spawner = { spawnerX / _tileWidth, (_levelHeight * _tileHeight - spawnerY) / _tileWidth, hp, initDelay, regularDelay, primaryEnemy, secondaryEnemy, tertiaryEnemy };
+        _spawnersPos.emplace_back(spawner);
     }
     return true;
 }

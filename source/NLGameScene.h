@@ -64,6 +64,7 @@ protected:
 
     /** Reference to the physics of the scene graph */
     std::shared_ptr<cugl::scene2::SceneNode> _worldnode;
+    std::shared_ptr<cugl::scene2::SceneNode> _monsterSceneNode;
     OverWorld overWorld;
     CollisionController _collisionController;
     SpawnerController _spawnerController;
@@ -290,6 +291,7 @@ public:
      Adds the Scenenode for the background tiles
      */
     void addChildBackground();
+    void addChildForeground();
 };
 
 #endif /* __NL_GAME_SCENE_H__ */

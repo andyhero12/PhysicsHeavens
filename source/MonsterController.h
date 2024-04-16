@@ -49,7 +49,6 @@ private:
     
     std::shared_ptr<NetEventController> _network;
     std::shared_ptr<cugl::scene2::SceneNode> _debugNode;
-    std::shared_ptr<cugl::scene2::SceneNode> _worldnode;
     // Need a Wrapper class that contains each and every Sprite
     // Each one needs its own sprite
     
@@ -69,9 +68,6 @@ public:
     std::shared_ptr<NetEventController> getNetwork(){
         return _network;
     }
-    std::shared_ptr<cugl::scene2::SceneNode> getMonsterSceneNode(){
-        return monsterControllerSceneNode;
-    }
     MonsterController(){
         
     }
@@ -79,7 +75,6 @@ public:
         
     }
     bool init(OverWorld& overWorld,
-              std::shared_ptr<cugl::scene2::SceneNode> worldNode,
               std::shared_ptr<cugl::scene2::SceneNode> _debugNode);
     
     bool isEmpty(){

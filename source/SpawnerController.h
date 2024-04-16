@@ -15,7 +15,7 @@
 #include <vector>
 #include "MonsterController.h"
 #include "AbstractSpawner.h"
-#include "MeleeSpawner.h"
+#include "SimpleSpawner.h"
 #include "OverWorld.h"
 
 
@@ -34,7 +34,7 @@ public:
     void setTexture(const std::shared_ptr<cugl::Texture>& value);
     void update(MonsterController& monsterController, OverWorld& overWorld, float timestep);
     
-    bool init(const std::vector<cugl::Vec2>& startLocs);
+    bool init(const std::vector<LevelModel::Spawner>& startLocs);
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl::Size size);
     void setRootNode(const std::shared_ptr<scene2::SceneNode>& _worldNode, bool isHost);
     bool win(){return _spawners.empty();}

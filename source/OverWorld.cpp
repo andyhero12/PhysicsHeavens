@@ -369,14 +369,22 @@ bool OverWorld::initDecoys(){
     return true;
 }
 
-bool OverWorld::init(const std::shared_ptr<cugl::AssetManager>& assets, const std::shared_ptr<LevelModel>& level, cugl::Size activeSize,std::shared_ptr<cugl::physics2::net::NetEventController> network, bool isHost){
+
+// Placeholder function if we want to move world instantiation into here later, imo moving it here makes more sense - Colin
+bool OverWorld::initWorld(){
+    return true;
+}
+
+bool OverWorld::init(const std::shared_ptr<cugl::AssetManager>& assets, const std::shared_ptr<LevelModel>& level, cugl::Size activeSize,std::shared_ptr<cugl::physics2::net::NetEventController> network, bool isHost, std::shared_ptr<World> world){
     _assets = assets;
     _level = level;
     _network = network;
     _isHost = isHost;
     _activeSize = activeSize;
     _constants = assets->get<cugl::JsonValue>("constants");
+    _world = world;
     
+    initWorld();
     initDogModel();
     initBases();
     initDecoys();
@@ -385,7 +393,7 @@ bool OverWorld::init(const std::shared_ptr<cugl::AssetManager>& assets, const st
     return true;
 }
 
-bool OverWorld::setRootNode(const std::shared_ptr<scene2::SceneNode>& _worldNode, const std::shared_ptr<scene2::SceneNode>& _debugNode, std::shared_ptr<cugl::physics2::net::NetWorld> _world){
+bool OverWorld::setRootNode(const std::shared_ptr<scene2::SceneNode>& _worldNode, const std::shared_ptr<scene2::SceneNode>& _debugNode, std::shared_ptr<cugl::physics2::net::NetWorld> _worldNet){
     // Add Base Decoy node
     _worldNode->addChild(_decoys->getDecoySetNode());
     
@@ -399,18 +407,18 @@ bool OverWorld::setRootNode(const std::shared_ptr<scene2::SceneNode>& _worldNode
     }
     
     // Add Dog to Obstacle World
-    _world->initObstacle(_dog);
+    _worldNet->initObstacle(_dog);
     _dog->setDebugScene(_debugNode);
     if (_isHost){
-        _world->getOwnedObstacles().insert({_dog,0});
+        _worldNet->getOwnedObstacles().insert({_dog,0});
     }
     _worldNode->addChild(_dog->getDogNode());
     
     if (_network->getNumPlayers() == 2){
-        _world->initObstacle(_dogClient);
+        _worldNet->initObstacle(_dogClient);
         _dogClient->setDebugScene(_debugNode);
         if (_isHost){
-            _world->getOwnedObstacles().insert({_dogClient,0});
+            _worldNet->getOwnedObstacles().insert({_dogClient,0});
         }
         _worldNode->addChild(_dogClient->getDogNode());
         if(!_isHost){

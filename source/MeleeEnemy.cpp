@@ -117,9 +117,14 @@ void MeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
     if (_counter < updateRate){
         _counter++;
     }
+    
     cugl::Vec2 target_pos = getTargetPositionFromIndex(overWorld);
     cugl::Vec2 direction = target_pos - getPosition();
     if (overWorld._isHost && _counter >= updateRate){
+        
+//        setGoal(target_pos, overWorld.getWorld());
+//        goToGoal();
+        
         setVX(direction.normalize().x * 0.5);
         setVY(direction.normalize().y * 0.5);
         setX(getX());

@@ -42,15 +42,14 @@ void SpawnerController::update(MonsterController& monsterController, OverWorld& 
     
 }
 
-bool SpawnerController::init(const std::vector<cugl::Vec2>& startLocs) {
+bool SpawnerController::init(const std::vector<LevelModel::Spawner>& startLocs) {
     _spawners.clear();
     baseSpawnerNode = cugl::scene2::SceneNode::alloc();
     for (int i =0; i< startLocs.size(); i++){
-        cugl::Vec2 pos;
-        pos = startLocs.at(i);
-        int spawnRate = 300;
-        int health = 10;
-        std::shared_ptr<MeleeSpawner> curSpawner = std::make_shared<MeleeSpawner>(spawnRate,pos,health,0);
+        LevelModel::Spawner spawner = startLocs.at(i);
+        cugl::Vec2 pos = Vec2(spawner.spawnerX, spawner.spawnerY);
+        int health = spawner.hp;
+        std::shared_ptr<SimpleSpawner> curSpawner = std::make_shared<SimpleSpawner>(spawner.regularDelay,pos,health,spawner.initDelay,spawner.primaryEnemy, spawner.secondaryEnemy, spawner.tertiaryEnemy);
         curSpawner->setSceneNode(_texture);
         baseSpawnerNode->addChild(curSpawner->getSpawnerNode());
         curSpawner->getSpawnerNode()->setPosition(pos);

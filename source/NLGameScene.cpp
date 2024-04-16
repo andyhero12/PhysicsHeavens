@@ -122,7 +122,6 @@ float CAN2_POS[] = {30, 9};
 #define FIXED_TIMESTEP_S 0.02f
 #define ROOT_NODE_SCALE 1
 
-
 #pragma mark -
 #pragma mark Constructors
 /**
@@ -237,6 +236,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _worldnode->setScale(zoom);
     _worldnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
 
+    _monsterSceneNode = scene2::SceneNode::alloc();
+    
     _debugnode = scene2::SceneNode::alloc();
     _debugnode->setScale(zoom);
     _debugnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
@@ -266,7 +267,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _spawnerController.init(_level->getSpawnersPos());
     _spawnerController.setRootNode(_worldnode, _isHost);
 
-    overWorld.init(assets, _level, computeActiveSize(), _network, isHost);
+    overWorld.init(assets, _level, computeActiveSize(),_network, isHost, _backgroundWrapper);
     overWorld.setRootNode(_worldnode, _debugnode, _world);
     if (isHost){
         _uinode->addChild(overWorld.getDog()->getUINode());
@@ -279,8 +280,10 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _monsterController.setSpawnerAnimationData(_constants->get("spawnerEnemy"), assets);
     _monsterController.setBombAnimationData(_constants->get("bomb"), assets);
     _monsterController.setAbsorbAnimationData(_constants->get("absorbEnemy"), assets);
-    _monsterController.init(overWorld, _worldnode, _debugnode);
-    _worldnode->addChild(_monsterController.getMonsterSceneNode());
+    _monsterController.init(overWorld, _debugnode);
+//    _worldnode->addChild(_monsterController.getMonsterSceneNode());
+    _monsterController.init(overWorld, _debugnode);
+    _worldnode->addChild(_monsterSceneNode);
     _collisionController.init();
 
     _active = true;
@@ -323,6 +326,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
         _rootnode->setScale(_zoom);
     }
 
+    addChildForeground();
     return true;
 }
 
@@ -378,7 +382,7 @@ void GameScene::linkSceneToObs(const std::shared_ptr<physics2::Obstacle> &obj,
 {
 
     node->setPosition(obj->getPosition());
-    _worldnode->addChild(node);
+    _monsterSceneNode->addChild(node);
     // Dynamic objects need constant updating
     if (obj->getBodyType() == b2_dynamicBody)
     {
@@ -446,10 +450,6 @@ void GameScene::preUpdate(float dt)
     {
         Application::get()->quit();
     }
-    if (_input.didPressRecall())
-    {
-        overWorld.getBaseSet()->recallBase(overWorld.getDog());
-    }
     _input.update();
 
     // Process the toggled key commands
@@ -459,10 +459,9 @@ void GameScene::preUpdate(float dt)
     }
     overWorld.update(_input, computeActiveSize(), dt);
     _spawnerController.update(_monsterController, overWorld, dt);
-    _monsterController.update(dt, overWorld);
+    _monsterController.update( dt, overWorld);
 
-    if (_isHost)
-    {
+    if (_isHost){
         _collisionController.intraOverWorldCollisions(overWorld);
         _collisionController.overWorldMonsterControllerCollisions(overWorld, _monsterController);
         _collisionController.attackCollisions(overWorld, _monsterController, _spawnerController);
@@ -520,7 +519,7 @@ void GameScene::fixedUpdate()
         if (auto dashEvent = std::dynamic_pointer_cast<DashEvent>(e))
         {
             //            CULog("Explode Event Got");
-            overWorld.processDashEvent(dashEvent); 
+            overWorld.processDashEvent(dashEvent);
         }
         if (auto sizeEvent = std::dynamic_pointer_cast<SizeEvent>(e))
         {
@@ -619,7 +618,6 @@ void GameScene::addChildBackground()
             std::shared_ptr<TileInfo> t = currentBoundaries.at(i).at(j);
             if (t->texture != nullptr)
             {
-                //                auto image  = t->texture;
                 auto sprite = scene2::PolygonNode::allocWithTexture(nullptr);
                 sprite->setContentSize(Vec2(1, 1));
                 sprite->setPosition(t->getPosition());
@@ -628,20 +626,50 @@ void GameScene::addChildBackground()
             }
         }
     }
-    const std::vector<std::vector<std::shared_ptr<TileInfo>>> &decorWorld = _backgroundWrapper->getDecorWorld();
-    for (int i = 0; i < originalRows; i++)
-    {
-        for (int j = 0; j < originalCols; j++)
+    const std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>> &lowerDecorWorld = _backgroundWrapper->getLowerDecorWorld();
+    for (int n = 0 ;n < lowerDecorWorld.size(); n++){
+        for (int i = 0; i < originalRows; i++)
         {
-            std::shared_ptr<TileInfo> t = decorWorld.at(i).at(j);
-            if (t->texture != nullptr)
+            for (int j = 0; j < originalCols; j++)
             {
-                auto image = t->texture;
-                auto sprite = scene2::PolygonNode::allocWithTexture(image);
-                sprite->setContentSize(Vec2(1, 1));
-                sprite->setPosition(t->getPosition());
-                _worldnode->addChild(sprite);
+                std::shared_ptr<TileInfo> t = lowerDecorWorld.at(n).at(i).at(j);
+                if (t->texture != nullptr)
+                {
+                    auto image = t->texture;
+                    auto sprite = scene2::PolygonNode::allocWithTexture(image);
+                    sprite->setContentSize(Vec2(1, 1));
+                    sprite->setPosition(t->getPosition());
+                    _worldnode->addChild(sprite);
+                }
             }
         }
     }
 }
+void GameScene::addChildForeground()
+{
+
+    const std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>> &upperDecorWorld = _backgroundWrapper->getUpperDecorWorld();
+    if (upperDecorWorld.size() == 0){
+        return;
+    }
+    int originalRows = (int)upperDecorWorld.at(0).size();
+    int originalCols = (int)upperDecorWorld.at(0).at(0).size();
+    for (int n = 0 ;n < upperDecorWorld.size(); n++){
+        for (int i = 0; i < originalRows; i++)
+        {
+            for (int j = 0; j < originalCols; j++)
+            {
+                std::shared_ptr<TileInfo> t = upperDecorWorld.at(n).at(i).at(j);
+                if (t->texture != nullptr)
+                {
+                    auto image = t->texture;
+                    auto sprite = scene2::PolygonNode::allocWithTexture(image);
+                    sprite->setContentSize(Vec2(1, 1));
+                    sprite->setPosition(t->getPosition());
+                    _worldnode->addChild(sprite);
+                }
+            }
+        }
+    }
+}
+

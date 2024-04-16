@@ -10,6 +10,7 @@
 #include <cugl/cugl.h>
 #include <unordered_set>
 #include <vector>
+#include <map>
 #include "Base.h"
 #include "NLDog.h"
 
@@ -22,6 +23,9 @@ public:
     std::shared_ptr<cugl::Texture> _texture;
 //    /* Set of bases */
     std::vector<std::shared_ptr<Base>> _bases;
+    
+    std::map<std::shared_ptr<Base>, int> baseMaxHPs;
+    
     BaseSet();
     
     ~BaseSet();
@@ -38,8 +42,6 @@ public:
     int getFirstHealth();
     
     const std::shared_ptr<cugl::Texture> getTexture() const { return _texture; }
-    
-    void recallBase(std::shared_ptr<Dog> dog);
     
 private:
     

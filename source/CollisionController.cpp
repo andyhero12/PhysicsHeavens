@@ -47,9 +47,6 @@ void CollisionController::overWorldMonsterControllerCollisions(OverWorld& overWo
     if (monsterBaseCollsion(overWorld, overWorld.getBaseSet(), monsterController)){
 //        CULog("Monster Base COLLISION DETECTED\n");
     }
-    if (absorbEnemDogCollision(overWorld.getDog(), absorbEnemies)){
-//        CULog("Absorb Enemy vs. Dog COLLISION DETECTED\n");
-    }
     if (absorbEnemMonsterCollision(monsterController, absorbEnemies)){
         CULog("Absorb Enemy vs. Other enemies COLLISION DETECTED\n");
     }
@@ -153,60 +150,45 @@ bool CollisionController::monsterDogCollision(std::shared_ptr<Dog> curDog, std::
     
     return false;
 }
-
-// IS THIS NECESSARY ???
-bool CollisionController::absorbEnemDogCollision(std::shared_ptr<Dog> curDog, std::unordered_set<std::shared_ptr<AbsorbEnemy>>& absorbCurEnemies){
-    bool collision = false;
-    auto it = absorbCurEnemies.begin();
-    while (it != absorbCurEnemies.end()){
-        std::shared_ptr<AbsorbEnemy> enemy = *it;
-        Vec2 norm = curDog->getPosition() - enemy->getPosition();
-        float distance = norm.length();
-        float impactDistance = 1.2;
-        it++;
-        if (distance < impactDistance) {
-            if (enemy->canAttack()){
-                collision = true;
-                enemy->resetAttack();
-                curDog->setHealth(curDog->getHealth()-enemy->getDamage());
-            }
-        }
-    }
-    return collision;
-}
 bool CollisionController::absorbEnemMonsterCollision(MonsterController& monsterController, std::unordered_set<std::shared_ptr<AbsorbEnemy>>& absorbCurEnemies){
     bool collision = false;
     std::unordered_set<std::shared_ptr<AbstractEnemy>>& monsterEnemies = monsterController.getEnemies();
-    for (std::shared_ptr<AbsorbEnemy> curAbsorbEnemy: absorbCurEnemies){
-        for (std::shared_ptr<AbstractEnemy> enemy: monsterEnemies){
-            Vec2 norm = curAbsorbEnemy->getPosition() - enemy->getPosition();
-            int curDamage = curAbsorbEnemy->getDamage();
+    
+    auto itAbs = absorbCurEnemies.begin();
+    auto itMon = monsterEnemies.begin();
+    while (itAbs != absorbCurEnemies.end()){
+        const std::shared_ptr<AbsorbEnemy>& absEnemy = *itAbs;
+        auto curAbs = itAbs;
+        itAbs++;
+        int curDamage = (*curAbs)->getDamage();
+        while(itMon != monsterEnemies.end()){
+            const std::shared_ptr<AbstractEnemy>& curEnemy = *itMon;
+            auto curMon = itMon;
+            itMon++;
+            Vec2 norm = (absEnemy)->getPosition() - (curEnemy)->getPosition();
             float distance = norm.length();
             float impactDistance = 1.2;
-            if (distance < impactDistance){ // need noise
-                if (curAbsorbEnemy->canAttack() && curAbsorbEnemy != enemy){
-                    CULog("ABSORPTION IN PROGRESS");
+            if (distance < impactDistance){
+                if ((*curAbs)->canAttack() && (*curAbs) != (*curMon)){ //NEED TO HANDLE BOTH ABSORB TYPES
+                    CULog("HAIIIIII");
                     collision = true;
-                    curAbsorbEnemy->resetAttack();
-                    // INCREASE ABSORB ENEMY STRENGTH
-                    CULog("Prev damage: %d", curDamage);
-                    curAbsorbEnemy->setDamage(curDamage + 1/64);
-                    CULog("New damage: %d", curAbsorbEnemy->getDamage());
+                    (*curAbs)->resetAttack();
+                    CULog("Old damage: %d", curDamage);
+                    (*curAbs)->setDamage(curDamage + 1/64); //NEED TO TUNE + LIMIT? THIS VALUE
+                    CULog("New damage: %d", (*curAbs)->getDamage());
                     // SCALE ABSORB ENEMY
-//                    float newWidth = curAbsorbEnemy->getDimension().width + 0.02;
-//                    float newHeight = curAbsorbEnemy->getDimension().height + 0.02;
+//                    float newWidth = (*curAbs)->getDimension().width + 0.02;
+//                    float newHeight = (*curAbs)->getDimension().height + 0.02;
 //                    cugl::Size newSize(newWidth,newHeight);
-//                    curAbsorbEnemy->setDimension(newSize);
-                    // ERASE CURRENT ENEMY
-                    monsterController.removeEnemy(enemy);
-//                    monsterEnemies.erase(enemy);
+//                    (*curAbs)->setDimension(newSize);
+                    monsterController.removeEnemy(curEnemy);
+                    monsterEnemies.erase(curMon);
                 }
             }
         }
     }
     return collision;
 }
-
 void CollisionController::resolveBiteAttack(const cugl::Poly2& bitePolygon, MonsterController& monsterController, OverWorld& overWorld){
     std::unordered_set<std::shared_ptr<AbstractEnemy>>& monsterEnemies = monsterController.getEnemies();
     auto itA = monsterEnemies.begin();

@@ -51,6 +51,7 @@ bool BaseSet::init(std::shared_ptr<cugl::JsonValue> data)
                 pos.y = entry->get(0)->get(1)->asFloat(0);
                 int health = entry->get(1)->asInt(0);
                 _bases.emplace_back(std::make_shared<Base>(health, pos));
+                baseMaxHPs[std::make_shared<Base>(health, pos)] = health;
             }
         }
         return true;
@@ -81,18 +82,4 @@ bool BaseSet::baseLost()
     return false;
 }
 
-void BaseSet::recallBase(std::shared_ptr<Dog> dog){
-    float shortestDist = std::numeric_limits<float>::max();
-    std::shared_ptr<Base> nearest;
-    for (auto& base : _bases){
-        Vec2 norm = base->getPos() - dog->getPosition();
-        float dist = norm.length();
-        if (dist < shortestDist){
-            shortestDist = dist;
-            nearest = base;
-        }
-    }
-//    CULog("Nearest base x: %fu", nearest->getPos().x);
-//    CULog("Nearest base y: %fu", nearest->getPos().y);
-    dog->setPosition(nearest->getPos());
-}
+
