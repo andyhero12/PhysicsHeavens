@@ -15,7 +15,7 @@
 #include <vector>
 #include "MonsterController.h"
 #include "AbstractSpawner.h"
-#include "MeleeSpawner.h"
+#include "SimpleSpawner.h"
 #include "OverWorld.h"
 
 
