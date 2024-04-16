@@ -64,6 +64,7 @@ protected:
 
     /** Reference to the physics of the scene graph */
     std::shared_ptr<cugl::scene2::SceneNode> _worldnode;
+    std::shared_ptr<cugl::scene2::SceneNode> _monsterSceneNode;
     OverWorld overWorld;
     CollisionController _collisionController;
     SpawnerController _spawnerController;

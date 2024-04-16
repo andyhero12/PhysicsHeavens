@@ -236,6 +236,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _worldnode->setScale(zoom);
     _worldnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
 
+    _monsterSceneNode = scene2::SceneNode::alloc();
+    
     _debugnode = scene2::SceneNode::alloc();
     _debugnode->setScale(zoom);
     _debugnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
@@ -277,8 +279,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _monsterController.setMeleeAnimationData(_constants->get("basicEnemy"), assets);
     _monsterController.setSpawnerAnimationData(_constants->get("spawnerEnemy"), assets);
     _monsterController.setBombAnimationData(_constants->get("bomb"), assets);
-    _monsterController.init(overWorld, _worldnode, _debugnode);
-    _worldnode->addChild(_monsterController.getMonsterSceneNode());
+    _monsterController.init(overWorld, _debugnode);
+    _worldnode->addChild(_monsterSceneNode);
     _collisionController.init();
 
     _active = true;
@@ -377,7 +379,7 @@ void GameScene::linkSceneToObs(const std::shared_ptr<physics2::Obstacle> &obj,
 {
 
     node->setPosition(obj->getPosition());
-    _worldnode->addChild(node);
+    _monsterSceneNode->addChild(node);
     // Dynamic objects need constant updating
     if (obj->getBodyType() == b2_dynamicBody)
     {

@@ -17,13 +17,10 @@ int generateRandomInclusiveHighLow(int low, int high)
 }
 
 bool MonsterController::init(OverWorld& overWorld,
-                             std::shared_ptr<cugl::scene2::SceneNode> worldNode,
      std::shared_ptr<cugl::scene2::SceneNode> debugNode){
     _current.clear();
     _pending.clear();
-    monsterControllerSceneNode = cugl::scene2::SceneNode::alloc();
     _debugNode = debugNode;
-    _worldnode = worldNode;
 
     for (const cugl::Vec3& cluster : overWorld.getLevelModel()->preSpawnLocs()){
         float cx = cluster.x;
