@@ -66,6 +66,17 @@ public:
 * during scene graph initialization.
 */
 class LevelModel : public Asset {
+public:
+    struct Spawner{
+        float spawnerX;
+        float spawnerY;
+        int hp;
+        float initDelay;
+        float regularDelay;
+        std::string primaryEnemy;
+        std::string secondaryEnemy;
+        std::string tertiaryEnemy;
+    };
     
 private:
     std::shared_ptr<cugl::AssetManager> _assets;
@@ -86,7 +97,7 @@ private:
     
     std::vector<cugl::Vec3> _basesPos;
     std::vector<cugl::Vec3> _preSpawnLocs;
-    std::vector<cugl::Vec2> _spawnersPos;
+    std::vector<Spawner> _spawnersPos;
     
     std::vector<std::vector<int>> _tiles;
     
@@ -126,7 +137,7 @@ public:
     
     cugl::Vec2 getPlayerPos(){return _playerPos;};
     
-    const std::vector<cugl::Vec2>& getSpawnersPos(){
+    const std::vector<Spawner>& getSpawnersPos(){
         return _spawnersPos;
     };
     const std::vector<cugl::Vec3>& getBasesPos(){
