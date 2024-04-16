@@ -273,8 +273,10 @@ protected:
         }
         
         //Move towards the next tile
-        setVX(direction.normalize().x);
-        setVY(direction.normalize().y);
+        setVX(direction.normalize().x * 0.5);
+        setVY(direction.normalize().y * 0.5);
+        setX(getX());
+        setY(getY());
         _prevDirection =_curDirection;
         _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
         

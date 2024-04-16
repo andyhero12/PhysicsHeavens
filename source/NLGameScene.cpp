@@ -615,11 +615,13 @@ void GameScene::addChildBackground()
             std::shared_ptr<TileInfo> t = currentBoundaries.at(i).at(j);
             if (t->texture != nullptr)
             {
-                auto sprite = scene2::PolygonNode::allocWithTexture(nullptr);
-                sprite->setContentSize(Vec2(1, 1));
-                sprite->setPosition(t->getPosition());
                 t->setDebugColor(DYNAMIC_COLOR);
-                addInitObstacle(t, sprite);
+                _world->initObstacle(t);
+                t->setDebugScene(_debugnode);
+                if (_isHost)
+                {
+                    _world->getOwnedObstacles().insert({t, 0});
+                }
             }
         }
     }
