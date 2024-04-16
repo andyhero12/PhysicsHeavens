@@ -42,7 +42,7 @@ void SpawnerController::update(MonsterController& monsterController, OverWorld& 
     
 }
 
-bool SpawnerController::init(const std::vector<LevelModel::Spawner>& startLocs) {
+bool SpawnerController::init(const std::vector<cugl::Vec2>& startLocs) {
     _spawners.clear();
     baseSpawnerNode = cugl::scene2::SceneNode::alloc();
     for (int i =0; i< startLocs.size(); i++){
