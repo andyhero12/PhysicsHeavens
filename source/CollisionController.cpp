@@ -25,7 +25,7 @@
 
 /** Impulse for giving collisions a slight bounce. */
 #define COLLISION_COEFF     0.1f
-#define DEFAULT_RADIUS  0.13f
+#define DEFAULT_RADIUS_COLLIDE  0.13f
 #define BUFFER  0.05f
 
 using namespace cugl;
@@ -46,7 +46,9 @@ void CollisionController::overWorldMonsterControllerCollisions(OverWorld& overWo
     if (monsterBaseCollsion(overWorld, overWorld.getBaseSet(), monsterController)){
 //        CULog("Monster Base COLLISION DETECTED\n");
     }
-
+    if (absorbEnemMonsterCollision(monsterController, monsterController.getAbsorbEnemies())){
+        CULog("Absorbed");
+    }
 }
 void CollisionController::attackCollisions(OverWorld& overWorld, MonsterController& monsterController, SpawnerController& spawnerController){
     AttackPolygons& attacks = overWorld.getAttackPolygons();
@@ -71,7 +73,7 @@ void CollisionController::attackCollisions(OverWorld& overWorld, MonsterControll
 bool CollisionController::monsterBaseCollsion(OverWorld& overWorld, std::shared_ptr<BaseSet> curBases, MonsterController& monsterController){
     std::unordered_set<std::shared_ptr<AbstractEnemy>>& curEnemies = monsterController.getEnemies();
     bool collision = false;
-    float baseRadius = DEFAULT_RADIUS;
+    float baseRadius = DEFAULT_RADIUS_COLLIDE;
     auto itP = curBases->_bases.begin();
     while (itP != curBases->_bases.end()){
         std::shared_ptr<Base> base = *itP;
@@ -105,7 +107,7 @@ bool CollisionController::monsterDecoyCollision(std::shared_ptr<DecoySet> decoyS
     bool collide = false;
     std::vector<std::shared_ptr<Decoy>> decoys = decoySet->getCurrentDecoys();
     for (std::shared_ptr<Decoy> curDecoy: decoys){
-        float decoyRadius = DEFAULT_RADIUS;
+        float decoyRadius = DEFAULT_RADIUS_COLLIDE;
         for (std::shared_ptr<AbstractEnemy> enemy: curEnemies){
             Vec2 norm = curDecoy->getPos() - enemy->getPosition();
             float enemyRadius = fmin(enemy->getWidth(), enemy->getHeight())/2;
@@ -222,4 +224,42 @@ void CollisionController::resolveBlowup(const cugl::Poly2& blastCircle, MonsterC
             spawners.erase(curS);
         }
     }
+}
+
+bool CollisionController::absorbEnemMonsterCollision(MonsterController& monsterController, std::unordered_set<std::shared_ptr<AbsorbEnemy>>& absorbCurEnemies){
+    bool collision = false;
+    std::unordered_set<std::shared_ptr<AbstractEnemy>>& monsterEnemies = monsterController.getEnemies();
+    
+    auto itAbs = absorbCurEnemies.begin();
+    auto itMon = monsterEnemies.begin();
+    while (itAbs != absorbCurEnemies.end()){
+        const std::shared_ptr<AbsorbEnemy>& absEnemy = *itAbs;
+        auto curAbs = itAbs;
+        itAbs++;
+        int curDamage = (*curAbs)->getDamage();
+        while(itMon != monsterEnemies.end()){
+            const std::shared_ptr<AbstractEnemy>& curEnemy = *itMon;
+            auto curMon = itMon;
+            itMon++;
+            Vec2 norm = (absEnemy)->getPosition() - (curEnemy)->getPosition();
+            float distance = norm.length();
+            float impactDistance = 1.5;
+            if (distance < impactDistance){
+                std::shared_ptr<AbsorbEnemy> isAbsorb = std::dynamic_pointer_cast<AbsorbEnemy>(curEnemy);
+                if (isAbsorb == nullptr && absEnemy->canAttack()){
+                    collision = true;
+                    absEnemy->resetAttack();
+                    absEnemy->increaseHealth(curEnemy->getHealth());
+                    // SCALE ABSORB ENEMY
+//                    float newWidth = (*curAbs)->getDimension().width + 0.02;
+//                    float newHeight = (*curAbs)->getDimension().height + 0.02;
+//                    cugl::Size newSize(newWidth,newHeight);
+//                    (*curAbs)->setDimension(newSize);
+                    monsterController.removeEnemy(curEnemy);
+                    monsterEnemies.erase(curMon);
+                }
+            }
+        }
+    }
+    return collision;
 }

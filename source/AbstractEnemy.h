@@ -68,9 +68,6 @@ public:
     
     void update(float delta) override{
         Obstacle::update(delta);
-
-        // Decoupled so useless for now
-        //CULog("Enemy Position: (%d, %d)", static_cast<int>(getPosition().x), static_cast<int>(getPosition().y));
         _prevDirection =_curDirection;
         Vec2 direction = getLinearVelocity();
         _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());

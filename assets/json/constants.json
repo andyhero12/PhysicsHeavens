@@ -49,6 +49,10 @@
         "sprite cols": 9,
         "sprite size": 9
     },
+    "absorbEnemy": {
+        "sprite cols": 8,
+        "sprite size": 8
+    },
     "spawnerEnemy": {
         "sprite cols": 4,
         "sprite size": 4

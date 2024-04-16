@@ -1,13 +1,14 @@
 //
-//  BombEnemy.hpp
-//  Ship
+//  AbsorbEnemy.hpp
+//  Heaven
 //
-//  Created by Andrew Cheng on 3/14/24.
+//  Created by Lisa Asriev on 4/11/24.
 //
 
-#ifndef BombEnemy_hpp
-#define BombEnemy_hpp
+#ifndef AbsorbEnemy_h
+#define AbsorbEnemy_h
 
+#include <stdio.h>
 #include "AbstractEnemy.h"
 
 /**
@@ -17,7 +18,7 @@
  * Obstacles added throught the ObstacleFactory class from one client will be added to all
  * clients in the simulations.
  */
-class BombFactory : public ObstacleFactory
+class AbsorbFactory : public ObstacleFactory
 {
 public:
     struct AnimationStruct{
@@ -39,9 +40,9 @@ public:
     /**
      * Allocates a new instance of the factory using the given AssetManager.
      */
-    static std::shared_ptr<BombFactory> alloc(std::shared_ptr<cugl::JsonValue> data, std::shared_ptr<AssetManager> &assets)
+    static std::shared_ptr<AbsorbFactory> alloc(std::shared_ptr<cugl::JsonValue> data, std::shared_ptr<AssetManager> &assets)
     {
-        auto f = std::make_shared<BombFactory>();
+        auto f = std::make_shared<AbsorbFactory>();
         f->init(data, assets);
         return f;
     };
@@ -56,14 +57,14 @@ public:
         int _framecols = data->getFloat("sprite cols", 0);
         int _framesize = data->getFloat("sprite size", 0);
         std::vector<std::shared_ptr<cugl::Texture>> textures;
-        textures.push_back(_assets->get<Texture>("bombFrontRightWalk"));
-        textures.push_back(_assets->get<Texture>("bombFrontRightWalk"));
-        textures.push_back(_assets->get<Texture>("bombFrontRightWalk"));
-        textures.push_back(_assets->get<Texture>("bombFrontRightWalk"));
-        textures.push_back(_assets->get<Texture>("bombFrontLeftWalk"));
-        textures.push_back(_assets->get<Texture>("bombFrontLeftWalk"));
-        textures.push_back(_assets->get<Texture>("bombFrontLeftWalk"));
-        textures.push_back(_assets->get<Texture>("bombFrontLeftWalk"));
+        textures.push_back(_assets->get<Texture>("absorbEnemyRightWalk"));
+        textures.push_back(_assets->get<Texture>("absorbEnemyRightWalk"));
+        textures.push_back(_assets->get<Texture>("absorbEnemyRightWalk"));
+        textures.push_back(_assets->get<Texture>("absorbEnemyRightWalk"));
+        textures.push_back(_assets->get<Texture>("absorbEnemyLeftWalk"));
+        textures.push_back(_assets->get<Texture>("absorbEnemyLeftWalk"));
+        textures.push_back(_assets->get<Texture>("absorbEnemyLeftWalk"));
+        textures.push_back(_assets->get<Texture>("absorbEnemyLeftWalk"));
         staticEnemyStruct._walkTextures  = textures;
         staticEnemyStruct._attackTextures  = textures;
         staticEnemyStruct._framesize = _framesize;
@@ -88,17 +89,17 @@ public:
 };
 
 
-class BombEnemy : public AbstractEnemy {
+class AbsorbEnemy : public AbstractEnemy {
 public:
     
-    static std::shared_ptr<BombEnemy> alloc(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex) {
-        std::shared_ptr<BombEnemy> result = std::make_shared<BombEnemy>();
+    static std::shared_ptr<AbsorbEnemy> alloc(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex) {
+        std::shared_ptr<AbsorbEnemy> result = std::make_shared<AbsorbEnemy>();
         return (result->init(m_pos, m_size, m_health, m_targetIndex) ? result : nullptr);
     }
-    BombEnemy();
+    AbsorbEnemy();
     
     bool init(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex);
-    virtual ~BombEnemy() {
+    virtual ~AbsorbEnemy() {
         
     }
     
@@ -107,23 +108,30 @@ public:
     virtual int getDamage() override{
         return _contactDamage;
     }
-    int getExplosionDamage(){
-        return _baseExplosionDamage;
+    
+    void setDamage(int damage){
+        _contactDamage += damage;
     }
+    
+    void increaseHealth(int inc_health){
+        _health += inc_health;
+        _maxHealth = max(_maxHealth,_health);
+//        float dim = (float) _health/6.0 + 1.0;
+//        cugl::Size nxtSize(dim,dim);
+//        setDimension(nxtSize);
+//        baseBlankNode->setScale(dim/64);
+    }
+    
     bool canAttack() const override{
-        if (_attackCooldown > 60){
-            std::cout <<"WTF\n";
-        }
         return _attackCooldown >= 60;
     }
     
     virtual void resetAttack() override{
         _attackCooldown = 0;
     }
-    virtual void executeDeath(OverWorld& overWorld) override;
     
     virtual int getAbsorbValue() const override{
-        CULog("TODO ABSORB BOMB\n");
+        CULog("TODO ABSORB VALUE OF ABSORB ENEMY \n");
         return 1;
     }
     
@@ -131,6 +139,6 @@ public:
 protected:
     int _contactDamage;
     int _attackCooldown;
-    int _baseExplosionDamage;
 };
-#endif /* BombEnemy_hpp */
+
+#endif /* AbsorbEnemy_h */
