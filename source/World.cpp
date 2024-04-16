@@ -16,7 +16,8 @@ World::World(std::shared_ptr<LevelModel> _level, std::shared_ptr<cugl::AssetMana
     _assets = assets;
     const std::vector<std::vector<int>>& map = _level->getTiles();
     const std::vector<std::vector<int>>& passable = _level->getBoundaries();
-    const std::vector<std::vector<int>>& decorations = _level->getDecorations();
+    const std::vector<std::vector<std::vector<int>>>& lowerDecorations = _level->getLowerDecorations();
+    const std::vector<std::vector<std::vector<int>>>& upperDecorations = _level->getUpperDecorations();
     const std::map<int,TileSet>& tileSetTextures = _level->getTileSetWithTextures();
     tileWorld.resize(map.size());
     for(int i = 0; i < map.size(); i++){
@@ -46,16 +47,29 @@ World::World(std::shared_ptr<LevelModel> _level, std::shared_ptr<cugl::AssetMana
             }
         }
     }
-    
-    decorWorld.resize(map.size());
-    for(int i = 0; i < map.size(); i++){
-        decorWorld.at(i).resize(decorations.at(0).size());
+    lowerDecorWorld.resize(_level->getLowerDecorLayers());
+    for(int n = 0; n < _level->getLowerDecorLayers(); n++){
+        lowerDecorWorld.at(n).resize(originalRows);
+        for (int i =0 ;i < originalRows; i++){
+            lowerDecorWorld.at(n).at(i).resize(originalCols);
+            for (int j =0 ;j < originalCols; j++){
+                std::shared_ptr<Texture> subTexture = getBoxFromTileSet((lowerDecorations.at(n).at(i).at(j)),tileSetTextures);
+                Rect temp = Rect(Vec2(j,i), size);
+                lowerDecorWorld.at(n).at(i).at(j) = TileInfo::alloc(temp.origin, size, Terrain::IMPASSIBLE, getBoxFromTileSet((lowerDecorations.at(n).at(i).at(j)),tileSetTextures));
+            }
+        }
     }
-    for (int i =0 ; i< originalRows; i++){
-        for (int j =0 ;j < originalCols; j++){
-            std::shared_ptr<Texture> subTexture = getBoxFromTileSet((decorations.at(i).at(j)),tileSetTextures);
-            Rect temp = Rect(Vec2(j,i), size); // VERY IMPORTANT DO NOT CHANGE Rotation Occurs Here
-            decorWorld.at(i).at(j) = TileInfo::alloc(temp.origin, size, Terrain::IMPASSIBLE, getBoxFromTileSet((decorations.at(i).at(j)),tileSetTextures));
+    
+    upperDecorWorld.resize(_level->getUpperDecorLayers()); 
+    for(int n = 0; n < _level->getUpperDecorLayers(); n++){
+        upperDecorWorld.at(n).resize(originalRows);
+        for (int i =0 ;i < originalRows; i++){
+            upperDecorWorld.at(n).at(i).resize(originalCols);
+            for (int j =0 ;j < originalCols; j++){
+                std::shared_ptr<Texture> subTexture = getBoxFromTileSet((upperDecorations.at(n).at(i).at(j)),tileSetTextures);
+                Rect temp = Rect(Vec2(j,i), size);
+                upperDecorWorld.at(n).at(i).at(j) = TileInfo::alloc(temp.origin, size, Terrain::IMPASSIBLE, getBoxFromTileSet((upperDecorations.at(n).at(i).at(j)),tileSetTextures));
+            }
         }
     }
 }

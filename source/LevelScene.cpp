@@ -107,7 +107,7 @@ void LevelScene::update(float progress) {
         frame = 0;
     }
     else{
-        std::cout<<"frame"<<std::endl;
+//        std::cout<<"frame"<<std::endl;
         frame += 1;
     }
     

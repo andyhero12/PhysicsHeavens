@@ -103,7 +103,7 @@ void LoadingScene::update(float progress) {
     if (frame >= 10){
         background->setFrame((background->getFrame()+ 1) % 18);
         frame = 0;
-        std::cout<<"frame"<<std::endl;
+//        std::cout<<"frame"<<std::endl;
     }
     else{
         frame += 1;

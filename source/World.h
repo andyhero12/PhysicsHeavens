@@ -72,8 +72,8 @@ public:
     
     std::vector<std::vector<std::shared_ptr<TileInfo>>> tileWorld;
     std::vector<std::vector<std::shared_ptr<TileInfo>>> boundaryWorld;
-    std::vector<std::vector<std::shared_ptr<TileInfo>>> decorWorld;
-    
+    std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>> lowerDecorWorld;
+    std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>> upperDecorWorld;
     World () {};
     ~World(){
         CULog("Destructing World");
@@ -90,8 +90,11 @@ public:
         return boundaryWorld;
     }
     
-    const std::vector<std::vector<std::shared_ptr<TileInfo>>>& getDecorWorld(){
-        return decorWorld;
+    const std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>>& getLowerDecorWorld(){
+        return lowerDecorWorld;
+    }
+    const std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>>& getUpperDecorWorld(){
+        return upperDecorWorld;
     }
     
     // Get whether a tile is passible or not

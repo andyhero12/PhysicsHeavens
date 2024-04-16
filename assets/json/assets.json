@@ -289,9 +289,24 @@
             "magfilter": "nearest"
         },
         
-        
+        "buildings": {
+            "file": "textures/tile/buildings.png",
+            "magfilter": "nearest"
+        },
         "streets": {
             "file": "textures/tile/streets.png",
+            "magfilter": "nearest"
+        },
+        "stiles": {
+            "file": "textures/tile/stiles.png",
+            "magfilter": "nearest"
+        },
+        "angelMotel": {
+            "file": "textures/tile/angelMotel.png",
+            "magfilter": "nearest"
+        },
+        "angelSkyscraper": {
+            "file": "textures/tile/angelSkyscraper.png",
             "magfilter": "nearest"
         },
         "angelCafe": {
@@ -300,6 +315,14 @@
         },
         "devilCafe": {
             "file": "textures/tile/devilCafe.png",
+            "magfilter": "nearest"
+        },
+        "devilMotel": {
+            "file": "textures/tile/devilMotel.png",
+            "magfilter": "nearest"
+        },
+        "devilSkyscraper": {
+            "file": "textures/tile/devilSkyscraper.png",
             "magfilter": "nearest"
         },
         
@@ -322,10 +345,16 @@
         
 	},
     "jsons": {
+        "angelMotel": "json/assetsJson/angelMotel.json",
+        "angelSkyscraper": "json/assetsJson/angelSkyscraper.json",
+        "devilMotel": "json/assetsJson/devilMotel.json",
+        "devilSkyscraper": "json/assetsJson/devilSkyscraper.json",
         "angelCafe": "json/assetsJson/angelCafe.json",
         "devilCafe": "json/assetsJson/devilCafe.json",
         "streets": "json/assetsJson/streets.json",
         "street_tiles": "json/assetsJson/street_tiles.json",
+        "stiles": "json/assetsJson/stiles.json",
+        "buildings": "json/assetsJson/buildings.json",
         "server": "json/server.json",
         "constants": "json/constants.json",
         "mainmenu": "json/mainmenuassets.json"

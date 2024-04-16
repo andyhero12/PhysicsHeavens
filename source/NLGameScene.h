@@ -290,6 +290,7 @@ public:
      Adds the Scenenode for the background tiles
      */
     void addChildBackground();
+    void addChildForeground();
 };
 
 #endif /* __NL_GAME_SCENE_H__ */
