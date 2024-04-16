@@ -246,12 +246,12 @@
        },
        
        "absorbEnemyLeftWalk": {
-           "file": "textures/absorbEnemy/absorbLeftWalk.PNG",
+           "file": "textures/absorbEnemy/absorbLeftWalk.png",
                  "minfilter": "linear",
                  "magfilter": "nearest"
        },
        "absorbEnemyRightWalk": {
-           "file": "textures/absorbEnemy/absorbRightWalk.PNG",
+           "file": "textures/absorbEnemy/absorbRightWalk.png",
                  "minfilter": "linear",
                  "magfilter": "nearest"
         },
