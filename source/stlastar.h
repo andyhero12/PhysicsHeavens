@@ -796,16 +796,16 @@ private: // data
     vector< Node * > m_Successors;
 
     // State
-    unsigned int m_State;
+    unsigned int m_State = SEARCH_STATE_NOT_INITIALISED;
 
     // Counts steps
-    int m_Steps;
+    int m_Steps = 0;
 
     // Start and goal state pointers
     Node *m_Start = NULL;
     Node *m_Goal = NULL;
 
-    Node *m_CurrentSolutionNode;
+    Node *m_CurrentSolutionNode = NULL;
 
 #if USE_FSA_MEMORY
     // Memory
@@ -818,9 +818,9 @@ private: // data
     typename vector< Node * >::iterator iterDbgClosed;
 
     // debugging : count memory allocation and free's
-    int m_AllocateNodeCount;
+    int m_AllocateNodeCount = 0;
     
-    bool m_CancelRequest;
+    bool m_CancelRequest = false;
 
 };
 

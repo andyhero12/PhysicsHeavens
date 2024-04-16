@@ -278,10 +278,6 @@ protected:
         _prevDirection =_curDirection;
         _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
         
-        
-        
-        
-        
         // If we have been stuck on the same tile for too long, move randomly and then restart pathfinding
         
     };
