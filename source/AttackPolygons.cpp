@@ -13,7 +13,7 @@
 #define SHOOT_HEAD_OFFSET_RATIO 1.5f
 #define ANIM_FREQ 1
 #define BITE_SCALE 1
-#define BITE_FRAME 4
+#define BITE_FRAME 5
 #define OFFSET_SCALE 1/0.0234375f
 
 
@@ -144,7 +144,7 @@ void AttackPolygons::addBite(Vec2 center, float angle, float explosionRad, float
          front = false;
      }
     
-    std::shared_ptr<SpriteAnimationNode> biteSprite = SpriteAnimationNode::allocWithSheet(bite, 3, 5, 13, 1);
+    std::shared_ptr<SpriteAnimationNode> biteSprite = SpriteAnimationNode::allocWithSheet(bite, 3, 5, 15, ANIM_FREQ);
     biteSprite->setAngle(ang);
     PolyFactory curFactory;
     Poly2 resultingPolygon = curFactory.makeArc(center, explosionRad * (1 + scale), angle, 180);

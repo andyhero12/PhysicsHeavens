@@ -49,7 +49,7 @@ public:
             _counter = 0;
             updateRate = 15;
             clearSharingDirtyBits();
-            setShared(false);
+            setShared(true);
             setDensity(DEFAULT_DENSITY);
             setFriction(DEFAULT_FRICTION);
             setRestitution(DEFAULT_RESTITUTION);

@@ -23,6 +23,10 @@ enum class Action : unsigned int {
 };
 
 class ActionPolygon{
+    
+private:
+    std::shared_ptr<SpriteAnimationNode> spriteActionNode;
+    std::shared_ptr<cugl::scene2::PolygonNode> polyActionNode;
 public:
     Action polygonAction;
     Poly2 internalPolygon;
@@ -42,15 +46,14 @@ public:
     Action getAction() const {return polygonAction;}
     const Poly2& getPolygon() const {return internalPolygon;}
     
-//    std::shared_ptr<cugl::scene2::SceneNode> getPolyNode(){ return polyActionNode; }
+    std::shared_ptr<cugl::scene2::SceneNode> getPolyNode(){ return polyActionNode; }
     bool expired() const { return _expired;}
     void update();
     std::shared_ptr<cugl::scene2::SceneNode> getActionNode();
+    std::shared_ptr<SpriteAnimationNode> getSpriteNode(){
+        return spriteActionNode;
+    }
     bool dealDamage();
-    
-private:
-    std::shared_ptr<SpriteAnimationNode> spriteActionNode;
-    std::shared_ptr<cugl::scene2::PolygonNode> polyActionNode;
 };
 
 class AttackPolygons{

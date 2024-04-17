@@ -175,7 +175,9 @@ void CollisionController::resolveBiteAttack(const std::shared_ptr<ActionPolygon>
         const std::shared_ptr<AbstractEnemy>& enemy = *itA;
         auto curA = itA;
         itA++;
+//        CULog("Enemy Pos %s", enemy->getPosition().toString().data());
         if (bitePolygon.contains(enemy->getPosition()) && action->dealDamage()){
+//            CULog("Contained Pos %s", enemy->getPosition().toString().data());
             hitSomething = true;
             enemy->setHealth(enemy->getHealth() - 1);
             if(enemy->getHealth() <= 0){

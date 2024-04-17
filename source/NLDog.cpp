@@ -58,7 +58,7 @@ using namespace cugl;
 #define HEAL_RATE 50
 #define HEALTH 100
 #define MAX_ABSORB 30
-#define BITE_RADIUS 5.5f
+#define BITE_RADIUS 8.0f
 #define SHOOT_RADIUS 8.5f
 #define EXPLOSION_RADIUS 1.4f
 #define DASH_RATE 50
