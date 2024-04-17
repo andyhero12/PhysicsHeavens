@@ -289,6 +289,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 
     _network->attachEventType<DecoyEvent>();
     _network->attachEventType<BiteEvent>();
+    _network->attachEventType<RecallEvent>();
     _network->attachEventType<ExplodeEvent>();
     _network->attachEventType<DashEvent>();
     _network->attachEventType<SizeEvent>();
@@ -425,11 +426,11 @@ void GameScene::preUpdate(float dt)
 {
 
     if (_isHost){
-        float zoom = _zoom - (ROOT_NODE_SCALE - 0.25f* (float)overWorld.getDog()->getAbsorb() / (float)overWorld.getDog()->getMaxAbsorb());
+        float zoom = _zoom - (ROOT_NODE_SCALE - 0.6f* (float)overWorld.getDog()->getAbsorb() / (float)overWorld.getDog()->getMaxAbsorb());
         _zoom -= fmin(zoom, 0.01f) * (zoom < 0 ? 0.12f : 0.3f);
         _rootnode->setScale(_zoom);
     }else{
-        float zoom = _zoom - (ROOT_NODE_SCALE - 0.25f* (float)overWorld.getClientDog()->getAbsorb() / (float)overWorld.getClientDog()->getMaxAbsorb());
+        float zoom = _zoom - (ROOT_NODE_SCALE - 0.6f* (float)overWorld.getClientDog()->getAbsorb() / (float)overWorld.getClientDog()->getMaxAbsorb());
         _zoom -= fmin(zoom, 0.01f) * (zoom < 0 ? 0.12f : 0.3f);
         _rootnode->setScale(_zoom);
     }
@@ -503,6 +504,11 @@ void GameScene::fixedUpdate()
         {
             CULog("Bite Event Got");
             overWorld.processBiteEvent(biteEvent);
+        }
+        if (auto recallEvent = std::dynamic_pointer_cast<RecallEvent>(e))
+        {
+            CULog("Recall Event Got");
+            overWorld.processRecallEvent(recallEvent);
         }
         if (auto explodeEvent = std::dynamic_pointer_cast<ExplodeEvent>(e))
         {

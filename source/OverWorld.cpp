@@ -292,10 +292,27 @@ bool OverWorld::initDogModel(){
     largeDogDash->setAnchor(Vec2::ANCHOR_CENTER);
     largeDogDash->setContentSize(DOG_SIZE);
     
-    
     std::shared_ptr<AnimationSceneNode> clientLargeDogDash = AnimationSceneNode::allocWithTextures(textures, 1,4, 4, 15);
     clientLargeDogDash->setAnchor(Vec2::ANCHOR_CENTER);
     clientLargeDogDash->setContentSize(DOG_SIZE);
+        
+    std::vector<std::shared_ptr<cugl::Texture>> recallTextures;
+    recallTextures.push_back(_assets->get<cugl::Texture>("recall"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("recall"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("recall"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("recall"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("recall"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("recall"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("recall"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("recall"));
+
+    std::shared_ptr<AnimationSceneNode> recall = AnimationSceneNode::allocWithTextures(recallTextures, 6,5, 30, 2);
+    recall->setAnchor(Vec2::ANCHOR_CENTER);
+    recall->setContentSize(DOG_SIZE);
+
+    std::shared_ptr<AnimationSceneNode> recallClient = AnimationSceneNode::allocWithTextures(textures,6,5, 30, 2);
+    recallClient->setAnchor(Vec2::ANCHOR_CENTER);
+    recallClient->setContentSize(DOG_SIZE);
     
     // MAGIC NUMBER ALERT!!
     Vec2 dogPos = _level->getPlayerPos();
@@ -309,7 +326,7 @@ bool OverWorld::initDogModel(){
     std::shared_ptr<cugl::scene2::SceneNode> placeHolderDrawOver = scene2::SceneNode::allocWithBounds(DOG_SIZE);
     // MORE MAGIC NUMBER ALERT
     
-    //placeHolderDrawOver->setContentSize(DOG_SIZE);
+    _dog->setRecallAnimation(recall);
     _dog->setFinalDog(placeHolderDrawOver);
     placeHolderDrawOver->setScale(DOG_SIZE.y / textures.at(0)->getHeight());
     //placeHolderDrawOver->setAnchor(Vec2::ANCHOR_CENTER);
@@ -331,8 +348,7 @@ bool OverWorld::initDogModel(){
     
     std::shared_ptr<cugl::scene2::SceneNode> clientPlaceHolderDrawOver = scene2::SceneNode::allocWithBounds(DOG_SIZE);
     // MORE MAGIC NUMBER ALERT
-    
-    //placeHolderDrawOver->setContentSize(DOG_SIZE);
+    _dogClient->setRecallAnimation(recallClient);
     _dogClient->setFinalDog(clientPlaceHolderDrawOver);
     clientPlaceHolderDrawOver->setScale(DOG_SIZE.y / textures.at(0)->getHeight());
     
@@ -457,6 +473,14 @@ void OverWorld::processBiteEvent(const std::shared_ptr<BiteEvent>& biteEvent){
         _dogClient->startBite();
     }
 }
+void OverWorld::processRecallEvent(const std::shared_ptr<RecallEvent>& recallEvent){
+    bool incomingHost = recallEvent->isHost();
+    if (incomingHost){
+        _dog->startRecall();
+    }else{
+        _dogClient->startRecall();
+    }
+}
 
 void OverWorld::processShootEvent(const std::shared_ptr<ShootEvent>& shootEvent){
     Vec2 center = shootEvent->getPos();
@@ -473,13 +497,29 @@ void OverWorld::processExplodeEvent(const std::shared_ptr<ExplodeEvent>& explode
     Vec2 center = explodeEvent->getPos();
     _attackPolygonSet.addExplode(center, _dog->getExplosionRadius());
 }
-
+void OverWorld::recallDogToClosetBase(std::shared_ptr<Dog> _curDog){
+    float shortestDist = 1000000.0f;
+    Vec2 location;
+    for (std::shared_ptr<Base> base : getBaseSet()->_bases){
+        Vec2 norm = base->getPos() - _curDog->getPosition();
+        float dist = norm.length();
+        if (dist < shortestDist){
+            shortestDist = dist;
+            location = base->getPos();
+        }
+    }
+    _curDog->setPosition(location);
+}
 void OverWorld::ownedDogUpdate(InputController& _input, cugl::Size, std::shared_ptr<Dog> _curDog){
     _curDog->moveOnInputSetAction(_input);
     _curDog->updateUI();
     if (_curDog->shouldSendSize()){
         _curDog->resetSendSize();
         _network->pushOutEvent(SizeEvent::allocSizeEvent(_curDog->getAbsorb(),_isHost));
+    }
+    if (_curDog->readyToRecall()){
+        recallDogToClosetBase(_curDog);
+        CULog("Recalling ");
     }
     if (_input.didPressDash() && _curDog->canDash()){
         _network->pushOutEvent(DashEvent::allocDashEvent(_isHost));
@@ -501,6 +541,8 @@ void OverWorld::ownedDogUpdate(InputController& _input, cugl::Size, std::shared_
         }else if (_curDog->getMode() == "BOMB" && _curDog->getAbsorb() >= 5){
             _curDog->subAbsorb(5);
             _network->pushOutEvent(ExplodeEvent::allocExplodeEvent(_curDog->getPosition()));
+        }else if (_curDog->getMode() == "RECALL"){
+            _network->pushOutEvent(RecallEvent::allocRecallEvent(_curDog->getPosition(),_isHost));
         }else {
             CULog("NOTHING\n");
         }

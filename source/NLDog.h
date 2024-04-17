@@ -60,6 +60,7 @@ public:
         RUN,
         SHOOT,
         BITE,
+        RECALL,
         DASH
     };
     enum class DogSize : int {
@@ -84,6 +85,7 @@ protected:
     std::shared_ptr<AnimationSceneNode> biteAnimation;
     std::shared_ptr<AnimationSceneNode> shootAnimation;
     std::shared_ptr<AnimationSceneNode> dashAnimation;
+    std::shared_ptr<AnimationSceneNode> recallAnimation;
     
     std::shared_ptr<AnimationSceneNode> idleAnimationSmall;
     std::shared_ptr<AnimationSceneNode> runAnimationSmall;
@@ -105,10 +107,11 @@ protected:
     
     std::shared_ptr<UIController> _uiController;
 
-    std::array<std::string,3> modes = {"SHOOT", "BAIT", "BOMB"};
+    std::array<std::string,4> modes = {"SHOOT", "BAIT", "BOMB", "RECALL"};
     bool _startDash;
     bool _startBite;
     bool _startShoot;
+    bool _startRecall;
     bool _sendSize;
     int _dashCounter;
     int _dashRate;
@@ -198,6 +201,7 @@ public:
     virtual bool init(const cugl::Vec2 pos, const cugl::Size size) override;
     
     
+    void setRecallAnimation(std::shared_ptr<AnimationSceneNode> recall);
     void setSmallAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot,std::shared_ptr<AnimationSceneNode> dash);
     void setMediumAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot,std::shared_ptr<AnimationSceneNode> dash);
     void setLargeAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot,std::shared_ptr<AnimationSceneNode> dash);
@@ -283,6 +287,9 @@ public:
     void startBite(){
         _startBite = true;
     }
+    void startRecall(){
+        _startRecall = true;
+    }
     void startShoot(){
         _startShoot = true;
     }
@@ -317,6 +324,7 @@ public:
     
     int getMaxHealth() const { return _maxHealth; }
     
+    bool readyToRecall() const { return action == Actions::RECALL && dashAnimation->getFrame() == dashAnimation->getSize()/2; }
     int getMaxAbsorb() const { return _maxAbsorb; }
     /**
      * Sets the current ship health.

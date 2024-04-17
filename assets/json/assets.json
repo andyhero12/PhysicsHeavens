@@ -244,7 +244,10 @@
            "file": "textures/dog/effects/magic_chomp_right.png",
             "magfilter": "nearest"
        },
-       
+       "recall":{
+           "file": "textures/dog/effects/recall.png",
+            "magfilter": "nearest"
+       },
        "absorbEnemyLeftWalk": {
            "file": "textures/absorbEnemy/absorbLeftWalk.PNG",
                  "minfilter": "linear",
