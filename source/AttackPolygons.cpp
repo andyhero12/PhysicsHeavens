@@ -141,24 +141,20 @@ void AttackPolygons::addExplode(Vec2 center, float explosionRad){
 void AttackPolygons::addBite(Vec2 center, float angle, float explosionRad, float scale){
     std::shared_ptr<cugl::Texture> bite;
     
-    
-    float ang = std::fmod(angle, 2*M_PI);
-    
-    if (ang < 0) {
-        ang += 2*M_PI;
-    }
-    
-    
     bool front = true;
-    if (ang >= 0 && ang < M_PI_2) {
+    if (angle >= 0 && angle < 45) {
         bite = biteBackTexture;
         front = false;
-     } else if (ang >= M_PI_2 && ang < M_PI) {
+     } else if (angle >= 45 && angle <= 135) {
          bite = biteLeftTexture;
-     } else if (ang >= M_PI && ang < 3 * M_PI_2) {
+     } else if (angle > 135 && angle < 225) {
          bite = biteFrontTexture;
-     } else if (ang >= 3 * M_PI_2 && ang < 2 * M_PI) {
+     } else if (angle >= 225 && angle <= 315) {
          bite = biteRightTexture;
+     }
+    else{
+         bite = biteBackTexture;
+         front = false;
      }
     
     std::shared_ptr<cugl::scene2::SpriteNode> biteSprite = cugl::scene2::SpriteNode::allocWithSheet(bite, 3, 5);
