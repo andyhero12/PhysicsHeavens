@@ -141,29 +141,26 @@ void AttackPolygons::addExplode(Vec2 center, float explosionRad){
 void AttackPolygons::addBite(Vec2 center, float angle, float explosionRad, float scale){
     std::shared_ptr<cugl::Texture> bite;
     
-    
-    float ang = std::fmod(angle, 2*M_PI);
-    
-    if (ang < 0) {
-        ang += 2*M_PI;
-    }
-    
-    
     bool front = true;
-    if (ang >= 0 && ang < M_PI_2) {
-        bite = biteBackTexture;
-        front = false;
-     } else if (ang >= M_PI_2 && ang < M_PI) {
+    float ang = angle;
+    if (angle >= 45 && angle <= 135) {
          bite = biteLeftTexture;
-     } else if (ang >= M_PI && ang < 3 * M_PI_2) {
+         ang -= 90;
+     } else if (angle > 135 && angle < 225) {
          bite = biteFrontTexture;
-     } else if (ang >= 3 * M_PI_2 && ang < 2 * M_PI) {
+         ang -= 180;
+     } else if (angle >= 225 && angle <= 315) {
          bite = biteRightTexture;
+         ang -= 270;
+     } else{
+         bite = biteBackTexture;
+         front = false;
      }
     
     std::shared_ptr<cugl::scene2::SpriteNode> biteSprite = cugl::scene2::SpriteNode::allocWithSheet(bite, 3, 5);
+    biteSprite->setAngle(ang);
     PolyFactory curFactory;
-    Poly2 resultingPolygon = curFactory.makeArc(center, explosionRad, angle, 180);
+    Poly2 resultingPolygon = curFactory.makeArc(center, explosionRad * (1 + scale), angle, 180);
     std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(biteSprite, Action::BITE, resultingPolygon, BITE_AGE, 1 + scale);
     if(front){
         frontAttackPolygonNode->addChild(curPtr->getActionNode());

@@ -25,6 +25,9 @@ public:
     
     /* Set of spawners */
     std::unordered_set<std::shared_ptr<AbstractSpawner>> _spawners;
+
+    float difficulty;
+    float accumulatedTime;
     
     /* Functions */
     SpawnerController();
