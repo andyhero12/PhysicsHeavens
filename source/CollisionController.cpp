@@ -158,6 +158,8 @@ bool CollisionController::monsterDogCollision(std::shared_ptr<Dog> curDog, std::
                 collision = true;
                 enemy->resetAttack();
                 curDog->setHealth(curDog->getHealth()-enemy->getDamage());
+            }else{
+                CULog("Can't Attack");
             }
         }
     }

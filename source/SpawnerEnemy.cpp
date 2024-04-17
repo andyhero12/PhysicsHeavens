@@ -104,6 +104,7 @@ bool SpawnerEnemy::init(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m
     if (AbstractEnemy::init(m_pos, m_size, m_health, m_targetIndex)){
         std::string name("Spawner Enemy");
         setName(name);
+        _attackCooldown = 0;
         return true;
     }
     return false;
