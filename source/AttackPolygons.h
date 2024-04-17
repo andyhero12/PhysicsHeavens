@@ -12,9 +12,6 @@
 #include <cugl/cugl.h>
 #include <unordered_set>
 #include "NLDog.h"
-#include "SpriteAnimationNode.h"
-
-
 using namespace cugl;
 enum class Action : unsigned int {
     BITE = 0,
@@ -36,7 +33,7 @@ public:
     int _freq;
     
     ActionPolygon(Action curAction, Poly2& mintPoly, int mx, float scale);
-    ActionPolygon(std::shared_ptr<SpriteAnimationNode> actionSprite, Action curAction, Poly2& mintPoly, int mx, float scale);
+    ActionPolygon(std::shared_ptr<cugl::scene2::SpriteNode> actionSprite, Action curAction, Poly2& mintPoly, int mx, float scale);
     
     float getScale() const { return _scale; }
     
@@ -52,7 +49,7 @@ public:
     bool dealDamage();
     
 private:
-    std::shared_ptr<SpriteAnimationNode> spriteActionNode;
+    std::shared_ptr<cugl::scene2::SpriteNode> spriteActionNode;
     std::shared_ptr<cugl::scene2::PolygonNode> polyActionNode;
 };
 
