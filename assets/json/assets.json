@@ -262,16 +262,24 @@
         "chompright": {
             "file": "textures/dog/effects/magic_chomp_right.png",
             "magfilter": "nearest"
-        },
-        "absorbEnemyLeftWalk": {
-            "file": "textures/absorbEnemy/absorbLeftWalk.png",
-            "minfilter": "linear",
+       },
+       "recall":{
+           "file": "textures/dog/effects/recall.png",
             "magfilter": "nearest"
-        },
-        "absorbEnemyRightWalk": {
-            "file": "textures/absorbEnemy/absorbRightWalk.png",
-            "minfilter": "linear",
+       },
+       "penta":{
+           "file": "textures/dog/effects/penta.png",
             "magfilter": "nearest"
+       },
+       "absorbEnemyLeftWalk": {
+           "file": "textures/absorbEnemy/absorbLeftWalk.PNG",
+                 "minfilter": "linear",
+                 "magfilter": "nearest"
+       },
+       "absorbEnemyRightWalk": {
+           "file": "textures/absorbEnemy/absorbRightWalk.PNG",
+                 "minfilter": "linear",
+                 "magfilter": "nearest"
         },
         "basicEnemy0": {
             "file": "textures/basicEnemy/basicWalkLeft.PNG",

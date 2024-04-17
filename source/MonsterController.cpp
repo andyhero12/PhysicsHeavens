@@ -137,7 +137,7 @@ void MonsterController::spawnAbsorbEnemy(cugl::Vec2 pos, OverWorld& overWorld){
     if (!overWorld._isHost){
         return;
     }
-    Size mySize(0.8,0.8);
+    Size mySize(1,1);
     auto params = _absorbEnemyFactory->serializeParams(pos, mySize, 3, 0);
     auto pair = _network->getPhysController()->addSharedObstacle(_absorbEnemyFactID, params);
 //        static_enemy->setHealthBar(_healthBar);

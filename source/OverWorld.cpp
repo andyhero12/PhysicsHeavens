@@ -295,7 +295,43 @@ bool OverWorld::initDogModel()
     std::shared_ptr<AnimationSceneNode> clientLargeDogDash = AnimationSceneNode::allocWithTextures(textures, 1, 4, 4, 15);
     clientLargeDogDash->setAnchor(Vec2::ANCHOR_CENTER);
     clientLargeDogDash->setContentSize(DOG_SIZE);
+        
+    std::vector<std::shared_ptr<cugl::Texture>> recallTextures;
+    recallTextures.push_back(_assets->get<cugl::Texture>("recall"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("recall"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("recall"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("recall"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("recall"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("recall"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("recall"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("recall"));
 
+    std::shared_ptr<AnimationSceneNode> recall = AnimationSceneNode::allocWithTextures(recallTextures, 6,5, 30, 2);
+    recall->setAnchor(Vec2::ANCHOR_CENTER);
+    recall->setContentSize(DOG_SIZE);
+    
+    std::shared_ptr<AnimationSceneNode> recallClient = AnimationSceneNode::allocWithTextures(recallTextures, 6,5, 30, 2);
+    recallClient->setAnchor(Vec2::ANCHOR_CENTER);
+    recallClient->setContentSize(DOG_SIZE);
+    
+    recallTextures.clear();
+    recallTextures.push_back(_assets->get<cugl::Texture>("penta"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("penta"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("penta"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("penta"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("penta"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("penta"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("penta"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("penta"));
+
+    std::shared_ptr<AnimationSceneNode> belowPenta = AnimationSceneNode::allocWithTextures(recallTextures, 6,5, 30, 2);
+    belowPenta->setAnchor(Vec2::ANCHOR_CENTER);
+    belowPenta->setContentSize(DOG_SIZE);
+
+    std::shared_ptr<AnimationSceneNode> belowPentaClient = AnimationSceneNode::allocWithTextures(recallTextures,6,5, 30, 2);
+    belowPentaClient->setAnchor(Vec2::ANCHOR_CENTER);
+    belowPentaClient->setContentSize(DOG_SIZE);
+    
     // MAGIC NUMBER ALERT!!
     Vec2 dogPos = _level->getPlayerPos();
     _dog = Dog::alloc(dogPos, DOG_SIZE);
@@ -307,8 +343,9 @@ bool OverWorld::initDogModel()
 
     std::shared_ptr<cugl::scene2::OrderedNode> placeHolderDrawOver = cugl::scene2::OrderedNode::allocWithOrder(cugl::scene2::OrderedNode::Order::PRE_ORDER, DOG_SIZE);
     // MORE MAGIC NUMBER ALERT
-
-    // placeHolderDrawOver->setContentSize(DOG_SIZE);
+    
+    _dog->setRecallAnimation(recall);
+    _dog->setBelowPenta(belowPenta);
     _dog->setFinalDog(placeHolderDrawOver);
     placeHolderDrawOver->setScale(DOG_SIZE.y / textures.at(0)->getHeight());
     // placeHolderDrawOver->setAnchor(Vec2::ANCHOR_CENTER);
@@ -329,8 +366,8 @@ bool OverWorld::initDogModel()
 
     std::shared_ptr<cugl::scene2::OrderedNode> clientPlaceHolderDrawOver = cugl::scene2::OrderedNode::allocWithOrder(cugl::scene2::OrderedNode::Order::PRE_ORDER, DOG_SIZE);
     // MORE MAGIC NUMBER ALERT
-
-    // placeHolderDrawOver->setContentSize(DOG_SIZE);
+    _dogClient->setRecallAnimation(recallClient);
+    _dogClient->setBelowPenta(belowPentaClient);
     _dogClient->setFinalDog(clientPlaceHolderDrawOver);
     clientPlaceHolderDrawOver->setScale(DOG_SIZE.y / textures.at(0)->getHeight());
     //    std::cout <<"scale " << DOG_SIZE.y / textures.at(0)->getHeight() << std::endl;
@@ -489,6 +526,14 @@ void OverWorld::processBiteEvent(const std::shared_ptr<BiteEvent> &biteEvent)
         _dogClient->startBite();
     }
 }
+void OverWorld::processRecallEvent(const std::shared_ptr<RecallEvent>& recallEvent){
+    bool incomingHost = recallEvent->isHost();
+    if (incomingHost){
+        _dog->startRecall();
+    }else{
+        _dogClient->startRecall();
+    }
+}
 
 void OverWorld::processShootEvent(const std::shared_ptr<ShootEvent> &shootEvent)
 {
@@ -510,9 +555,20 @@ void OverWorld::processExplodeEvent(const std::shared_ptr<ExplodeEvent> &explode
     Vec2 center = explodeEvent->getPos();
     _attackPolygonSet.addExplode(center, _dog->getExplosionRadius());
 }
-
-void OverWorld::ownedDogUpdate(InputController &_input, cugl::Size, std::shared_ptr<Dog> _curDog)
-{
+void OverWorld::recallDogToClosetBase(std::shared_ptr<Dog> _curDog){
+    float shortestDist = 1000000.0f;
+    Vec2 location;
+    for (std::shared_ptr<Base> base : getBaseSet()->_bases){
+        Vec2 norm = base->getPos() - _curDog->getPosition();
+        float dist = norm.length();
+        if (dist < shortestDist){
+            shortestDist = dist;
+            location = base->getPos();
+        }
+    }
+    _curDog->setPosition(location);
+}
+void OverWorld::ownedDogUpdate(InputController& _input, cugl::Size, std::shared_ptr<Dog> _curDog){
     _curDog->moveOnInputSetAction(_input);
     _curDog->updateUI();
     if (_curDog->shouldSendSize())
@@ -520,8 +576,10 @@ void OverWorld::ownedDogUpdate(InputController &_input, cugl::Size, std::shared_
         _curDog->resetSendSize();
         _network->pushOutEvent(SizeEvent::allocSizeEvent(_curDog->getAbsorb(), _isHost));
     }
-    if (_input.didPressDash() && _curDog->canDash())
-    {
+    if (_curDog->readyToRecall()){
+        recallDogToClosetBase(_curDog);
+    }
+    if (_input.didPressDash() && _curDog->canDash()){
         _network->pushOutEvent(DashEvent::allocDashEvent(_isHost));
         _curDog->resetDash();
     }
@@ -548,9 +606,9 @@ void OverWorld::ownedDogUpdate(InputController &_input, cugl::Size, std::shared_
         {
             _curDog->subAbsorb(5);
             _network->pushOutEvent(ExplodeEvent::allocExplodeEvent(_curDog->getPosition()));
-        }
-        else
-        {
+        }else if (_curDog->getMode() == "RECALL"){
+            _network->pushOutEvent(RecallEvent::allocRecallEvent(_curDog->getPosition(),_isHost));
+        }else {
             CULog("NOTHING\n");
         }
     }
