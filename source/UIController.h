@@ -36,6 +36,7 @@ private:
     std::shared_ptr<cugl::scene2::PolygonNode> _bombtoggle;
     std::shared_ptr<cugl::scene2::PolygonNode> _shoottoggle;
     std::shared_ptr<cugl::scene2::PolygonNode> _baittoggle;
+    std::shared_ptr<cugl::scene2::SpriteNode> _toggleFlash;
     
 public:
         

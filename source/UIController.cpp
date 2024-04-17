@@ -20,6 +20,7 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     _bombtoggle = cugl::scene2::PolygonNode::allocWithTexture(assets->get<Texture>("bombtoggle"));
     _shoottoggle = cugl::scene2::PolygonNode::allocWithTexture(assets->get<Texture>("shoottoggle"));
     _baittoggle = cugl::scene2::PolygonNode::allocWithTexture(assets->get<Texture>("baittoggle"));
+    _toggleFlash = cugl::scene2::SpriteNode::allocWithSheet(assets->get<Texture>("flash"), 1, 5);
     
     // set the scale
     _healthframe->setScale(UI_SCALE);
@@ -29,6 +30,7 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     _bombtoggle->setScale(UI_SCALE);
     _shoottoggle->setScale(UI_SCALE);
     _baittoggle->setScale(UI_SCALE);
+    _toggleFlash->setScale(UI_SCALE);
     
     // set the position
     _healthframe->setAnchor(Vec2::ANCHOR_CENTER);
@@ -38,6 +40,7 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     _bombtoggle->setAnchor(Vec2::ANCHOR_CENTER);
     _shoottoggle->setAnchor(Vec2::ANCHOR_CENTER);
     _baittoggle->setAnchor(Vec2::ANCHOR_CENTER);
+    _toggleFlash->setAnchor(Vec2::ANCHOR_CENTER);
     
     x =0;
     y =0;
@@ -67,10 +70,12 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     _bombtoggle->setPosition(togglex, toggley);
     _shoottoggle->setPosition(togglex, toggley);
     _baittoggle->setPosition(togglex, toggley);
+    _toggleFlash->setPosition(togglex, toggley);
     
     _shoottoggle->setVisible(true);
     _bombtoggle->setVisible(false);
     _baittoggle->setVisible(false);
+    _toggleFlash->setVisible(true);
     
     node->addChild(_healthframe);
     node->addChild(_sizeframe);
@@ -79,6 +84,7 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     node->addChild(_baittoggle);
     node->addChild(_healthfill);
     node->addChild(_sizefill);
+    node->addChild(_toggleFlash);
     
     return true;
 }

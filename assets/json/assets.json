@@ -361,6 +361,10 @@
         },
         "left": {
             "file": "textures/left_arrow.png"
+        },
+        "flash": {
+            "file": "textures/game_ui/icon_ready_flash.png",
+            "magfilter": "nearest"
         }
     },
     "jsons": {
