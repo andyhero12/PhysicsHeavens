@@ -361,6 +361,10 @@
         },
         "left": {
             "file": "textures/left_arrow.png"
+        },
+        "explodingGate": {
+            "file": "textures/effects/gate_explode.PNG",
+            "magfilter": "nearest"
         }
     },
     "jsons": {
