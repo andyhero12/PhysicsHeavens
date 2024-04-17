@@ -84,6 +84,8 @@ bool Dog::init(const Vec2 pos, const Size size) {
     if (physics2::BoxObstacle::init(pos,size)){
         std::string name("rocket");
         setName(name);
+        setShared(true);
+        clearSharingDirtyBits();
         setDensity(DEFAULT_DENSITY);
         setFriction(DEFAULT_FRICTION);
         setRestitution(DEFAULT_RESTITUTION);
