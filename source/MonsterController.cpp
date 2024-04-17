@@ -30,7 +30,7 @@ bool MonsterController::init(OverWorld& overWorld,
 //        for(int i = 0; i < count; i++) {
             spawnStaticBasicEnemy(Vec2(cx,cy), overWorld, 1);
             spawnBombEnemy(Vec2(cx,cy), overWorld, 1);
-        spawnAbsorbEnemy(Vec2(cx,cy), overWorld, 1);
+//        spawnAbsorbEnemy(Vec2(cx,cy), overWorld, 1);
         spawnSpawnerEnemy(Vec2(cx,cy), overWorld, 1); // TODO SPAWN ENEMY IN MONSTER CONTROLLER
 //        }
     }

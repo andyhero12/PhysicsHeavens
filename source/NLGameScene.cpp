@@ -53,32 +53,7 @@ using namespace cugl::physics2::net;
 
 #define DEFAULT_TURN_RATE 0.05f
 
-/** To automate the loading of crate files */
-#define NUM_CRATES 100
-
-// Since these appear only once, we do not care about the magic numbers.
-// In an actual game, this information would go in a data file.
-// IMPORTANT: Note that Box2D units do not equal drawing units
-/** The wall vertices */
-/** The positions of the crate pyramid */
-float BOXES[] = {14.5f, 14.25f,
-                 13.0f, 12.00f, 16.0f, 12.00f,
-                 11.5f, 9.75f, 14.5f, 9.75f, 17.5f, 9.75f,
-                 13.0f, 7.50f, 16.0f, 7.50f,
-                 11.5f, 5.25f, 14.5f, 5.25f, 17.5f, 5.25f,
-                 10.0f, 3.00f, 13.0f, 3.00f, 16.0f, 3.00f, 19.0f, 3.0f};
-
-/** The initial cannon position */
-float CAN1_POS[] = {2, 9};
-float CAN2_POS[] = {30, 9};
-
 #pragma mark Assset Constants
-/** The key for the earth texture in the asset manager */
-#define EARTH_TEXTURE "earth"
-/** The key for the cannon texture in the asset manager */
-#define CANNON_TEXTURE "rocket"
-/** The key prefix for the multiple crate assets */
-#define CRATE_PREFIX "crate"
 /** The key for the fire textures in the asset manager */
 #define MAIN_FIRE_TEXTURE "flames"
 #define RGHT_FIRE_TEXTURE "flames-right"
@@ -106,14 +81,8 @@ float CAN2_POS[] = {30, 9};
 // Physics constants for initialization
 /** Density of non-crate objects */
 #define BASIC_DENSITY 0.0f
-/** Density of the crate objects */
-#define CRATE_DENSITY 1.0f
 /** Friction of non-crate objects */
 #define BASIC_FRICTION 0.1f
-/** Friction of the crate objects */
-#define CRATE_FRICTION 0.2f
-/** Angular damping of the crate objects */
-#define CRATE_DAMPING 1.0f
 /** Collision restitution for all objects */
 #define BASIC_RESTITUTION 0.1f
 /** Threshold for generating sound on collision */
@@ -292,6 +261,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 
     _network->attachEventType<DecoyEvent>();
     _network->attachEventType<BiteEvent>();
+    _network->attachEventType<WinEvent>();
+    _network->attachEventType<LoseEvent>();
     _network->attachEventType<RecallEvent>();
     _network->attachEventType<ExplodeEvent>();
     _network->attachEventType<DashEvent>();
@@ -313,6 +284,17 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 
     _pause->setContentSize(dimen);
     _pause->doLayout();
+    
+    CULog("%s", computeActiveSize().toString().data());
+    loseNode = scene2::Label::allocWithText(Vec2(computeActiveSize()/2),strtool::format("You Lose!"),assets->get<Font>("retro"));
+    loseNode->setAnchor(Vec2::ANCHOR_CENTER);
+    CULog("%s", computeActiveSize().toString().data());
+    winNode = scene2::Label::allocWithText(Vec2(computeActiveSize()/2),strtool::format("You Win!"),assets->get<Font>("retro"));
+    winNode->setAnchor(Vec2::ANCHOR_CENTER);
+    _uinode->addChild(loseNode);
+    _uinode->addChild(winNode);
+    loseNode->setVisible(false);
+    winNode->setVisible(false);
 
     _zoom = ROOT_NODE_SCALE;
 
@@ -332,6 +314,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     }
 
     addChildForeground();
+    
     return true;
 }
 
@@ -430,7 +413,24 @@ void GameScene::addInitObstacle(const std::shared_ptr<physics2::Obstacle> &obj,
 
 void GameScene::preUpdate(float dt)
 {
+    _input.update();
+    if (_input.didPressExit())
+    {
+        Application::get()->quit();
+    }
+    if (_input.didPressPause())
+    {
+        CULog("pressed Pause");
+        _pause->setPause(_input.getPause());
+    }
 
+    if (_input.didPressReset())
+    {
+        _pause->exitToMain();
+    }
+    if (loseNode->isVisible() || winNode->isVisible()){
+        return;
+    }
     if (_isHost){
         float zoom = _zoom - (ROOT_NODE_SCALE - 0.6f* (float)overWorld.getDog()->getAbsorb() / (float)overWorld.getDog()->getMaxAbsorb());
         _zoom -= fmin(zoom, 0.01f) * (zoom < 0 ? 0.12f : 0.3f);
@@ -440,22 +440,6 @@ void GameScene::preUpdate(float dt)
         _zoom -= fmin(zoom, 0.01f) * (zoom < 0 ? 0.12f : 0.3f);
         _rootnode->setScale(_zoom);
     }
-
-    if (_input.didPressPause())
-    {
-        _pause->setPause(_input.getPause());
-    }
-
-    if (_input.didPressReset())
-    {
-        _pause->exitToMain();
-    }
-
-    if (_input.didPressExit())
-    {
-        Application::get()->quit();
-    }
-    _input.update();
 
     // Process the toggled key commands
     if (_input.didPressDebug())
@@ -471,12 +455,32 @@ void GameScene::preUpdate(float dt)
         _collisionController.intraOverWorldCollisions(overWorld);
         _collisionController.overWorldMonsterControllerCollisions(overWorld, _monsterController);
         _collisionController.attackCollisions(overWorld, _monsterController, _spawnerController);
+        
+        if (_monsterController.isEmpty() && _spawnerController.win() && !winNode->isVisible())
+        {
+//            winNode->setVisible(true);
+            _network->pushOutEvent(WinEvent::allocWinEvent(overWorld.getDog()->getPosition(), _isHost));
+        }
+        else if ((overWorld.getDog()->getHealth() == 0 || overWorld.getBaseSet()->baseLost()) && !loseNode->isVisible())
+        {
+//            loseNode->setVisible(true);
+            _network->pushOutEvent(LoseEvent::allocLoseEvent(overWorld.getDog()->getPosition(), _isHost));
+        }
+    }else{
+        if (overWorld.getClientDog()->getHealth() ==  0 && !loseNode->isVisible()){
+//            loseNode->setVisible(true);
+            _network->pushOutEvent(LoseEvent::allocLoseEvent(overWorld.getClientDog()->getPosition(), _isHost));
+        }
     }
+    
 }
 
 void GameScene::postUpdate(float dt)
 {
     // Nothing to do now
+    if (loseNode->isVisible() || winNode->isVisible()){
+        return;
+    }
     _monsterController.postUpdate();
     overWorld.postUpdate();
 
@@ -529,6 +533,9 @@ void GameScene::postUpdate(float dt)
 
 void GameScene::fixedUpdate()
 {
+    if (loseNode->isVisible() || winNode->isVisible()){
+        return;
+    }
     // TODO: check for available incoming events from the network controller and call processCrateEvent if it is a CrateEvent.
 
     // Hint: You can check if ptr points to an object of class A using std::dynamic_pointer_cast<A>(ptr). You should always check isInAvailable() before popInEvent().
@@ -571,6 +578,16 @@ void GameScene::fixedUpdate()
         {
             //            CULog("Explode Event Got");
             overWorld.processSizeEvent(sizeEvent);
+        }
+        if (auto winEvent = std::dynamic_pointer_cast<WinEvent>(e))
+        {
+            winNode->setVisible(true);
+//            CULog("winEvent Event Got");
+        }
+        if (auto loseEvent = std::dynamic_pointer_cast<LoseEvent>(e))
+        {
+            loseNode->setVisible(true);
+//            CULog("loseEvent Event Got");
         }
     }
 #pragma mark END SOLUTION

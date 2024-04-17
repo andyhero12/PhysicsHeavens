@@ -108,6 +108,8 @@ void LevelModel::loadLayer(const std::shared_ptr<JsonValue>& json){
         loadBaseLocations(json);
     }else if (type == "PreSpawnedClusters"){
         loadPreSpawnedClusters(json);
+    }else if (type == "DynamicDecor"){
+        CULog("Not loading Dynamic Decor ATM");
     }else{
         CULog("TYPE NOT FOUND %s\n", type.data());
     }
