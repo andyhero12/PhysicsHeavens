@@ -89,13 +89,13 @@ public:
     std::unordered_set<std::shared_ptr<AbsorbEnemy>>& getAbsorbEnemies(){
         return _absorbEnem;
     }
-    void spawnBasicEnemy(cugl::Vec2 pos, OverWorld& overWorld);
-    void spawnStaticBasicEnemy(cugl::Vec2 pos, OverWorld& overWorld);
-    void spawnBombEnemy(cugl::Vec2 pos, OverWorld& overWorld);
+    void spawnBasicEnemy(cugl::Vec2 pos, OverWorld& overWorld, float power);
+    void spawnStaticBasicEnemy(cugl::Vec2 pos, OverWorld& overWorld, float power);
+    void spawnBombEnemy(cugl::Vec2 pos, OverWorld& overWorld, float power);
     
-    void spawnSpawnerEnemy(cugl::Vec2 pos, OverWorld& overWorld);
+    void spawnSpawnerEnemy(cugl::Vec2 pos, OverWorld& overWorld, float power);
     
-    void spawnAbsorbEnemy(cugl::Vec2 pos, OverWorld& overWorld);
+    void spawnAbsorbEnemy(cugl::Vec2 pos, OverWorld& overWorld, float power);
     
     void postUpdate();
     
@@ -110,6 +110,9 @@ public:
                                  std::shared_ptr<cugl::AssetManager> _assets);
     void setHealthBar(std::shared_ptr<cugl::scene2::ProgressBar> bar);
     
+    void powerSize(float power, Size& size);
+
+    float powerHealth(float power, int hp);
 };
 
 #endif /* MonsterController_h */

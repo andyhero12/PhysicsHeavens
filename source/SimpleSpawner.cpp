@@ -50,19 +50,19 @@ void SimpleSpawner::update(MonsterController& monsterController, OverWorld& over
         else {
             s = spawnType3;
         }
+        float power = 1f;
 
         if (s == "basic") {
-            monsterController.spawnBasicEnemy(getPos(), overWorld);
+            monsterController.spawnBasicEnemy(getPos(), overWorld, power);
         }
         else if (s == "spawner") {
-            monsterController.spawnSpawnerEnemy(getPos(), overWorld);
+            monsterController.spawnSpawnerEnemy(getPos(), overWorld, power);
         }
         else if (s == "bomb") {
-            monsterController.spawnBombEnemy(getPos(), overWorld);
+            monsterController.spawnBombEnemy(getPos(), overWorld, power);
         }
         else if (s == "eating") {
-            throw std::runtime_error("Unimplemented: " + spawnType1);
-            //monsterController.spawnEatingEnemy(getPos(), overWorld);
+            monsterController.spawnAbsorbEnemy(getPos(), overWorld, power);
         }
         else {
             throw std::runtime_error("Unknown enemy type: " + spawnType1);
