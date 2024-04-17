@@ -1,14 +1,16 @@
 //
-//  MeleeEnemy.cpp
-//  Ship
+//  AbsorbEnemy.cpp
+//  Heaven
 //
-//  Created by Andrew Cheng on 3/14/24.
+//  Created by Lisa Asriev on 4/11/24.
 //
 
-#define MELEE_DAMAGE 5
-#include "MeleeEnemy.h"
+#include "AbsorbEnemy.h"
+
+#define EXPLOSION_RADIUS 1.5f
+#define CONTACT_DAMAGE 4
 #define DYNAMIC_COLOR   Color4::YELLOW
-std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode>> MeleeFactory::createObstacle(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex) {
+std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode>> AbsorbFactory::createObstacle(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex) {
     std::vector<std::shared_ptr<cugl::Texture>>& _textures = staticEnemyStruct._walkTextures;
     if (_textures.size() == 0){
         CULog("EMPTY TEXTURES");
@@ -21,7 +23,7 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
     {
         rows++;
     }
-    std::shared_ptr<MeleeEnemy> static_enemy = MeleeEnemy::alloc(m_pos, m_size, m_health, m_targetIndex);
+    std::shared_ptr<AbsorbEnemy> static_enemy = AbsorbEnemy::alloc(m_pos, m_size, m_health, m_targetIndex);
     
     // used to create progress bars
     std::shared_ptr<cugl::Texture> barImage = _assets->get<Texture>("progress");
@@ -34,10 +36,9 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
     std::shared_ptr<cugl::Texture> left_cap = barImage->getSubTexture(0/textureWidth, 24/textureWidth, 45/textureHeight, 90/textureHeight);
     std::shared_ptr<cugl::Texture> right_cap = barImage->getSubTexture(296/textureWidth, 320/textureWidth, 45/textureHeight, 90/textureHeight);
     
-    std::shared_ptr<cugl::scene2::ProgressBar> _bar = cugl::scene2::ProgressBar::allocWithCaps(bg, fg, left_cap, right_cap);
+     std::shared_ptr<cugl::scene2::ProgressBar> _bar = cugl::scene2::ProgressBar::allocWithCaps(bg, fg, left_cap, right_cap);
     _bar->setProgress(1.0f);
     static_enemy->setHealthBar(_bar);
-    
     
     static_enemy->setDebugColor(DYNAMIC_COLOR);
     static_enemy->setAngleSnap(0); // Snap to the nearest degree
@@ -57,7 +58,8 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
     static_enemy->setFinalEnemy(topLevel);
     topLevel->setScale(m_size.height / _textures.at(0)->getHeight());
     static_enemy->setShared(true);
-
+    
+//        static_enemy->setHealthBar(_healthBar);
     return std::make_pair(static_enemy, topLevel);
 #pragma mark END SOLUTION
 }
@@ -65,7 +67,7 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
 /**
  * Helper method for converting normal parameters into byte vectors used for syncing.
  */
-std::shared_ptr<std::vector<std::byte>> MeleeFactory::serializeParams(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex) {
+std::shared_ptr<std::vector<std::byte>> AbsorbFactory::serializeParams(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex) {
     // TODO: Use _serializer to serialize pos and scale (remember to make a shared copy of the serializer reference, otherwise it will be lost if the serializer is reset).
 #pragma mark BEGIN SOLUTION
     _serializer.reset();
@@ -82,7 +84,7 @@ std::shared_ptr<std::vector<std::byte>> MeleeFactory::serializeParams(cugl::Vec2
 /**
  * Generate a pair of Obstacle and SceneNode using serialized parameters.
  */
-std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode>> MeleeFactory::createObstacle(const std::vector<std::byte>& params) {
+std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode>> AbsorbFactory::createObstacle(const std::vector<std::byte>& params) {
     // TODO: Use _deserializer to deserialize byte vectors packed by {@link serializeParams()} and call the regular createObstacle() method with them.
 #pragma mark BEGIN SOLUTION
     _deserializer.reset();
@@ -99,17 +101,18 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
 #pragma mark END SOLUTION
 }
 
-MeleeEnemy::MeleeEnemy(){}
-bool MeleeEnemy::init(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex){
+AbsorbEnemy::AbsorbEnemy(){}
+bool AbsorbEnemy::init(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex){
     if (AbstractEnemy::init(m_pos, m_size, m_health, m_targetIndex)){
-        std::string name("Melee Enemy");
+        std::string name("Absorb Enemy");
         setName(name);
-        _contactDamage = MELEE_DAMAGE;
+        _contactDamage = CONTACT_DAMAGE;
         return true;
     }
     return false;
 }
-void MeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
+
+void AbsorbEnemy::preUpdate(float dt, OverWorld& overWorld){
     if (_attackCooldown < 60){
         _attackCooldown++;
     }
@@ -117,14 +120,9 @@ void MeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
     if (_counter < updateRate){
         _counter++;
     }
-    
     cugl::Vec2 target_pos = getTargetPositionFromIndex(overWorld);
     cugl::Vec2 direction = target_pos - getPosition();
     if (overWorld._isHost && _counter >= updateRate){
-        
-//        setGoal(target_pos, overWorld.getWorld());
-//        goToGoal();
-        
         setVX(direction.normalize().x * 0.5);
         setVY(direction.normalize().y * 0.5);
         setX(getX());

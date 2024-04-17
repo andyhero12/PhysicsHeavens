@@ -236,6 +236,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _worldnode->setScale(zoom);
     _worldnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
 
+    _monsterSceneNode = scene2::SceneNode::alloc();
+
     _debugnode = scene2::SceneNode::alloc();
     _debugnode->setScale(zoom);
     _debugnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
@@ -280,8 +282,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _monsterController.setMeleeAnimationData(_constants->get("basicEnemy"), assets);
     _monsterController.setSpawnerAnimationData(_constants->get("spawnerEnemy"), assets);
     _monsterController.setBombAnimationData(_constants->get("bomb"), assets);
-    _monsterController.init(overWorld, _worldnode, _debugnode);
-    _worldnode->addChild(_monsterController.getMonsterSceneNode());
+    _monsterController.setAbsorbAnimationData(_constants->get("absorbEnemy"), assets);
+    _monsterController.init(overWorld, _debugnode);
+    _worldnode->addChild(_monsterSceneNode);
     _collisionController.init();
 
     _active = true;
@@ -327,6 +330,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
         _rootnode->setScale(_zoom);
     }
 
+    addChildForeground();
     return true;
 }
 
@@ -382,7 +386,7 @@ void GameScene::linkSceneToObs(const std::shared_ptr<physics2::Obstacle> &obj,
 {
 
     node->setPosition(obj->getPosition());
-    _worldnode->addChild(node);
+    _monsterSceneNode->addChild(node);
     // Dynamic objects need constant updating
     if (obj->getBodyType() == b2_dynamicBody)
     {
@@ -479,8 +483,10 @@ void GameScene::postUpdate(float dt)
     overWorld.postUpdate();
 
     _rootnode->resetPane();
-    for(int i = 0; i < _decorToHide.size(); i++){
-        if(_decorToHide.at(i)){
+    for (int i = 0; i < _decorToHide.size(); i++)
+    {
+        if (_decorToHide.at(i))
+        {
             _decorToHide.at(i)->setColor(Color4::WHITE);
         }
     }
@@ -500,22 +506,26 @@ void GameScene::postUpdate(float dt)
         delta = overWorld.getClientDog()->getDogNode()->getWorldPosition();
         delta -= (computeActiveSize() / 2);
         _rootnode->applyPan(-delta / _zoom);
-        
+
         delta = overWorld.getClientDog()->getPosition();
     }
-    
-    for(int i = -1; i <= 1; i ++){
-        for(int j = -1; j <= 1; j ++){
+
+    for (int i = -1; i <= 1; i++)
+    {
+        for (int j = -1; j <= 1; j++)
+        {
             _decorToHide.push_back(_worldnode->getChildByName("decoration" + std::to_string(int(delta.y + i)) + " " + std::to_string(int(delta.x + j))));
         }
     }
-    
-    for(int i = 0; i < _decorToHide.size(); i++){
-        if(_decorToHide.at(i)){
-            _decorToHide.at(i)->setColor(Color4f(1, 1, 1, 0.1f));
+
+    for (int i = 0; i < _decorToHide.size(); i++)
+    {
+        if (_decorToHide.at(i))
+        {
+            _decorToHide.at(i)->setColor(Color4f(1, 1, 1, 0.7f));
         }
     }
-    
+
     // hiding decorations
 }
 
@@ -651,29 +661,61 @@ void GameScene::addChildBackground()
             std::shared_ptr<TileInfo> t = currentBoundaries.at(i).at(j);
             if (t->texture != nullptr)
             {
-                //                auto image  = t->texture;
-                auto sprite = scene2::PolygonNode::allocWithTexture(nullptr);
-                sprite->setContentSize(Vec2(1, 1));
-                sprite->setPosition(t->getPosition());
                 t->setDebugColor(DYNAMIC_COLOR);
-                addInitObstacle(t, sprite);
+                _world->initObstacle(t);
+                t->setDebugScene(_debugnode);
+                if (_isHost)
+                {
+                    _world->getOwnedObstacles().insert({t, 0});
+                }
             }
         }
     }
-    const std::vector<std::vector<std::shared_ptr<TileInfo>>> &decorWorld = _backgroundWrapper->getDecorWorld();
-    for (int i = 0; i < originalRows; i++)
+    const std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>> &lowerDecorWorld = _backgroundWrapper->getLowerDecorWorld();
+    for (int n = 0; n < lowerDecorWorld.size(); n++)
     {
-        for (int j = 0; j < originalCols; j++)
+        for (int i = 0; i < originalRows; i++)
         {
-            std::shared_ptr<TileInfo> t = decorWorld.at(i).at(j);
-            if (t->texture != nullptr)
+            for (int j = 0; j < originalCols; j++)
             {
-                auto image = t->texture;
-                auto sprite = scene2::PolygonNode::allocWithTexture(image);
-                sprite->setContentSize(Vec2(1, 1));
-                sprite->setPosition(t->getPosition());
-                _worldnode->addChildWithName(sprite, "decoration" + std::to_string(i) + " " + std::to_string(j));
-//                std::cout <<  "decoration" + std::to_string(i) + " " + std::to_string(j) << std::endl;
+                std::shared_ptr<TileInfo> t = lowerDecorWorld.at(n).at(i).at(j);
+                if (t->texture != nullptr)
+                {
+                    auto image = t->texture;
+                    auto sprite = scene2::PolygonNode::allocWithTexture(image);
+                    sprite->setContentSize(Vec2(1, 1));
+                    sprite->setPosition(t->getPosition());
+                    _worldnode->addChild(sprite);
+                }
+            }
+        }
+    }
+}
+void GameScene::addChildForeground()
+{
+
+    const std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>> &upperDecorWorld = _backgroundWrapper->getUpperDecorWorld();
+    if (upperDecorWorld.size() == 0)
+    {
+        return;
+    }
+    int originalRows = (int)upperDecorWorld.at(0).size();
+    int originalCols = (int)upperDecorWorld.at(0).at(0).size();
+    for (int n = 0; n < upperDecorWorld.size(); n++)
+    {
+        for (int i = 0; i < originalRows; i++)
+        {
+            for (int j = 0; j < originalCols; j++)
+            {
+                std::shared_ptr<TileInfo> t = upperDecorWorld.at(n).at(i).at(j);
+                if (t->texture != nullptr)
+                {
+                    auto image = t->texture;
+                    auto sprite = scene2::PolygonNode::allocWithTexture(image);
+                    sprite->setContentSize(Vec2(1, 1));
+                    sprite->setPosition(t->getPosition());
+                    _worldnode->addChildWithName(sprite, "decoration" + std::to_string(i) + " " + std::to_string(j));
+                }
             }
         }
     }

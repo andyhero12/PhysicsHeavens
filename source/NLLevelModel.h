@@ -66,6 +66,17 @@ public:
 * during scene graph initialization.
 */
 class LevelModel : public Asset {
+public:
+    struct Spawner{
+        float spawnerX;
+        float spawnerY;
+        int hp;
+        float initDelay;
+        float regularDelay;
+        std::string primaryEnemy;
+        std::string secondaryEnemy;
+        std::string tertiaryEnemy;
+    };
     
 private:
     std::shared_ptr<cugl::AssetManager> _assets;
@@ -73,6 +84,9 @@ private:
     std::shared_ptr<cugl::JsonValue> _tileset;
     
     std::shared_ptr<cugl::Texture> _defaultTexture;
+    
+    int _numLowerDecorLayers;
+    int _numUpperDecorLayers;
     
     float _levelHeight;
     
@@ -86,14 +100,14 @@ private:
     
     std::vector<cugl::Vec3> _basesPos;
     std::vector<cugl::Vec3> _preSpawnLocs;
-    std::vector<cugl::Vec2> _spawnersPos;
+    std::vector<Spawner> _spawnersPos;
     
     std::vector<std::vector<int>> _tiles;
     
     std::vector<std::vector<int>> _walls;
     
-    std::vector<std::vector<int>> _decors;
-    
+    std::vector<std::vector<std::vector<int>>> _lowerDecorLayers;
+    std::vector<std::vector<std::vector<int>>> _upperDecorLayers;
     // ordered for lower bound
     std::map<int,std::string> tileSetMapping;
     std::map<int,TileSet> tilesMappingWithTextures;
@@ -123,10 +137,12 @@ public:
     int getTileHeight(){return _tileHeight;};
     
     int getTileWidth(){return _tileWidth;};
+    int getLowerDecorLayers(){ return _numLowerDecorLayers;}
+    int getUpperDecorLayers(){ return _numUpperDecorLayers;}
     
     cugl::Vec2 getPlayerPos(){return _playerPos;};
     
-    const std::vector<cugl::Vec2>& getSpawnersPos(){
+    const std::vector<Spawner>& getSpawnersPos(){
         return _spawnersPos;
     };
     const std::vector<cugl::Vec3>& getBasesPos(){
@@ -140,7 +156,12 @@ public:
     
     const std::vector<std::vector<int>>& getBoundaries(){return _walls;};
     
-    const std::vector<std::vector<int>>& getDecorations(){return _decors;};
+    const std::vector<std::vector<std::vector<int>>>& getLowerDecorations(){
+        return _lowerDecorLayers;
+    };
+    const std::vector<std::vector<std::vector<int>>>& getUpperDecorations(){
+        return _upperDecorLayers;
+    };
 #pragma mark Static Constructors
     /**
      * Creates a new game level with no source file.
@@ -187,7 +208,9 @@ public:
     
     bool loadDecorations(const std::shared_ptr<JsonValue>& json);
     
-    
+    bool loadNumDecor(const std::shared_ptr<JsonValue>& json);
+    bool loadLowerDecorLayer(const std::shared_ptr<JsonValue>& json, int index);
+    bool loadUpperDecorLayer(const std::shared_ptr<JsonValue>& json, int index);
     bool loadPlayer(const std::shared_ptr<JsonValue>& json);
     bool loadSpanwerLocations(const std::shared_ptr<JsonValue>& json);
     /**
