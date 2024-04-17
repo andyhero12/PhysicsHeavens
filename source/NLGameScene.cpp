@@ -237,7 +237,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _worldnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
 
     _monsterSceneNode = scene2::SceneNode::alloc();
-    
+
     _debugnode = scene2::SceneNode::alloc();
     _debugnode->setScale(zoom);
     _debugnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
@@ -267,11 +267,14 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _spawnerController.init(_level->getSpawnersPos());
     _spawnerController.setRootNode(_worldnode, _isHost);
 
-    overWorld.init(assets, _level, computeActiveSize(),_network, isHost, _backgroundWrapper);
+    overWorld.init(assets, _level, computeActiveSize(), _network, isHost, _backgroundWrapper);
     overWorld.setRootNode(_worldnode, _debugnode, _world);
-    if (isHost){
+    if (isHost)
+    {
         _uinode->addChild(overWorld.getDog()->getUINode());
-    }else{
+    }
+    else
+    {
         _uinode->addChild(overWorld.getClientDog()->getUINode());
     }
 
@@ -279,7 +282,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _monsterController.setMeleeAnimationData(_constants->get("basicEnemy"), assets);
     _monsterController.setSpawnerAnimationData(_constants->get("spawnerEnemy"), assets);
     _monsterController.setBombAnimationData(_constants->get("bomb"), assets);
-    _monsterController.setAbsorbAnimationData(_constants->get("absorbEnemy"),assets);
+    _monsterController.setAbsorbAnimationData(_constants->get("absorbEnemy"), assets);
     _monsterController.init(overWorld, _debugnode);
     _worldnode->addChild(_monsterSceneNode);
     _collisionController.init();
@@ -312,12 +315,15 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 
     _zoom = ROOT_NODE_SCALE;
 
-    if (isHost){
+    if (isHost)
+    {
         Vec2 delta = overWorld.getDog()->getDogNode()->getWorldPosition();
         delta -= (computeActiveSize() / 2);
         _rootnode->applyPan(-delta / _zoom);
         _rootnode->setScale(_zoom);
-    }else{
+    }
+    else
+    {
         Vec2 delta = overWorld.getClientDog()->getDogNode()->getWorldPosition();
         delta -= (computeActiveSize() / 2);
         _rootnode->applyPan(-delta / _zoom);
@@ -424,12 +430,15 @@ void GameScene::addInitObstacle(const std::shared_ptr<physics2::Obstacle> &obj,
 void GameScene::preUpdate(float dt)
 {
 
-    if (_isHost){
-        float zoom = _zoom - (ROOT_NODE_SCALE - 0.25f* (float)overWorld.getDog()->getAbsorb() / (float)overWorld.getDog()->getMaxAbsorb());
+    if (_isHost)
+    {
+        float zoom = _zoom - (ROOT_NODE_SCALE - 0.25f * (float)overWorld.getDog()->getAbsorb() / (float)overWorld.getDog()->getMaxAbsorb());
         _zoom -= fmin(zoom, 0.01f) * (zoom < 0 ? 0.12f : 0.3f);
         _rootnode->setScale(_zoom);
-    }else{
-        float zoom = _zoom - (ROOT_NODE_SCALE - 0.25f* (float)overWorld.getClientDog()->getAbsorb() / (float)overWorld.getClientDog()->getMaxAbsorb());
+    }
+    else
+    {
+        float zoom = _zoom - (ROOT_NODE_SCALE - 0.25f * (float)overWorld.getClientDog()->getAbsorb() / (float)overWorld.getClientDog()->getMaxAbsorb());
         _zoom -= fmin(zoom, 0.01f) * (zoom < 0 ? 0.12f : 0.3f);
         _rootnode->setScale(_zoom);
     }
@@ -457,9 +466,10 @@ void GameScene::preUpdate(float dt)
     }
     overWorld.update(_input, computeActiveSize(), dt);
     _spawnerController.update(_monsterController, overWorld, dt);
-    _monsterController.update( dt, overWorld);
+    _monsterController.update(dt, overWorld);
 
-    if (_isHost){
+    if (_isHost)
+    {
         _collisionController.intraOverWorldCollisions(overWorld);
         _collisionController.overWorldMonsterControllerCollisions(overWorld, _monsterController);
         _collisionController.attackCollisions(overWorld, _monsterController, _spawnerController);
@@ -473,15 +483,50 @@ void GameScene::postUpdate(float dt)
     overWorld.postUpdate();
 
     _rootnode->resetPane();
-    if (_isHost){
-        Vec2 delta = overWorld.getDog()->getDogNode()->getWorldPosition();
-        delta -= (computeActiveSize() / 2);
-        _rootnode->applyPan(-delta / _zoom);
-    }else{
-        Vec2 delta = overWorld.getClientDog()->getDogNode()->getWorldPosition();
-        delta -= (computeActiveSize() / 2);
-        _rootnode->applyPan(-delta / _zoom);
+    for (int i = 0; i < _decorToHide.size(); i++)
+    {
+        if (_decorToHide.at(i))
+        {
+            _decorToHide.at(i)->setColor(Color4::WHITE);
+        }
     }
+    _decorToHide.clear();
+    Vec2 delta;
+
+    if (_isHost)
+    {
+        delta = overWorld.getDog()->getDogNode()->getWorldPosition();
+        delta -= (computeActiveSize() / 2);
+        _rootnode->applyPan(-delta / _zoom);
+
+        delta = overWorld.getDog()->getPosition();
+    }
+    else
+    {
+        delta = overWorld.getClientDog()->getDogNode()->getWorldPosition();
+        delta -= (computeActiveSize() / 2);
+        _rootnode->applyPan(-delta / _zoom);
+
+        delta = overWorld.getClientDog()->getPosition();
+    }
+
+    for (int i = -1; i <= 1; i++)
+    {
+        for (int j = -1; j <= 1; j++)
+        {
+            _decorToHide.push_back(_worldnode->getChildByName("decoration" + std::to_string(int(delta.y + i)) + " " + std::to_string(int(delta.x + j))));
+        }
+    }
+
+    for (int i = 0; i < _decorToHide.size(); i++)
+    {
+        if (_decorToHide.at(i))
+        {
+            _decorToHide.at(i)->setColor(Color4f(1, 1, 1, 0.7f));
+        }
+    }
+
+    // hiding decorations
 }
 
 void GameScene::fixedUpdate()
@@ -605,7 +650,7 @@ void GameScene::addChildBackground()
             auto sprite = scene2::PolygonNode::allocWithTexture(image);
             sprite->setContentSize(Vec2(1, 1));
             sprite->setPosition(t->getPosition());
-            _worldnode->addChild(sprite);
+            _worldnode->addChildWithName(sprite, "tileworld" + std::to_string(i) + std::to_string(j));
         }
     }
     const std::vector<std::vector<std::shared_ptr<TileInfo>>> &currentBoundaries = _backgroundWrapper->getBoundaryWorld();
@@ -627,7 +672,8 @@ void GameScene::addChildBackground()
         }
     }
     const std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>> &lowerDecorWorld = _backgroundWrapper->getLowerDecorWorld();
-    for (int n = 0 ;n < lowerDecorWorld.size(); n++){
+    for (int n = 0; n < lowerDecorWorld.size(); n++)
+    {
         for (int i = 0; i < originalRows; i++)
         {
             for (int j = 0; j < originalCols; j++)
@@ -649,12 +695,14 @@ void GameScene::addChildForeground()
 {
 
     const std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>> &upperDecorWorld = _backgroundWrapper->getUpperDecorWorld();
-    if (upperDecorWorld.size() == 0){
+    if (upperDecorWorld.size() == 0)
+    {
         return;
     }
     int originalRows = (int)upperDecorWorld.at(0).size();
     int originalCols = (int)upperDecorWorld.at(0).at(0).size();
-    for (int n = 0 ;n < upperDecorWorld.size(); n++){
+    for (int n = 0; n < upperDecorWorld.size(); n++)
+    {
         for (int i = 0; i < originalRows; i++)
         {
             for (int j = 0; j < originalCols; j++)
@@ -666,10 +714,9 @@ void GameScene::addChildForeground()
                     auto sprite = scene2::PolygonNode::allocWithTexture(image);
                     sprite->setContentSize(Vec2(1, 1));
                     sprite->setPosition(t->getPosition());
-                    _worldnode->addChild(sprite);
+                    _worldnode->addChildWithName(sprite, "decoration" + std::to_string(i) + " " + std::to_string(j));
                 }
             }
         }
     }
 }
-
