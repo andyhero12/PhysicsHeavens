@@ -19,7 +19,7 @@
 using namespace cugl;
 
 /** This is the ideal size of the logo */
-#define SCENE_SIZE  1024
+#define SCENE_SIZE 1024
 
 #pragma mark -
 #pragma mark Constructors
@@ -35,42 +35,49 @@ using namespace cugl;
  *
  * @return true if the controller is initialized properly, false otherwise.
  */
-bool LevelScene::init(const std::shared_ptr<AssetManager>& assets) {
+bool LevelScene::init(const std::shared_ptr<AssetManager> &assets)
+{
     // Initialize the scene to a locked width
     Size dimen = Application::get()->getDisplaySize();
     // Lock the scene to a reasonable resolution
-    if (dimen.width > dimen.height) {
-        dimen *= SCENE_SIZE/dimen.width;
-    } else {
-        dimen *= SCENE_SIZE/dimen.height;
+    if (dimen.width > dimen.height)
+    {
+        dimen *= SCENE_SIZE / dimen.width;
     }
-    if (assets == nullptr) {
-        return false;
-    } else if (!Scene2::init(dimen)) {
+    else
+    {
+        dimen *= SCENE_SIZE / dimen.height;
+    }
+    if (assets == nullptr)
+    {
         return false;
     }
-    
+    else if (!Scene2::init(dimen))
+    {
+        return false;
+    }
+
     // IMMEDIATELY load the splash screen assets
     _assets = assets;
     _assets->loadDirectory("json/level.json");
     std::shared_ptr<cugl::scene2::SceneNode> layer = assets->get<scene2::SceneNode>("level");
     layer->setContentSize(dimen);
     layer->doLayout(); // This rearranges the children to fit the screen
-    
+
     _bar = std::dynamic_pointer_cast<scene2::ProgressBar>(assets->get<scene2::SceneNode>("level_bar"));
     _brand = assets->get<scene2::SceneNode>("load_name");
     _button = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("level_play"));
-    _button->addListener([=](const std::string& name, bool down) {
+    _button->addListener([=](const std::string &name, bool down)
+                         {
         if(down){
             _level = Level::L1;
-        }
-    });
+        } });
     background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("backgroundl"), 1, 18);
     background->setScale(6.5);
     background->setPosition(0.5 * background->getSize());
     addChild(background);
-    layer->setColor(Color4(0,0,0,1));
-    Application::get()->setClearColor(Color4(192,192,192,255));
+    layer->setColor(Color4(0, 0, 0, 1));
+    Application::get()->setClearColor(Color4(192, 192, 192, 255));
     addChild(layer);
     return true;
 }
@@ -78,9 +85,11 @@ bool LevelScene::init(const std::shared_ptr<AssetManager>& assets) {
 /**
  * Disposes of all (non-static) resources allocated to this mode.
  */
-void LevelScene::dispose() {
+void LevelScene::dispose()
+{
     // Deactivate the button (platform dependent)
-    if (isPending()) {
+    if (isPending())
+    {
         _button->deactivate();
     }
     _button = nullptr;
@@ -91,7 +100,6 @@ void LevelScene::dispose() {
     _progress = 0.0f;
 }
 
-
 #pragma mark -
 #pragma mark Progress Monitoring
 /**
@@ -101,19 +109,24 @@ void LevelScene::dispose() {
  *
  * @param timestep  The amount of time (in seconds) since the last frame
  */
-void LevelScene::update(float progress) {
-    if (frame >= 10){
-        background->setFrame((background->getFrame()+ 1) % 18);
+void LevelScene::update(float progress)
+{
+    if (frame >= 10)
+    {
+        background->setFrame((background->getFrame() + 1) % 18);
         frame = 0;
     }
-    else{
-//        std::cout<<"frame"<<std::endl;
+    else
+    {
+        //        std::cout<<"frame"<<std::endl;
         frame += 1;
     }
-    
-    if (_progress < 1) {
+
+    if (_progress < 1)
+    {
         _progress = _assets->progress();
-        if (_progress >= 1) {
+        if (_progress >= 1)
+        {
             _progress = 1.0f;
             _bar->setVisible(false);
             _brand->setVisible(false);
@@ -129,24 +142,28 @@ void LevelScene::update(float progress) {
  *
  * @return true if loading is complete, but the player has not pressed play
  */
-bool LevelScene::isPending( ) const {
+bool LevelScene::isPending() const
+{
     return _button != nullptr && _button->isVisible();
 }
 
 void LevelScene::setActive(bool value)
 {
 
-    if (isActive() != value) {
-            Scene2::setActive(value);
-            if (value) {
-                _level = Level::NONE;
-                _button->activate();
-            } else {
-                _button->deactivate();
-                _button->setDown(false);
-                _progress = 0.0f;
-                frame = 0.0f;
-            }
+    if (isActive() != value)
+    {
+        Scene2::setActive(value);
+        if (value)
+        {
+            _level = Level::NONE;
+            _button->activate();
+        }
+        else
+        {
+            _button->deactivate();
+            _button->setDown(false);
+            _progress = 0.0f;
+            frame = 0.0f;
+        }
     }
-
 }
