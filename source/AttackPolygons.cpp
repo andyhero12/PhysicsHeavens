@@ -163,7 +163,7 @@ void AttackPolygons::addBite(Vec2 center, float angle, float explosionRad, float
     
     std::shared_ptr<cugl::scene2::SpriteNode> biteSprite = cugl::scene2::SpriteNode::allocWithSheet(bite, 3, 5);
     PolyFactory curFactory;
-    Poly2 resultingPolygon = curFactory.makeArc(center, explosionRad, angle, 180);
+    Poly2 resultingPolygon = curFactory.makeArc(center, explosionRad * (1 + scale), angle, 180);
     std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(biteSprite, Action::BITE, resultingPolygon, BITE_AGE, 1 + scale);
     if(front){
         frontAttackPolygonNode->addChild(curPtr->getActionNode());
