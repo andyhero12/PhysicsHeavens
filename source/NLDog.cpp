@@ -424,11 +424,13 @@ void Dog::updateLocalAnimations(DogSize size){
     dashAnimation->setPosition(baseBlankNode->getAnchor());
     baseBlankNode->addChild(dashAnimation);
     
-    recallAnimation->setPosition(baseBlankNode->getAnchor());
-    baseBlankNode->addChild(recallAnimation);
     
     belowPenta->setPosition(baseBlankNode->getAnchor());
     baseBlankNode->addChild(belowPenta);
+    
+    recallAnimation->setPosition(baseBlankNode->getAnchor());
+    baseBlankNode->addChild(recallAnimation);
+    
     
     baseBlankNode->setPosition(getPosition());
 }
