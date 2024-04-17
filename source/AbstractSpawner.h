@@ -60,7 +60,10 @@ public:
     }
     cugl::Vec2 getPos() const {
         return _position; }
-    void subHealth(const int val);
+    void subHealth(const int val) {
+        _health -= val;
+        cout << _health;
+    }
     bool dead(){
         return _health <= 0;
     }

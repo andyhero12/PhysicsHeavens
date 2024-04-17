@@ -325,8 +325,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     }
 
     addChildForeground();
-
-    _difficulty = 1;
     return true;
 }
 
@@ -458,7 +456,7 @@ void GameScene::preUpdate(float dt)
         setDebug(!isDebug());
     }
     overWorld.update(_input, computeActiveSize(), dt);
-    _spawnerController.update(_monsterController, overWorld, dt, _difficulty);
+    _spawnerController.update(_monsterController, overWorld, dt);
     _monsterController.update( dt, overWorld);
 
     if (_isHost){
@@ -530,8 +528,6 @@ void GameScene::fixedUpdate()
 #pragma mark END SOLUTION
 
     _world->update(FIXED_TIMESTEP_S);
-    //_difficulty *= 1.00077046f;
-    _difficulty *= 1.00003851f;
 }
 
 /**

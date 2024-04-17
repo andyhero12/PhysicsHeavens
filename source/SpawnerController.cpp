@@ -5,6 +5,7 @@
 //
 #include "SpawnerController.h"
 #include <random>
+#include <cmath>
 
 SpawnerController::SpawnerController(){
     
@@ -22,9 +23,13 @@ int generateRandomValue(int left, int right) {
     return dis(gen);
 }
 
-void SpawnerController::update(MonsterController& monsterController, OverWorld& overWorld, float timestep, float difficulty){
+void SpawnerController::update(MonsterController& monsterController, OverWorld& overWorld, float timestep){
+    //_difficulty *= 1.00077046f;
+   // _difficulty *= 1.00003851f;
+    accumulatedTime += timestep;
+    //cout << (std::to_string(difficulty));
     for(auto& spawner : _spawners) {
-        spawner->update(monsterController, overWorld, timestep, difficulty);
+        spawner->update(monsterController, overWorld, timestep, (float)std::pow(1.00231316, accumulatedTime) + difficulty);
     }
     
     
@@ -33,7 +38,10 @@ void SpawnerController::update(MonsterController& monsterController, OverWorld& 
         std::shared_ptr<AbstractSpawner> spawner = *it;
         
         if (spawner->dead()){
+            //CULog("nani");
             it = _spawners.erase(it);
+            spawner->getSpawnerNode()->removeFromParent();
+            difficulty += 0.1;
         }
         else{
             ++it;
@@ -55,6 +63,8 @@ bool SpawnerController::init(const std::vector<LevelModel::Spawner>& startLocs) 
         curSpawner->getSpawnerNode()->setPosition(pos);
         _spawners.insert(curSpawner);
     }
+    difficulty = 0;
+    accumulatedTime = 0;
     return true;
 }
 

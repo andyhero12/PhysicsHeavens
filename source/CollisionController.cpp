@@ -220,8 +220,10 @@ void CollisionController::resolveBlowup(const cugl::Poly2& blastCircle, MonsterC
         auto curS = itS;
         itS++;
         if (blastCircle.contains(spawn->getPos())){
-            spawn->getSpawnerNode()->removeFromParent();
-            spawners.erase(curS);
+            //CULog("wtf");
+            spawn->subHealth(999);
+            //spawn->getSpawnerNode()->removeFromParent();
+            //spawners.erase(curS);
         }
     }
 }

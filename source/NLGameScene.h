@@ -94,7 +94,6 @@ protected:
     cugl::Affine2 _transform;
 
     float _zoom;
-    float _difficulty;
 
     /**
      * Lays out the game geography.

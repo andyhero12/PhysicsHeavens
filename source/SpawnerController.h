@@ -25,6 +25,9 @@ public:
     
     /* Set of spawners */
     std::unordered_set<std::shared_ptr<AbstractSpawner>> _spawners;
+
+    float difficulty;
+    float accumulatedTime;
     
     /* Functions */
     SpawnerController();
@@ -32,7 +35,7 @@ public:
     ~SpawnerController();
 
     void setTexture(const std::shared_ptr<cugl::Texture>& value);
-    void update(MonsterController& monsterController, OverWorld& overWorld, float timestep, float difficulty);
+    void update(MonsterController& monsterController, OverWorld& overWorld, float timestep);
     
     bool init(const std::vector<LevelModel::Spawner>& startLocs);
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl::Size size);
