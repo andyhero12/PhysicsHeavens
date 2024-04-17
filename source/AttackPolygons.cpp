@@ -19,7 +19,11 @@
 
 bool ActionPolygon::dealDamage(){
     if(!_polygon && polygonAction == Action::BITE){
-        return (spriteActionNode->getFrame() == BITE_FRAME) && _freq == 0;
+        bool first_time = spriteActionNode->getFrame() == BITE_FRAME && _freq == 0;
+        if(first_time){
+            _freq = 1;
+        }
+        return first_time;
     }
     else{
         return true;
@@ -60,8 +64,6 @@ ActionPolygon::ActionPolygon( std::shared_ptr<SpriteAnimationNode> actionSprite,
     spriteActionNode = actionSprite;
     _scale = scale * BITE_SCALE;
     spriteActionNode->setScale(_scale);
-//    internalPolygon = spriteActionNode->getPolygon() * _scale;
-//    polyActionNode = cugl::scene2::SpriteNode::allocWithPoly(internalPolygon);
 }
 
 ActionPolygon::ActionPolygon(Action curAction, Poly2& mintPoly, int mx, float scale)
@@ -71,18 +73,11 @@ ActionPolygon::ActionPolygon(Action curAction, Poly2& mintPoly, int mx, float sc
 , _maxage{mx}
 , _scale{1.0}
 , _polygon(true)
+, _freq{0}
 {
     polyActionNode = cugl::scene2::SpriteNode::allocWithPoly(mintPoly);
 }
 
-void ActionPolygon::draw(const std::shared_ptr<SpriteBatch>& batch, const Affine2& transform, Color4 tint){
-    if(_polygon){
-        polyActionNode->draw(batch, transform, tint);
-    }
-    else{
-        spriteActionNode->draw(batch, transform, tint);
-    }
-}
 
 AttackPolygons::AttackPolygons()
 : max_age{25}
