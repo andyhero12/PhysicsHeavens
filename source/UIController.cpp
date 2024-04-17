@@ -7,6 +7,7 @@
 
 #include "UIController.h"
 using namespace cugl;
+#define ANIM_FREQ 5
 
 bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std::shared_ptr<cugl::AssetManager>& assets, cugl::Size screenSize){
 //    _childOffset = -1;
@@ -70,7 +71,8 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     _bombtoggle->setPosition(togglex, toggley);
     _shoottoggle->setPosition(togglex, toggley);
     _baittoggle->setPosition(togglex, toggley);
-    _toggleFlash->setPosition(togglex, toggley);
+    
+    _toggleFlash->setPosition(togglex + _baittoggle->getWidth()/3, toggley + _baittoggle->getHeight()/3);
     
     _shoottoggle->setVisible(true);
     _bombtoggle->setVisible(false);
@@ -148,5 +150,15 @@ void UIController::setToggle(std::string mode){
     }
     else{
         CUAssertLog(false, "wrong mode string");
+    }
+}
+
+void UIController::animateFlash(){
+    if(_freq == ANIM_FREQ){
+        _freq = 0;
+        _toggleFlash->setFrame((_toggleFlash->getFrame() + 1) % _toggleFlash->getSpan());
+    }
+    else{
+        _freq += 1;
     }
 }
