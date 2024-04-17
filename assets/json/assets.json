@@ -248,6 +248,10 @@
            "file": "textures/dog/effects/recall.png",
             "magfilter": "nearest"
        },
+       "penta":{
+           "file": "textures/dog/effects/penta.png",
+            "magfilter": "nearest"
+       },
        "absorbEnemyLeftWalk": {
            "file": "textures/absorbEnemy/absorbLeftWalk.PNG",
                  "minfilter": "linear",

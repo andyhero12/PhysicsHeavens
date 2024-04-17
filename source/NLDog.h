@@ -85,7 +85,6 @@ protected:
     std::shared_ptr<AnimationSceneNode> biteAnimation;
     std::shared_ptr<AnimationSceneNode> shootAnimation;
     std::shared_ptr<AnimationSceneNode> dashAnimation;
-    std::shared_ptr<AnimationSceneNode> recallAnimation;
     
     std::shared_ptr<AnimationSceneNode> idleAnimationSmall;
     std::shared_ptr<AnimationSceneNode> runAnimationSmall;
@@ -105,6 +104,8 @@ protected:
     std::shared_ptr<AnimationSceneNode> shootAnimationLarge;
     std::shared_ptr<AnimationSceneNode> dashAnimationLarge;
     
+    std::shared_ptr<AnimationSceneNode> recallAnimation;
+    std::shared_ptr<AnimationSceneNode> belowPenta;
     std::shared_ptr<UIController> _uiController;
 
     std::array<std::string,4> modes = {"SHOOT", "BAIT", "BOMB", "RECALL"};
@@ -202,6 +203,7 @@ public:
     
     
     void setRecallAnimation(std::shared_ptr<AnimationSceneNode> recall);
+    void setBelowPenta(std::shared_ptr<AnimationSceneNode> belowPenta);
     void setSmallAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot,std::shared_ptr<AnimationSceneNode> dash);
     void setMediumAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot,std::shared_ptr<AnimationSceneNode> dash);
     void setLargeAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot,std::shared_ptr<AnimationSceneNode> dash);
@@ -324,7 +326,7 @@ public:
     
     int getMaxHealth() const { return _maxHealth; }
     
-    bool readyToRecall() const { return action == Actions::RECALL && dashAnimation->getFrame() == dashAnimation->getSize()/2; }
+    bool readyToRecall() const { return action == Actions::RECALL && recallAnimation->getFrame() == recallAnimation->getSize()/2; }
     int getMaxAbsorb() const { return _maxAbsorb; }
     /**
      * Sets the current ship health.

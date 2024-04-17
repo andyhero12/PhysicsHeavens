@@ -309,10 +309,28 @@ bool OverWorld::initDogModel(){
     std::shared_ptr<AnimationSceneNode> recall = AnimationSceneNode::allocWithTextures(recallTextures, 6,5, 30, 2);
     recall->setAnchor(Vec2::ANCHOR_CENTER);
     recall->setContentSize(DOG_SIZE);
-
-    std::shared_ptr<AnimationSceneNode> recallClient = AnimationSceneNode::allocWithTextures(textures,6,5, 30, 2);
+    
+    std::shared_ptr<AnimationSceneNode> recallClient = AnimationSceneNode::allocWithTextures(recallTextures, 6,5, 30, 2);
     recallClient->setAnchor(Vec2::ANCHOR_CENTER);
     recallClient->setContentSize(DOG_SIZE);
+    
+    recallTextures.clear();
+    recallTextures.push_back(_assets->get<cugl::Texture>("penta"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("penta"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("penta"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("penta"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("penta"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("penta"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("penta"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("penta"));
+
+    std::shared_ptr<AnimationSceneNode> belowPenta = AnimationSceneNode::allocWithTextures(recallTextures, 6,5, 30, 2);
+    belowPenta->setAnchor(Vec2::ANCHOR_CENTER);
+    belowPenta->setContentSize(DOG_SIZE);
+
+    std::shared_ptr<AnimationSceneNode> belowPentaClient = AnimationSceneNode::allocWithTextures(recallTextures,6,5, 30, 2);
+    belowPentaClient->setAnchor(Vec2::ANCHOR_CENTER);
+    belowPentaClient->setContentSize(DOG_SIZE);
     
     // MAGIC NUMBER ALERT!!
     Vec2 dogPos = _level->getPlayerPos();
@@ -327,6 +345,7 @@ bool OverWorld::initDogModel(){
     // MORE MAGIC NUMBER ALERT
     
     _dog->setRecallAnimation(recall);
+    _dog->setBelowPenta(belowPenta);
     _dog->setFinalDog(placeHolderDrawOver);
     placeHolderDrawOver->setScale(DOG_SIZE.y / textures.at(0)->getHeight());
     //placeHolderDrawOver->setAnchor(Vec2::ANCHOR_CENTER);
@@ -349,6 +368,7 @@ bool OverWorld::initDogModel(){
     std::shared_ptr<cugl::scene2::SceneNode> clientPlaceHolderDrawOver = scene2::SceneNode::allocWithBounds(DOG_SIZE);
     // MORE MAGIC NUMBER ALERT
     _dogClient->setRecallAnimation(recallClient);
+    _dogClient->setBelowPenta(belowPentaClient);
     _dogClient->setFinalDog(clientPlaceHolderDrawOver);
     clientPlaceHolderDrawOver->setScale(DOG_SIZE.y / textures.at(0)->getHeight());
     
@@ -518,6 +538,7 @@ void OverWorld::ownedDogUpdate(InputController& _input, cugl::Size, std::shared_
         _network->pushOutEvent(SizeEvent::allocSizeEvent(_curDog->getAbsorb(),_isHost));
     }
     if (_curDog->readyToRecall()){
+        CULog("GOOD RECALL");
         recallDogToClosetBase(_curDog);
         CULog("Recalling ");
     }

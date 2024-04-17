@@ -204,6 +204,9 @@ void Dog::moveOnInputSetAction(InputController& _input){
     }else if (_input.getKeyboardState()){
         _vel = Vec2(_input.getTurn(), _input.getForward());
     }
+    if (action == Actions::RECALL){
+        _vel= Vec2(0,0);
+    }
     prevDirection =_curDirection;
     bool startingDash = _startDash;
     bool startingRecall = _startRecall;
@@ -303,8 +306,7 @@ void Dog::dogActions(){
     if(action == Actions::BITE && biteAnimation->getFrame() == biteAnimation->getSize() - 1){
         // bite is finished
         action = Actions::RUN;
-    }
-    else if(action == Actions::SHOOT && shootAnimation->getFrame() == shootAnimation->getSize() - 1){
+    }else if(action == Actions::SHOOT && shootAnimation->getFrame() == shootAnimation->getSize() - 1){
         // shoot is finished
         action = Actions::RUN;
     }
@@ -324,14 +326,16 @@ void Dog::dogActions(){
         shootAnimation->animate(prevDirection, false);
         dashAnimation->animate(prevDirection, false);
         recallAnimation->animate(prevDirection, false);
+        belowPenta->animate(prevDirection,false);
     }
     else{
         idleAnimation->animate(direction, false);
-        runAnimation->animate(direction, action == Actions::RUN || action == Actions::RECALL);
+        runAnimation->animate(direction, action == Actions::RUN);
         biteAnimation->animate(direction, action == Actions::BITE);
         shootAnimation->animate(direction, action == Actions::SHOOT);
         dashAnimation->animate(direction, action == Actions::DASH);
         recallAnimation->animate(direction, action == Actions::RECALL);
+        belowPenta->animate(prevDirection,action == Actions::RECALL);
     }
 }
 /**
@@ -359,6 +363,9 @@ void Dog::update(float delta) {
 
 void Dog::setRecallAnimation(std::shared_ptr<AnimationSceneNode> recall){
     recallAnimation = recall;
+}
+void Dog::setBelowPenta(std::shared_ptr<AnimationSceneNode> _belowPenta){
+    belowPenta = _belowPenta;
 }
 void Dog::setSmallAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot, std::shared_ptr<AnimationSceneNode> dash){
     runAnimationSmall = run;
@@ -419,6 +426,9 @@ void Dog::updateLocalAnimations(DogSize size){
     
     recallAnimation->setPosition(baseBlankNode->getAnchor());
     baseBlankNode->addChild(recallAnimation);
+    
+    belowPenta->setPosition(baseBlankNode->getAnchor());
+    baseBlankNode->addChild(belowPenta);
     
     baseBlankNode->setPosition(getPosition());
 }
