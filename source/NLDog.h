@@ -78,7 +78,7 @@ protected:
     AnimationSceneNode::Directions prevDirection;
     cugl::Vec2 dir;
     cugl::Vec2 _ang;
-    std::shared_ptr<cugl::scene2::SceneNode> baseBlankNode;
+    std::shared_ptr<cugl::scene2::OrderedNode> baseBlankNode;
     std::shared_ptr<cugl::scene2::SceneNode> effectsNode;
     std::shared_ptr<AnimationSceneNode> idleAnimation;
     std::shared_ptr<AnimationSceneNode> runAnimation;
@@ -205,7 +205,7 @@ public:
     
     void setUIController(std::shared_ptr<UIController> controller){ _uiController = controller; }
     
-    void setFinalDog(std::shared_ptr<cugl::scene2::SceneNode> baseNode);
+    void setFinalDog(std::shared_ptr<cugl::scene2::OrderedNode> baseNode);
     void resetCurrentAnimations(DogSize dogSize);
     void updateLocalAnimations(DogSize dogSize);
     

@@ -372,7 +372,7 @@ void Dog::setLargeAnimation(std::shared_ptr<AnimationSceneNode> idle, std::share
     dashAnimationLarge = dash;
 }
 // Decoupled so useless for now
-void Dog::setFinalDog(std::shared_ptr<cugl::scene2::SceneNode> baseNode){
+void Dog::setFinalDog(std::shared_ptr<cugl::scene2::OrderedNode> baseNode){
     baseBlankNode = baseNode;
     updateLocalAnimations(DogSize::SMALL);
 }
@@ -407,8 +407,15 @@ void Dog::updateLocalAnimations(DogSize size){
     
     baseBlankNode->setPosition(getPosition());
     
+    idleAnimation->setPriority(0.5f);
+    biteAnimation->setPriority(0.5f);
+    shootAnimation->setPriority(0.5f);
+    runAnimation->setPriority(0.5f);
+    dashAnimation->setPriority(0.5f);
+    
     if(effectsNode){
         baseBlankNode->addChild(effectsNode);
+        effectsNode->setPriority(0);
     }
 }
 

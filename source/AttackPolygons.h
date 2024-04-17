@@ -61,6 +61,7 @@ private:
     std::shared_ptr<cugl::Texture> biteLeftTexture;
     std::shared_ptr<cugl::Texture> biteFrontTexture;
     std::shared_ptr<cugl::Texture> biteBackTexture;
+    int zorder;
 public:
     // Have AttackPolygon Set hold all possible textures for bite, shoot, explode
     int max_age;
@@ -76,5 +77,6 @@ public:
     std::shared_ptr<cugl::scene2::SceneNode> getAttackPolygonNode(){
         return attackPolygonNode;
     }
+    int getZOrder() const { return zorder; }
 };
 #endif /* AttackPolygons_hpp */

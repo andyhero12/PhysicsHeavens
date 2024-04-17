@@ -266,7 +266,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _spawnerController.setTexture(assets->get<Texture>("spawner"));
     _spawnerController.init(_level->getSpawnersPos());
     _spawnerController.setRootNode(_worldnode, _isHost);
-
+    _worldnode->addChild(_monsterSceneNode);
     overWorld.init(assets, _level, computeActiveSize(), _network, isHost, _backgroundWrapper);
     overWorld.setRootNode(_worldnode, _debugnode, _world);
     if (isHost)
@@ -284,7 +284,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _monsterController.setBombAnimationData(_constants->get("bomb"), assets);
     _monsterController.setAbsorbAnimationData(_constants->get("absorbEnemy"), assets);
     _monsterController.init(overWorld, _debugnode);
-    _worldnode->addChild(_monsterSceneNode);
+
     _collisionController.init();
 
     _active = true;

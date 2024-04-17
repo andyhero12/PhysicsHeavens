@@ -305,7 +305,7 @@ bool OverWorld::initDogModel()
     _dog->setMediumAnimation(mediumDogIdle, mediumDogRun, mediumDogBite, mediumDogShoot, mediumDogDash);
     _dog->setLargeAnimation(largeDogIdle, largeDogRun, largeDogBite, largeDogShoot, largeDogDash);
 
-    std::shared_ptr<cugl::scene2::SceneNode> placeHolderDrawOver = scene2::SceneNode::allocWithBounds(DOG_SIZE);
+    std::shared_ptr<cugl::scene2::OrderedNode> placeHolderDrawOver = cugl::scene2::OrderedNode::allocWithOrder(cugl::scene2::OrderedNode::Order::ASCEND, DOG_SIZE);
     // MORE MAGIC NUMBER ALERT
 
     // placeHolderDrawOver->setContentSize(DOG_SIZE);
@@ -327,7 +327,7 @@ bool OverWorld::initDogModel()
     _dogClient->setMediumAnimation(clientMediumDogIdle, clientMediumDogRun, clientMediumDogBite, clientMediumDogShoot, clientMediumDogDash);
     _dogClient->setLargeAnimation(clientLargeDogIdle, clientLargeDogRun, clientLargeDogBite, clientLargeDogShoot, clientLargeDogDash);
 
-    std::shared_ptr<cugl::scene2::SceneNode> clientPlaceHolderDrawOver = scene2::SceneNode::allocWithBounds(DOG_SIZE);
+    std::shared_ptr<cugl::scene2::OrderedNode> clientPlaceHolderDrawOver = cugl::scene2::OrderedNode::allocWithOrder(cugl::scene2::OrderedNode::Order::ASCEND, DOG_SIZE);
     // MORE MAGIC NUMBER ALERT
 
     // placeHolderDrawOver->setContentSize(DOG_SIZE);
