@@ -272,12 +272,12 @@
             "magfilter": "nearest"
        },
        "absorbEnemyLeftWalk": {
-           "file": "textures/absorbEnemy/absorbLeftWalk.PNG",
+           "file": "textures/absorbEnemy/absorbLeftWalk.png",
                  "minfilter": "linear",
                  "magfilter": "nearest"
        },
        "absorbEnemyRightWalk": {
-           "file": "textures/absorbEnemy/absorbRightWalk.PNG",
+           "file": "textures/absorbEnemy/absorbRightWalk.png",
                  "minfilter": "linear",
                  "magfilter": "nearest"
         },
@@ -349,6 +349,22 @@
             "file": "textures/tile/angelCafe.png",
             "magfilter": "nearest"
         },
+        "angelFountain": {
+            "file": "textures/tile/angelFountain.png",
+            "magfilter": "nearest"
+        },
+        "lamp": {
+            "file": "textures/tile/lamp.png",
+            "magfilter": "nearest"
+        },
+        "angelFoodTruck": {
+            "file": "textures/tile/angelFoodTruck.png",
+            "magfilter": "nearest"
+        },
+        "table": {
+            "file": "textures/tile/table.png",
+            "magfilter": "nearest"
+        },
         "devilCafe": {
             "file": "textures/tile/devilCafe.png",
             "magfilter": "nearest"
@@ -382,6 +398,10 @@
     },
     "jsons": {
         "angelMotel": "json/assetsJson/angelMotel.json",
+        "angelFoodTruck": "json/assetsJson/angelFoodTruck.json",
+        "angelFountain": "json/assetsJson/angelFountain.json",
+        "lamp": "json/assetsJson/lamp.json",
+        "table": "json/assetsJson/table.json",
         "angelSkyscraper": "json/assetsJson/angelSkyscraper.json",
         "devilMotel": "json/assetsJson/devilMotel.json",
         "devilSkyscraper": "json/assetsJson/devilSkyscraper.json",

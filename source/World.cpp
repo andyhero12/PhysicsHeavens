@@ -103,6 +103,7 @@ std::shared_ptr<cugl::Texture> World::getBoxFromTileSet(int position, const std:
     float textureWidth = curTile.tileJson->get("imagewidth")->asFloat();
     float textureHeight = curTile.tileJson->get("imageheight")->asFloat();
     
+    CULog("%s",curTile.source.data());
     CUAssert(textureWidth == curTile.textureTile->getWidth());
     CUAssert(textureHeight == curTile.textureTile->getHeight());
     int offset = position - curTile.firstGid;

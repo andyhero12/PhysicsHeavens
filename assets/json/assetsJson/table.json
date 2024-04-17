@@ -1,0 +1,14 @@
+{ "columns":2,
+ "image":"Downloads\/table.png.PNG",
+ "imageheight":65,
+ "imagewidth":91,
+ "margin":0,
+ "name":"table",
+ "spacing":0,
+ "tilecount":4,
+ "tiledversion":"1.10.2",
+ "tileheight":32,
+ "tilewidth":32,
+ "type":"tileset",
+ "version":"1.10"
+}
