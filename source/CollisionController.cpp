@@ -69,6 +69,22 @@ void CollisionController::attackCollisions(OverWorld& overWorld, MonsterControll
                 CULog("Action not used in Collisions\n");
         };
     }
+    AttackPolygons& attacksClient = overWorld.getAttackPolygonsClient();
+    for (const std::shared_ptr<ActionPolygon>& action: attacksClient.currentAttacks){
+        switch (action->getAction()){
+            case (Action::SHOOT):
+                hugeBlastCollision(action, monsterController); // Play blast sound
+                break;
+            case (Action::EXPLODE):
+                resolveBlowup(action,monsterController, spawners); // play boom sound
+                break;
+            case (Action::BITE):
+                resolveBiteAttack(action, monsterController, overWorld);
+                break;
+            default:
+                CULog("Action not used in Collisions\n");
+        };
+    }
 }
 bool CollisionController::monsterBaseCollsion(OverWorld& overWorld, std::shared_ptr<BaseSet> curBases, MonsterController& monsterController){
     std::unordered_set<std::shared_ptr<AbstractEnemy>>& curEnemies = monsterController.getEnemies();
@@ -223,8 +239,10 @@ void CollisionController::resolveBlowup(const std::shared_ptr<ActionPolygon>& ac
         auto curS = itS;
         itS++;
         if (blastCircle.contains(spawn->getPos())){
-            spawn->getSpawnerNode()->removeFromParent();
-            spawners.erase(curS);
+            //CULog("wtf");
+            spawn->subHealth(999);
+            //spawn->getSpawnerNode()->removeFromParent();
+            //spawners.erase(curS);
         }
     }
 }

@@ -27,6 +27,7 @@
 #include "NLShootEvent.h"
 #include "NLGameResEvent.h"
 #include "NLDashEvent.h"
+#include "NLRecallEvent.h"
 #include "NLSizeEvent.h"
 #include "NLCameraController.h"
 #include "NLLevelModel.h"
