@@ -152,8 +152,9 @@ bool CollisionController::monsterDogCollision(std::shared_ptr<Dog> curDog, std::
         float impactDistance = dogRadius + enemyRadius + BUFFER;
         it++;
         if (distance < impactDistance) {
+            CULog("WITHIN BUFFER");
             if (enemy->canAttack()){
-                CULog("Attacked");
+                CULog("Can Attack");
                 collision = true;
                 enemy->resetAttack();
                 curDog->setHealth(curDog->getHealth()-enemy->getDamage());
