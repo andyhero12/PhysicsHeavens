@@ -15,6 +15,11 @@
             "minfilter": "linear",
             "magfilter": "nearest"
         },
+        "frontbite": {
+            "file": "textures/dog/effects/magic_chomp_back.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
         "resume": {
             "file": "textures/game_ui/resume_button.png",
             "minfilter": "linear",
