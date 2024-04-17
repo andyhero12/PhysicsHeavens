@@ -41,6 +41,7 @@ private:
     std::shared_ptr<cugl::JsonValue> _constants;
     std::shared_ptr<cugl::AssetManager> _assets;
     AttackPolygons _attackPolygonSet;
+    AttackPolygons _clientAttackPolygonSet;
     std::shared_ptr<World> _world;
 
     void drawDecoy(const std::shared_ptr<cugl::SpriteBatch> &batch);
@@ -113,6 +114,10 @@ public:
     AttackPolygons &getAttackPolygons()
     {
         return _attackPolygonSet;
+    }
+    AttackPolygons &getAttackPolygonsClient()
+    {
+        return _clientAttackPolygonSet;
     }
     void setDog(std::shared_ptr<Dog> m_dog)
     {

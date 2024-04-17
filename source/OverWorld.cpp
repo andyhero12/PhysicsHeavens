@@ -19,6 +19,7 @@ void OverWorld::reset()
     initBases();
     initDecoys();
     _attackPolygonSet.init();
+    _clientAttackPolygonSet.init();
 }
 
 bool OverWorld::initDogModel()
@@ -412,6 +413,8 @@ bool OverWorld::initPolygons()
 {
     _attackPolygonSet.init();
     _attackPolygonSet.setTexture(_assets->get<cugl::Texture>("leftbite"), _assets->get<cugl::Texture>("rightbite"), _assets->get<cugl::Texture>("frontbite"), _assets->get<cugl::Texture>("leftbite"));
+    _clientAttackPolygonSet.init();
+    _clientAttackPolygonSet.setTexture(_assets->get<cugl::Texture>("leftbite"), _assets->get<cugl::Texture>("rightbite"), _assets->get<cugl::Texture>("frontbite"), _assets->get<cugl::Texture>("leftbite"));
     return true;
 }
 
@@ -461,6 +464,7 @@ bool OverWorld::setRootNode(const std::shared_ptr<scene2::SceneNode> &_worldNode
     }
     _worldNode->addChild(_dog->getDogNode());
     _dog->addEffects(_attackPolygonSet.getFrontAttackPolygonNode(), _attackPolygonSet.getBackAttackPolygonNode());
+    _dogClient->addEffects(_clientAttackPolygonSet.getFrontAttackPolygonNode(), _clientAttackPolygonSet.getBackAttackPolygonNode());
     //    _dog->getDogNode()->addChildWithTag(_attackPolygonSet.getAttackPolygonNode(), 0);
     //    _attackPolygonSet.getAttackPolygonNode()->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
 
@@ -514,15 +518,15 @@ void OverWorld::processBiteEvent(const std::shared_ptr<BiteEvent> &biteEvent)
 {
     Vec2 center = biteEvent->getPos();
     float ang = biteEvent->getAng();
-    _attackPolygonSet.addBite(center, ang, _dog->getBiteRadius(), _dog->getAbsorb() / _dog->getMaxAbsorb());
     bool incomingHost = biteEvent->isHost();
     if (incomingHost)
     {
-
+        _attackPolygonSet.addBite(center, ang, _dog->getBiteRadius(), _dog->getAbsorb() / _dog->getMaxAbsorb());
         _dog->startBite();
     }
     else
     {
+        _clientAttackPolygonSet.addBite(center, ang, _dogClient->getBiteRadius(), _dogClient->getAbsorb() / _dogClient->getMaxAbsorb());
         _dogClient->startBite();
     }
 }
@@ -638,6 +642,7 @@ void OverWorld::update(InputController &_input, cugl::Size totalSize, float time
     _decoys->update(timestep);
     //    devilUpdate(_input, totalSize);
     _attackPolygonSet.update();
+    _clientAttackPolygonSet.update();
 }
 
 void OverWorld::postUpdate()
