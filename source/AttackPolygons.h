@@ -56,11 +56,13 @@ private:
 class AttackPolygons{
     
 private:
-    std::shared_ptr<cugl::scene2::SceneNode> attackPolygonNode;
+    std::shared_ptr<cugl::scene2::SceneNode> frontAttackPolygonNode;
+    std::shared_ptr<cugl::scene2::SceneNode> backAttackPolygonNode;
     std::shared_ptr<cugl::Texture> biteRightTexture;
     std::shared_ptr<cugl::Texture> biteLeftTexture;
     std::shared_ptr<cugl::Texture> biteFrontTexture;
     std::shared_ptr<cugl::Texture> biteBackTexture;
+    float zorder;
 public:
     // Have AttackPolygon Set hold all possible textures for bite, shoot, explode
     int max_age;
@@ -73,8 +75,12 @@ public:
     void addShoot(Vec2 center, float angle, float shootRadius);
     void addExplode(cugl::Vec2 center, float explosionRadius);
     void addBite(cugl::Vec2 center, float angle, float explosionRad, float scale);
-    std::shared_ptr<cugl::scene2::SceneNode> getAttackPolygonNode(){
-        return attackPolygonNode;
+    std::shared_ptr<cugl::scene2::SceneNode> getFrontAttackPolygonNode(){
+        return frontAttackPolygonNode;
     }
+    std::shared_ptr<cugl::scene2::SceneNode> getBackAttackPolygonNode(){
+        return backAttackPolygonNode;
+    }
+    int getZOrder() const { return zorder; }
 };
 #endif /* AttackPolygons_hpp */

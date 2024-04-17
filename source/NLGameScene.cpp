@@ -266,7 +266,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _spawnerController.setTexture(assets->get<Texture>("spawner"));
     _spawnerController.init(_level->getSpawnersPos());
     _spawnerController.setRootNode(_worldnode, _isHost);
-
+    _worldnode->addChild(_monsterSceneNode);
     overWorld.init(assets, _level, computeActiveSize(), _network, isHost, _backgroundWrapper);
     overWorld.setRootNode(_worldnode, _debugnode, _world);
     if (isHost)
@@ -284,7 +284,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _monsterController.setBombAnimationData(_constants->get("bomb"), assets);
     _monsterController.setAbsorbAnimationData(_constants->get("absorbEnemy"), assets);
     _monsterController.init(overWorld, _debugnode);
-    _worldnode->addChild(_monsterSceneNode);
+
     _collisionController.init();
 
     _active = true;
@@ -292,6 +292,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 
     _network->attachEventType<DecoyEvent>();
     _network->attachEventType<BiteEvent>();
+    _network->attachEventType<RecallEvent>();
     _network->attachEventType<ExplodeEvent>();
     _network->attachEventType<DashEvent>();
     _network->attachEventType<SizeEvent>();
@@ -430,15 +431,12 @@ void GameScene::addInitObstacle(const std::shared_ptr<physics2::Obstacle> &obj,
 void GameScene::preUpdate(float dt)
 {
 
-    if (_isHost)
-    {
-        float zoom = _zoom - (ROOT_NODE_SCALE - 0.25f * (float)overWorld.getDog()->getAbsorb() / (float)overWorld.getDog()->getMaxAbsorb());
+    if (_isHost){
+        float zoom = _zoom - (ROOT_NODE_SCALE - 0.6f* (float)overWorld.getDog()->getAbsorb() / (float)overWorld.getDog()->getMaxAbsorb());
         _zoom -= fmin(zoom, 0.01f) * (zoom < 0 ? 0.12f : 0.3f);
         _rootnode->setScale(_zoom);
-    }
-    else
-    {
-        float zoom = _zoom - (ROOT_NODE_SCALE - 0.25f * (float)overWorld.getClientDog()->getAbsorb() / (float)overWorld.getClientDog()->getMaxAbsorb());
+    }else{
+        float zoom = _zoom - (ROOT_NODE_SCALE - 0.6f* (float)overWorld.getClientDog()->getAbsorb() / (float)overWorld.getClientDog()->getMaxAbsorb());
         _zoom -= fmin(zoom, 0.01f) * (zoom < 0 ? 0.12f : 0.3f);
         _rootnode->setScale(_zoom);
     }
@@ -548,6 +546,11 @@ void GameScene::fixedUpdate()
         {
             CULog("Bite Event Got");
             overWorld.processBiteEvent(biteEvent);
+        }
+        if (auto recallEvent = std::dynamic_pointer_cast<RecallEvent>(e))
+        {
+            CULog("Recall Event Got");
+            overWorld.processRecallEvent(recallEvent);
         }
         if (auto explodeEvent = std::dynamic_pointer_cast<ExplodeEvent>(e))
         {
