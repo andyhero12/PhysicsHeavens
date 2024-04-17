@@ -406,18 +406,8 @@ bool OverWorld::initDecoys()
     _decoys = std::make_shared<DecoySet>();
     _decoys->init();
     _decoys->setTexture(_assets->get<cugl::Texture>("base"));
-    
-    std::vector<std::shared_ptr<cugl::Texture>> textures;
-    textures.push_back(_assets->get<cugl::Texture>("explodingGate"));
-    textures.push_back(_assets->get<cugl::Texture>("explodingGate"));
-    textures.push_back(_assets->get<cugl::Texture>("explodingGate"));
-    textures.push_back(_assets->get<cugl::Texture>("explodingGate"));
-    textures.push_back(_assets->get<cugl::Texture>("explodingGate"));
-    textures.push_back(_assets->get<cugl::Texture>("explodingGate"));
-    textures.push_back(_assets->get<cugl::Texture>("explodingGate"));
-    textures.push_back(_assets->get<cugl::Texture>("explodingGate"));
 
-    std::shared_ptr<AnimationSceneNode> explodeGate = AnimationSceneNode::allocWithTextures(textures, 5, 4, 18, 15);
+    std::shared_ptr<cugl::scene2::SpriteNode> explodeGate = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("explodingGate"), 5, 4, 18);
     _decoys->setExplodeAnimation(explodeGate);
     return true;
 }

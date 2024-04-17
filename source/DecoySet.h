@@ -20,7 +20,7 @@ private:
     std::vector<std::shared_ptr<Decoy>> _pendingDecoys;
     std::shared_ptr<cugl::Texture> _texture;
     bool justAdded;
-    std::shared_ptr<AnimationSceneNode> _explodeAnimation;
+    std::shared_ptr<cugl::scene2::SpriteNode> _explodeAnimation;
 public:
     
     std::shared_ptr<cugl::scene2::SceneNode> getDecoySetNode(){
@@ -42,7 +42,7 @@ public:
     void update(float timestep);
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch);
     void setTexture(const std::shared_ptr<cugl::Texture> &value);
-    void setExplodeAnimation(const std::shared_ptr<AnimationSceneNode> &value);
+    void setExplodeAnimation(const std::shared_ptr<cugl::scene2::SpriteNode> &value);
     void addNewDecoy(cugl::Vec2 pos);
     void postUpdate();
 };
