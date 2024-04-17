@@ -27,7 +27,8 @@
 #include "NLDashEvent.h"
 #include "NLSizeEvent.h"
 
-class OverWorld{
+class OverWorld
+{
 private:
     std::shared_ptr<LevelModel> _level;
     std::shared_ptr<NetEventController> _network;
@@ -41,30 +42,32 @@ private:
     std::shared_ptr<cugl::AssetManager> _assets;
     AttackPolygons _attackPolygonSet;
     std::shared_ptr<World> _world;
-    
-    void drawDecoy(const std::shared_ptr<cugl::SpriteBatch>& batch);
+
+    void drawDecoy(const std::shared_ptr<cugl::SpriteBatch> &batch);
+
 public:
     bool _isHost;
-    OverWorld(){
-        
+    OverWorld()
+    {
     }
-    ~OverWorld(){
-        
+    ~OverWorld()
+    {
     }
-    
+
     void reset();
-    bool init(const std::shared_ptr<cugl::AssetManager>& assets, const std::shared_ptr<LevelModel>& _level, cugl::Size activeSize, std::shared_ptr<cugl::physics2::net::NetEventController> network, bool isHost, std::shared_ptr<World> world);
+    bool init(const std::shared_ptr<cugl::AssetManager> &assets, const std::shared_ptr<LevelModel> &_level, cugl::Size activeSize, std::shared_ptr<cugl::physics2::net::NetEventController> network, bool isHost, std::shared_ptr<World> world);
     bool initDogModel();
     bool initDevil();
     bool initBases();
     bool initDecoys();
+    bool initPolygons();
     bool initWorld();
-    
-    bool setRootNode(const std::shared_ptr<scene2::SceneNode>& _worldNode, const std::shared_ptr<scene2::SceneNode>& _debugNode, std::shared_ptr<cugl::physics2::net::NetWorld> _world);
+
+    bool setRootNode(const std::shared_ptr<scene2::SceneNode> &_worldNode, const std::shared_ptr<scene2::SceneNode> &_debugNode, std::shared_ptr<cugl::physics2::net::NetWorld> _world);
     // will add Obstacle nodes too
-    void dogUpdate(InputController& _input,cugl::Size totalSize);
-    void devilUpdate(InputController& _input,cugl::Size totalSize);
-    void update(InputController& input, cugl::Size totalSize, float timestep);
+    void dogUpdate(InputController &_input, cugl::Size totalSize);
+    void devilUpdate(InputController &_input, cugl::Size totalSize);
+    void update(InputController &input, cugl::Size totalSize, float timestep);
     void postUpdate();
     void ownedDogUpdate(InputController& _input, cugl::Size, std::shared_ptr<Dog> _curDog);
     void processShootEvent(const std::shared_ptr<ShootEvent>& shootEvent);
@@ -78,35 +81,45 @@ public:
     std::shared_ptr<Dog> getDog() const {
         return _dog;
     }
-    std::shared_ptr<Dog> getClientDog() const {
+    std::shared_ptr<Dog> getClientDog() const
+    {
         return _dogClient;
     }
-    std::shared_ptr<Devil> getDevil()const {
+    std::shared_ptr<Devil> getDevil() const
+    {
         return _devil;
     }
-    std::shared_ptr<DecoySet> getDecoys() const{
+    std::shared_ptr<DecoySet> getDecoys() const
+    {
         return _decoys;
     }
-    std::shared_ptr<BaseSet> getBaseSet(){
+    std::shared_ptr<BaseSet> getBaseSet()
+    {
         return _bases;
     }
-    std::shared_ptr<LevelModel> getLevelModel(){
+    std::shared_ptr<LevelModel> getLevelModel()
+    {
         return _level;
     }
-    std::shared_ptr<World> getWorld(){
+    std::shared_ptr<World> getWorld()
+    {
         return _world;
     }
-    
-    int getTotalTargets() const {
-        return 1 + (int) _bases->_bases.size() + (int) _decoys->getCurrentDecoys().size();
+
+    int getTotalTargets() const
+    {
+        return 1 + (int)_bases->_bases.size() + (int)_decoys->getCurrentDecoys().size();
     }
-    AttackPolygons& getAttackPolygons(){
+    AttackPolygons &getAttackPolygons()
+    {
         return _attackPolygonSet;
     }
-    void setDog(std::shared_ptr<Dog> m_dog){
+    void setDog(std::shared_ptr<Dog> m_dog)
+    {
         _dog = m_dog;
     }
-    void setDevil(std::shared_ptr<Devil> m_devil){
+    void setDevil(std::shared_ptr<Devil> m_devil)
+    {
         _devil = m_devil;
     }
 };

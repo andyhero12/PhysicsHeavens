@@ -100,12 +100,10 @@ void AnimationSceneNode::setAnchor(const cugl::Vec2 anchor){
 
 void AnimationSceneNode::setContentSize(const cugl::Size size) {
     SpriteNode::setContentSize(size);
-    /*
-    _contentSize = size;
-    for (auto& node : _animationSprites) {
-        node->setContentSize(size);
-    }
-    */
+//    _contentSize = size;
+//    for (std::shared_ptr<cugl::scene2::SpriteNode> &node : _animationSprites) {
+//        node->setContentSize(size);
+//    }
 }
 
 void AnimationSceneNode::setPosition(const cugl::Vec2 &position){

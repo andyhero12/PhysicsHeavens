@@ -58,7 +58,7 @@ using namespace cugl;
 #define HEAL_RATE 50
 #define HEALTH 100
 #define MAX_ABSORB 30
-#define BITE_RADIUS 3.5f
+#define BITE_RADIUS 5.5f
 #define SHOOT_RADIUS 8.5f
 #define EXPLOSION_RADIUS 1.4f
 #define DASH_RATE 50
@@ -433,6 +433,10 @@ void Dog::updateLocalAnimations(DogSize size){
     
     
     baseBlankNode->setPosition(getPosition());
+    
+    if(effectsNode){
+        baseBlankNode->addChild(effectsNode);
+    }
 }
 
 void Dog::resetCurrentAnimations(DogSize size){
@@ -472,4 +476,10 @@ void Dog::setAbsorbValue(int value){
 void Dog::setMode(int mode){
     _mode = mode;
     _uiController->setToggle(modes.at(_mode));
+}
+
+void Dog::addEffects(std::shared_ptr<cugl::scene2::SceneNode> node){
+    effectsNode = node;
+    baseBlankNode->addChild(effectsNode);
+    
 }

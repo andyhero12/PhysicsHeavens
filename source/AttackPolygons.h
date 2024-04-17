@@ -26,44 +26,53 @@ public:
     int _age;
     int _maxage;
     float _scale;
+    bool _polygon;
+    bool _expired;
     
-    ActionPolygon(Action curAction, Poly2& mintPoly, int mx);
+    int _frame;
+    int _freq;
+    
+    ActionPolygon(Action curAction, Poly2& mintPoly, int mx, float scale);
+    ActionPolygon(std::shared_ptr<cugl::scene2::SpriteNode> actionSprite, Action curAction, Poly2& mintPoly, int mx, float scale);
     
     float getScale() const { return _scale; }
     
     int getAge() const { return _age; }
     Action getAction() const {return polygonAction;}
     const Poly2& getPolygon() const {return internalPolygon;}
-    bool expired() const { return _age >= _maxage;}
     
+//    std::shared_ptr<cugl::scene2::SceneNode> getPolyNode(){ return polyActionNode; }
+    bool expired() const { return _expired;}
     void update();
-    void draw(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl::Size size);
-    std::shared_ptr<cugl::scene2::SceneNode> getActionNode(){
-        return actionNode;
-    }
+    std::shared_ptr<cugl::scene2::SceneNode> getActionNode();
+    void draw(const std::shared_ptr<SpriteBatch>& batch, const Affine2& transform, Color4 tint);
+    bool dealDamage();
+    
 private:
-    std::shared_ptr<cugl::scene2::SceneNode> actionNode;
-    void drawShoot(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl::Size size);
-    void drawExplode(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl::Size size);
-    void drawBite(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl::Size size);
+    std::shared_ptr<cugl::scene2::SpriteNode> spriteActionNode;
+    std::shared_ptr<cugl::scene2::PolygonNode> polyActionNode;
 };
 
 class AttackPolygons{
     
 private:
     std::shared_ptr<cugl::scene2::SceneNode> attackPolygonNode;
+    std::shared_ptr<cugl::Texture> biteRightTexture;
+    std::shared_ptr<cugl::Texture> biteLeftTexture;
+    std::shared_ptr<cugl::Texture> biteFrontTexture;
+    std::shared_ptr<cugl::Texture> biteBackTexture;
 public:
     // Have AttackPolygon Set hold all possible textures for bite, shoot, explode
     int max_age;
     std::unordered_set<std::shared_ptr<ActionPolygon>> currentAttacks;
     AttackPolygons();
     bool init();
+    bool setTexture(const std::shared_ptr<cugl::Texture> &biteL, const std::shared_ptr<cugl::Texture> &biteR, const std::shared_ptr<cugl::Texture> &biteF, const std::shared_ptr<cugl::Texture> &biteB);
     bool isEmpty() const { return currentAttacks.empty(); }
     void update();
-    void draw(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl::Size size);
     void addShoot(Vec2 center, float angle, float shootRadius);
     void addExplode(cugl::Vec2 center, float explosionRadius);
-    void addBite(cugl::Vec2 center, float angle, float explosionRad);
+    void addBite(cugl::Vec2 center, float angle, float explosionRad, float scale);
     std::shared_ptr<cugl::scene2::SceneNode> getAttackPolygonNode(){
         return attackPolygonNode;
     }
