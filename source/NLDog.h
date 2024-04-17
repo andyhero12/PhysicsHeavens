@@ -79,7 +79,9 @@ protected:
     cugl::Vec2 dir;
     cugl::Vec2 _ang;
     std::shared_ptr<cugl::scene2::OrderedNode> baseBlankNode;
-    std::shared_ptr<cugl::scene2::SceneNode> effectsNode;
+    std::shared_ptr<cugl::scene2::SceneNode> frontEffectsNode;
+    std::shared_ptr<cugl::scene2::SceneNode> backEffectsNode;
+    
     std::shared_ptr<AnimationSceneNode> idleAnimation;
     std::shared_ptr<AnimationSceneNode> runAnimation;
     std::shared_ptr<AnimationSceneNode> biteAnimation;
@@ -210,7 +212,7 @@ public:
     void updateLocalAnimations(DogSize dogSize);
     
     void updateDogSize(int absorbValue);
-    void addEffects(std::shared_ptr<cugl::scene2::SceneNode> node);
+    void addEffects(std::shared_ptr<cugl::scene2::SceneNode> fnode, std::shared_ptr<cugl::scene2::SceneNode> bnode);
 #pragma mark Static Constructors
     /**
      * Returns a newly allocate rocket at the origin.

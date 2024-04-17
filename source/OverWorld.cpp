@@ -305,7 +305,7 @@ bool OverWorld::initDogModel()
     _dog->setMediumAnimation(mediumDogIdle, mediumDogRun, mediumDogBite, mediumDogShoot, mediumDogDash);
     _dog->setLargeAnimation(largeDogIdle, largeDogRun, largeDogBite, largeDogShoot, largeDogDash);
 
-    std::shared_ptr<cugl::scene2::OrderedNode> placeHolderDrawOver = cugl::scene2::OrderedNode::allocWithOrder(cugl::scene2::OrderedNode::Order::ASCEND, DOG_SIZE);
+    std::shared_ptr<cugl::scene2::OrderedNode> placeHolderDrawOver = cugl::scene2::OrderedNode::allocWithOrder(cugl::scene2::OrderedNode::Order::PRE_ORDER, DOG_SIZE);
     // MORE MAGIC NUMBER ALERT
 
     // placeHolderDrawOver->setContentSize(DOG_SIZE);
@@ -327,7 +327,7 @@ bool OverWorld::initDogModel()
     _dogClient->setMediumAnimation(clientMediumDogIdle, clientMediumDogRun, clientMediumDogBite, clientMediumDogShoot, clientMediumDogDash);
     _dogClient->setLargeAnimation(clientLargeDogIdle, clientLargeDogRun, clientLargeDogBite, clientLargeDogShoot, clientLargeDogDash);
 
-    std::shared_ptr<cugl::scene2::OrderedNode> clientPlaceHolderDrawOver = cugl::scene2::OrderedNode::allocWithOrder(cugl::scene2::OrderedNode::Order::ASCEND, DOG_SIZE);
+    std::shared_ptr<cugl::scene2::OrderedNode> clientPlaceHolderDrawOver = cugl::scene2::OrderedNode::allocWithOrder(cugl::scene2::OrderedNode::Order::PRE_ORDER, DOG_SIZE);
     // MORE MAGIC NUMBER ALERT
 
     // placeHolderDrawOver->setContentSize(DOG_SIZE);
@@ -423,7 +423,7 @@ bool OverWorld::setRootNode(const std::shared_ptr<scene2::SceneNode> &_worldNode
         _worldNet->getOwnedObstacles().insert({_dog, 0});
     }
     _worldNode->addChild(_dog->getDogNode());
-    _dog->addEffects(_attackPolygonSet.getAttackPolygonNode());
+    _dog->addEffects(_attackPolygonSet.getFrontAttackPolygonNode(), _attackPolygonSet.getBackAttackPolygonNode());
     //    _dog->getDogNode()->addChildWithTag(_attackPolygonSet.getAttackPolygonNode(), 0);
     //    _attackPolygonSet.getAttackPolygonNode()->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
 

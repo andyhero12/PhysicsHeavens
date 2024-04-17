@@ -74,6 +74,6 @@ void PauseScene::dispose(){
 }
 
 void PauseScene::exitToMain(){
-    resumeButton->setDown(true);
-    resumeButton->setDown(false);
+    exitButton->setDown(true);
+    exitButton->setDown(false);
 }

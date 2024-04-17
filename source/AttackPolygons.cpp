@@ -98,8 +98,8 @@ AttackPolygons::AttackPolygons()
 
 bool AttackPolygons::init(){
     currentAttacks.clear();
-    attackPolygonNode = cugl::scene2::SceneNode::alloc();
-//    attackPolygonNode->setScale(BITE_SCALE);
+    backAttackPolygonNode = cugl::scene2::SceneNode::alloc();
+    frontAttackPolygonNode = cugl::scene2::SceneNode::alloc();
     return true;
 }
 void AttackPolygons::update(){
@@ -109,8 +109,7 @@ void AttackPolygons::update(){
         curAction->update();
         auto curIt = it++;
         if (curAction->expired()){
-            attackPolygonNode->removeChild(curAction->getActionNode());
-//            attackPolygonNode->removeChild(curAction->getPolyNode());
+            curAction->getActionNode()->removeFromParent();
             currentAttacks.erase(curIt);
         }
     }
@@ -121,7 +120,7 @@ void AttackPolygons::addShoot(Vec2 center, float angle, float shootRadius){
     PolyFactory curFactory;
     Poly2 resultingPolygon_shoot = curFactory.makeArc(center, shootRadius, angle + degree, degree);
     std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(Action::SHOOT, resultingPolygon_shoot, max_age, shootRadius);
-    attackPolygonNode->addChild(curPtr->getActionNode());
+    frontAttackPolygonNode->addChild(curPtr->getActionNode());
     Vec2 offset = Vec2(SDL_cosf((angle + 90) * 3.14f / 180), SDL_sinf((angle + 90) * 3.14f / 180)) * DOG_SIZE.x * SHOOT_HEAD_OFFSET_RATIO;
     curPtr->getActionNode()->setScale(OFFSET_SCALE);
     curPtr->getActionNode()->setPosition(center.add(offset));
@@ -133,7 +132,7 @@ void AttackPolygons::addExplode(Vec2 center, float explosionRad){
     PolyFactory curFactory;
     Poly2 resultingPolygon = curFactory.makeCircle(center, explosionRad);
     std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(Action::EXPLODE, resultingPolygon, max_age, explosionRad);
-    attackPolygonNode->addChild(curPtr->getActionNode());
+    frontAttackPolygonNode->addChild(curPtr->getActionNode());
     curPtr->getActionNode()->setScale(OFFSET_SCALE);
     curPtr->getActionNode()->setPosition(center);
     currentAttacks.insert(curPtr);
@@ -149,33 +148,31 @@ void AttackPolygons::addBite(Vec2 center, float angle, float explosionRad, float
         ang += 2*M_PI;
     }
     
+    
+    bool front = true;
     if (ang >= 0 && ang < M_PI_2) {
         bite = biteBackTexture;
-        zorder = 0;
+        front = false;
      } else if (ang >= M_PI_2 && ang < M_PI) {
          bite = biteLeftTexture;
-         zorder = 0;
      } else if (ang >= M_PI && ang < 3 * M_PI_2) {
          bite = biteFrontTexture;
-         zorder = 0;
      } else if (ang >= 3 * M_PI_2 && ang < 2 * M_PI) {
          bite = biteRightTexture;
-         zorder = 0;
      }
-    
-    attackPolygonNode->setPriority(zorder);
     
     std::shared_ptr<cugl::scene2::SpriteNode> biteSprite = cugl::scene2::SpriteNode::allocWithSheet(bite, 3, 5);
     PolyFactory curFactory;
     Poly2 resultingPolygon = curFactory.makeArc(center, explosionRad, angle, 180);
     std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(biteSprite, Action::BITE, resultingPolygon, BITE_AGE, 1 + scale);
-//    attackPolygonNode->addChild(curPtr->getPolyNode());
-    attackPolygonNode->addChild(curPtr->getActionNode());
+    if(front){
+        frontAttackPolygonNode->addChild(curPtr->getActionNode());
+    }
+    else{
+        backAttackPolygonNode->addChild(curPtr->getActionNode());
+    }
     Vec2 offset = Vec2(SDL_cosf((angle + 90) * 3.14f / 180), SDL_sinf((angle + 90) * 3.14f / 180)) * DOG_SIZE.x * BITE_HEAD_OFFSET_RATIO;
-//    curPtr->getPolyNode()->setPosition(center.add(offset));
-//    std::cout << offset.x << " " << offset.y << std::endl;
-    curPtr->getActionNode()->setPosition(attackPolygonNode->getPosition() + (offset ));
-    
+    curPtr->getActionNode()->setPosition(offset * OFFSET_SCALE);
     currentAttacks.insert(curPtr);
 }
 

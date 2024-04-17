@@ -390,6 +390,11 @@ void Dog::updateDogSize(int absorbValue){
 
 void Dog::updateLocalAnimations(DogSize size){
     baseBlankNode->removeAllChildren();
+    
+    if(backEffectsNode){
+        baseBlankNode->addChild(backEffectsNode);
+    }
+    
     setDogSize(size);
     idleAnimation->setPosition(baseBlankNode->getAnchor());
     baseBlankNode->addChild(idleAnimation);
@@ -407,15 +412,9 @@ void Dog::updateLocalAnimations(DogSize size){
     
     baseBlankNode->setPosition(getPosition());
     
-    idleAnimation->setPriority(0.5f);
-    biteAnimation->setPriority(0.5f);
-    shootAnimation->setPriority(0.5f);
-    runAnimation->setPriority(0.5f);
-    dashAnimation->setPriority(0.5f);
     
-    if(effectsNode){
-        baseBlankNode->addChild(effectsNode);
-        effectsNode->setPriority(0);
+    if(frontEffectsNode){
+        baseBlankNode->addChild(frontEffectsNode);
     }
 }
 
@@ -458,8 +457,9 @@ void Dog::setMode(int mode){
     _uiController->setToggle(modes.at(_mode));
 }
 
-void Dog::addEffects(std::shared_ptr<cugl::scene2::SceneNode> node){
-    effectsNode = node;
-    baseBlankNode->addChild(effectsNode);
+void Dog::addEffects(std::shared_ptr<cugl::scene2::SceneNode> fnode, std::shared_ptr<cugl::scene2::SceneNode> bnode){
+    frontEffectsNode = fnode;
+    backEffectsNode = bnode;
+    updateLocalAnimations(dogSize);
     
 }
