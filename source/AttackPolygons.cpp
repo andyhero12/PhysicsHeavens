@@ -28,17 +28,11 @@ bool ActionPolygon::dealDamage(){
 
 void ActionPolygon::update(){
     if(!_polygon){
-        if(_freq == ANIM_FREQ){
-            _expired = (spriteActionNode->getFrame() + 1) == spriteActionNode->getSpan();
-            if(_expired){
-                return;
-            }
-            _freq = 0;
-            spriteActionNode->setFrame((spriteActionNode->getFrame() + 1) % spriteActionNode->getSpan());
+        _expired = (spriteActionNode->getFrame() + 1) == spriteActionNode->getSpan();
+        if(_expired){
+            return;
         }
-        else{
-            _freq += 1;
-        }
+        spriteActionNode->update();
     }
     else{
         _age++;
@@ -58,7 +52,7 @@ std::shared_ptr<cugl::scene2::SceneNode> ActionPolygon::getActionNode(){
 }
 
 
-ActionPolygon::ActionPolygon( std::shared_ptr<cugl::scene2::SpriteNode> actionSprite, Action curAction, Poly2& mintPoly, int mx, float scale)
+ActionPolygon::ActionPolygon( std::shared_ptr<SpriteAnimationNode> actionSprite, Action curAction, Poly2& mintPoly, int mx, float scale)
 : ActionPolygon(curAction, mintPoly, mx, scale)
 {
     _expired = false;
@@ -157,7 +151,7 @@ void AttackPolygons::addBite(Vec2 center, float angle, float explosionRad, float
          front = false;
      }
     
-    std::shared_ptr<cugl::scene2::SpriteNode> biteSprite = cugl::scene2::SpriteNode::allocWithSheet(bite, 3, 5);
+    std::shared_ptr<SpriteAnimationNode> biteSprite = SpriteAnimationNode::allocWithSheet(bite, 3, 5, 13, 1);
     biteSprite->setAngle(ang);
     PolyFactory curFactory;
     Poly2 resultingPolygon = curFactory.makeArc(center, explosionRad * (1 + scale), angle, 180);
