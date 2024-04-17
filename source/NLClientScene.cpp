@@ -23,7 +23,7 @@ using namespace cugl::physics2::net;
 #pragma mark Level Layout
 
 /** Regardless of logo, lock the height to this */
-#define SCENE_HEIGHT  720
+#define SCENE_HEIGHT  800
 
 /**
  * Converts a decimal string to a hexadecimal string
@@ -188,10 +188,17 @@ void ClientScene::updateText(const std::shared_ptr<scene2::Button>& button, cons
  */
 void ClientScene::update(float timestep) {
     // Do this last for button safety
+    std::cout<<_input._confirm<<std::endl;
+    if(_input._confirm){
+        _startgame->setDown(true);
+    }
+
     configureStartButton();
+
     if(_network->getStatus() == NetEventController::Status::CONNECTED || _network->getStatus() == NetEventController::Status::HANDSHAKE){
         _player->setText(std::to_string(_network->getNumPlayers()));
     }
+    //_input.resetcontroller();
 }
 
 /**

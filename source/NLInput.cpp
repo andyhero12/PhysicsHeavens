@@ -217,24 +217,26 @@ void InputController::readInput_joystick() {
     cugl::GameController::Button X = cugl::GameController::Button::X;
     cugl::GameController::Button B = cugl::GameController::Button::B;
     cugl::GameController::Button Y = cugl::GameController::Button::Y;
-
-    
+    cugl::GameController::Button LT = cugl::GameController::Button::LEFT_SHOULDER;
+    cugl::GameController::Button RT = cugl::GameController::Button::RIGHT_SHOULDER;
+    cugl::GameController::Button Back = cugl::GameController::Button::BACK;
+    cugl::GameController::Button Start = cugl::GameController::Button::START;
     /* Movement using controller*/
     if (_gameContrl) {
         float LR = _gameContrl->getAxisPosition(X_left);
         float UD = _gameContrl->getAxisPosition(Y_left);
 
-        if (_gameContrl->isButtonPressed(A)) {
+        if (_gameContrl->isButtonPressed(X)) {
             _didFire = true;
             _UseJoystick = true;
         }
 
-        if (_gameContrl->isButtonPressed(B)) {
+        if (_gameContrl->isButtonPressed(A)) {
             _didSpecial = true;
             _UseJoystick = true;
         }
 
-        if (_gameContrl->isButtonPressed(X)) {
+        if (_gameContrl->isButtonPressed(B)) {
             _didChangeMode = true;
             _UseJoystick = true;
         }
@@ -243,6 +245,24 @@ void InputController::readInput_joystick() {
             _didReset = true;
             _UseJoystick = true;
         }
+        if (_gameContrl->isButtonPressed(LT)) {
+            _didDash = true;
+            _UseJoystick = true;
+        }
+        if (_gameContrl->isButtonPressed(RT)) {
+            _didChangeMode = true;
+            _UseJoystick = true;
+        }
+          if (_gameContrl->isButtonPressed(Back)) {
+            _didReset = true;
+            _UseJoystick = true;
+        }
+          if (_gameContrl->isButtonPressed(Start)) {
+            _pause = !_pause;
+            _didPause = true;
+            _UseJoystick = true;
+        }
+
         if (abs(LR) >= 0.2 || abs(UD) >= 0.2) {
 
             _Vel = cugl::Vec2(LR, -UD);
