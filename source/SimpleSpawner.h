@@ -19,7 +19,7 @@ private:
     
 public:
     SimpleSpawner(int rate, cugl::Vec2 pos, int health, int delay, std::string spawnType1, std::string spawnType2, std::string spawnType3);
-    virtual void update(MonsterController& monsterController, OverWorld& overWorld, float timestep) override;
+    virtual void update(MonsterController& monsterController, OverWorld& overWorld, float timestep, float difficulty) override;
 };
 
 #endif /* MeleeSpawner_hpp */

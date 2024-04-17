@@ -22,9 +22,9 @@ int generateRandomValue(int left, int right) {
     return dis(gen);
 }
 
-void SpawnerController::update(MonsterController& monsterController, OverWorld& overWorld, float timestep){
+void SpawnerController::update(MonsterController& monsterController, OverWorld& overWorld, float timestep, float difficulty){
     for(auto& spawner : _spawners) {
-        spawner->update(monsterController, overWorld, timestep);
+        spawner->update(monsterController, overWorld, timestep, difficulty);
     }
     
     

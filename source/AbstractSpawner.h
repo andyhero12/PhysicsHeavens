@@ -64,7 +64,7 @@ public:
     bool dead(){
         return _health <= 0;
     }
-    virtual void update(MonsterController& monsterController, OverWorld& overWorld, float timestep) = 0;
+    virtual void update(MonsterController& monsterController, OverWorld& overWorld, float timestep, float difficulty) = 0;
     
 };
 #endif /* AbstractSpawner_h */

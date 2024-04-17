@@ -32,7 +32,7 @@ public:
     ~SpawnerController();
 
     void setTexture(const std::shared_ptr<cugl::Texture>& value);
-    void update(MonsterController& monsterController, OverWorld& overWorld, float timestep);
+    void update(MonsterController& monsterController, OverWorld& overWorld, float timestep, float difficulty);
     
     bool init(const std::vector<LevelModel::Spawner>& startLocs);
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl::Size size);

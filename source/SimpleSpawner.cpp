@@ -34,7 +34,7 @@ SimpleSpawner::SimpleSpawner(int rate, cugl::Vec2 pos, int health, int delay, st
 }
 
 
-void SimpleSpawner::update(MonsterController& monsterController, OverWorld& overWorld, float timestep){
+void SimpleSpawner::update(MonsterController& monsterController, OverWorld& overWorld, float timestep, float difficulty){
     updateTime(timestep);
     int r = rand() % 10;
     if (canSpawn()){
@@ -50,7 +50,7 @@ void SimpleSpawner::update(MonsterController& monsterController, OverWorld& over
         else {
             s = spawnType3;
         }
-        float power = 1f;
+        float power = difficulty;
 
         if (s == "basic") {
             monsterController.spawnBasicEnemy(getPos(), overWorld, power);
