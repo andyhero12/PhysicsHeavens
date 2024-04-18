@@ -6,6 +6,7 @@
 //
 
 #include "PauseScene.h"
+#include "NLInput.h"
 
 using namespace cugl;
 
@@ -65,6 +66,9 @@ bool PauseScene::init(){
 
 void PauseScene::setPause(bool value) {
     paused = value; 
+    if(value){
+        status = Choice::GAME;
+    }
     setVisible(getPause());
 }
 

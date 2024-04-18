@@ -22,6 +22,16 @@
  * that functions differently on mobile than it does on the desktop.
  */
 class InputController {
+
+public:
+
+enum State {
+        /** User has not yet made a choice */
+    MOUSE,
+        /** ser wants to host a game */
+    CONTROLLER
+};
+
 private:
     /** How much forward are we going? */
     float _forward;
@@ -51,6 +61,8 @@ private:
 
     bool _UseJoystick;
 
+    State _state;
+
 public:
 
     std::shared_ptr<cugl::GameController> _gameContrl;
@@ -58,6 +70,7 @@ public:
     float _updown;
     float _Leftright;
     bool _confirm;
+    bool _back;
 
     bool init();
 
@@ -182,6 +195,10 @@ public:
     //void updatemainmenubutton();
 
     void resetcontroller();
+
+    State getState() {
+        return _state;
+    }
 };
 
 #endif /* __GL_INPUT_CONTROLLER_H__ */

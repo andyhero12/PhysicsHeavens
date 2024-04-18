@@ -8,6 +8,7 @@
 #ifndef PauseScene_h
 #define PauseScene_h
 #include <cugl/cugl.h>
+#include "GlobalConstants.h"
 
 
 #define PAUSE_SCALE 6

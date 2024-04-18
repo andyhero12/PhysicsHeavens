@@ -14,6 +14,8 @@
 #define __NL_HOST_SCENE_H__
 #include <cugl/cugl.h>
 #include <vector>
+#include "GlobalConstants.h"
+#include "NLInput.h"
 
 #define PING_TEST_COUNT 5
 
@@ -42,6 +44,8 @@ protected:
     std::shared_ptr<cugl::scene2::Label> _gameid;
     /** The players label (for updating) */
     std::shared_ptr<cugl::scene2::Label> _player;
+
+    InputController _input;
 
     /** Whether the startGame button had been pressed. */
     bool _startGameClicked = false;
