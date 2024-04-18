@@ -29,6 +29,8 @@
 #include "NLDashEvent.h"
 #include "NLRecallEvent.h"
 #include "NLSizeEvent.h"
+#include "NLWinEvent.h"
+#include "NLLoseEvent.h"
 #include "NLCameraController.h"
 #include "NLLevelModel.h"
 #include "World.h"
@@ -78,6 +80,9 @@ protected:
     std::shared_ptr<cugl::scene2::SceneNode> _uinode;
 
     std::shared_ptr<cugl::physics2::net::NetWorld> _world;
+    
+    std::shared_ptr<cugl::scene2::Label> loseNode;
+    std::shared_ptr<cugl::scene2::Label> winNode;
     /** The level model */
     std::shared_ptr<LevelModel> _level;
 

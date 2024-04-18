@@ -106,6 +106,7 @@ bool BombEnemy::init(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_ta
     if (AbstractEnemy::init(m_pos, m_size, m_health, m_targetIndex)){
         std::string name("Bomb Enemy");
         setName(name);
+        _attackCooldown = 0;
         _contactDamage = CONTACT_DAMAGE;
         _baseExplosionDamage = EXPLOSION_DAMAGE;
         return true;

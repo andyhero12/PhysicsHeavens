@@ -408,7 +408,7 @@ public:
     }
     
     Vec2 getBiteCenter() const{
-        return _ang*0.1 +  getPosition();
+        return getPosition();
     }
     Vec2 getShootCenter() const{
         return _ang*0.3 +  getPosition();
