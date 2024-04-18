@@ -145,7 +145,7 @@ void AttackPolygons::addBite(Vec2 center, float angle, float explosionRad, float
      }
     
     std::shared_ptr<SpriteAnimationNode> biteSprite = SpriteAnimationNode::allocWithSheet(bite, 3, 5, 15, ANIM_FREQ);
-    biteSprite->setAngle(ang);
+    //biteSprite->setAngle(ang);
     PolyFactory curFactory;
     Poly2 resultingPolygon = curFactory.makeArc(center, explosionRad * (1 + scale), angle, 180);
     std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(biteSprite, Action::BITE, resultingPolygon, BITE_AGE, 1 + scale);
