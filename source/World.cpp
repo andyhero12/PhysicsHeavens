@@ -77,6 +77,8 @@ World::World(std::shared_ptr<LevelModel> _level, std::shared_ptr<cugl::AssetMana
 bool TileInfo::init(const cugl::Vec2& pos, const cugl::Size& size,Terrain m_type, std::shared_ptr<cugl::Texture> m_texture)
 {
     if (BoxObstacle::init(pos,size)){
+        setShared(false);
+        clearSharingDirtyBits();
         setBodyType(b2_staticBody);
         setDensity(10.0f);
         setFriction(0.4f);

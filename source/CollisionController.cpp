@@ -26,7 +26,7 @@
 /** Impulse for giving collisions a slight bounce. */
 #define COLLISION_COEFF     0.1f
 #define DEFAULT_RADIUS_COLLIDE  0.13f
-#define BUFFER  0.05f
+#define BUFFER  0.1f
 
 using namespace cugl;
 void CollisionController::intraOverWorldCollisions(OverWorld& overWorld){
@@ -141,12 +141,12 @@ bool CollisionController::monsterDecoyCollision(std::shared_ptr<DecoySet> decoyS
     return collide;
 }
 bool CollisionController::monsterDogCollision(std::shared_ptr<Dog> curDog, std::unordered_set<std::shared_ptr<AbstractEnemy>>& curEnemies){
-    float dogRadius = fmin(curDog->getWidth(), curDog->getHeight())/2;
+    float dogRadius = fmax(curDog->getWidth(), curDog->getHeight())/2;
     bool collision = false;
     auto it = curEnemies.begin();
     while (it != curEnemies.end()){
         std::shared_ptr<AbstractEnemy> enemy = *it;
-        float enemyRadius = fmin(enemy->getWidth(), enemy->getHeight())/2;
+        float enemyRadius = fmax(enemy->getWidth(), enemy->getHeight())/2;
         Vec2 norm = curDog->getPosition() - enemy->getPosition();
         float distance = norm.length();
         float impactDistance = dogRadius + enemyRadius + BUFFER;
@@ -156,6 +156,7 @@ bool CollisionController::monsterDogCollision(std::shared_ptr<Dog> curDog, std::
                 collision = true;
                 enemy->resetAttack();
                 curDog->setHealth(curDog->getHealth()-enemy->getDamage());
+            }else{
             }
         }
     }
@@ -174,7 +175,9 @@ void CollisionController::resolveBiteAttack(const std::shared_ptr<ActionPolygon>
         const std::shared_ptr<AbstractEnemy>& enemy = *itA;
         auto curA = itA;
         itA++;
+//        CULog("Enemy Pos %s", enemy->getPosition().toString().data());
         if (bitePolygon.contains(enemy->getPosition()) && action->dealDamage()){
+//            CULog("Contained Pos %s", enemy->getPosition().toString().data());
             hitSomething = true;
             enemy->setHealth(enemy->getHealth() - 1);
             if(enemy->getHealth() <= 0){
@@ -257,7 +260,6 @@ bool CollisionController::absorbEnemMonsterCollision(MonsterController& monsterC
         const std::shared_ptr<AbsorbEnemy>& absEnemy = *itAbs;
         auto curAbs = itAbs;
         itAbs++;
-        int curDamage = (*curAbs)->getDamage();
         while(itMon != monsterEnemies.end()){
             const std::shared_ptr<AbstractEnemy>& curEnemy = *itMon;
             auto curMon = itMon;

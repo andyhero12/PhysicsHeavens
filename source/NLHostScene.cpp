@@ -24,7 +24,7 @@ using namespace std;
 #pragma mark Level Layout
 
 /** Regardless of logo, lock the height to this */
-#define SCENE_HEIGHT  720
+#define SCENE_HEIGHT  800
 
 /**
  * Converts a hexadecimal string to a decimal string

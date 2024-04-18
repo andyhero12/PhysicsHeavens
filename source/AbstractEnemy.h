@@ -48,6 +48,8 @@ public:
         if (result){
             _counter = 0;
             updateRate = 15;
+            clearSharingDirtyBits();
+            setShared(true);
             setDensity(DEFAULT_DENSITY);
             setFriction(DEFAULT_FRICTION);
             setRestitution(DEFAULT_RESTITUTION);

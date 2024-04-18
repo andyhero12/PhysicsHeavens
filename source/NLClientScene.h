@@ -14,6 +14,8 @@
 #define __NL_CLIENT_SCENE_H__
 #include <cugl/cugl.h>
 #include <vector>
+#include "GlobalConstants.h"
+#include "NLInput.h"
 
 using namespace cugl::physics2::net;
 
@@ -39,6 +41,8 @@ protected:
     std::shared_ptr<cugl::scene2::TextField> _gameid;
     /** The players label (for updating) */
     std::shared_ptr<cugl::scene2::Label> _player;
+
+    InputController _input;
     
     /** The network configuration */
     cugl::net::NetcodeConfig _config;
