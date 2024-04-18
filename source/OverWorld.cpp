@@ -24,7 +24,7 @@ void OverWorld::reset()
 
 bool OverWorld::initDogModel()
 {
-    // should start at northeast and add to vector with animation in clockwise direction
+    // should start at east and add to vector with animation in clockwise direction
     std::vector<std::shared_ptr<cugl::Texture>> textures;
     textures.push_back(_assets->get<cugl::Texture>("smalldogrightrun"));
     textures.push_back(_assets->get<cugl::Texture>("smalldogrightrun"));
