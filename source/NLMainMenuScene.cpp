@@ -73,13 +73,23 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _button1->addListener([this](const std::string& name, bool down) {
         //std::cout << _input._confirm << std::endl;
         if (down) {  
-            _choice = Choice::SINGLE;
-            //_isdown = Isdown::isSINGLE;
+            if(_input.getState()==InputController::State::CONTROLLER){
+                _isdown = Isdown::isSINGLE;
+            }
+            else{
+                _choice = Choice::SINGLE;
+            }
+            
         }
     });
     _button2->addListener([this](const std::string& name, bool down) {
         if (down) {
-            _choice = Choice::COOP;
+            if(_input.getState()==InputController::State::CONTROLLER){
+                _isdown = Isdown::isCOOP;
+            }
+            else{
+                _choice = Choice::COOP;
+            }
         }
     });
 

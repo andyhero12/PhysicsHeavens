@@ -39,7 +39,8 @@ _pause(false),
 _updown(0.0),
 _Leftright(0.0),
 _confirm(false),
-_controllerKey(0)
+_controllerKey(0),
+_back(false)
 {
 }
 
@@ -74,11 +75,12 @@ bool InputController::init_withlistener() {
             _gameContrl->addButtonListener(_controllerKey, [=](const GameControllerButtonEvent& event, bool focus) {
             this->getButton(event, focus);
             });
+            _state = State::CONTROLLER;
         return true;
         }
         
     }
-
+    _state = State::MOUSE;
     return false;
 
 }
@@ -94,6 +96,7 @@ void InputController::resetcontroller()
     _updown = 0;
     _Leftright = 0;
     _confirm = false;
+    _back = false;
 }
 /**
  * Reads the input for this player and converts the result into game logic.
@@ -304,6 +307,9 @@ void InputController::getButton(const cugl::GameControllerButtonEvent& event, bo
     if (event.button == cugl::GameController::Button::A) {
         _confirm = true;
         std::cout << "buttonA" << std::endl;
+    }else if(event.button == cugl::GameController::Button::B){
+        _back = true;
+        std::cout << "buttonB" << std::endl;
     }
 }
 
