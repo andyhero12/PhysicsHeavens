@@ -30,15 +30,17 @@ private:
 public:
     Action polygonAction;
     Poly2 internalPolygon;
+    Vec2 _center;
     int _age;
     int _maxage;
     float _scale;
+    float _ang;
     bool _polygon;
     bool _expired;
     int _freq;
     
-    ActionPolygon(Action curAction, Poly2& mintPoly, int mx, float scale);
-    ActionPolygon(std::shared_ptr<SpriteAnimationNode> actionSprite, Action curAction, Poly2& mintPoly, int mx, float scale);
+    ActionPolygon(Action curAction, Poly2& mintPoly, int mx, float scale, float ang, Vec2 center);
+    ActionPolygon(std::shared_ptr<SpriteAnimationNode> actionSprite, Action curAction, Poly2& mintPoly, int mx, float scale, float ang, Vec2 center);
     
     float getScale() const { return _scale; }
     
@@ -54,6 +56,8 @@ public:
         return spriteActionNode;
     }
     bool dealDamage();
+    float getAngle() const { return _ang;}
+    Vec2 getCenter() const { return _center;}
 };
 
 class AttackPolygons{
@@ -85,5 +89,6 @@ public:
         return backAttackPolygonNode;
     }
     int getZOrder() const { return zorder; }
+
 };
 #endif /* AttackPolygons_hpp */
