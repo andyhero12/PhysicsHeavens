@@ -35,6 +35,43 @@ void CollisionController::intraOverWorldCollisions(OverWorld& overWorld){
     }
 }
 
+float vectorAngle(Vec2 vec){
+    if (vec.x == 0) // special cases
+        return (vec.y > 0)? 90
+            : (vec.y == 0)? 0
+            : 270;
+    else if (vec.y == 0) // special cases
+        return (vec.x >= 0)? 0
+            : 180;
+    float ret = vec.getAngle() * 180 /M_PI;
+    if (vec.x < 0 && vec.y < 0) // quadrant Ⅲ
+        ret = 180 + ret;
+    else if (vec.x < 0) // quadrant Ⅱ
+        ret = 180 + ret; // it actually substracts
+    else if (vec.y < 0) // quadrant Ⅳ
+        ret = 270 + (90 + ret); // it actually substracts
+    return ret;
+}
+
+static inline double angle_1to360(float angle){
+    if (angle >= 360.0f){
+        angle -= 360.0f;
+    }
+    if (angle <= 0.0f){
+        angle += 360;
+    }
+    return angle;
+}
+bool withinAngle(float ang1, float ang2, float degrees){
+    float N = angle_1to360(ang2); //normalize angles to be 1-360 degrees
+    float a = angle_1to360(ang1);
+    float b = angle_1to360(ang1 + degrees);
+    
+    if (a < b){
+        return a <= N && N <= b;
+    }
+    return a <= N || N <= b;
+}
 void CollisionController::overWorldMonsterControllerCollisions(OverWorld& overWorld, MonsterController& monsterController){
     std::unordered_set<std::shared_ptr<AbstractEnemy>>& monsterEnemies = monsterController.getEnemies();
     if (monsterDogCollision(overWorld.getDog(), monsterEnemies)){
@@ -175,9 +212,20 @@ void CollisionController::resolveBiteAttack(const std::shared_ptr<ActionPolygon>
         const std::shared_ptr<AbstractEnemy>& enemy = *itA;
         auto curA = itA;
         itA++;
-//        CULog("Enemy Pos %s", enemy->getPosition().toString().data());
-        if (bitePolygon.contains(enemy->getPosition()) && action->dealDamage()){
-//            CULog("Contained Pos %s", enemy->getPosition().toString().data());
+        
+        Vec2 diff = enemy->getPosition() - action->getCenter();
+        float ang = diff.getAngle();
+        float result = ((ang > 0 ? ang : (2*M_PI +ang)) * 360 / (2*M_PI)) - 90.0f;
+        if (result < 0.0f){
+            result += 360.0f;
+        }
+        float dist = diff.length();
+//        if (dist <= 3 && action->dealDamage()){
+//            CULog("%s %f",diff.toString().data(), result);
+////            CULog("Attack Angle: %f, angle enemy %f %d",action->getAngle(), ang, withinAngle(action->getAngle()-90.0f, ang, 180.0f));
+////            CULog("%f, %f %f %s %s", dist, ang, diff.getAngle(), enemy->getPosition().toString().data(), action->getCenter().toString().data());
+//        }
+        if (withinAngle(action->getAngle()-90.0f, result, 180.0f) && dist <= 3 * action->getScale() && action->dealDamage()){
             hitSomething = true;
             enemy->setHealth(enemy->getHealth() - 1);
             if(enemy->getHealth() <= 0){
