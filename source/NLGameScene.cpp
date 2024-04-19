@@ -119,9 +119,9 @@ GameScene::GameScene() : cugl::Scene2(),
  *
  * @return true if the controller is initialized properly, false otherwise.
  */
-bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const std::shared_ptr<cugl::physics2::net::NetEventController> network, bool isHost)
+bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const std::shared_ptr<cugl::physics2::net::NetEventController> network, bool isHost, std::string level)
 {
-    return init(assets, Rect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT), Vec2(0, DEFAULT_GRAVITY), network, isHost);
+    return init(assets, Rect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT), Vec2(0, DEFAULT_GRAVITY), network, isHost, level);
 }
 
 /**
@@ -140,15 +140,11 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const std::sha
  *
  * @return  true if the controller is initialized properly, false otherwise.
  */
-bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rect, const std::shared_ptr<NetEventController> network, bool isHost)
+bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rect, const std::shared_ptr<NetEventController> network, bool isHost, std::string level)
 {
-    return init(assets, rect, Vec2(0, DEFAULT_GRAVITY), network, isHost);
+    return init(assets, rect, Vec2(0, DEFAULT_GRAVITY), network, isHost, level);
 }
 
-bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rect, const Vec2 gravity, const std::shared_ptr<NetEventController> network, bool isHost)
-{
-    return init(assets, rect, gravity, network, isHost, LEVEL_ONE_KEY);
-}
 /**
  * Initializes the controller contents, and starts the game
  *

@@ -34,7 +34,7 @@ class LevelScene : public cugl::Scene2 {
 public:
     enum Level {
             /** User has not yet made a choice */
-            L1,
+            L1 = 0,
             /** User wants to host a game */
             L2,
             /** User wants to join a game */
@@ -165,7 +165,9 @@ public:
     void resetAnimCD(){
         curMoveAnim = 0;
     }
-
+    void resetLevel(){
+        _level = Level::NONE;
+    }
     void resetgochange(){
         _goleft = false;
         _goright = false;

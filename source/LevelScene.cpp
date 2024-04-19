@@ -68,6 +68,7 @@ bool LevelScene::init(const std::shared_ptr<AssetManager> &assets)
     //_brand = assets->get<scene2::SceneNode>("level_name");
     _button = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("level_play"));
     _button->addListener([=](const std::string &name, bool down){
+        CULog("Current Level %d  %d %d", level1, level2, level3);
         if(down && level1){
             _level = Level::L1;
         }else if (down && level2){
@@ -115,6 +116,7 @@ void LevelScene::dispose()
 void LevelScene::update(float progress)
 {
     _input.update();
+    
     if (curMoveAnim <= moveCooldown){
         curMoveAnim++;
     }
