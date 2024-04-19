@@ -21,7 +21,8 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     _bombtoggle = cugl::scene2::PolygonNode::allocWithTexture(assets->get<Texture>("bombtoggle"));
     _shoottoggle = cugl::scene2::PolygonNode::allocWithTexture(assets->get<Texture>("shoottoggle"));
     _baittoggle = cugl::scene2::PolygonNode::allocWithTexture(assets->get<Texture>("baittoggle"));
-    _toggleFlash = cugl::scene2::SpriteNode::allocWithSheet(assets->get<Texture>("flash"), 1, 5);
+    _hometoggle = cugl::scene2::PolygonNode::allocWithTexture(assets->get<Texture>("hometoggle"));
+    _toggleFlash = SpriteAnimationNode::allocWithSheet(assets->get<Texture>("flash"), 1, 5, 5, 10);
     
     // set the scale
     _healthframe->setScale(UI_SCALE);
@@ -31,6 +32,7 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     _bombtoggle->setScale(UI_SCALE);
     _shoottoggle->setScale(UI_SCALE);
     _baittoggle->setScale(UI_SCALE);
+    _hometoggle->setScale(UI_SCALE);
     _toggleFlash->setScale(UI_SCALE);
     
     // set the position
@@ -41,6 +43,7 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     _bombtoggle->setAnchor(Vec2::ANCHOR_CENTER);
     _shoottoggle->setAnchor(Vec2::ANCHOR_CENTER);
     _baittoggle->setAnchor(Vec2::ANCHOR_CENTER);
+    _hometoggle->setAnchor(Vec2::ANCHOR_CENTER);
     _toggleFlash->setAnchor(Vec2::ANCHOR_CENTER);
     
     x =0;
@@ -71,12 +74,13 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     _bombtoggle->setPosition(togglex, toggley);
     _shoottoggle->setPosition(togglex, toggley);
     _baittoggle->setPosition(togglex, toggley);
-    
-    _toggleFlash->setPosition(togglex + _baittoggle->getWidth()/3, toggley + _baittoggle->getHeight()/3);
+    _hometoggle->setPosition(togglex, toggley);
+    _toggleFlash->setPosition(togglex, toggley);
     
     _shoottoggle->setVisible(true);
     _bombtoggle->setVisible(false);
     _baittoggle->setVisible(false);
+    _hometoggle->setVisible(false);
     _toggleFlash->setVisible(true);
     
     node->addChild(_healthframe);
@@ -84,6 +88,7 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     node->addChild(_bombtoggle);
     node->addChild(_shoottoggle);
     node->addChild(_baittoggle);
+    node->addChild(_hometoggle);
     node->addChild(_healthfill);
     node->addChild(_sizefill);
     node->addChild(_toggleFlash);
@@ -132,36 +137,37 @@ void UIController::setToggle(std::string mode){
         _bombtoggle->setVisible(false);
         _shoottoggle->setVisible(true);
         _baittoggle->setVisible(false);
+        _hometoggle->setVisible(false);
     }
     else if (mode == "BAIT"){
         _bombtoggle->setVisible(false);
         _shoottoggle->setVisible(false);
         _baittoggle->setVisible(true);
+        _hometoggle->setVisible(false);
     }
     else if (mode == "BOMB"){
         _bombtoggle->setVisible(true);
         _shoottoggle->setVisible(false);
         _baittoggle->setVisible(false);
+        _hometoggle->setVisible(false);
     }
     else if (mode == "NOTHING"){
         _bombtoggle->setVisible(false);
         _shoottoggle->setVisible(false);
         _baittoggle->setVisible(false);
+        _hometoggle->setVisible(false);
     }else if (mode == "RECALL"){
         _bombtoggle->setVisible(false);
         _shoottoggle->setVisible(false);
         _baittoggle->setVisible(false);
+        _hometoggle->setVisible(true);
     }else{
         CUAssertLog(false, "wrong mode string");
     }
 }
 
-void UIController::animateFlash(){
-    if(_freq == ANIM_FREQ){
-        _freq = 0;
-        _toggleFlash->setFrame((_toggleFlash->getFrame() + 1) % _toggleFlash->getSpan());
-    }
-    else{
-        _freq += 1;
+void UIController::animateFlash(int absorb){
+    if(absorb > 10){
+        _toggleFlash->update();
     }
 }

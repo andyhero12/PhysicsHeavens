@@ -191,7 +191,9 @@ void Dog::updateClientAnimations(){
  *
  */
 void Dog::moveOnInputSetAction(InputController& _input){
-    _uiController->animateFlash();
+    if(_mode != -1){
+        _uiController->animateFlash(_absorbValue);
+    }
     if (_refire <= _firerate) {
         _refire++;
     }

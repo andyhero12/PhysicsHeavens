@@ -63,6 +63,10 @@
             "file": "textures/game_ui/SHOOT_TOGGLE.png",
             "magfilter": "nearest"
         },
+        "hometoggle": {
+            "file": "textures/game_ui/SPAWN_TOGGLE.png",
+            "magfilter": "nearest"
+        },
         "smalldogleftidle": {
             "file": "textures/dog/idle/small-left-idle.png",
             "magfilter": "nearest"
@@ -396,7 +400,7 @@
             "file": "textures/left_arrow.png"
         },
         "flash": {
-            "file": "textures/game_ui/icon_ready_flash.png",
+            "file": "textures/game_ui/icon_ready_flash_offset.png",
             "magfilter": "nearest"
         }
     },
