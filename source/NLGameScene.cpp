@@ -119,9 +119,9 @@ GameScene::GameScene() : cugl::Scene2(),
  *
  * @return true if the controller is initialized properly, false otherwise.
  */
-bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const std::shared_ptr<cugl::physics2::net::NetEventController> network, bool isHost)
+bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const std::shared_ptr<cugl::physics2::net::NetEventController> network, bool isHost, std::string level)
 {
-    return init(assets, Rect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT), Vec2(0, DEFAULT_GRAVITY), network, isHost);
+    return init(assets, Rect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT), Vec2(0, DEFAULT_GRAVITY), network, isHost, level);
 }
 
 /**
@@ -140,9 +140,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const std::sha
  *
  * @return  true if the controller is initialized properly, false otherwise.
  */
-bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rect, const std::shared_ptr<NetEventController> network, bool isHost)
+bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rect, const std::shared_ptr<NetEventController> network, bool isHost, std::string level)
 {
-    return init(assets, rect, Vec2(0, DEFAULT_GRAVITY), network, isHost);
+    return init(assets, rect, Vec2(0, DEFAULT_GRAVITY), network, isHost, level);
 }
 
 /**
@@ -162,7 +162,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
  *
  * @return  true if the controller is initialized properly, false otherwise.
  */
-bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rect, const Vec2 gravity, const std::shared_ptr<NetEventController> network, bool isHost)
+bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rect, const Vec2 gravity, const std::shared_ptr<NetEventController> network, bool isHost, std::string level_string)
 {
     Size dimen = computeActiveSize();
 
@@ -180,7 +180,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _network = network;
 
     // Start up the input handler
-    _level = assets->get<LevelModel>(LEVEL_ONE_KEY);
+    _level = assets->get<LevelModel>(level_string);
     _level->setTileSetAssets(assets);
     _constants = assets->get<JsonValue>("constants");
     if (_level == nullptr)

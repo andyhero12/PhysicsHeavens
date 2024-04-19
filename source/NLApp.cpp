@@ -57,6 +57,8 @@ void NetApp::onStartup() {
     AudioEngine::start(24);
     _assets->loadDirectoryAsync("json/assets.json",nullptr);
     _assets->loadAsync<LevelModel>(LEVEL_ONE_KEY,LEVEL_ONE_FILE,nullptr);
+    _assets->loadAsync<LevelModel>(LEVEL_TWO_KEY,LEVEL_TWO_FILE,nullptr);
+    _assets->loadAsync<LevelModel>(LEVEL_THREE_KEY,LEVEL_THREE_FILE,nullptr);
     cugl::net::NetworkLayer::start(net::NetworkLayer::Log::INFO);
     
     Application::onStartup(); // YOU MUST END with call to parent
@@ -249,7 +251,20 @@ void NetApp::updateHostScene(float timestep) {
         //_menu.setActive(true);
     }
     else if (_network->getStatus() == NetEventController::Status::HANDSHAKE && _network->getShortUID()) {
-        _gameplay.init(_assets, _network, true);
+        switch (_level.getLevel()) {
+            case LevelScene::Level::L1:
+                _gameplay.init(_assets, _network, true, LEVEL_ONE_KEY);
+                break;
+            case LevelScene::Level::L2:
+                _gameplay.init(_assets, _network, true, LEVEL_TWO_KEY);
+                break;
+            case LevelScene::Level::L3:
+                _gameplay.init(_assets, _network, true, LEVEL_THREE_KEY);
+                break;
+            default :
+                CUAssertLog(false, "bad level");
+                break;
+        }
         _network->markReady();
     }
     else if (_network->getStatus() == NetEventController::Status::INGAME) {
@@ -284,7 +299,7 @@ void NetApp::updateClientScene(float timestep) {
         _mainmenu.setActive(true);
     }
     else if (_network->getStatus() == NetEventController::Status::HANDSHAKE && _network->getShortUID()) {
-        _gameplay.init(_assets, _network, false);
+        _gameplay.init(_assets, _network, false, LEVEL_TWO_KEY);
         _network->markReady();
     }
     else if (_network->getStatus() == NetEventController::Status::INGAME) {
@@ -323,6 +338,7 @@ void NetApp::updateMainScene(float timestep)
     case MainMenuScene::Choice::SINGLE:
         _mainmenu.setActive(false);
         _status = LEVEL;
+        _level.resetLevel();
         break;
     case MainMenuScene::Choice::COOP:
         _mainmenu.setActive(false);
@@ -344,6 +360,7 @@ void NetApp::updateMainScene(float timestep)
 void NetApp::updateLevelScene(float timestep)
 {
     _level.update(timestep);
+    
     switch (_level.getLevel()) {
     case LevelScene::Level::L1:
         _level.setActive(false);
@@ -351,12 +368,16 @@ void NetApp::updateLevelScene(float timestep)
         _status = HOST;
         break;
     case LevelScene::Level::L2:
-
+        _level.setActive(false);
+        _hostgame.setActive(true);
+        _status = HOST;
         break;
     case LevelScene::Level::L3:
-
+        _level.setActive(false);
+        _hostgame.setActive(true);
+        _status = HOST;
         break;
-    case LevelScene::Level::NONE:
+    default :
         // DO NOTHING
         break;
     }

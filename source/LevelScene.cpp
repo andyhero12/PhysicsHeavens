@@ -56,7 +56,7 @@ bool LevelScene::init(const std::shared_ptr<AssetManager> &assets)
     {
         return false;
     }
-
+    _input.init_withlistener();
     // IMMEDIATELY load the splash screen assets
     _assets = assets;
     _assets->loadDirectory("json/level.json");
@@ -65,15 +65,19 @@ bool LevelScene::init(const std::shared_ptr<AssetManager> &assets)
     layer->doLayout(); // This rearranges the children to fit the screen
 
     _bar = std::dynamic_pointer_cast<scene2::ProgressBar>(assets->get<scene2::SceneNode>("level_bar"));
-    _brand = assets->get<scene2::SceneNode>("load_name");
+    //_brand = assets->get<scene2::SceneNode>("level_name");
     _button = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("level_play"));
-    _button->addListener([=](const std::string &name, bool down)
-                         {
-        if(down){
+    _button->addListener([=](const std::string &name, bool down){
+        CULog("Current Level %d  %d %d", level1, level2, level3);
+        if(down && level1){
             _level = Level::L1;
+        }else if (down && level2){
+            _level = Level::L2;
+        }else if (down && level3){
+            _level = Level::L3;
         } });
-    background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("backgroundl"), 1, 18);
-    background->setScale(6.5);
+    background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("Background"), 1, 15);
+    background->setScale(2.7);
     background->setPosition(0.5 * background->getSize());
     addChild(background);
     layer->setColor(Color4(0, 0, 0, 1));
@@ -93,7 +97,7 @@ void LevelScene::dispose()
         _button->deactivate();
     }
     _button = nullptr;
-    _brand = nullptr;
+    //_brand = nullptr;
     _bar->removeFromParent();
     _bar = nullptr;
     _assets = nullptr;
@@ -111,16 +115,64 @@ void LevelScene::dispose()
  */
 void LevelScene::update(float progress)
 {
-    if (frame >= 10)
-    {
-        background->setFrame((background->getFrame() + 1) % 18);
-        frame = 0;
+    _input.update();
+    
+    if (curMoveAnim <= moveCooldown){
+        curMoveAnim++;
     }
-    else
-    {
-        //        std::cout<<"frame"<<std::endl;
-        frame += 1;
+    std::cout<<_input._Leftright<<std::endl;
+    if(_input._Leftright == 1 && readyToChangeLevel()){
+        _goright = true;
     }
+
+    if(_input._Leftright == -1 && readyToChangeLevel()){
+        _goleft = true;
+    }
+
+    if (_input.didPressRight()){
+        CULog("Pressed Right");
+    }
+    if(_input.didPressRight() && readyToChangeLevel()){
+        _goright = true;
+    }
+    if(_input.didPressLeft() && readyToChangeLevel()){
+        _goleft = true;
+    }
+    
+    updatelevelscene();
+    resetgochange();
+    if (level1 && readToAnim()){
+        if(background->getFrame() != 2){
+            resetAnimCD();
+           if (background->getFrame() < 2){
+               background->setFrame(background->getFrame() + 1);
+           }else if (background->getFrame() >  2){
+               background->setFrame(background->getFrame() - 1);
+           }
+       }
+    }else if(level2 && readToAnim()) {
+        if(background->getFrame() != 8){
+            resetAnimCD();
+            if (background->getFrame() < 8){
+                background->setFrame(background->getFrame() + 1);
+            }else if (background->getFrame() >  8){
+                background->setFrame(background->getFrame() - 1);
+            }
+       }
+    }else if(level3 && readToAnim()){
+        if(background->getFrame() !=14){
+            resetAnimCD();
+            if (background->getFrame() < 14){
+                background->setFrame(background->getFrame() + 1);
+            }else if (background->getFrame() >  14){
+                background->setFrame(background->getFrame() - 1);
+            }
+        }
+    }
+    if (_input._confirm){
+        _button->setDown(true);
+    }
+    _input.resetcontroller();
 
     if (_progress < 1)
     {
@@ -129,11 +181,13 @@ void LevelScene::update(float progress)
         {
             _progress = 1.0f;
             _bar->setVisible(false);
-            _brand->setVisible(false);
-            _button->setVisible(true);
+            //_brand->setVisible(false);
+            _button->setVisible(false);
             _button->activate();
         }
         _bar->setProgress(_progress);
+        _button->setVisible(false);
+        //_brand->setVisible(false);
     }
 }
 

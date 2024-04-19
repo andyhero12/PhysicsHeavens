@@ -34,7 +34,7 @@ class LevelScene : public cugl::Scene2 {
 public:
     enum Level {
             /** User has not yet made a choice */
-            L1,
+            L1 = 0,
             /** User wants to host a game */
             L2,
             /** User wants to join a game */
@@ -59,7 +59,7 @@ protected:
     std::shared_ptr<cugl::scene2::SpriteNode> background;
 
     Level _level;
-
+    InputController _input;
     // MODEL
     /** The progress displayed on the screen */
     float _progress;
@@ -67,6 +67,17 @@ protected:
     bool  _completed;
     
     int frame;
+
+    int curMoveAnim;
+
+    int moveCooldown;
+
+    bool level1;
+    bool level2;
+    bool level3;
+
+    bool _goright;
+    bool _goleft;
     /**
      * Returns the active screen size of this scene.
      *
@@ -84,7 +95,7 @@ public:
      * This constructor does not allocate any objects or start the game.
      * This allows us to use the object without a heap pointer.
      */
-    LevelScene() : cugl::Scene2(), _progress(0.0f), frame(0.0f) {}
+    LevelScene() : cugl::Scene2(), _progress(0.0f), frame(0.0f), curMoveAnim(0), moveCooldown(6), level1(true), level2(false), level3(false), _goleft(false), _goright(false), _level(NONE){}
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.
@@ -133,7 +144,54 @@ public:
 
     virtual void setActive(bool value) override;
 
-    Level getLevel() const { return _level; }
+    Level getLevel() const { return _level;}
+
+    bool readToAnim(){
+        return curMoveAnim >= moveCooldown;
+    }
+    
+    bool readyToChangeLevel(){
+        return finAnimLevel1() || finAnimLevel2() || finAnimLevel3();
+    }
+    bool finAnimLevel1(){
+        return level1 && background->getFrame() == 2;
+    }
+    bool finAnimLevel2(){
+        return level2 && background->getFrame() == 8;
+    }
+    bool finAnimLevel3(){
+        return level3 && background->getFrame() == 14;
+    }
+    void resetAnimCD(){
+        curMoveAnim = 0;
+    }
+    void resetLevel(){
+        _level = Level::NONE;
+    }
+    void resetgochange(){
+        _goleft = false;
+        _goright = false;
+    }
+    
+    void updatelevelscene(){
+        if(_goright&&level1){
+            level1 = false;
+            level2 = true;
+        }else if(_goright && level2){
+            level2 = false;
+            level3 = true;
+        }else if(_goright&&level3){
+            
+        }else if(_goleft&&level1){
+            
+        }else if(_goleft&&level2){
+            level1 = true;
+            level2 = false;
+        }else if(_goleft&&level3){
+            level2 = true;
+            level3 = false;
+        }
+    }
 
     
 };

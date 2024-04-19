@@ -68,11 +68,11 @@
             "magfilter": "nearest"
         },
         "initialflash":{
-            "file": "textures/game_ui/icon_flash_offset.png",
+            "file": "textures/game_ui/Icon_flash_offset.png",
             "magfilter": "nearest"
         },
         "flash": {
-            "file": "textures/game_ui/icon_ready_flash_offset.png",
+            "file": "textures/game_ui/Icon_ready_flash_offset.png",
             "magfilter": "nearest"
         },
         "smalldogleftidle": {
@@ -353,6 +353,10 @@
             "file": "textures/tile/stiles.png",
             "magfilter": "nearest"
         },
+        "streetTiles": {
+            "file": "textures/tile/stiles.png",
+            "magfilter": "nearest"
+        },
         "angelMotel": {
             "file": "textures/tile/angelMotel.png",
             "magfilter": "nearest"
@@ -417,10 +421,10 @@
             "magfilter": "nearest"
         },
         "win_screen": {
-          "file": "textures/Menu/win_screen_wip.png"
+          "file": "textures/win_screen.png"
         },
         "lose_screen": {
-          "file": "textures/Menu/fail_screen_wip.png"
+          "file": "textures/fail_screen.png"
         }
     },
     "jsons": {
@@ -437,6 +441,7 @@
         "streets": "json/assetsJson/streets.json",
         "street_tiles": "json/assetsJson/street_tiles.json",
         "stiles": "json/assetsJson/stiles.json",
+        "streetTiles": "json/assetsJson/stiles.json",
         "buildings": "json/assetsJson/buildings.json",
         "server": "json/server.json",
         "constants": "json/constants.json",

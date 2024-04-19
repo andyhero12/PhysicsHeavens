@@ -70,6 +70,7 @@ bool SpawnerController::init(const std::vector<LevelModel::Spawner>& startLocs, 
         drawNode->setAnchor(cugl::Vec2::ANCHOR_CENTER);
 //        animationNodes.push_back(drawNode);
         baseSpawnerNode->addChild(drawNode);
+        curSpawner->setSpawnerNode(drawNode);
         _spawners.insert(curSpawner);
     }
     difficulty = 0;
