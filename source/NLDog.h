@@ -60,6 +60,7 @@ public:
         RUN,
         SHOOT,
         BITE,
+        RECALL,
         DASH
     };
     enum class DogSize : int {
@@ -78,8 +79,10 @@ protected:
     AnimationSceneNode::Directions prevDirection;
     cugl::Vec2 dir;
     cugl::Vec2 _ang;
-    std::shared_ptr<cugl::scene2::SceneNode> baseBlankNode;
-    std::shared_ptr<cugl::scene2::SceneNode> effectsNode;
+    std::shared_ptr<cugl::scene2::OrderedNode> baseBlankNode;
+    std::shared_ptr<cugl::scene2::SceneNode> frontEffectsNode;
+    std::shared_ptr<cugl::scene2::SceneNode> backEffectsNode;
+    
     std::shared_ptr<AnimationSceneNode> idleAnimation;
     std::shared_ptr<AnimationSceneNode> runAnimation;
     std::shared_ptr<AnimationSceneNode> biteAnimation;
@@ -104,12 +107,15 @@ protected:
     std::shared_ptr<AnimationSceneNode> shootAnimationLarge;
     std::shared_ptr<AnimationSceneNode> dashAnimationLarge;
     
+    std::shared_ptr<AnimationSceneNode> recallAnimation;
+    std::shared_ptr<AnimationSceneNode> belowPenta;
     std::shared_ptr<UIController> _uiController;
 
-    std::array<std::string,3> modes = {"SHOOT", "BAIT", "BOMB"};
+    std::array<std::string,4> modes = {"SHOOT", "BAIT", "BOMB", "RECALL"};
     bool _startDash;
     bool _startBite;
     bool _startShoot;
+    bool _startRecall;
     bool _sendSize;
     int _dashCounter;
     int _dashRate;
@@ -199,18 +205,20 @@ public:
     virtual bool init(const cugl::Vec2 pos, const cugl::Size size) override;
     
     
+    void setRecallAnimation(std::shared_ptr<AnimationSceneNode> recall);
+    void setBelowPenta(std::shared_ptr<AnimationSceneNode> belowPenta);
     void setSmallAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot,std::shared_ptr<AnimationSceneNode> dash);
     void setMediumAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot,std::shared_ptr<AnimationSceneNode> dash);
     void setLargeAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot,std::shared_ptr<AnimationSceneNode> dash);
     
     void setUIController(std::shared_ptr<UIController> controller){ _uiController = controller; }
     
-    void setFinalDog(std::shared_ptr<cugl::scene2::SceneNode> baseNode);
+    void setFinalDog(std::shared_ptr<cugl::scene2::OrderedNode> baseNode);
     void resetCurrentAnimations(DogSize dogSize);
     void updateLocalAnimations(DogSize dogSize);
     
     void updateDogSize(int absorbValue);
-    void addEffects(std::shared_ptr<cugl::scene2::SceneNode> node);
+    void addEffects(std::shared_ptr<cugl::scene2::SceneNode> fnode, std::shared_ptr<cugl::scene2::SceneNode> bnode);
 #pragma mark Static Constructors
     /**
      * Returns a newly allocate rocket at the origin.
@@ -285,6 +293,9 @@ public:
     void startBite(){
         _startBite = true;
     }
+    void startRecall(){
+        _startRecall = true;
+    }
     void startShoot(){
         _startShoot = true;
     }
@@ -319,6 +330,7 @@ public:
     
     int getMaxHealth() const { return _maxHealth; }
     
+    bool readyToRecall() const { return action == Actions::RECALL && recallAnimation->getFrame() == recallAnimation->getSize()/2; }
     int getMaxAbsorb() const { return _maxAbsorb; }
     /**
      * Sets the current ship health.
@@ -396,7 +408,7 @@ public:
     }
     
     Vec2 getBiteCenter() const{
-        return _ang*0.1 +  getPosition();
+        return getPosition();
     }
     Vec2 getShootCenter() const{
         return _ang*0.3 +  getPosition();

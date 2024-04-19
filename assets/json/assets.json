@@ -15,6 +15,11 @@
             "minfilter": "linear",
             "magfilter": "nearest"
         },
+        "frontbite": {
+            "file": "textures/dog/effects/magic_chomp_back.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
         "resume": {
             "file": "textures/game_ui/resume_button.png",
             "minfilter": "linear",
@@ -257,16 +262,28 @@
         "chompright": {
             "file": "textures/dog/effects/magic_chomp_right.png",
             "magfilter": "nearest"
-        },
-        "absorbEnemyLeftWalk": {
-            "file": "textures/absorbEnemy/absorbLeftWalk.png",
-            "minfilter": "linear",
+       },
+       "recall":{
+           "file": "textures/dog/effects/recall.png",
             "magfilter": "nearest"
-        },
-        "absorbEnemyRightWalk": {
-            "file": "textures/absorbEnemy/absorbRightWalk.png",
-            "minfilter": "linear",
+       },
+       "dash":{
+           "file": "textures/dog/effects/dash.png",
             "magfilter": "nearest"
+       },
+       "penta":{
+           "file": "textures/dog/effects/penta.png",
+            "magfilter": "nearest"
+       },
+       "absorbEnemyLeftWalk": {
+           "file": "textures/absorbEnemy/absorbLeftWalk.png",
+                 "minfilter": "linear",
+                 "magfilter": "nearest"
+       },
+       "absorbEnemyRightWalk": {
+           "file": "textures/absorbEnemy/absorbRightWalk.png",
+                 "minfilter": "linear",
+                 "magfilter": "nearest"
         },
         "basicEnemy0": {
             "file": "textures/basicEnemy/basicWalkLeft.PNG",
@@ -336,6 +353,22 @@
             "file": "textures/tile/angelCafe.png",
             "magfilter": "nearest"
         },
+        "angelFountain": {
+            "file": "textures/tile/angelFountain.png",
+            "magfilter": "nearest"
+        },
+        "lamp": {
+            "file": "textures/tile/lamp.png",
+            "magfilter": "nearest"
+        },
+        "angelFoodTruck": {
+            "file": "textures/tile/angelFoodTruck.png",
+            "magfilter": "nearest"
+        },
+        "table": {
+            "file": "textures/tile/table.png",
+            "magfilter": "nearest"
+        },
         "devilCafe": {
             "file": "textures/tile/devilCafe.png",
             "magfilter": "nearest"
@@ -369,6 +402,10 @@
     },
     "jsons": {
         "angelMotel": "json/assetsJson/angelMotel.json",
+        "angelFoodTruck": "json/assetsJson/angelFoodTruck.json",
+        "angelFountain": "json/assetsJson/angelFountain.json",
+        "lamp": "json/assetsJson/lamp.json",
+        "table": "json/assetsJson/table.json",
         "angelSkyscraper": "json/assetsJson/angelSkyscraper.json",
         "devilMotel": "json/assetsJson/devilMotel.json",
         "devilSkyscraper": "json/assetsJson/devilSkyscraper.json",

@@ -23,13 +23,13 @@ public:
      */
     enum class Directions : int {
         EAST,
-        NORTHEAST,
-        NORTH,
-        NORTHWEST,
-        WEST,
-        SOUTHWEST,
+        SOUTHEAST,
         SOUTH,
-        SOUTHEAST
+        SOUTHWEST,
+        WEST,
+        NORTHWEST,
+        NORTH,
+        NORTHEAST
     };
 #pragma mark -
 #pragma mark Helper Functions

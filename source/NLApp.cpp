@@ -322,11 +322,6 @@ void NetApp::updateMainScene(float timestep)
     switch (_mainmenu.getChoice()) {
     case MainMenuScene::Choice::SINGLE:
         _mainmenu.setActive(false);
-        _level.setActive(true);
-        //_menu.setActive(true);
-
-        //_menu.setActive(false);
-        //_hostgame.setActive(true);
         _status = LEVEL;
         break;
     case MainMenuScene::Choice::COOP:

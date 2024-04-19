@@ -19,11 +19,12 @@ void OverWorld::reset()
     initBases();
     initDecoys();
     _attackPolygonSet.init();
+    _clientAttackPolygonSet.init();
 }
 
 bool OverWorld::initDogModel()
 {
-    // should start at northeast and add to vector with animation in clockwise direction
+    // should start at east and add to vector with animation in clockwise direction
     std::vector<std::shared_ptr<cugl::Texture>> textures;
     textures.push_back(_assets->get<cugl::Texture>("smalldogrightrun"));
     textures.push_back(_assets->get<cugl::Texture>("smalldogrightrun"));
@@ -98,21 +99,21 @@ bool OverWorld::initDogModel()
     clientSmallDogShoot->setAnchor(Vec2::ANCHOR_CENTER);
     clientSmallDogShoot->setContentSize(DOG_SIZE);
 
-    textures.clear();
-    textures.push_back(_assets->get<cugl::Texture>("smalldogrightshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogrightshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogfrontshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogfrontshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogleftshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogleftshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogbackshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogbackshoot"));
+    std::vector<std::shared_ptr<cugl::Texture>> dashTextures;
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
 
-    std::shared_ptr<AnimationSceneNode> smallDogDash = AnimationSceneNode::allocWithTextures(textures, 1, 4, 4, 15);
+    std::shared_ptr<AnimationSceneNode> smallDogDash = AnimationSceneNode::allocWithTextures(dashTextures, 4, 5, 20, 1);
     smallDogDash->setAnchor(Vec2::ANCHOR_CENTER);
     smallDogDash->setContentSize(DOG_SIZE);
 
-    std::shared_ptr<AnimationSceneNode> clientSmallDogDash = AnimationSceneNode::allocWithTextures(textures, 1, 4, 4, 15);
+    std::shared_ptr<AnimationSceneNode> clientSmallDogDash = AnimationSceneNode::allocWithTextures(dashTextures, 4, 5, 20, 1);
     clientSmallDogDash->setAnchor(Vec2::ANCHOR_CENTER);
     clientSmallDogDash->setContentSize(DOG_SIZE);
 
@@ -188,21 +189,21 @@ bool OverWorld::initDogModel()
     clientMediumDogShoot->setAnchor(Vec2::ANCHOR_CENTER);
     clientMediumDogShoot->setContentSize(DOG_SIZE);
 
-    textures.clear();
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogrightshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogrightshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogfrontshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogfrontshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogleftshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogleftshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogbackshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogbackshoot"));
+    dashTextures.clear();
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
 
-    std::shared_ptr<AnimationSceneNode> mediumDogDash = AnimationSceneNode::allocWithTextures(textures, 1, 4, 4, 15);
+    std::shared_ptr<AnimationSceneNode> mediumDogDash = AnimationSceneNode::allocWithTextures(dashTextures, 4, 5, 20, 1);
     mediumDogDash->setAnchor(Vec2::ANCHOR_CENTER);
     mediumDogDash->setContentSize(DOG_SIZE);
 
-    std::shared_ptr<AnimationSceneNode> clientMediumDogDash = AnimationSceneNode::allocWithTextures(textures, 1, 4, 4, 15);
+    std::shared_ptr<AnimationSceneNode> clientMediumDogDash = AnimationSceneNode::allocWithTextures(textures, 4, 5, 20, 1);
     clientMediumDogDash->setAnchor(Vec2::ANCHOR_CENTER);
     clientMediumDogDash->setContentSize(DOG_SIZE);
 
@@ -278,24 +279,60 @@ bool OverWorld::initDogModel()
     clientLargeDogShoot->setAnchor(Vec2::ANCHOR_CENTER);
     clientLargeDogShoot->setContentSize(DOG_SIZE);
 
-    textures.clear();
-    textures.push_back(_assets->get<cugl::Texture>("largedogrightshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogrightshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogfrontshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogfrontshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogleftshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogleftshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogbackshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogbackshoot"));
+    dashTextures.clear();
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
 
-    std::shared_ptr<AnimationSceneNode> largeDogDash = AnimationSceneNode::allocWithTextures(textures, 1, 4, 4, 15);
+    std::shared_ptr<AnimationSceneNode> largeDogDash = AnimationSceneNode::allocWithTextures(dashTextures, 4, 5, 20, 1);
     largeDogDash->setAnchor(Vec2::ANCHOR_CENTER);
     largeDogDash->setContentSize(DOG_SIZE);
 
-    std::shared_ptr<AnimationSceneNode> clientLargeDogDash = AnimationSceneNode::allocWithTextures(textures, 1, 4, 4, 15);
+    std::shared_ptr<AnimationSceneNode> clientLargeDogDash = AnimationSceneNode::allocWithTextures(dashTextures, 4, 5, 20, 1);
     clientLargeDogDash->setAnchor(Vec2::ANCHOR_CENTER);
     clientLargeDogDash->setContentSize(DOG_SIZE);
+        
+    std::vector<std::shared_ptr<cugl::Texture>> recallTextures;
+    recallTextures.push_back(_assets->get<cugl::Texture>("recall"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("recall"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("recall"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("recall"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("recall"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("recall"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("recall"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("recall"));
 
+    std::shared_ptr<AnimationSceneNode> recall = AnimationSceneNode::allocWithTextures(recallTextures, 6,5, 30, 2);
+    recall->setAnchor(Vec2::ANCHOR_CENTER);
+    recall->setContentSize(DOG_SIZE);
+    
+    std::shared_ptr<AnimationSceneNode> recallClient = AnimationSceneNode::allocWithTextures(recallTextures, 6,5, 30, 2);
+    recallClient->setAnchor(Vec2::ANCHOR_CENTER);
+    recallClient->setContentSize(DOG_SIZE);
+    
+    recallTextures.clear();
+    recallTextures.push_back(_assets->get<cugl::Texture>("penta"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("penta"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("penta"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("penta"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("penta"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("penta"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("penta"));
+    recallTextures.push_back(_assets->get<cugl::Texture>("penta"));
+
+    std::shared_ptr<AnimationSceneNode> belowPenta = AnimationSceneNode::allocWithTextures(recallTextures, 6,5, 30, 2);
+    belowPenta->setAnchor(Vec2::ANCHOR_CENTER);
+    belowPenta->setContentSize(DOG_SIZE);
+
+    std::shared_ptr<AnimationSceneNode> belowPentaClient = AnimationSceneNode::allocWithTextures(recallTextures,6,5, 30, 2);
+    belowPentaClient->setAnchor(Vec2::ANCHOR_CENTER);
+    belowPentaClient->setContentSize(DOG_SIZE);
+    
     // MAGIC NUMBER ALERT!!
     Vec2 dogPos = _level->getPlayerPos();
     _dog = Dog::alloc(dogPos, DOG_SIZE);
@@ -305,10 +342,11 @@ bool OverWorld::initDogModel()
     _dog->setMediumAnimation(mediumDogIdle, mediumDogRun, mediumDogBite, mediumDogShoot, mediumDogDash);
     _dog->setLargeAnimation(largeDogIdle, largeDogRun, largeDogBite, largeDogShoot, largeDogDash);
 
-    std::shared_ptr<cugl::scene2::SceneNode> placeHolderDrawOver = scene2::SceneNode::allocWithBounds(DOG_SIZE);
+    std::shared_ptr<cugl::scene2::OrderedNode> placeHolderDrawOver = cugl::scene2::OrderedNode::allocWithOrder(cugl::scene2::OrderedNode::Order::PRE_ORDER, DOG_SIZE);
     // MORE MAGIC NUMBER ALERT
-
-    // placeHolderDrawOver->setContentSize(DOG_SIZE);
+    
+    _dog->setRecallAnimation(recall);
+    _dog->setBelowPenta(belowPenta);
     _dog->setFinalDog(placeHolderDrawOver);
     placeHolderDrawOver->setScale(DOG_SIZE.y / textures.at(0)->getHeight());
     // placeHolderDrawOver->setAnchor(Vec2::ANCHOR_CENTER);
@@ -327,13 +365,12 @@ bool OverWorld::initDogModel()
     _dogClient->setMediumAnimation(clientMediumDogIdle, clientMediumDogRun, clientMediumDogBite, clientMediumDogShoot, clientMediumDogDash);
     _dogClient->setLargeAnimation(clientLargeDogIdle, clientLargeDogRun, clientLargeDogBite, clientLargeDogShoot, clientLargeDogDash);
 
-    std::shared_ptr<cugl::scene2::SceneNode> clientPlaceHolderDrawOver = scene2::SceneNode::allocWithBounds(DOG_SIZE);
+    std::shared_ptr<cugl::scene2::OrderedNode> clientPlaceHolderDrawOver = cugl::scene2::OrderedNode::allocWithOrder(cugl::scene2::OrderedNode::Order::PRE_ORDER, DOG_SIZE);
     // MORE MAGIC NUMBER ALERT
-
-    // placeHolderDrawOver->setContentSize(DOG_SIZE);
+    _dogClient->setRecallAnimation(recallClient);
+    _dogClient->setBelowPenta(belowPentaClient);
     _dogClient->setFinalDog(clientPlaceHolderDrawOver);
     clientPlaceHolderDrawOver->setScale(DOG_SIZE.y / textures.at(0)->getHeight());
-    //    std::cout <<"scale " << DOG_SIZE.y / textures.at(0)->getHeight() << std::endl;
 
     std::shared_ptr<scene2::SceneNode> _clientUINode = scene2::SceneNode::alloc();
     _uinode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
@@ -375,6 +412,8 @@ bool OverWorld::initPolygons()
 {
     _attackPolygonSet.init();
     _attackPolygonSet.setTexture(_assets->get<cugl::Texture>("leftbite"), _assets->get<cugl::Texture>("rightbite"), _assets->get<cugl::Texture>("frontbite"), _assets->get<cugl::Texture>("leftbite"));
+    _clientAttackPolygonSet.init();
+    _clientAttackPolygonSet.setTexture(_assets->get<cugl::Texture>("leftbite"), _assets->get<cugl::Texture>("rightbite"), _assets->get<cugl::Texture>("frontbite"), _assets->get<cugl::Texture>("leftbite"));
     return true;
 }
 
@@ -423,7 +462,8 @@ bool OverWorld::setRootNode(const std::shared_ptr<scene2::SceneNode> &_worldNode
         _worldNet->getOwnedObstacles().insert({_dog, 0});
     }
     _worldNode->addChild(_dog->getDogNode());
-    _dog->addEffects(_attackPolygonSet.getAttackPolygonNode());
+    _dog->addEffects(_attackPolygonSet.getFrontAttackPolygonNode(), _attackPolygonSet.getBackAttackPolygonNode());
+    _dogClient->addEffects(_clientAttackPolygonSet.getFrontAttackPolygonNode(), _clientAttackPolygonSet.getBackAttackPolygonNode());
     //    _dog->getDogNode()->addChildWithTag(_attackPolygonSet.getAttackPolygonNode(), 0);
     //    _attackPolygonSet.getAttackPolygonNode()->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
 
@@ -464,7 +504,7 @@ void OverWorld::processSizeEvent(const std::shared_ptr<SizeEvent> &sizeEvent)
 {
     bool incomingHost = sizeEvent->isHost();
     bool currentHost = _isHost;
-    CULog("processing Size Event %d %d", incomingHost, currentHost);
+//    CULog("processing Size Event %d %d", incomingHost, currentHost);
     if (incomingHost != currentHost)
     { // means we received from other person
         if (incomingHost)
@@ -477,16 +517,24 @@ void OverWorld::processBiteEvent(const std::shared_ptr<BiteEvent> &biteEvent)
 {
     Vec2 center = biteEvent->getPos();
     float ang = biteEvent->getAng();
-    _attackPolygonSet.addBite(center, ang, _dog->getBiteRadius(), _dog->getAbsorb() / _dog->getMaxAbsorb());
     bool incomingHost = biteEvent->isHost();
     if (incomingHost)
     {
-
+        _attackPolygonSet.addBite(center, ang, _dog->getBiteRadius(), _dog->getAbsorb() / _dog->getMaxAbsorb());
         _dog->startBite();
     }
     else
     {
+        _clientAttackPolygonSet.addBite(center, ang, _dogClient->getBiteRadius(), _dogClient->getAbsorb() / _dogClient->getMaxAbsorb());
         _dogClient->startBite();
+    }
+}
+void OverWorld::processRecallEvent(const std::shared_ptr<RecallEvent>& recallEvent){
+    bool incomingHost = recallEvent->isHost();
+    if (incomingHost){
+        _dog->startRecall();
+    }else{
+        _dogClient->startRecall();
     }
 }
 
@@ -510,9 +558,20 @@ void OverWorld::processExplodeEvent(const std::shared_ptr<ExplodeEvent> &explode
     Vec2 center = explodeEvent->getPos();
     _attackPolygonSet.addExplode(center, _dog->getExplosionRadius());
 }
-
-void OverWorld::ownedDogUpdate(InputController &_input, cugl::Size, std::shared_ptr<Dog> _curDog)
-{
+void OverWorld::recallDogToClosetBase(std::shared_ptr<Dog> _curDog){
+    float shortestDist = 1000000.0f;
+    Vec2 location;
+    for (std::shared_ptr<Base> base : getBaseSet()->_bases){
+        Vec2 norm = base->getPos() - _curDog->getPosition();
+        float dist = norm.length();
+        if (dist < shortestDist){
+            shortestDist = dist;
+            location = base->getPos();
+        }
+    }
+    _curDog->setPosition(location);
+}
+void OverWorld::ownedDogUpdate(InputController& _input, cugl::Size, std::shared_ptr<Dog> _curDog){
     _curDog->moveOnInputSetAction(_input);
     _curDog->updateUI();
     if (_curDog->shouldSendSize())
@@ -520,14 +579,16 @@ void OverWorld::ownedDogUpdate(InputController &_input, cugl::Size, std::shared_
         _curDog->resetSendSize();
         _network->pushOutEvent(SizeEvent::allocSizeEvent(_curDog->getAbsorb(), _isHost));
     }
-    if (_input.didPressDash() && _curDog->canDash())
-    {
+    if (_curDog->readyToRecall()){
+        recallDogToClosetBase(_curDog);
+    }
+    if (_input.didPressDash() && _curDog->canDash()){
         _network->pushOutEvent(DashEvent::allocDashEvent(_isHost));
         _curDog->resetDash();
     }
     if (_input.didPressFire() && _curDog->canFireWeapon())
     {
-        CULog("Send Attack");
+//        CULog("Send Attack");
         _network->pushOutEvent(BiteEvent::allocBiteEvent(_curDog->getBiteCenter(), _curDog->getDirInDegrees(), _isHost));
         _curDog->reloadWeapon();
     }
@@ -548,9 +609,9 @@ void OverWorld::ownedDogUpdate(InputController &_input, cugl::Size, std::shared_
         {
             _curDog->subAbsorb(5);
             _network->pushOutEvent(ExplodeEvent::allocExplodeEvent(_curDog->getPosition()));
-        }
-        else
-        {
+        }else if (_curDog->getMode() == "RECALL"){
+            _network->pushOutEvent(RecallEvent::allocRecallEvent(_curDog->getPosition(),_isHost));
+        }else {
             CULog("NOTHING\n");
         }
     }
@@ -580,6 +641,7 @@ void OverWorld::update(InputController &_input, cugl::Size totalSize, float time
     _decoys->update(timestep);
     //    devilUpdate(_input, totalSize);
     _attackPolygonSet.update();
+    _clientAttackPolygonSet.update();
 }
 
 void OverWorld::postUpdate()

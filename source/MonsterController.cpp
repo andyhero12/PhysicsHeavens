@@ -26,16 +26,14 @@ bool MonsterController::init(OverWorld& overWorld,
     for (const cugl::Vec3& cluster : overWorld.getLevelModel()->preSpawnLocs()){
         float cx = cluster.x;
         float cy = cluster.y;
-        int count = round(cluster.z);
+        int count = (int) round(cluster.z);
 //        for(int i = 0; i < count; i++) {
-            spawnStaticBasicEnemy(Vec2(cx,cy), overWorld);
-            spawnBombEnemy(Vec2(cx,cy), overWorld);
-        spawnAbsorbEnemy(Vec2(cx,cy), overWorld);
-        spawnSpawnerEnemy(Vec2(cx,cy), overWorld); // TODO SPAWN ENEMY IN MONSTER CONTROLLER
+            spawnStaticBasicEnemy(Vec2(cx,cy), overWorld, 1);
+            spawnBombEnemy(Vec2(cx,cy), overWorld, 1);
+//        spawnAbsorbEnemy(Vec2(cx,cy), overWorld, 1);
+        spawnSpawnerEnemy(Vec2(cx,cy), overWorld, 1); // TODO SPAWN ENEMY IN MONSTER CONTROLLER
 //        }
     }
-    
-    spawnStaticBasicEnemy(Vec2(5,6), overWorld);
     return true;
 }
 void MonsterController::postUpdate(){
@@ -101,7 +99,7 @@ void MonsterController::update(float timestep, OverWorld& overWorld){
         if (std::shared_ptr<SpawnerEnemy> spawnerEnemy = std::dynamic_pointer_cast<SpawnerEnemy>(curEnemy)){
             if (spawnerEnemy->canAttack()){
                 spawnerEnemy->resetAttack();
-                spawnBasicEnemy(spawnerEnemy->getPosition() - Vec2(0.2,0.2), overWorld);
+                spawnBasicEnemy(spawnerEnemy->getPosition() - Vec2(0.2,0.2), overWorld, 1);
             }
         }
     }
@@ -133,11 +131,23 @@ void MonsterController::setAbsorbAnimationData(std::shared_ptr<cugl::JsonValue> 
 void MonsterController::setHealthBar(std::shared_ptr<cugl::scene2::ProgressBar> bar){
     _healthBar = bar;
 }
-void MonsterController::spawnAbsorbEnemy(cugl::Vec2 pos, OverWorld& overWorld){
+
+void MonsterController::powerSize(float power, Size& size) {
+    size *= power;
+}
+
+float MonsterController::powerHealth(float power, int hp) {
+    return (int)(hp * power * power);
+}
+
+void MonsterController::spawnAbsorbEnemy(cugl::Vec2 pos, OverWorld& overWorld, float power){
     if (!overWorld._isHost){
         return;
     }
-    Size mySize(0.8,0.8);
+    Size mySize(1.0,1.0);
+    int hp = 3;
+    powerSize(power, mySize);
+    hp = powerHealth(power, hp);
     auto params = _absorbEnemyFactory->serializeParams(pos, mySize, 3, 0);
     auto pair = _network->getPhysController()->addSharedObstacle(_absorbEnemyFactID, params);
 //        static_enemy->setHealthBar(_healthBar);
@@ -148,14 +158,17 @@ void MonsterController::spawnAbsorbEnemy(cugl::Vec2 pos, OverWorld& overWorld){
     }
 }
 
-void MonsterController::spawnBasicEnemy(cugl::Vec2 pos, OverWorld& overWorld){
+void MonsterController::spawnBasicEnemy(cugl::Vec2 pos, OverWorld& overWorld, float power){
     if (!overWorld._isHost){
         return;
     }
     int numTargets =  overWorld.getTotalTargets();
     int chosenTarget = generateRandomInclusiveHighLow(0, numTargets-1);
     Size mySize(1,1);
-    auto params = _meleeFactory->serializeParams(pos, mySize, 3, chosenTarget);
+    int hp = 3;
+    powerSize(power, mySize);
+    hp = powerHealth(power, hp);
+    auto params = _meleeFactory->serializeParams(pos, mySize, hp, chosenTarget);
     auto pair = _network->getPhysController()->addSharedObstacle(_meleeFactID, params);
 //        static_enemy->setHealthBar(_healthBar);
     pair.first->setDebugScene(_debugNode);
@@ -164,12 +177,15 @@ void MonsterController::spawnBasicEnemy(cugl::Vec2 pos, OverWorld& overWorld){
     }
 }
 
-void MonsterController::spawnSpawnerEnemy(cugl::Vec2 pos, OverWorld& overWorld){
+void MonsterController::spawnSpawnerEnemy(cugl::Vec2 pos, OverWorld& overWorld, float power){
     if (!overWorld._isHost){
         return;
     }
     int chosenTarget = 0;
     Size mySize(1,1);
+    int hp = 3;
+    powerSize(power, mySize);
+    hp = powerHealth(power, hp);
     auto params = _meleeFactory->serializeParams(pos, mySize, 3, chosenTarget);
     auto pair = _network->getPhysController()->addSharedObstacle(_spawnerEnemyFactID, params);
 //        static_enemy->setHealthBar(_healthBar);
@@ -179,12 +195,15 @@ void MonsterController::spawnSpawnerEnemy(cugl::Vec2 pos, OverWorld& overWorld){
     }
 }
 
-void MonsterController::spawnStaticBasicEnemy(cugl::Vec2 pos, OverWorld& overWorld){
+void MonsterController::spawnStaticBasicEnemy(cugl::Vec2 pos, OverWorld& overWorld, float power){
     if (!overWorld._isHost){
         return;
     }
     Size mySize(1,1);
-    auto params = _staticMeleeFactory->serializeParams(pos, mySize, 3, 0);
+    int hp = 3;
+    powerSize(power, mySize);
+    hp = powerHealth(power, hp);
+    auto params = _staticMeleeFactory->serializeParams(pos, mySize, hp, 0);
     auto pair = _network->getPhysController()->addSharedObstacle(_staticMeleeFactID, params);
 //        static_enemy->setHealthBar(_healthBar);
     pair.first->setDebugScene(_debugNode);
@@ -193,12 +212,15 @@ void MonsterController::spawnStaticBasicEnemy(cugl::Vec2 pos, OverWorld& overWor
     }
 }
 
-void MonsterController::spawnBombEnemy(cugl::Vec2 pos, OverWorld& overWorld){
+void MonsterController::spawnBombEnemy(cugl::Vec2 pos, OverWorld& overWorld, float power){
     if (!overWorld._isHost){
         return;
     }
     Size mySize(1,1);
-    auto params = _bombEnemyFactory->serializeParams(pos, mySize, 3, 0);
+    int hp = 3;
+    powerSize(power, mySize);
+    hp = powerHealth(power, hp);
+    auto params = _bombEnemyFactory->serializeParams(pos, mySize, hp, 0);
     auto pair = _network->getPhysController()->addSharedObstacle(_bombEnemyFactID, params);
 //        static_enemy->setHealthBar(_healthBar);
     pair.first->setDebugScene(_debugNode);

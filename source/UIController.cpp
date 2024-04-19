@@ -147,8 +147,11 @@ void UIController::setToggle(std::string mode){
         _bombtoggle->setVisible(false);
         _shoottoggle->setVisible(false);
         _baittoggle->setVisible(false);
-    }
-    else{
+    }else if (mode == "RECALL"){
+        _bombtoggle->setVisible(false);
+        _shoottoggle->setVisible(false);
+        _baittoggle->setVisible(false);
+    }else{
         CUAssertLog(false, "wrong mode string");
     }
 }

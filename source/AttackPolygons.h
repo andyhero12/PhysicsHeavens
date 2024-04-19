@@ -12,6 +12,9 @@
 #include <cugl/cugl.h>
 #include <unordered_set>
 #include "NLDog.h"
+#include "SpriteAnimationNode.h"
+
+
 using namespace cugl;
 enum class Action : unsigned int {
     BITE = 0,
@@ -20,20 +23,24 @@ enum class Action : unsigned int {
 };
 
 class ActionPolygon{
+    
+private:
+    std::shared_ptr<SpriteAnimationNode> spriteActionNode;
+    std::shared_ptr<cugl::scene2::PolygonNode> polyActionNode;
 public:
     Action polygonAction;
     Poly2 internalPolygon;
+    Vec2 _center;
     int _age;
     int _maxage;
     float _scale;
+    float _ang;
     bool _polygon;
     bool _expired;
-    
-    int _frame;
     int _freq;
     
-    ActionPolygon(Action curAction, Poly2& mintPoly, int mx, float scale);
-    ActionPolygon(std::shared_ptr<cugl::scene2::SpriteNode> actionSprite, Action curAction, Poly2& mintPoly, int mx, float scale);
+    ActionPolygon(Action curAction, Poly2& mintPoly, int mx, float scale, float ang, Vec2 center);
+    ActionPolygon(std::shared_ptr<SpriteAnimationNode> actionSprite, Action curAction, Poly2& mintPoly, int mx, float scale, float ang, Vec2 center);
     
     float getScale() const { return _scale; }
     
@@ -41,26 +48,28 @@ public:
     Action getAction() const {return polygonAction;}
     const Poly2& getPolygon() const {return internalPolygon;}
     
-//    std::shared_ptr<cugl::scene2::SceneNode> getPolyNode(){ return polyActionNode; }
+    std::shared_ptr<cugl::scene2::SceneNode> getPolyNode(){ return polyActionNode; }
     bool expired() const { return _expired;}
     void update();
     std::shared_ptr<cugl::scene2::SceneNode> getActionNode();
-    void draw(const std::shared_ptr<SpriteBatch>& batch, const Affine2& transform, Color4 tint);
+    std::shared_ptr<SpriteAnimationNode> getSpriteNode(){
+        return spriteActionNode;
+    }
     bool dealDamage();
-    
-private:
-    std::shared_ptr<cugl::scene2::SpriteNode> spriteActionNode;
-    std::shared_ptr<cugl::scene2::PolygonNode> polyActionNode;
+    float getAngle() const { return _ang;}
+    Vec2 getCenter() const { return _center;}
 };
 
 class AttackPolygons{
     
 private:
-    std::shared_ptr<cugl::scene2::SceneNode> attackPolygonNode;
+    std::shared_ptr<cugl::scene2::SceneNode> frontAttackPolygonNode;
+    std::shared_ptr<cugl::scene2::SceneNode> backAttackPolygonNode;
     std::shared_ptr<cugl::Texture> biteRightTexture;
     std::shared_ptr<cugl::Texture> biteLeftTexture;
     std::shared_ptr<cugl::Texture> biteFrontTexture;
     std::shared_ptr<cugl::Texture> biteBackTexture;
+    float zorder;
 public:
     // Have AttackPolygon Set hold all possible textures for bite, shoot, explode
     int max_age;
@@ -73,8 +82,13 @@ public:
     void addShoot(Vec2 center, float angle, float shootRadius);
     void addExplode(cugl::Vec2 center, float explosionRadius);
     void addBite(cugl::Vec2 center, float angle, float explosionRad, float scale);
-    std::shared_ptr<cugl::scene2::SceneNode> getAttackPolygonNode(){
-        return attackPolygonNode;
+    std::shared_ptr<cugl::scene2::SceneNode> getFrontAttackPolygonNode(){
+        return frontAttackPolygonNode;
     }
+    std::shared_ptr<cugl::scene2::SceneNode> getBackAttackPolygonNode(){
+        return backAttackPolygonNode;
+    }
+    int getZOrder() const { return zorder; }
+
 };
 #endif /* AttackPolygons_hpp */
