@@ -67,6 +67,17 @@ protected:
     bool  _completed;
     
     int frame;
+
+    int curMoveAnim;
+
+    int moveCooldown;
+
+    bool level1;
+    bool level2;
+    bool level3;
+
+    bool _goright;
+    bool _goleft;
     /**
      * Returns the active screen size of this scene.
      *
@@ -84,7 +95,7 @@ public:
      * This constructor does not allocate any objects or start the game.
      * This allows us to use the object without a heap pointer.
      */
-    LevelScene() : cugl::Scene2(), _progress(0.0f), frame(0.0f) {}
+    LevelScene() : cugl::Scene2(), _progress(0.0f), frame(0.0f), curMoveAnim(0), moveCooldown(2), level1(true), level2(false), level3(false), _goleft(false), _goright(false){}
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.
@@ -133,7 +144,44 @@ public:
 
     virtual void setActive(bool value) override;
 
-    Level getLevel() const { return _level; }
+    Level getLevel() const { return _level;}
+
+    bool canChangeLevel(){
+        return curMoveAnim >=moveCooldown;
+    }
+    void resetChangeLevel(){
+        curMoveAnim = 0;
+    }
+
+    void resetgochange(){
+        _goleft = false;
+        _goright = false;
+    }
+    
+    void updatelevelscene(){
+        if(_goright&&level1){
+            level1 = false;
+            level2 = true;
+        }
+        if(_goright&&level2){
+            level2 = false;
+            level3 = true;
+        }
+        if(_goright&&level3){
+        }
+
+        if(_goleft&&level1){
+        }
+        if(_goleft&&level2){
+            level1 = true;
+            level2 = false;
+        }
+        if(_goleft&&level3){
+            level2 = true;
+            level3 = false;
+        }
+
+    }
 
     
 };

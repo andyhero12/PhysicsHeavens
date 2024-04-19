@@ -71,7 +71,7 @@ bool LevelScene::init(const std::shared_ptr<AssetManager> &assets)
         if(down){
             _level = Level::L1;
         } });
-    background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("Background"), 1, 11);
+    background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("Background"), 1, 15);
     background->setScale(2.7);
     background->setPosition(0.5 * background->getSize());
     addChild(background);
@@ -110,9 +110,51 @@ void LevelScene::dispose()
  */
 void LevelScene::update(float progress)
 {
-    if (background->getFrame() <= 10){
-        background->setFrame(0);
+    _input.update();
+    if (curMoveAnim <= moveCooldown){
+        curMoveAnim++;
     }
+
+    updatelevelscene();
+
+    if (level1){
+       if(background->getFrame()==2){
+            background->setFrame(2);
+       }
+    }else if(level2) {
+        if(background->getFrame()==8){
+            background->setFrame(8);
+       }
+    }else if(level3){
+        if(background->getFrame()==14){
+            background->setFrame(14);
+       }
+    }
+
+    if(_input._Leftright == 1 && canChangeLevel()){
+        _goright = true;
+        resetChangeLevel();
+        _input.resetcontroller();
+    }
+
+    if(_input._Leftright == -1 && canChangeLevel()){
+        _goleft = true;
+        resetChangeLevel();
+        _input.resetcontroller();
+    }
+
+    if(_input.didPressRight() && canChangeLevel()){
+        _goright = true;
+        resetChangeLevel();
+        _input.resetcontroller();
+    }
+    if(_input.didPressLeft() && canChangeLevel()){
+        _goleft = true;
+        resetChangeLevel();
+        _input.resetcontroller();
+    }
+
+    resetgochange();
 
     if (_progress < 1)
     {
@@ -130,6 +172,7 @@ void LevelScene::update(float progress)
         //_brand->setVisible(false);
     }
     
+   //_input.resetcontroller();
 }
 
 /**
