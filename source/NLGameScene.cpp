@@ -232,8 +232,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 
     _network->enablePhysics(_world, linkSceneToObsFunc);
 
-    _spawnerController.setTexture(assets->get<Texture>("spawner"));
-    _spawnerController.init(_level->getSpawnersPos());
+    _spawnerController.init(_level->getSpawnersPos(), assets);
     _spawnerController.setRootNode(_worldnode, _isHost);
     _worldnode->addChild(_monsterSceneNode);
     overWorld.init(assets, _level, computeActiveSize(), _network, isHost, _backgroundWrapper);

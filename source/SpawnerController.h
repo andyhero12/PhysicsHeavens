@@ -25,6 +25,7 @@ public:
     
     /* Set of spawners */
     std::unordered_set<std::shared_ptr<AbstractSpawner>> _spawners;
+    std::vector<std::shared_ptr<SpriteAnimationNode>> animationNodes;
 
     float difficulty;
     float accumulatedTime;
@@ -33,11 +34,9 @@ public:
     SpawnerController();
     
     ~SpawnerController();
-
-    void setTexture(const std::shared_ptr<cugl::Texture>& value);
     void update(MonsterController& monsterController, OverWorld& overWorld, float timestep);
     
-    bool init(const std::vector<LevelModel::Spawner>& startLocs);
+    bool init(const std::vector<LevelModel::Spawner>& startLocs, std::shared_ptr<cugl::AssetManager> assets );
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl::Size size);
     void setRootNode(const std::shared_ptr<scene2::SceneNode>& _worldNode, bool isHost);
     bool win(){return _spawners.empty();}
