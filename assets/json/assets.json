@@ -421,10 +421,10 @@
             "magfilter": "nearest"
         },
         "win_screen": {
-          "file": "textures/Menu/win_screen_wip.png"
+          "file": "textures/win_screen.png"
         },
         "lose_screen": {
-          "file": "textures/Menu/fail_screen_wip.png"
+          "file": "textures/fail_screen.png"
         }
     },
     "jsons": {
