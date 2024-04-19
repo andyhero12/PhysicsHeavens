@@ -99,21 +99,21 @@ bool OverWorld::initDogModel()
     clientSmallDogShoot->setAnchor(Vec2::ANCHOR_CENTER);
     clientSmallDogShoot->setContentSize(DOG_SIZE);
 
-    textures.clear();
-    textures.push_back(_assets->get<cugl::Texture>("smalldogrightshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogrightshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogfrontshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogfrontshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogleftshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogleftshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogbackshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("smalldogbackshoot"));
+    std::vector<std::shared_ptr<cugl::Texture>> dashTextures;
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
 
-    std::shared_ptr<AnimationSceneNode> smallDogDash = AnimationSceneNode::allocWithTextures(textures, 1, 4, 4, 15);
+    std::shared_ptr<AnimationSceneNode> smallDogDash = AnimationSceneNode::allocWithTextures(dashTextures, 4, 5, 20, 1);
     smallDogDash->setAnchor(Vec2::ANCHOR_CENTER);
     smallDogDash->setContentSize(DOG_SIZE);
 
-    std::shared_ptr<AnimationSceneNode> clientSmallDogDash = AnimationSceneNode::allocWithTextures(textures, 1, 4, 4, 15);
+    std::shared_ptr<AnimationSceneNode> clientSmallDogDash = AnimationSceneNode::allocWithTextures(dashTextures, 4, 5, 20, 1);
     clientSmallDogDash->setAnchor(Vec2::ANCHOR_CENTER);
     clientSmallDogDash->setContentSize(DOG_SIZE);
 
@@ -189,21 +189,21 @@ bool OverWorld::initDogModel()
     clientMediumDogShoot->setAnchor(Vec2::ANCHOR_CENTER);
     clientMediumDogShoot->setContentSize(DOG_SIZE);
 
-    textures.clear();
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogrightshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogrightshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogfrontshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogfrontshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogleftshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogleftshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogbackshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("mediumdogbackshoot"));
+    dashTextures.clear();
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
 
-    std::shared_ptr<AnimationSceneNode> mediumDogDash = AnimationSceneNode::allocWithTextures(textures, 1, 4, 4, 15);
+    std::shared_ptr<AnimationSceneNode> mediumDogDash = AnimationSceneNode::allocWithTextures(dashTextures, 4, 5, 20, 1);
     mediumDogDash->setAnchor(Vec2::ANCHOR_CENTER);
     mediumDogDash->setContentSize(DOG_SIZE);
 
-    std::shared_ptr<AnimationSceneNode> clientMediumDogDash = AnimationSceneNode::allocWithTextures(textures, 1, 4, 4, 15);
+    std::shared_ptr<AnimationSceneNode> clientMediumDogDash = AnimationSceneNode::allocWithTextures(textures, 4, 5, 20, 1);
     clientMediumDogDash->setAnchor(Vec2::ANCHOR_CENTER);
     clientMediumDogDash->setContentSize(DOG_SIZE);
 
@@ -279,21 +279,21 @@ bool OverWorld::initDogModel()
     clientLargeDogShoot->setAnchor(Vec2::ANCHOR_CENTER);
     clientLargeDogShoot->setContentSize(DOG_SIZE);
 
-    textures.clear();
-    textures.push_back(_assets->get<cugl::Texture>("largedogrightshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogrightshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogfrontshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogfrontshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogleftshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogleftshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogbackshoot"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogbackshoot"));
+    dashTextures.clear();
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
+    dashTextures.push_back(_assets->get<cugl::Texture>("dash"));
 
-    std::shared_ptr<AnimationSceneNode> largeDogDash = AnimationSceneNode::allocWithTextures(textures, 1, 4, 4, 15);
+    std::shared_ptr<AnimationSceneNode> largeDogDash = AnimationSceneNode::allocWithTextures(dashTextures, 4, 5, 20, 1);
     largeDogDash->setAnchor(Vec2::ANCHOR_CENTER);
     largeDogDash->setContentSize(DOG_SIZE);
 
-    std::shared_ptr<AnimationSceneNode> clientLargeDogDash = AnimationSceneNode::allocWithTextures(textures, 1, 4, 4, 15);
+    std::shared_ptr<AnimationSceneNode> clientLargeDogDash = AnimationSceneNode::allocWithTextures(dashTextures, 4, 5, 20, 1);
     clientLargeDogDash->setAnchor(Vec2::ANCHOR_CENTER);
     clientLargeDogDash->setContentSize(DOG_SIZE);
         
@@ -504,7 +504,7 @@ void OverWorld::processSizeEvent(const std::shared_ptr<SizeEvent> &sizeEvent)
 {
     bool incomingHost = sizeEvent->isHost();
     bool currentHost = _isHost;
-    CULog("processing Size Event %d %d", incomingHost, currentHost);
+//    CULog("processing Size Event %d %d", incomingHost, currentHost);
     if (incomingHost != currentHost)
     { // means we received from other person
         if (incomingHost)
