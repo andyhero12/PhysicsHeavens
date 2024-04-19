@@ -272,28 +272,34 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     // XNA nostalgia
     Application::get()->setClearColor(Color4f::CORNFLOWER);
 
-    _pause = std::make_shared<PauseScene>();
-    _pause->init(_assets, computeActiveSize());
-    _pause->setPause(false);
-
-    //
-    _uinode->addChild(_pause);
     _uinode->setContentSize(dimen);
     _uinode->doLayout();
-
-    _pause->setContentSize(dimen);
-    _pause->doLayout();
     
     CULog("%s", computeActiveSize().toString().data());
-    loseNode = scene2::Label::allocWithText(Vec2(computeActiveSize()/2),strtool::format("You Lose!"),assets->get<Font>("retro"));
+
+    loseNode = cugl::scene2::PolygonNode::allocWithTexture(_assets->get<cugl::Texture>("lose_screen"));
+    loseNode->setContentSize(dimen);
     loseNode->setAnchor(Vec2::ANCHOR_CENTER);
+    loseNode->setPosition(0.5 * loseNode->getSize());
+    
     CULog("%s", computeActiveSize().toString().data());
-    winNode = scene2::Label::allocWithText(Vec2(computeActiveSize()/2),strtool::format("You Win!"),assets->get<Font>("retro"));
+    winNode = cugl::scene2::PolygonNode::allocWithTexture(_assets->get<cugl::Texture>("win_screen"));
+    winNode->setContentSize(dimen);
     winNode->setAnchor(Vec2::ANCHOR_CENTER);
+    winNode->setPosition(0.5 * winNode->getSize());
+    
     _uinode->addChild(loseNode);
     _uinode->addChild(winNode);
     loseNode->setVisible(false);
     winNode->setVisible(false);
+    
+    _pause = std::make_shared<PauseScene>();
+    _pause->init(_assets, computeActiveSize());
+    _pause->setPause(false);
+    _uinode->addChild(_pause);
+    
+    _pause->setContentSize(dimen);
+    _pause->doLayout();
 
     _zoom = ROOT_NODE_SCALE;
 
