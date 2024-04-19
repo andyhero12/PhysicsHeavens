@@ -56,7 +56,7 @@ bool LevelScene::init(const std::shared_ptr<AssetManager> &assets)
     {
         return false;
     }
-
+    _input.init_withlistener();
     // IMMEDIATELY load the splash screen assets
     _assets = assets;
     _assets->loadDirectory("json/level.json");
@@ -65,15 +65,14 @@ bool LevelScene::init(const std::shared_ptr<AssetManager> &assets)
     layer->doLayout(); // This rearranges the children to fit the screen
 
     _bar = std::dynamic_pointer_cast<scene2::ProgressBar>(assets->get<scene2::SceneNode>("level_bar"));
-    _brand = assets->get<scene2::SceneNode>("load_name");
+    //_brand = assets->get<scene2::SceneNode>("level_name");
     _button = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("level_play"));
-    _button->addListener([=](const std::string &name, bool down)
-                         {
+    _button->addListener([=](const std::string &name, bool down){
         if(down){
             _level = Level::L1;
         } });
-    background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("backgroundl"), 1, 18);
-    background->setScale(6.5);
+    background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("Background"), 1, 11);
+    background->setScale(2.7);
     background->setPosition(0.5 * background->getSize());
     addChild(background);
     layer->setColor(Color4(0, 0, 0, 1));
@@ -93,7 +92,7 @@ void LevelScene::dispose()
         _button->deactivate();
     }
     _button = nullptr;
-    _brand = nullptr;
+    //_brand = nullptr;
     _bar->removeFromParent();
     _bar = nullptr;
     _assets = nullptr;
@@ -111,15 +110,8 @@ void LevelScene::dispose()
  */
 void LevelScene::update(float progress)
 {
-    if (frame >= 10)
-    {
-        background->setFrame((background->getFrame() + 1) % 18);
-        frame = 0;
-    }
-    else
-    {
-        //        std::cout<<"frame"<<std::endl;
-        frame += 1;
+    if (background->getFrame() <= 10){
+        background->setFrame(0);
     }
 
     if (_progress < 1)
@@ -129,12 +121,15 @@ void LevelScene::update(float progress)
         {
             _progress = 1.0f;
             _bar->setVisible(false);
-            _brand->setVisible(false);
-            _button->setVisible(true);
+            //_brand->setVisible(false);
+            _button->setVisible(false);
             _button->activate();
         }
         _bar->setProgress(_progress);
+        _button->setVisible(false);
+        //_brand->setVisible(false);
     }
+    
 }
 
 /**

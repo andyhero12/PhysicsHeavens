@@ -59,7 +59,7 @@ protected:
     std::shared_ptr<cugl::scene2::SpriteNode> background;
 
     Level _level;
-
+    InputController _input;
     // MODEL
     /** The progress displayed on the screen */
     float _progress;

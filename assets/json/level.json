@@ -1,7 +1,7 @@
 {
 	"textures": {
-        "backgroundl":{
-            "file":      "textures/level-complete.png",
+        "Background":{
+            "file":      "textures/leveltest.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
@@ -50,40 +50,6 @@
                 "color": [239,61,49,255]
             },
             "children"  : {
-                "logo"  : {
-                    "type"   : "Image",
-                    "format"    : {
-                        "type" : "Anchored"
-                    },
-                    "data"   : {
-                        "texture"  : "logo",
-                        "anchor"   : [0.5,0.5],
-                        "scale"    : 3.25
-                    },
-                    "layout" : {
-                        "x_anchor" : "center",
-                        "y_anchor" : "middle",
-                        "y_offset" : 115,
-                        "absolute" : true
-                    }
-                },
-                "name"  : {
-                    "type"   : "Image",
-                    "format"    : {
-                        "type" : "Anchored"
-                    },
-                    "data"   : {
-                        "texture"  : "name",
-                        "anchor"   : [0.5,0.5],
-                        "scale"    : 3.25
-                    },
-                    "layout" : {
-                        "x_anchor" : "center",
-                        "y_anchor" : "middle",
-                        "y_offset" : 115,
-                        "absolute" : true
-                    }
-                },
                 "play"  : {
                     "type"   : "Button",
                     "data"   : {
