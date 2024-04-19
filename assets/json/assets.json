@@ -267,6 +267,10 @@
            "file": "textures/dog/effects/recall.png",
             "magfilter": "nearest"
        },
+       "dash":{
+           "file": "textures/dog/effects/dash.png",
+            "magfilter": "nearest"
+       },
        "penta":{
            "file": "textures/dog/effects/penta.png",
             "magfilter": "nearest"
@@ -379,6 +383,11 @@
         },
         "base": {
             "file": "textures/target.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "gate": {
+            "file": "textures/heavens_gate.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
