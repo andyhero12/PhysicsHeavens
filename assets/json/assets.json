@@ -68,11 +68,11 @@
             "magfilter": "nearest"
         },
         "initialflash":{
-            "file": "textures/game_ui/icon_flash_offset.png",
+            "file": "textures/game_ui/Icon_flash_offset.png",
             "magfilter": "nearest"
         },
         "flash": {
-            "file": "textures/game_ui/icon_ready_flash_offset.png",
+            "file": "textures/game_ui/Icon_ready_flash_offset.png",
             "magfilter": "nearest"
         },
         "smalldogleftidle": {
