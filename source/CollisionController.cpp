@@ -80,6 +80,9 @@ void CollisionController::overWorldMonsterControllerCollisions(OverWorld& overWo
     if (monsterDecoyCollision(overWorld.getDecoys(), monsterEnemies)){
 //         CULog("MONSTER DECOY COLLISION DETECTED\n");
     }
+    if (monsterDecoyExplosionCollision(overWorld.getDecoys(), monsterController)){
+//         CULog("MONSTER DECOY COLLISION DETECTED\n");
+    }
     if (monsterBaseCollsion(overWorld, overWorld.getBaseSet(), monsterController)){
 //        CULog("Monster Base COLLISION DETECTED\n");
     }
@@ -159,6 +162,7 @@ bool CollisionController::monsterBaseCollsion(OverWorld& overWorld, std::shared_
 bool CollisionController::monsterDecoyCollision(std::shared_ptr<DecoySet> decoySet, std::unordered_set<std::shared_ptr<AbstractEnemy>>& curEnemies){
     bool collide = false;
     std::vector<std::shared_ptr<Decoy>> decoys = decoySet->getCurrentDecoys();
+//    std::vector<std::shared_ptr<Decoy>> removedDecoys = decoySet->getRemovedDecoys();
     for (std::shared_ptr<Decoy> curDecoy: decoys){
         float decoyRadius = DEFAULT_RADIUS_COLLIDE;
         for (std::shared_ptr<AbstractEnemy> enemy: curEnemies){
@@ -172,6 +176,56 @@ bool CollisionController::monsterDecoyCollision(std::shared_ptr<DecoySet> decoyS
                     enemy->resetAttack();
                     curDecoy->subHealth(enemy->getDamage());
                 }
+            }
+        }
+    }
+//    auto itDec = removedDecoys.begin();
+//    auto itMon = curEnemies.begin();
+//    float decoyRadius = 0.26f;
+//    while (itDec != removedDecoys.end()){
+//        const std::shared_ptr<Decoy>& decoy= *itDec;
+//        auto curDec = itDec;
+//        itDec++;
+//        while(itMon != curEnemies.end()){
+//            const std::shared_ptr<AbstractEnemy>& enemy = *itMon;
+//            auto curMon = itMon;
+//            itMon++;
+//            Vec2 norm = decoy->getPos() - enemy->getPosition();
+//            float enemyRadius = fmin(enemy->getWidth(), enemy->getHeight())/2;
+//            float distance = norm.length();
+//            float impactDistance = decoyRadius + enemyRadius;
+//            if (distance < impactDistance){ // need noise
+//                collide = true;
+//                curEnemies.erase(enemy);
+//            }
+//        }
+//    }
+    return collide;
+}
+bool CollisionController::monsterDecoyExplosionCollision(std::shared_ptr<DecoySet> decoySet, MonsterController& monsterController){
+    bool collide = false;
+    std::unordered_set<std::shared_ptr<AbstractEnemy>>& curEnemies = monsterController.getEnemies();
+    std::vector<std::shared_ptr<Decoy>> removedDecoys = decoySet->getRemovedDecoys();
+    
+    auto itDec = removedDecoys.begin();
+    auto itMon = curEnemies.begin();
+    float decoyRadius = 2.00f;
+    while (itDec != removedDecoys.end()){
+        const std::shared_ptr<Decoy>& decoy= *itDec;
+        auto curDec = itDec;
+        itDec++;
+        while(itMon != curEnemies.end()){
+            const std::shared_ptr<AbstractEnemy>& enemy = *itMon;
+            auto curMon = itMon;
+            itMon++;
+            Vec2 norm = decoy->getPos() - enemy->getPosition();
+            float enemyRadius = fmin(enemy->getWidth(), enemy->getHeight())/2;
+            float distance = norm.length();
+            float impactDistance = decoyRadius + enemyRadius;
+            if (distance < impactDistance){ // need noise
+                collide = true;
+                monsterController.removeEnemy(enemy);
+                curEnemies.erase(curMon);
             }
         }
     }

@@ -403,6 +403,7 @@ bool OverWorld::initDecoys()
     _decoys = std::make_shared<DecoySet>();
     _decoys->init();
     _decoys->setTexture(_assets->get<cugl::Texture>("base"));
+    _decoys->setExplodeTexture(_assets->get<cugl::Texture>("explodingGate"));
     return true;
 }
 
