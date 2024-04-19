@@ -26,7 +26,7 @@ bool MonsterController::init(OverWorld& overWorld,
     for (const cugl::Vec3& cluster : overWorld.getLevelModel()->preSpawnLocs()){
         float cx = cluster.x;
         float cy = cluster.y;
-        int count = (int) round(cluster.z);
+//        int count = (int) round(cluster.z);
 //        for(int i = 0; i < count; i++) {
             spawnStaticBasicEnemy(Vec2(cx,cy), overWorld, 1);
             spawnBombEnemy(Vec2(cx,cy), overWorld, 1);
