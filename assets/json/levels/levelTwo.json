@@ -665,8 +665,8 @@
  "tilesets":[
         {
          "firstgid":1,
-         "source":"streetTiles.json"
-        }, 
+         "source":"stiles.json"
+        },
         {
          "firstgid":36,
          "source":"devilMotel.json"
