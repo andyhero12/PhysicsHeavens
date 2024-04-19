@@ -403,6 +403,12 @@
         "explodingGate": {
             "file": "textures/effects/gate_explode.PNG",
             "magfilter": "nearest"
+        },
+        "win_screen": {
+          "file": "textures/Menu/win_screen_wip.png"
+        },
+        "lose_screen": {
+          "file": "textures/Menu/fail_screen_wip.png"
         }
     },
     "jsons": {

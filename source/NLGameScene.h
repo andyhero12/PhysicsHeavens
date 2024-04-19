@@ -79,8 +79,6 @@ protected:
 
     std::shared_ptr<cugl::scene2::SceneNode> _uinode;
     
-    std::shared_ptr<cugl::scene2::PolygonNode> _loseScreen;
-    std::shared_ptr<cugl::scene2::PolygonNode> _winScreen;
 
     std::shared_ptr<cugl::physics2::net::NetWorld> _world;
     

@@ -14,12 +14,6 @@
     },
     "heavens_devils_logo": {
       "file": "textures/Menu/heavens_devils_logo.png"
-    },
-    "win_screen": {
-      "file": "textures/Menu/win_screen_wip.png"
-    },
-    "lose_screen": {
-      "file": "textures/Menu/lose_screen_wip.png"
     }
   },
   "fonts": {
