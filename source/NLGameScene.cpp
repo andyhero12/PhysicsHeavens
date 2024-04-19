@@ -286,15 +286,38 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _pause->doLayout();
     
     CULog("%s", computeActiveSize().toString().data());
-    loseNode = scene2::Label::allocWithText(Vec2(computeActiveSize()/2),strtool::format("You Lose!"),assets->get<Font>("retro"));
+//    loseNode = scene2::Label::allocWithText(Vec2(computeActiveSize()/2),strtool::format("You Lose!"),assets->get<Font>("retro"));
+    loseNode = cugl::scene2::PolygonNode::allocWithTexture(_assets->get<cugl::Texture>("lose_screen"));
+//    loseNode->setContentSize(dimen);
     loseNode->setAnchor(Vec2::ANCHOR_CENTER);
+    loseNode->setScale(650);
+    loseNode->setPosition(0.5 * loseNode->getSize());
+    
     CULog("%s", computeActiveSize().toString().data());
-    winNode = scene2::Label::allocWithText(Vec2(computeActiveSize()/2),strtool::format("You Win!"),assets->get<Font>("retro"));
+//    winNode = scene2::Label::allocWithText(Vec2(computeActiveSize()/2),strtool::format("You Win!"),assets->get<Font>("retro"));
+    winNode = cugl::scene2::PolygonNode::allocWithTexture(_assets->get<cugl::Texture>("win_screen"));
     winNode->setAnchor(Vec2::ANCHOR_CENTER);
+    winNode->setScale(650);
+    winNode->setPosition(0.5 * winNode->getSize());
+    
     _uinode->addChild(loseNode);
     _uinode->addChild(winNode);
     loseNode->setVisible(false);
     winNode->setVisible(false);
+    
+//    _loseScreen = cugl::scene2::PolygonNode::allocWithTexture(_assets->get<cugl::Texture>("lose_screen"));
+//    _loseScreen->setAnchor(Vec2::ANCHOR_CENTER);
+//    _loseScreen->setScale(6.5);
+//    _loseScreen->setPosition(0.5 * _loseScreen->getSize());
+//    _uinode->addChild(_loseScreen);
+//    _loseScreen->setVisible(false);
+//    
+//    _winScreen = cugl::scene2::PolygonNode::allocWithTexture(_assets->get<cugl::Texture>("win_screen"));
+//    _winScreen->setAnchor(Vec2::ANCHOR_CENTER);
+//    _winScreen->setScale(6.5);
+//    _winScreen->setPosition(0.5 * _winScreen->getSize());
+//    _uinode->addChild(_winScreen);
+//    _winScreen->setVisible(false);
 
     _zoom = ROOT_NODE_SCALE;
 
