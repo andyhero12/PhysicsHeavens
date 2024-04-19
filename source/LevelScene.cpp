@@ -68,8 +68,12 @@ bool LevelScene::init(const std::shared_ptr<AssetManager> &assets)
     //_brand = assets->get<scene2::SceneNode>("level_name");
     _button = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("level_play"));
     _button->addListener([=](const std::string &name, bool down){
-        if(down){
+        if(down && level1){
             _level = Level::L1;
+        }else if (down && level2){
+            _level = Level::L2;
+        }else if (down && level3){
+            _level = Level::L3;
         } });
     background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("Background"), 1, 15);
     background->setScale(2.7);

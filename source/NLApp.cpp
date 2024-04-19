@@ -251,7 +251,20 @@ void NetApp::updateHostScene(float timestep) {
         //_menu.setActive(true);
     }
     else if (_network->getStatus() == NetEventController::Status::HANDSHAKE && _network->getShortUID()) {
-        _gameplay.init(_assets, _network, true);
+        switch (_level.getLevel()) {
+            case LevelScene::Level::L1:
+                _gameplay.init(_assets, _network, true);
+                break;
+            case LevelScene::Level::L2:
+                _gameplay.init(_assets, _network, true);
+                break;
+            case LevelScene::Level::L3:
+                _gameplay.init(_assets, _network, true);
+                break;
+            default :
+                CUAssertLog(false, "bad level");
+                break;
+        }
         _network->markReady();
     }
     else if (_network->getStatus() == NetEventController::Status::INGAME) {
@@ -346,6 +359,7 @@ void NetApp::updateMainScene(float timestep)
 void NetApp::updateLevelScene(float timestep)
 {
     _level.update(timestep);
+    
     switch (_level.getLevel()) {
     case LevelScene::Level::L1:
         _level.setActive(false);
@@ -353,10 +367,14 @@ void NetApp::updateLevelScene(float timestep)
         _status = HOST;
         break;
     case LevelScene::Level::L2:
-
+        _level.setActive(false);
+        _hostgame.setActive(true);
+        _status = HOST;
         break;
     case LevelScene::Level::L3:
-
+        _level.setActive(false);
+        _hostgame.setActive(true);
+        _status = HOST;
         break;
     case LevelScene::Level::NONE:
         // DO NOTHING

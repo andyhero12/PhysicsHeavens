@@ -145,6 +145,10 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     return init(assets, rect, Vec2(0, DEFAULT_GRAVITY), network, isHost);
 }
 
+bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rect, const Vec2 gravity, const std::shared_ptr<NetEventController> network, bool isHost)
+{
+    return init(assets, rect, gravity, network, isHost, LEVEL_ONE_KEY);
+}
 /**
  * Initializes the controller contents, and starts the game
  *
@@ -162,7 +166,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
  *
  * @return  true if the controller is initialized properly, false otherwise.
  */
-bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rect, const Vec2 gravity, const std::shared_ptr<NetEventController> network, bool isHost)
+bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rect, const Vec2 gravity, const std::shared_ptr<NetEventController> network, bool isHost, std::string level_string)
 {
     Size dimen = computeActiveSize();
 
@@ -180,7 +184,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _network = network;
 
     // Start up the input handler
-    _level = assets->get<LevelModel>(LEVEL_ONE_KEY);
+    _level = assets->get<LevelModel>(level_string);
     _level->setTileSetAssets(assets);
     _constants = assets->get<JsonValue>("constants");
     if (_level == nullptr)
