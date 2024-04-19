@@ -30,8 +30,11 @@ void SpawnerController::update(MonsterController& monsterController, OverWorld& 
     //cout << (std::to_string(difficulty));
     for(auto& spawner : _spawners) {
         spawner->update(monsterController, overWorld, timestep, (float)std::pow(1.00231316, accumulatedTime) + difficulty);
+        
     }
-    
+    for (auto& spawner : animationNodes){
+        spawner->update();
+    }
     
     auto it = _spawners.begin();
     while (it != _spawners.end()){
@@ -50,28 +53,29 @@ void SpawnerController::update(MonsterController& monsterController, OverWorld& 
     
 }
 
-bool SpawnerController::init(const std::vector<LevelModel::Spawner>& startLocs) {
+bool SpawnerController::init(const std::vector<LevelModel::Spawner>& startLocs, std::shared_ptr<cugl::AssetManager> assets) {
     _spawners.clear();
+    animationNodes.clear();
     baseSpawnerNode = cugl::scene2::SceneNode::alloc();
     for (int i =0; i< startLocs.size(); i++){
         LevelModel::Spawner spawner = startLocs.at(i);
         cugl::Vec2 pos = Vec2(spawner.spawnerX, spawner.spawnerY);
         int health = spawner.hp;
         std::shared_ptr<SimpleSpawner> curSpawner = std::make_shared<SimpleSpawner>(spawner.regularDelay,pos,health,spawner.initDelay,spawner.primaryEnemy, spawner.secondaryEnemy, spawner.tertiaryEnemy);
-        curSpawner->setSceneNode(_texture);
-        baseSpawnerNode->addChild(curSpawner->getSpawnerNode());
-        curSpawner->getSpawnerNode()->setPosition(pos);
+//        auto drawNode = cugl::scene2::PolygonNode::allocWithTexture(assets->get<cugl::Texture>("spawner"));
+        auto drawNode = SpriteAnimationNode::allocWithSheet(assets->get<cugl::Texture>("spawner"), 1,1,1);
+        drawNode->setScale(cugl::Size(1,1)/48);
+//        drawNode->setContentSize(cugl::Size(1,1));
+        drawNode->setPosition(pos);
+        drawNode->setAnchor(cugl::Vec2::ANCHOR_CENTER);
+//        animationNodes.push_back(drawNode);
+        baseSpawnerNode->addChild(drawNode);
         _spawners.insert(curSpawner);
     }
     difficulty = 0;
     accumulatedTime = 0;
     return true;
 }
-
-void SpawnerController::setTexture(const std::shared_ptr<cugl::Texture>& value ){
-    _texture = value;
-}
-
 void SpawnerController::setRootNode(const std::shared_ptr<scene2::SceneNode>& _worldNode, bool isHost){
     
     _isHost = isHost;
