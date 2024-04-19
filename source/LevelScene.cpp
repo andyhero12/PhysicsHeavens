@@ -110,12 +110,11 @@ void LevelScene::dispose()
  */
 void LevelScene::update(float progress)
 {
-    _input.resetcontroller();
     _input.update();
     if (curMoveAnim <= moveCooldown){
         curMoveAnim++;
     }
-
+    std::cout<<_input._Leftright<<std::endl;
     if(_input._Leftright == 1 && readyToChangeLevel()){
         _goright = true;
     }
@@ -160,6 +159,7 @@ void LevelScene::update(float progress)
             }
         }
     }
+    _input.resetcontroller();
 
     if (_progress < 1)
     {
