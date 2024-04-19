@@ -26,7 +26,7 @@ bool MonsterController::init(OverWorld& overWorld,
     for (const cugl::Vec3& cluster : overWorld.getLevelModel()->preSpawnLocs()){
         float cx = cluster.x;
         float cy = cluster.y;
-        int count = round(cluster.z);
+        int count = (int) round(cluster.z);
 //        for(int i = 0; i < count; i++) {
             spawnStaticBasicEnemy(Vec2(cx,cy), overWorld, 1);
             spawnBombEnemy(Vec2(cx,cy), overWorld, 1);
@@ -34,8 +34,6 @@ bool MonsterController::init(OverWorld& overWorld,
         spawnSpawnerEnemy(Vec2(cx,cy), overWorld, 1); // TODO SPAWN ENEMY IN MONSTER CONTROLLER
 //        }
     }
-    
-    spawnStaticBasicEnemy(Vec2(5,6), overWorld, 1);
     return true;
 }
 void MonsterController::postUpdate(){

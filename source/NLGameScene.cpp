@@ -551,12 +551,10 @@ void GameScene::fixedUpdate()
         }
         if (auto biteEvent = std::dynamic_pointer_cast<BiteEvent>(e))
         {
-            CULog("Bite Event Got");
             overWorld.processBiteEvent(biteEvent);
         }
         if (auto recallEvent = std::dynamic_pointer_cast<RecallEvent>(e))
         {
-            CULog("Recall Event Got");
             overWorld.processRecallEvent(recallEvent);
         }
         if (auto explodeEvent = std::dynamic_pointer_cast<ExplodeEvent>(e))

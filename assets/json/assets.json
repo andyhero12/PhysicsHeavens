@@ -267,6 +267,10 @@
            "file": "textures/dog/effects/recall.png",
             "magfilter": "nearest"
        },
+       "dash":{
+           "file": "textures/dog/effects/dash.png",
+            "magfilter": "nearest"
+       },
        "penta":{
            "file": "textures/dog/effects/penta.png",
             "magfilter": "nearest"

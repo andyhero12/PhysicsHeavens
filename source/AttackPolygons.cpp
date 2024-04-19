@@ -19,11 +19,7 @@
 
 bool ActionPolygon::dealDamage(){
     if(!_polygon && polygonAction == Action::BITE){
-        bool first_time = spriteActionNode->getFrame() == BITE_FRAME && _freq == 0;
-        if(first_time){
-            _freq = 1;
-        }
-        return first_time;
+        return spriteActionNode->getFrame() == BITE_FRAME;
     }
     else{
         return true;
@@ -56,8 +52,8 @@ std::shared_ptr<cugl::scene2::SceneNode> ActionPolygon::getActionNode(){
 }
 
 
-ActionPolygon::ActionPolygon( std::shared_ptr<SpriteAnimationNode> actionSprite, Action curAction, Poly2& mintPoly, int mx, float scale)
-: ActionPolygon(curAction, mintPoly, mx, scale)
+ActionPolygon::ActionPolygon( std::shared_ptr<SpriteAnimationNode> actionSprite, Action curAction, Poly2& mintPoly, int mx, float scale, float ang, Vec2 center)
+: ActionPolygon(curAction, mintPoly, mx, scale, ang, center)
 {
     _expired = false;
     _polygon = false;
@@ -66,14 +62,16 @@ ActionPolygon::ActionPolygon( std::shared_ptr<SpriteAnimationNode> actionSprite,
     spriteActionNode->setScale(_scale);
 }
 
-ActionPolygon::ActionPolygon(Action curAction, Poly2& mintPoly, int mx, float scale)
+ActionPolygon::ActionPolygon(Action curAction, Poly2& mintPoly, int mx, float scale, float ang, Vec2 center)
 : polygonAction{curAction}
 , internalPolygon{mintPoly}
 , _age{0}
 , _maxage{mx}
-, _scale{1.0}
+, _scale{scale}
 , _polygon(true)
 , _freq{0}
+, _ang{ang}
+, _center(center)
 {
     polyActionNode = cugl::scene2::SpriteNode::allocWithPoly(mintPoly);
 }
@@ -108,7 +106,7 @@ void AttackPolygons::addShoot(Vec2 center, float angle, float shootRadius){
     float degree = 60;
     PolyFactory curFactory;
     Poly2 resultingPolygon_shoot = curFactory.makeArc(center, shootRadius, angle + degree, degree);
-    std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(Action::SHOOT, resultingPolygon_shoot, max_age, shootRadius);
+    std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(Action::SHOOT, resultingPolygon_shoot, max_age, shootRadius, angle, center);
     backAttackPolygonNode->addChild(curPtr->getActionNode());
     Vec2 offset = Vec2(SDL_cosf((angle + 90) * 3.14f / 180), SDL_sinf((angle + 90) * 3.14f / 180)) * DOG_SIZE.x * SHOOT_HEAD_OFFSET_RATIO;
     curPtr->getActionNode()->setScale(OFFSET_SCALE);
@@ -119,7 +117,7 @@ void AttackPolygons::addShoot(Vec2 center, float angle, float shootRadius){
 void AttackPolygons::addExplode(Vec2 center, float explosionRad){
     PolyFactory curFactory;
     Poly2 resultingPolygon = curFactory.makeCircle(center, explosionRad);
-    std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(Action::EXPLODE, resultingPolygon, max_age, explosionRad);
+    std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(Action::EXPLODE, resultingPolygon, max_age, explosionRad, 0, center);
     backAttackPolygonNode->addChild(curPtr->getActionNode());
     curPtr->getActionNode()->setScale(OFFSET_SCALE);
     currentAttacks.insert(curPtr);
@@ -148,7 +146,7 @@ void AttackPolygons::addBite(Vec2 center, float angle, float explosionRad, float
     //biteSprite->setAngle(ang);
     PolyFactory curFactory;
     Poly2 resultingPolygon = curFactory.makeArc(center, explosionRad * (1 + scale), angle, 180);
-    std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(biteSprite, Action::BITE, resultingPolygon, BITE_AGE, 1 + scale);
+    std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(biteSprite, Action::BITE, resultingPolygon, BITE_AGE, 1 + scale, angle, center);
     if(front){
         frontAttackPolygonNode->addChild(curPtr->getActionNode());
     }
