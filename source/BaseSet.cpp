@@ -30,6 +30,7 @@ int BaseSet::getFirstHealth()
 bool BaseSet::init(const std::vector<cugl::Vec3>& basePoses, std::shared_ptr<cugl::AssetManager> assets)
 {
     _bases.clear();
+    animationNodes.clear();
     baseSetNode = cugl::scene2::SceneNode::alloc();
     for (const cugl::Vec3& base : basePoses){
         auto baseObj = std::make_shared<Base>(base.z, cugl::Vec2(base.x,base.y));
