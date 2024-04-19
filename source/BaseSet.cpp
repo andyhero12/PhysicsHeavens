@@ -17,56 +17,33 @@ void BaseSet::update()
     for (auto &base : _bases)
     {
         base->update();
+//        base->getSceneNode()->update();
+    }
+    for (auto& animation: animationNodes){
+        animation->update();
     }
 }
 int BaseSet::getFirstHealth()
 {
     return (*_bases.begin())->getHealth();
 }
-bool BaseSet::init(const std::vector<cugl::Vec3>& basePoses)
+bool BaseSet::init(const std::vector<cugl::Vec3>& basePoses, std::shared_ptr<cugl::AssetManager> assets)
 {
     _bases.clear();
+    animationNodes.clear();
+    baseSetNode = cugl::scene2::SceneNode::alloc();
     for (const cugl::Vec3& base : basePoses){
-        _bases.emplace_back(std::make_shared<Base>(base.z, cugl::Vec2(base.x,base.y)));
+        auto baseObj = std::make_shared<Base>(base.z, cugl::Vec2(base.x,base.y));
+        _bases.emplace_back(baseObj);
+        auto drawNode = SpriteAnimationNode::allocWithSheet(assets->get<cugl::Texture>("gate"), 3,5, 5);
+//        drawNode->setContentSize(cugl::Size(4,4));
+        drawNode->setScale(cugl::Size(1,1)/48);
+        drawNode->setPosition(baseObj->getPos());
+        drawNode->setAnchor(cugl::Vec2::ANCHOR_CENTER);
+        baseSetNode->addChild(drawNode);
+        animationNodes.push_back(drawNode);
     }
     return true;
-}
-
-
-bool BaseSet::init(std::shared_ptr<cugl::JsonValue> data)
-{
-    if (data)
-    {
-        _bases.clear();
-        if (data->get("start"))
-        {
-            auto baseValues = data->get("start")->children();
-            for (auto it = baseValues.begin(); it != baseValues.end(); it++)
-            {
-                std::shared_ptr<cugl::JsonValue> entry = (*it);
-                cugl::Vec2 pos;
-                // TEMPORARY MAGIC NUMBERS
-                pos.x = entry->get(0)->get(0)->asFloat(0);
-                pos.y = entry->get(0)->get(1)->asFloat(0);
-                int health = entry->get(1)->asInt(0);
-                _bases.emplace_back(std::make_shared<Base>(health, pos));
-            }
-        }
-        return true;
-    }
-    return false;
-}
-
-void BaseSet::setTexture(const std::shared_ptr<cugl::Texture> &value)
-{
-    _texture = value;
-    for (auto& base : _bases){
-        std::shared_ptr<cugl::scene2::SceneNode> baseNode = cugl::scene2::PolygonNode::allocWithTexture(_texture);
-        baseNode->setContentSize(cugl::Vec2(1, 1));
-        baseNode->setPosition(base->getPos());
-        baseNode->setAnchor(cugl::Vec2::ANCHOR_CENTER);
-        base->setSceneNode(baseNode);
-    }
 }
 bool BaseSet::baseLost()
 {

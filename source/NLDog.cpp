@@ -298,6 +298,7 @@ void Dog::setDogSize(DogSize size){
             dashAnimation = dashAnimationLarge;
             break;
         default:
+            CULog("Dog Size Bad %d", size);
             CULog("INVALID SETDOGSIZE INPUT");
             break;
     }
