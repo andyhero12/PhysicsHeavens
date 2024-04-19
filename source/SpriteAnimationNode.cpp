@@ -37,7 +37,6 @@ void SpriteAnimationNode::stepAnimation(){
 void SpriteAnimationNode::update(){
     updateAnimTime();
     if (frameUpdateReady()){
-        CULog("Frame: %du", getFrame());
         stepAnimation();
     }
 }
