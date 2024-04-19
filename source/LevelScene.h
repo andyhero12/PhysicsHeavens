@@ -175,25 +175,20 @@ public:
         if(_goright&&level1){
             level1 = false;
             level2 = true;
-        }
-        if(_goright&&level2){
+        }else if(_goright && level2){
             level2 = false;
             level3 = true;
-        }
-        if(_goright&&level3){
-        }
-
-        if(_goleft&&level1){
-        }
-        if(_goleft&&level2){
+        }else if(_goright&&level3){
+            
+        }else if(_goleft&&level1){
+            
+        }else if(_goleft&&level2){
             level1 = true;
             level2 = false;
-        }
-        if(_goleft&&level3){
+        }else if(_goleft&&level3){
             level2 = true;
             level3 = false;
         }
-
     }
 
     
