@@ -67,6 +67,14 @@
             "file": "textures/game_ui/SPAWN_TOGGLE.png",
             "magfilter": "nearest"
         },
+        "initialflash":{
+            "file": "textures/game_ui/icon_flash_offset.png",
+            "magfilter": "nearest"
+        },
+        "flash": {
+            "file": "textures/game_ui/icon_ready_flash_offset.png",
+            "magfilter": "nearest"
+        },
         "smalldogleftidle": {
             "file": "textures/dog/idle/small-left-idle.png",
             "magfilter": "nearest"
@@ -398,10 +406,6 @@
         },
         "left": {
             "file": "textures/left_arrow.png"
-        },
-        "flash": {
-            "file": "textures/game_ui/icon_ready_flash_offset.png",
-            "magfilter": "nearest"
         }
     },
     "jsons": {

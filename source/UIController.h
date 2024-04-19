@@ -39,6 +39,8 @@ private:
     std::shared_ptr<cugl::scene2::PolygonNode> _baittoggle;
     std::shared_ptr<cugl::scene2::PolygonNode> _hometoggle;
     std::shared_ptr<SpriteAnimationNode> _toggleFlash;
+    std::shared_ptr<SpriteAnimationNode> _initialFlash;
+    bool _flashAnimated = false;
     int _freq = 0;
     
 public:
