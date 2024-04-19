@@ -8,6 +8,7 @@
 #ifndef DecoySet_hpp
 #define DecoySet_hpp
 #include "Decoy.h"
+#include "SpriteAnimationNode.h"
 #include <unordered_set>
 #include <vector>
 #include <cugl/cugl.h>
@@ -20,7 +21,8 @@ private:
     std::vector<std::shared_ptr<Decoy>> _pendingDecoys;
     std::shared_ptr<cugl::Texture> _texture;
     bool justAdded;
-    std::shared_ptr<cugl::scene2::SpriteNode> _explodeAnimation;
+    std::shared_ptr<cugl::Texture> _explodeTexture;
+    std::unordered_set<std::shared_ptr<SpriteAnimationNode>> _curAnimations;
 public:
     
     std::shared_ptr<cugl::scene2::SceneNode> getDecoySetNode(){
@@ -32,6 +34,9 @@ public:
     std::vector<std::shared_ptr<Decoy>>& getPendingDecoys(){
         return _pendingDecoys;
     }
+    std::vector<std::shared_ptr<Decoy>>& getRemovedDecoys(){
+        return _removedDecoys;
+    }
     bool addedNewDecoy(){
         return justAdded;
     }
@@ -42,7 +47,7 @@ public:
     void update(float timestep);
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch);
     void setTexture(const std::shared_ptr<cugl::Texture> &value);
-    void setExplodeAnimation(const std::shared_ptr<cugl::scene2::SpriteNode> &value);
+    void setExplodeTexture(const std::shared_ptr<cugl::Texture> &value);
     void addNewDecoy(cugl::Vec2 pos);
     void postUpdate();
 };

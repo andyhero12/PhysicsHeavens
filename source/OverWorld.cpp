@@ -403,9 +403,7 @@ bool OverWorld::initDecoys()
     _decoys = std::make_shared<DecoySet>();
     _decoys->init();
     _decoys->setTexture(_assets->get<cugl::Texture>("base"));
-
-    std::shared_ptr<cugl::scene2::SpriteNode> explodeGate = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("explodingGate"), 5, 4, 18);
-    _decoys->setExplodeAnimation(explodeGate);
+    _decoys->setExplodeTexture(_assets->get<cugl::Texture>("explodingGate"));
     return true;
 }
 
