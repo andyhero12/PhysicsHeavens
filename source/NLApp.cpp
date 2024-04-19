@@ -57,6 +57,8 @@ void NetApp::onStartup() {
     AudioEngine::start(24);
     _assets->loadDirectoryAsync("json/assets.json",nullptr);
     _assets->loadAsync<LevelModel>(LEVEL_ONE_KEY,LEVEL_ONE_FILE,nullptr);
+    _assets->loadAsync<LevelModel>(LEVEL_TWO_KEY,LEVEL_TWO_FILE,nullptr);
+    _assets->loadAsync<LevelModel>(LEVEL_THREE_KEY,LEVEL_THREE_FILE,nullptr);
     cugl::net::NetworkLayer::start(net::NetworkLayer::Log::INFO);
     
     Application::onStartup(); // YOU MUST END with call to parent

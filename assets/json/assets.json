@@ -341,6 +341,10 @@
             "file": "textures/tile/stiles.png",
             "magfilter": "nearest"
         },
+        "streetTiles": {
+            "file": "textures/tile/stiles.png",
+            "magfilter": "nearest"
+        },
         "angelMotel": {
             "file": "textures/tile/angelMotel.png",
             "magfilter": "nearest"
@@ -419,6 +423,7 @@
         "streets": "json/assetsJson/streets.json",
         "street_tiles": "json/assetsJson/street_tiles.json",
         "stiles": "json/assetsJson/stiles.json",
+        "streetTiles": "json/assetsJson/stiles.json",
         "buildings": "json/assetsJson/buildings.json",
         "server": "json/server.json",
         "constants": "json/constants.json",

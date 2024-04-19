@@ -26,6 +26,9 @@ public:
     std::shared_ptr<cugl::scene2::SceneNode> getSpawnerNode(){
         return polyNode;
     }
+    void setSpawnerNode(std::shared_ptr<cugl::scene2::PolygonNode>  inc){
+        polyNode = inc;
+    }
     AbstractSpawner(float regularDelay, cugl::Vec2 pos, int health, float delay)
     : _regularDelay(regularDelay)
     , _position(pos)
