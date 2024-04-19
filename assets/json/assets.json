@@ -386,6 +386,11 @@
             "minfilter": "linear",
             "magfilter": "nearest"
         },
+        "gate": {
+            "file": "textures/heavens_gate.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
         "button": {
             "file": "textures/button.png"
         },

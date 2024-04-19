@@ -394,9 +394,7 @@ bool OverWorld::initDevil()
 bool OverWorld::initBases()
 {
     _bases = std::make_shared<BaseSet>();
-    _bases->init(_level->getBasesPos());
-    //    _bases->init(_constants->get("base"));
-    _bases->setTexture(_assets->get<cugl::Texture>("base"));
+    _bases->init(_level->getBasesPos(), _assets);
     return true;
 }
 
@@ -447,12 +445,13 @@ bool OverWorld::setRootNode(const std::shared_ptr<scene2::SceneNode> &_worldNode
     // Add Base Decoy node
     _worldNode->addChild(_decoys->getDecoySetNode());
 
-    // Add Bases to the World Node
-    for (auto &base : _bases->_bases)
-    {
-        std::shared_ptr<scene2::SceneNode> baseNode = base->getSceneNode();
-        _worldNode->addChild(base->getSceneNode());
-    }
+    _worldNode->addChild(_bases->getBaseSetNode());
+//    // Add Bases to the World Node
+//    for (auto &base : _bases->_bases)
+//    {
+//        std::shared_ptr<scene2::SceneNode> baseNode = base->getSceneNode();
+//        _worldNode->addChild(base->getSceneNode());
+//    }
 
     // Add Dog to Obstacle World
     _worldNet->initObstacle(_dog);
