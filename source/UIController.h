@@ -11,6 +11,7 @@
 #include <cugl/cugl.h>
 #include <stdio.h>
 #include "SubTextureNode.h"
+#include "SpriteAnimationNode.h"
 
 #define UI_SCALE 6
 
@@ -36,6 +37,11 @@ private:
     std::shared_ptr<cugl::scene2::PolygonNode> _bombtoggle;
     std::shared_ptr<cugl::scene2::PolygonNode> _shoottoggle;
     std::shared_ptr<cugl::scene2::PolygonNode> _baittoggle;
+    std::shared_ptr<cugl::scene2::PolygonNode> _hometoggle;
+    std::shared_ptr<SpriteAnimationNode> _toggleFlash;
+    std::shared_ptr<SpriteAnimationNode> _initialFlash;
+    bool _flashAnimated = false;
+    int _freq = 0;
     
 public:
         
@@ -51,6 +57,7 @@ public:
     void setHealthBarTexture(float percentage);
     void setSizeBarTexture(float percentage);
     void setToggle(std::string mode);
+    void animateFlash(int absorb);
   
 };
 

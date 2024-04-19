@@ -7,6 +7,7 @@
 
 #include "UIController.h"
 using namespace cugl;
+#define ANIM_FREQ 5
 
 bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std::shared_ptr<cugl::AssetManager>& assets, cugl::Size screenSize){
 //    _childOffset = -1;
@@ -20,6 +21,10 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     _bombtoggle = cugl::scene2::PolygonNode::allocWithTexture(assets->get<Texture>("bombtoggle"));
     _shoottoggle = cugl::scene2::PolygonNode::allocWithTexture(assets->get<Texture>("shoottoggle"));
     _baittoggle = cugl::scene2::PolygonNode::allocWithTexture(assets->get<Texture>("baittoggle"));
+    _hometoggle = cugl::scene2::PolygonNode::allocWithTexture(assets->get<Texture>("hometoggle"));
+    _initialFlash = SpriteAnimationNode::allocWithSheet(assets->get<Texture>("initialflash"), 1, 5, 5, 6);
+    _toggleFlash = SpriteAnimationNode::allocWithSheet(assets->get<Texture>("flash"), 1, 5, 5, 10);
+    
     
     // set the scale
     _healthframe->setScale(UI_SCALE);
@@ -29,6 +34,9 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     _bombtoggle->setScale(UI_SCALE);
     _shoottoggle->setScale(UI_SCALE);
     _baittoggle->setScale(UI_SCALE);
+    _hometoggle->setScale(UI_SCALE);
+    _initialFlash->setScale(UI_SCALE);
+    _toggleFlash->setScale(UI_SCALE);
     
     // set the position
     _healthframe->setAnchor(Vec2::ANCHOR_CENTER);
@@ -38,6 +46,9 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     _bombtoggle->setAnchor(Vec2::ANCHOR_CENTER);
     _shoottoggle->setAnchor(Vec2::ANCHOR_CENTER);
     _baittoggle->setAnchor(Vec2::ANCHOR_CENTER);
+    _hometoggle->setAnchor(Vec2::ANCHOR_CENTER);
+    _initialFlash->setAnchor(Vec2::ANCHOR_CENTER);
+    _toggleFlash->setAnchor(Vec2::ANCHOR_CENTER);
     
     x =0;
     y =0;
@@ -67,18 +78,27 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     _bombtoggle->setPosition(togglex, toggley);
     _shoottoggle->setPosition(togglex, toggley);
     _baittoggle->setPosition(togglex, toggley);
+    _hometoggle->setPosition(togglex, toggley);
+    _initialFlash->setPosition(togglex, toggley);
+    _toggleFlash->setPosition(togglex, toggley);
     
     _shoottoggle->setVisible(true);
     _bombtoggle->setVisible(false);
     _baittoggle->setVisible(false);
+    _hometoggle->setVisible(false);
+    _initialFlash->setVisible(false);
+    _toggleFlash->setVisible(true);
     
     node->addChild(_healthframe);
     node->addChild(_sizeframe);
     node->addChild(_bombtoggle);
     node->addChild(_shoottoggle);
     node->addChild(_baittoggle);
+    node->addChild(_hometoggle);
     node->addChild(_healthfill);
     node->addChild(_sizefill);
+    node->addChild(_toggleFlash);
+    node->addChild(_initialFlash);
     
     return true;
 }
@@ -124,26 +144,52 @@ void UIController::setToggle(std::string mode){
         _bombtoggle->setVisible(false);
         _shoottoggle->setVisible(true);
         _baittoggle->setVisible(false);
+        _hometoggle->setVisible(false);
     }
     else if (mode == "BAIT"){
         _bombtoggle->setVisible(false);
         _shoottoggle->setVisible(false);
         _baittoggle->setVisible(true);
+        _hometoggle->setVisible(false);
     }
     else if (mode == "BOMB"){
         _bombtoggle->setVisible(true);
         _shoottoggle->setVisible(false);
         _baittoggle->setVisible(false);
+        _hometoggle->setVisible(false);
     }
     else if (mode == "NOTHING"){
         _bombtoggle->setVisible(false);
         _shoottoggle->setVisible(false);
         _baittoggle->setVisible(false);
+        _hometoggle->setVisible(false);
     }else if (mode == "RECALL"){
         _bombtoggle->setVisible(false);
         _shoottoggle->setVisible(false);
         _baittoggle->setVisible(false);
+        _hometoggle->setVisible(true);
     }else{
         CUAssertLog(false, "wrong mode string");
+    }
+}
+
+void UIController::animateFlash(int absorb){
+    if(absorb > 10){
+        if(!_flashAnimated){
+            _initialFlash->setVisible(true);
+            _initialFlash->update();
+            
+            if(_initialFlash->getFrame() == _initialFlash->getSpan() - 1){
+                _flashAnimated = true;
+            }
+        } else{
+            _toggleFlash->update();
+        }
+        
+    } else{
+        _initialFlash->setVisible(false);
+        _flashAnimated = false;
+        _initialFlash->setFrame(0);
+        _toggleFlash->setFrame(3);
     }
 }

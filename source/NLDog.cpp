@@ -191,6 +191,9 @@ void Dog::updateClientAnimations(){
  *
  */
 void Dog::moveOnInputSetAction(InputController& _input){
+    if(_mode != -1){
+        _uiController->animateFlash(_absorbValue);
+    }
     if (_refire <= _firerate) {
         _refire++;
     }
@@ -267,6 +270,7 @@ void Dog::moveOnInputSetAction(InputController& _input){
     
 }
 void Dog::setDogSize(DogSize size){
+    
     if(idleAnimation != nullptr && size != dogSize){
         idleAnimation->animate(AnimationSceneNode::Directions::SOUTH, false);
         runAnimation->animate(AnimationSceneNode::Directions::SOUTH, false);
