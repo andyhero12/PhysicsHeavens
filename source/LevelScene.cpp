@@ -124,12 +124,16 @@ void LevelScene::update(float progress)
         _goleft = true;
     }
 
+    if (_input.didPressRight()){
+        CULog("Pressed Right");
+    }
     if(_input.didPressRight() && readyToChangeLevel()){
         _goright = true;
     }
     if(_input.didPressLeft() && readyToChangeLevel()){
         _goleft = true;
     }
+    
     updatelevelscene();
     resetgochange();
     if (level1 && readToAnim()){
