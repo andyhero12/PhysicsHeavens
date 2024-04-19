@@ -95,7 +95,7 @@ public:
      * This constructor does not allocate any objects or start the game.
      * This allows us to use the object without a heap pointer.
      */
-    LevelScene() : cugl::Scene2(), _progress(0.0f), frame(0.0f), curMoveAnim(0), moveCooldown(2), level1(true), level2(false), level3(false), _goleft(false), _goright(false){}
+    LevelScene() : cugl::Scene2(), _progress(0.0f), frame(0.0f), curMoveAnim(0), moveCooldown(6), level1(true), level2(false), level3(false), _goleft(false), _goright(false){}
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.
@@ -108,7 +108,7 @@ public:
     /**
      * Disposes of all (non-static) resources allocated to this mode.
      */
-    void dispose();
+    void dispose() override;
     
     /**
      * Initializes the controller contents, making it ready for loading
@@ -146,10 +146,23 @@ public:
 
     Level getLevel() const { return _level;}
 
-    bool canChangeLevel(){
-        return curMoveAnim >=moveCooldown;
+    bool readToAnim(){
+        return curMoveAnim >= moveCooldown;
     }
-    void resetChangeLevel(){
+    
+    bool readyToChangeLevel(){
+        return finAnimLevel1() || finAnimLevel2() || finAnimLevel3();
+    }
+    bool finAnimLevel1(){
+        return level1 && background->getFrame() == 2;
+    }
+    bool finAnimLevel2(){
+        return level2 && background->getFrame() == 8;
+    }
+    bool finAnimLevel3(){
+        return level3 && background->getFrame() == 14;
+    }
+    void resetAnimCD(){
         curMoveAnim = 0;
     }
 

@@ -110,51 +110,56 @@ void LevelScene::dispose()
  */
 void LevelScene::update(float progress)
 {
+    _input.resetcontroller();
     _input.update();
     if (curMoveAnim <= moveCooldown){
         curMoveAnim++;
     }
 
+    if(_input._Leftright == 1 && readyToChangeLevel()){
+        _goright = true;
+    }
+
+    if(_input._Leftright == -1 && readyToChangeLevel()){
+        _goleft = true;
+    }
+
+    if(_input.didPressRight() && readyToChangeLevel()){
+        _goright = true;
+    }
+    if(_input.didPressLeft() && readyToChangeLevel()){
+        _goleft = true;
+    }
     updatelevelscene();
-
-    if (level1){
-       if(background->getFrame()==2){
-            background->setFrame(2);
-       }
-    }else if(level2) {
-        if(background->getFrame()==8){
-            background->setFrame(8);
-       }
-    }else if(level3){
-        if(background->getFrame()==14){
-            background->setFrame(14);
-       }
-    }
-
-    if(_input._Leftright == 1 && canChangeLevel()){
-        _goright = true;
-        resetChangeLevel();
-        _input.resetcontroller();
-    }
-
-    if(_input._Leftright == -1 && canChangeLevel()){
-        _goleft = true;
-        resetChangeLevel();
-        _input.resetcontroller();
-    }
-
-    if(_input.didPressRight() && canChangeLevel()){
-        _goright = true;
-        resetChangeLevel();
-        _input.resetcontroller();
-    }
-    if(_input.didPressLeft() && canChangeLevel()){
-        _goleft = true;
-        resetChangeLevel();
-        _input.resetcontroller();
-    }
-
     resetgochange();
+    if (level1 && readToAnim()){
+        if(background->getFrame() != 2){
+            resetAnimCD();
+           if (background->getFrame() < 2){
+               background->setFrame(background->getFrame() + 1);
+           }else if (background->getFrame() >  2){
+               background->setFrame(background->getFrame() - 1);
+           }
+       }
+    }else if(level2 && readToAnim()) {
+        if(background->getFrame() != 8){
+            resetAnimCD();
+            if (background->getFrame() < 8){
+                background->setFrame(background->getFrame() + 1);
+            }else if (background->getFrame() >  8){
+                background->setFrame(background->getFrame() - 1);
+            }
+       }
+    }else if(level3 && readToAnim()){
+        if(background->getFrame() !=14){
+            resetAnimCD();
+            if (background->getFrame() < 14){
+                background->setFrame(background->getFrame() + 1);
+            }else if (background->getFrame() >  14){
+                background->setFrame(background->getFrame() - 1);
+            }
+        }
+    }
 
     if (_progress < 1)
     {
@@ -171,8 +176,6 @@ void LevelScene::update(float progress)
         _button->setVisible(false);
         //_brand->setVisible(false);
     }
-    
-   //_input.resetcontroller();
 }
 
 /**
