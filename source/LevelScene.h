@@ -17,6 +17,7 @@
 #include <cugl/cugl.h>
 #include "GlobalConstants.h"
 #include "NLInput.h"
+#include <map>
 
 
 /**
@@ -60,6 +61,8 @@ protected:
 
     Level _level;
     InputController _input;
+
+    std::map<int, int> frameTargets;
     // MODEL
     /** The progress displayed on the screen */
     float _progress;
@@ -72,12 +75,16 @@ protected:
 
     int moveCooldown;
 
+    int level;
+
     bool level1;
     bool level2;
     bool level3;
 
     bool _goright;
     bool _goleft;
+    bool firsttime;
+    bool _backClicked;
     /**
      * Returns the active screen size of this scene.
      *
@@ -95,7 +102,28 @@ public:
      * This constructor does not allocate any objects or start the game.
      * This allows us to use the object without a heap pointer.
      */
-    LevelScene() : cugl::Scene2(), _progress(0.0f), frame(0.0f), curMoveAnim(0), moveCooldown(6), level1(true), level2(false), level3(false), _goleft(false), _goright(false), _level(NONE){}
+    LevelScene() : cugl::Scene2(), 
+    _progress(0.0f), 
+    frame(0.0f), 
+    curMoveAnim(0), 
+    moveCooldown(6), 
+    level1(true), 
+    level2(false), 
+    level3(false), 
+    _goleft(false), 
+    _goright(false), 
+    _level(NONE), 
+    level(1),
+    firsttime(true),
+    _backClicked(false){
+        frameTargets = {
+        {1, 2},
+        {2, 8},
+        {3, 14}
+        // Add new levels and frames as needed
+    };
+
+    }
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.
@@ -154,13 +182,13 @@ public:
         return finAnimLevel1() || finAnimLevel2() || finAnimLevel3();
     }
     bool finAnimLevel1(){
-        return level1 && background->getFrame() == 2;
+        return level == 1 && background->getFrame() == 2;
     }
     bool finAnimLevel2(){
-        return level2 && background->getFrame() == 8;
+        return level == 2 && background->getFrame() == 8;
     }
     bool finAnimLevel3(){
-        return level3 && background->getFrame() == 14;
+        return level == 3 && background->getFrame() == 14;
     }
     void resetAnimCD(){
         curMoveAnim = 0;
@@ -174,23 +202,17 @@ public:
     }
     
     void updatelevelscene(){
-        if(_goright&&level1){
-            level1 = false;
-            level2 = true;
-        }else if(_goright && level2){
-            level2 = false;
-            level3 = true;
-        }else if(_goright&&level3){
-            
-        }else if(_goleft&&level1){
-            
-        }else if(_goleft&&level2){
-            level1 = true;
-            level2 = false;
-        }else if(_goleft&&level3){
-            level2 = true;
-            level3 = false;
+       if (_goright && level < 3) {
+        level += 1;
+        } else if (_goleft && level > 1) {
+            level -= 1;
         }
+    }
+
+    void adjustFrame(int level);
+
+    bool getBackclick(){
+        return _backClicked;
     }
 
     

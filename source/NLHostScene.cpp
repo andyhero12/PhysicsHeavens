@@ -88,7 +88,7 @@ bool HostScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::sha
     std::shared_ptr<scene2::SceneNode> scene = _assets->get<scene2::SceneNode>("host");
     scene->setContentSize(dimen);
     scene->doLayout(); // Repositions the HUD
-
+    //_input.init_withlistener();
     _startgame = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("host_center_start"));
     _backout = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("host_back"));
     _gameid = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("host_center_game_field_text"));
@@ -201,7 +201,7 @@ void HostScene::update(float timestep) {
     if(_network->getStatus() == NetEventController::Status::CONNECTED){
         if (!_startGameClicked) {
             updateText(_startgame, "Start Game");
-            _startgame->activate();
+            _startgame->activate();    
         }
         else {
             updateText(_startgame, "Starting");
@@ -210,7 +210,10 @@ void HostScene::update(float timestep) {
 		_gameid->setText(hex2dec(_network->getRoomID()));
         _player->setText(std::to_string(_network->getNumPlayers()));
 	}
+
 #pragma mark END SOLUTION
+
+
 }
 
 /**

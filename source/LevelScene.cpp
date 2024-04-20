@@ -56,7 +56,7 @@ bool LevelScene::init(const std::shared_ptr<AssetManager> &assets)
     {
         return false;
     }
-    _input.init_withlistener();
+    //_input.init_withlistener();
     // IMMEDIATELY load the splash screen assets
     _assets = assets;
     _assets->loadDirectory("json/level.json");
@@ -64,18 +64,33 @@ bool LevelScene::init(const std::shared_ptr<AssetManager> &assets)
     layer->setContentSize(dimen);
     layer->doLayout(); // This rearranges the children to fit the screen
 
-    _bar = std::dynamic_pointer_cast<scene2::ProgressBar>(assets->get<scene2::SceneNode>("level_bar"));
+    //_bar = std::dynamic_pointer_cast<scene2::ProgressBar>(assets->get<scene2::SceneNode>("level_bar"));
     //_brand = assets->get<scene2::SceneNode>("level_name");
     _button = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("level_play"));
-    _button->addListener([=](const std::string &name, bool down){
-        CULog("Current Level %d  %d %d", level1, level2, level3);
-        if(down && level1){
-            _level = Level::L1;
-        }else if (down && level2){
-            _level = Level::L2;
-        }else if (down && level3){
-            _level = Level::L3;
-        } });
+    _button->addListener([this](const std::string &name, bool down){
+    if(down) { // Check if the button is pressed down
+        switch (level) { // Use the current level stored in _level
+            case 1:
+                CULog("Current Level: L1");
+                _level = Level::L1; // Move to next level
+                break;
+            case 2:
+                CULog("Current Level: L2");
+                _level = Level::L2;
+                break;
+            case 3:
+                CULog("Current Level: L3");
+                _level = Level::L3; // Assuming there's a level 4
+                break;
+            case 4:
+                CULog("Current Level: L4");
+                break;
+            default:
+                CULog("Unknown Level");
+                break;
+        }
+    }
+});
     background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("Background"), 1, 15);
     background->setScale(2.7);
     background->setPosition(0.5 * background->getSize());
@@ -97,11 +112,7 @@ void LevelScene::dispose()
         _button->deactivate();
     }
     _button = nullptr;
-    //_brand = nullptr;
-    _bar->removeFromParent();
-    _bar = nullptr;
     _assets = nullptr;
-    _progress = 0.0f;
 }
 
 #pragma mark -
@@ -120,7 +131,7 @@ void LevelScene::update(float progress)
     if (curMoveAnim <= moveCooldown){
         curMoveAnim++;
     }
-    std::cout<<_input._Leftright<<std::endl;
+
     if(_input._Leftright == 1 && readyToChangeLevel()){
         _goright = true;
     }
@@ -129,9 +140,6 @@ void LevelScene::update(float progress)
         _goleft = true;
     }
 
-    if (_input.didPressRight()){
-        CULog("Pressed Right");
-    }
     if(_input.didPressRight() && readyToChangeLevel()){
         _goright = true;
     }
@@ -141,53 +149,22 @@ void LevelScene::update(float progress)
     
     updatelevelscene();
     resetgochange();
-    if (level1 && readToAnim()){
-        if(background->getFrame() != 2){
-            resetAnimCD();
-           if (background->getFrame() < 2){
-               background->setFrame(background->getFrame() + 1);
-           }else if (background->getFrame() >  2){
-               background->setFrame(background->getFrame() - 1);
-           }
-       }
-    }else if(level2 && readToAnim()) {
-        if(background->getFrame() != 8){
-            resetAnimCD();
-            if (background->getFrame() < 8){
-                background->setFrame(background->getFrame() + 1);
-            }else if (background->getFrame() >  8){
-                background->setFrame(background->getFrame() - 1);
-            }
-       }
-    }else if(level3 && readToAnim()){
-        if(background->getFrame() !=14){
-            resetAnimCD();
-            if (background->getFrame() < 14){
-                background->setFrame(background->getFrame() + 1);
-            }else if (background->getFrame() >  14){
-                background->setFrame(background->getFrame() - 1);
-            }
-        }
-    }
-    if (_input._confirm){
+    adjustFrame(level);
+
+    if (_input._confirm && readyToChangeLevel()){
         _button->setDown(true);
+    }
+
+    if(_input._back && readyToChangeLevel()){
+        _backClicked = true;
     }
     _input.resetcontroller();
 
-    if (_progress < 1)
+    if (firsttime)
     {
-        _progress = _assets->progress();
-        if (_progress >= 1)
-        {
-            _progress = 1.0f;
-            _bar->setVisible(false);
-            //_brand->setVisible(false);
-            _button->setVisible(false);
-            _button->activate();
-        }
-        _bar->setProgress(_progress);
+        _button->activate();
         _button->setVisible(false);
-        //_brand->setVisible(false);
+        firsttime = false;
     }
 }
 
@@ -211,13 +188,29 @@ void LevelScene::setActive(bool value)
         {
             _level = Level::NONE;
             _button->activate();
+            firsttime = true;
+            _backClicked = false;
         }
         else
         {
             _button->deactivate();
             _button->setDown(false);
-            _progress = 0.0f;
-            frame = 0.0f;
+            firsttime = true;
+            _backClicked = false;
         }
+    }
+}
+
+void LevelScene::adjustFrame(int level){
+    if (readToAnim()) {
+            int targetFrame = frameTargets[level];
+            if (background->getFrame() != targetFrame) {
+                resetAnimCD();
+                if (background->getFrame() < targetFrame) {
+                    background->setFrame(background->getFrame() + 1);
+                } else if (background->getFrame() > targetFrame) {
+                    background->setFrame(background->getFrame() - 1);
+                }
+            }
     }
 }

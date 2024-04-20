@@ -42,6 +42,7 @@ using namespace std;
  */
 bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     // Initialize the scene to a locked width
+    Input::activate<GameControllerInput>();
     Size dimen = Application::get()->getDisplaySize();
     dimen *= SCENE_HEIGHT/dimen.height;
     if (assets == nullptr) {
@@ -52,7 +53,6 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     
     // Start up the input handler
     _assets = assets;
-    _input.init_withlistener();
     // Acquire the scene built by the asset loader and resize it the scene
     //std::shared_ptr<scene2::SceneNode> scene = _assets->get<scene2::SceneNode>("menu");
     //scene->setContentSize(dimen);
@@ -132,8 +132,6 @@ void MainMenuScene::setActive(bool value) {
         if (value) {
             _choice = Choice::NONE;
             _isdown = Isdown::isNONE;
-            //_hostbutton->activate();
-            //_joinbutton->activate();
             _button1->activate();
             _button2->activate();
             _button3->activate();
@@ -144,11 +142,7 @@ void MainMenuScene::setActive(bool value) {
             _button1->setDown(false);
             _button2->setDown(false);
             _button3->setDown(false);
-            //_hostbutton->deactivate();
-            //_joinbutton->deactivate();
-            // If any were pressed, reset them
-            //_hostbutton->setDown(false);
-            //_joinbutton->setDown(false);
+            _input.resetcontroller();
         }
     }
 }

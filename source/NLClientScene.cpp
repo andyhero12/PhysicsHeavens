@@ -70,7 +70,7 @@ bool ClientScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::s
     // Start up the input handler
     _assets = assets;
     _network = network;
-    _input.init_withlistener();
+    //_input.init_withlistener();
     // Acquire the scene built by the asset loader and resize it the scene
     std::shared_ptr<scene2::SceneNode> scene = _assets->get<scene2::SceneNode>("client");
     scene->setContentSize(dimen);

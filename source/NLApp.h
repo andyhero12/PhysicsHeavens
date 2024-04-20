@@ -22,6 +22,7 @@
 #include "PauseScene.h"
 #include "NLMainMenuScene.h"
 #include "LevelScene.h"
+#include "NLInput.h"
 
 using namespace cugl::physics2::net;
 
@@ -63,6 +64,8 @@ protected:
     HostScene _hostgame;
 
     LevelScene _level;
+
+    InputController _input;
     
     /** Whether or not we have finished loading all assets */
     bool _loaded;

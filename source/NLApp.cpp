@@ -52,7 +52,7 @@ void NetApp::onStartup() {
     
     _loading.init(_assets);
     _status = LOAD;
-    
+    //_input.init_withlistener();
     // Que up the other assets
     AudioEngine::start(24);
     _assets->loadDirectoryAsync("json/assets.json",nullptr);
@@ -244,11 +244,10 @@ void NetApp::updateMenuScene(float timestep) {
 void NetApp::updateHostScene(float timestep) {
     _hostgame.update(timestep);
     if(_hostgame.getBackClicked()){
-        _status = MAINMENU;
+        _status = LEVEL;
         _hostgame.setActive(false);
-        _mainmenu.setActive(true);
-        _level.setActive(false);
-        //_menu.setActive(true);
+        _level.setActive(true);
+        _joingame.setActive(false);
     }
     else if (_network->getStatus() == NetEventController::Status::HANDSHAKE && _network->getShortUID()) {
         switch (_level.getLevel()) {
@@ -337,8 +336,8 @@ void NetApp::updateMainScene(float timestep)
     switch (_mainmenu.getChoice()) {
     case MainMenuScene::Choice::SINGLE:
         _mainmenu.setActive(false);
+        _level.setActive(true);
         _status = LEVEL;
-        _level.resetLevel();
         break;
     case MainMenuScene::Choice::COOP:
         _mainmenu.setActive(false);
@@ -360,27 +359,35 @@ void NetApp::updateMainScene(float timestep)
 void NetApp::updateLevelScene(float timestep)
 {
     _level.update(timestep);
-    
-    switch (_level.getLevel()) {
-    case LevelScene::Level::L1:
+    if(_level.getBackclick())
+    {
         _level.setActive(false);
-        _hostgame.setActive(true);
-        _status = HOST;
-        break;
-    case LevelScene::Level::L2:
-        _level.setActive(false);
-        _hostgame.setActive(true);
-        _status = HOST;
-        break;
-    case LevelScene::Level::L3:
-        _level.setActive(false);
-        _hostgame.setActive(true);
-        _status = HOST;
-        break;
-    default :
-        // DO NOTHING
-        break;
+        _mainmenu.setActive(true);
+        _status = MAINMENU;
+    }else{
+        switch (_level.getLevel()) {
+        case LevelScene::Level::L1:
+            _level.setActive(false);
+            _hostgame.setActive(true);
+            _status = HOST;
+            break;
+        case LevelScene::Level::L2:
+            _level.setActive(false);
+            _hostgame.setActive(true);
+            _status = HOST;
+            break;
+        case LevelScene::Level::L3:
+            _level.setActive(false);
+            _hostgame.setActive(true);
+            _status = HOST;
+            break;
+        default :
+            // DO NOTHING
+            break;
+        }
+
     }
+    
     
 }
 
