@@ -169,7 +169,7 @@ void LevelScene::update(float progress)
             }
         }
     }
-    if (_input._confirm){
+    if (_input._confirm &&readyToChangeLevel()){
         _button->setDown(true);
     }
     _input.resetcontroller();
