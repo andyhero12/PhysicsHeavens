@@ -70,7 +70,7 @@ bool ClientScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::s
     // Start up the input handler
     _assets = assets;
     _network = network;
-    //_input.init_withlistener();
+    _input.init();
     // Acquire the scene built by the asset loader and resize it the scene
     std::shared_ptr<scene2::SceneNode> scene = _assets->get<scene2::SceneNode>("client");
     scene->setContentSize(dimen);
@@ -189,18 +189,19 @@ void ClientScene::updateText(const std::shared_ptr<scene2::Button>& button, cons
 void ClientScene::update(float timestep) {
     // Do this last for button safety
     configureStartButton();
-
+    _input.update();
     if(_network->getStatus() == NetEventController::Status::CONNECTED || _network->getStatus() == NetEventController::Status::HANDSHAKE){
         _player->setText(std::to_string(_network->getNumPlayers()));
     }
 
-    if(_input._confirm){
+    if(_input.didPressConfirm()){
         _startgame->setDown(true);
-    }else if(_input._back){
+    }
+
+    if(_input.didPressBack()){
         _backout->setDown(true);
     }
 
-    _input.resetcontroller();
 }
 
 /**

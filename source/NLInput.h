@@ -57,6 +57,8 @@ private:
     bool _didDash;
     bool _didPressLeft;
     bool _didPressRight;
+    bool _didConfirm;
+    bool _didBack;
     cugl::Vec2 _Vel;
 
     bool _UseKeyboard;
@@ -200,7 +202,14 @@ public:
     bool getKeyboardState() {
         return _UseKeyboard;
     }
-    //void updatemainmenubutton();
+
+    bool didPressConfirm(){
+        return _didConfirm;
+    };
+
+    bool didPressBack(){
+        return _didBack;
+    }
 
     void resetcontroller();
 

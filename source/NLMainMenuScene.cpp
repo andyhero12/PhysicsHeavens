@@ -54,13 +54,8 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     // Start up the input handler
     _assets = assets;
     // Acquire the scene built by the asset loader and resize it the scene
-    //std::shared_ptr<scene2::SceneNode> scene = _assets->get<scene2::SceneNode>("menu");
-    //scene->setContentSize(dimen);
-    //scene->doLayout(); // Repositions the HUD
-    //_choice = Choice::NONE;
-    //_hostbutton = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("menu_host"));
-    //_joinbutton = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("menu_join"));
-    
+
+    _input.init();
     _assets->loadDirectory("json/mainmenuassets.json");
     std::shared_ptr<scene2::SceneNode> layer = _assets->get<scene2::SceneNode>("Menu");
     std::cout << dimen.width << "  " << dimen.height << std::endl;
@@ -71,7 +66,7 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _buttonset.push_back(_button3 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("Menu_startmenu_button3")));
     // Program the buttons
     _button1->addListener([this](const std::string& name, bool down) {
-        //std::cout << _input._confirm << std::endl;
+        std::cout << _input._confirm << std::endl;
         if (down) {  
             if(_input.getState()==InputController::State::CONTROLLER){
                 _isdown = Isdown::isSINGLE;
@@ -142,13 +137,13 @@ void MainMenuScene::setActive(bool value) {
             _button1->setDown(false);
             _button2->setDown(false);
             _button3->setDown(false);
-            _input.resetcontroller();
         }
     }
 }
 
 void MainMenuScene::update(float timestep)
 {
+    _input.update();
     timeSinceLastSwitch += timestep;
     //std::cout << timeSinceLastSwitch << std::endl;
     if (timeSinceLastSwitch >= switchFreq) {
@@ -168,16 +163,16 @@ void MainMenuScene::update(float timestep)
         }
     }
     //std::cout << _input._confirm << std::endl;
-    if (_isdown == Isdown::isSINGLE&&_input._confirm) {
+    if (_isdown == Isdown::isSINGLE &&_input.didPressConfirm() ){
         _choice = Choice::SINGLE;
     }
-    else if(_isdown == Isdown::isCOOP && _input._confirm){
+    else if(_isdown == Isdown::isCOOP && _input.didPressConfirm()){
         _choice = Choice::COOP;
     }
-    else if (_isdown == Isdown::isSETTING && _input._confirm) {
+    else if (_isdown == Isdown::isSETTING && _input.didPressConfirm()) {
         _choice = Choice::SETTING;
     }
-    else if (_isdown == Isdown::isNONE && _input._confirm) {
+    else if (_isdown == Isdown::isNONE && _input.didPressConfirm()) {
     }
 
     _input.resetcontroller();

@@ -57,6 +57,7 @@ bool LevelScene::init(const std::shared_ptr<AssetManager> &assets)
         return false;
     }
     //_input.init_withlistener();
+    _input.init();
     // IMMEDIATELY load the splash screen assets
     _assets = assets;
     _assets->loadDirectory("json/level.json");
@@ -151,14 +152,13 @@ void LevelScene::update(float progress)
     resetgochange();
     adjustFrame(level);
 
-    if (_input._confirm && readyToChangeLevel()){
+    if (_input.didPressConfirm() && readyToChangeLevel()){
         _button->setDown(true);
     }
 
-    if(_input._back && readyToChangeLevel()){
+    if(_input.didPressBack() && readyToChangeLevel()){
         _backClicked = true;
     }
-    _input.resetcontroller();
 
     if (firsttime)
     {

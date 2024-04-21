@@ -52,7 +52,6 @@ void NetApp::onStartup() {
     
     _loading.init(_assets);
     _status = LOAD;
-    //_input.init_withlistener();
     // Que up the other assets
     AudioEngine::start(24);
     _assets->loadDirectoryAsync("json/assets.json",nullptr);

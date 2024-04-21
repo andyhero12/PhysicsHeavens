@@ -42,7 +42,9 @@ _confirm(false),
 _controllerKey(0),
 _didPressRight(false),
 _didPressLeft(false),
-_back(false)
+_back(false),
+_didConfirm(false),
+_didBack(false)
 {
 }
 
@@ -56,6 +58,7 @@ bool InputController::init() {
             return false;
         }
         _gameContrl = controller -> open(deviceUUIDs.at(0));
+        _state = State::CONTROLLER;
         return true;
     }
 
@@ -220,8 +223,12 @@ void InputController::resetKeys(){
     _UseKeyboard = false;
     _didPressLeft = false;
     _didPressRight = false;
+    _didConfirm =false;
+    _didBack = false;
     _forward  = 0;
     _turning = 0;
+    _updown = 0;
+    _Leftright = 0;
     _Vel = cugl::Vec2(0, 0);
 }
 
@@ -240,6 +247,16 @@ void InputController::readInput_joystick() {
     if (_gameContrl) {
         float LR = _gameContrl->getAxisPosition(X_left);
         float UD = _gameContrl->getAxisPosition(Y_left);
+
+        if (_gameContrl->isButtonPressed(A)) {
+            _didConfirm = true;
+            _UseJoystick = true;
+            std::cout<<"pressed"<<std::endl;
+        }
+        if (_gameContrl->isButtonPressed(B)) {
+            _didBack = true;
+            _UseJoystick = true;
+        }
 
         if (_gameContrl->isButtonPressed(X)) {
             _didFire = true;
@@ -282,14 +299,21 @@ void InputController::readInput_joystick() {
 
             _Vel = cugl::Vec2(LR, -UD);
             _UseJoystick = true;
-
-           /* if (LR > 0) {
-                _turning = 1;
+            if (UD < -0.2) {
+                _updown = 1; //Up
             }
-            else if (LR < 0) {
-                _turning = -1;
-            }*/
-        }
+            else if (UD > 0.2) {
+                _updown = -1; //down
+            }
+             if (LR < -0.2) {
+                _Leftright = -1; //Left
+            }
+            else if (LR > 0.2) {
+                _Leftright = 1; //Right
+            }
+
+
+    }
     }
 }
 

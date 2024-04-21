@@ -25,7 +25,7 @@ bool PauseScene::init(){
     
     std::shared_ptr<cugl::scene2::SceneNode> exit =cugl::scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("mainmenu"));
 //    exit->setScale(PAUSE_SCALE);
-    
+    //_input.init();
     
     resumeButton = cugl::scene2::Button::alloc(resume, Color4::GRAY);
     exitButton = cugl::scene2::Button::alloc(exit, Color4::GRAY);

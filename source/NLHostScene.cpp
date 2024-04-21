@@ -88,7 +88,7 @@ bool HostScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::sha
     std::shared_ptr<scene2::SceneNode> scene = _assets->get<scene2::SceneNode>("host");
     scene->setContentSize(dimen);
     scene->doLayout(); // Repositions the HUD
-    //_input.init_withlistener();
+    _input.init();
     _startgame = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("host_center_start"));
     _backout = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("host_back"));
     _gameid = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("host_center_game_field_text"));
@@ -197,11 +197,19 @@ void HostScene::update(float timestep) {
     /**
      * TODO: check for the status of `_network` (The NetworkController). If it is CONNECTED, you would need to update the scene nodes so that _gameId displays the id of the room (converted from hex to decimal) and _player displays the number of players. Additionally, you should check whether the `_startgame` button has been pressed and update its text. If it is not pressed yet, then its should display "Start Game" and be activated, otherwise, it should be deactivated and show "Starting".
      */
+
+     _input.update();
 #pragma mark BEGIN SOLUTION
     if(_network->getStatus() == NetEventController::Status::CONNECTED){
         if (!_startGameClicked) {
             updateText(_startgame, "Start Game");
-            _startgame->activate();    
+            _startgame->activate();
+            if(_input.didPressConfirm()){
+                _startgame->setDown(true);
+            } 
+            if(_input.didPressBack()){
+                _backout->setDown(true);
+            }     
         }
         else {
             updateText(_startgame, "Starting");
@@ -209,6 +217,7 @@ void HostScene::update(float timestep) {
         }
 		_gameid->setText(hex2dec(_network->getRoomID()));
         _player->setText(std::to_string(_network->getNumPlayers()));
+        
 	}
 
 #pragma mark END SOLUTION
