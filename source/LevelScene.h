@@ -36,7 +36,6 @@ public:
     enum Level {
             /** User has not yet made a choice */
             L1 = 0,
-            L1 = 0,
             /** User wants to host a game */
             L2,
             /** User wants to join a game */

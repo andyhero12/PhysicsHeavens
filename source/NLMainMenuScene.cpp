@@ -175,5 +175,4 @@ void MainMenuScene::update(float timestep)
     else if (_isdown == Isdown::isNONE && _input.didPressConfirm()) {
     }
 
-    _input.resetcontroller();
 }
