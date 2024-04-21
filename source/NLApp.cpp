@@ -58,6 +58,8 @@ void NetApp::onStartup() {
     _assets->loadAsync<LevelModel>(LEVEL_ONE_KEY,LEVEL_ONE_FILE,nullptr);
     _assets->loadAsync<LevelModel>(LEVEL_TWO_KEY,LEVEL_TWO_FILE,nullptr);
     _assets->loadAsync<LevelModel>(LEVEL_THREE_KEY,LEVEL_THREE_FILE,nullptr);
+    _assets->loadAsync<LevelModel>(LEVEL_TWO_KEY,LEVEL_TWO_FILE,nullptr);
+    _assets->loadAsync<LevelModel>(LEVEL_THREE_KEY,LEVEL_THREE_FILE,nullptr);
     cugl::net::NetworkLayer::start(net::NetworkLayer::Log::INFO);
     
     Application::onStartup(); // YOU MUST END with call to parent
@@ -263,6 +265,20 @@ void NetApp::updateHostScene(float timestep) {
                 CUAssertLog(false, "bad level");
                 break;
         }
+        switch (_level.getLevel()) {
+            case LevelScene::Level::L1:
+                _gameplay.init(_assets, _network, true, LEVEL_ONE_KEY);
+                break;
+            case LevelScene::Level::L2:
+                _gameplay.init(_assets, _network, true, LEVEL_TWO_KEY);
+                break;
+            case LevelScene::Level::L3:
+                _gameplay.init(_assets, _network, true, LEVEL_THREE_KEY);
+                break;
+            default :
+                CUAssertLog(false, "bad level");
+                break;
+        }
         _network->markReady();
     }
     else if (_network->getStatus() == NetEventController::Status::INGAME) {
@@ -297,6 +313,7 @@ void NetApp::updateClientScene(float timestep) {
         _mainmenu.setActive(true);
     }
     else if (_network->getStatus() == NetEventController::Status::HANDSHAKE && _network->getShortUID()) {
+        _gameplay.init(_assets, _network, false, LEVEL_TWO_KEY);
         _gameplay.init(_assets, _network, false, LEVEL_TWO_KEY);
         _network->markReady();
     }
@@ -337,6 +354,7 @@ void NetApp::updateMainScene(float timestep)
         _mainmenu.setActive(false);
         _level.setActive(true);
         _status = LEVEL;
+        _level.resetLevel();
         break;
     case MainMenuScene::Choice::COOP:
         _mainmenu.setActive(false);

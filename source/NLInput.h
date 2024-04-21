@@ -144,6 +144,12 @@ public:
     bool didPressRight() const {
         return _didPressRight;
     }
+    bool didPressLeft() const {
+        return _didPressLeft;
+    }
+    bool didPressRight() const {
+        return _didPressRight;
+    }
     
     bool didChangeMode() const {
         return _didChangeMode;
