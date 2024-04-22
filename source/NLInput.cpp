@@ -153,14 +153,6 @@ void InputController::readInput() {
         _UseKeyboard = true;
         _didPressLeft = true;
     }
-    if (keys->keyPressed(right)){
-        _UseKeyboard = true;
-        _didPressRight = true;
-    }
-    if (keys->keyPressed(left)){
-        _UseKeyboard = true;
-        _didPressLeft = true;
-    }
     // Shooting
     if (keys->keyPressed(shoot)) {
         _didFire = true;
