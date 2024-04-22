@@ -50,7 +50,14 @@ public:
     virtual bool init(const cugl::Vec2& pos, const cugl::Size& size,Terrain m_type, std::shared_ptr<cugl::Texture> m_texture);
     std::shared_ptr<cugl::Texture> texture;
     std::shared_ptr<scene2::PolygonNode> tileSprite;
-
+    bool isUpper;
+    
+    void setUpperTrue(){
+        isUpper = true;
+    }
+    bool getIsUpperDecor(){
+        return isUpper;
+    }
     const std::shared_ptr<scene2::PolygonNode>& getTileSprite(){
         return tileSprite;
     }

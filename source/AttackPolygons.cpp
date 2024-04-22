@@ -121,6 +121,8 @@ void AttackPolygons::addExplode(Vec2 center, float explosionRad){
     std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(explodeSprite, Action::EXPLODE, resultingPolygon, EXPLODE_AGE, 1.0f, 0, center);
     frontAttackPolygonNode->addChild(curPtr->getActionNode());
     Vec2 offset = Vec2(0,0);
+    curPtr->getActionNode()->setAnchor(Vec2::ANCHOR_CENTER);
+    curPtr->getActionNode()->setScale(0.6);
     curPtr->getActionNode()->setPosition(offset * OFFSET_SCALE);
     currentAttacks.insert(curPtr);
 }

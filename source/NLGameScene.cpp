@@ -492,10 +492,7 @@ void GameScene::postUpdate(float dt)
     _rootnode->resetPane();
     for (int i = 0; i < _decorToHide.size(); i++)
     {
-        if (_decorToHide.at(i))
-        {
-            _decorToHide.at(i)->setColor(Color4::WHITE);
-        }
+        _decorToHide.at(i)->setColor(Color4::WHITE);
     }
     _decorToHide.clear();
     Vec2 delta;
@@ -517,34 +514,31 @@ void GameScene::postUpdate(float dt)
         delta = overWorld.getClientDog()->getPosition();
     }
 
-    
-    // TODO OPTIMIZE THIS BY JUST HOLDING THE SHARED POINTER IN TILEINFO INSTEAD OF SEARCHING takes 5% CPU :((
-//    for (int i = -1; i <= 1; i++)
-//    {
-//        for (int j = -1; j <= 1; j++)
-//        {
-//            _decorToHide.push_back(_worldnode->getChildByName("decoration" + std::to_string(int(delta.y + i)) + " " + std::to_string(int(delta.x + j))));
-//        }
-//    }
-//
-//    for (int i = 0; i < _decorToHide.size(); i++)
-//    {
-//        if (_decorToHide.at(i))
-//        {
-//            _decorToHide.at(i)->setColor(Color4f(1, 1, 1, 0.7f));
-//        }
-//    }
-
-//    // hiding decorations
-//    for (const std::shared_ptr<TileInfo>& tile : _backgroundWrapper->getVisibleNodes()){
-//        Vec2 pos = tile->getPosition();
-//        Vec2 dogPos = _isHost ? overWorld.getDog()->getPosition() : overWorld.getClientDog()->getPosition();
-//        if (abs(pos.x - dogPos.x) >= 10 || abs(pos.y - dogPos.y) >= 10){
-//            tile->getTileSprite()->setVisible(false);
-//        }else{
-//            tile->getTileSprite()->setVisible(true);
-//        }
-//    }
+    std::vector<Vec2> upperPosHide;
+    for (int i = -1; i <= 1; i++)
+    {
+        for (int j = -1; j <= 1; j++)
+        {
+            
+            upperPosHide.push_back(Vec2(int(delta.x + j),int(delta.y + i)));
+        }
+    }
+    for (const std::shared_ptr<TileInfo>& tile : _backgroundWrapper->getVisibleNodes()){
+        Vec2 pos = tile->getPosition();
+        Vec2 dogPos = _isHost ? overWorld.getDog()->getPosition() : overWorld.getClientDog()->getPosition();
+        if (abs(pos.x - dogPos.x) >= 15 || abs(pos.y - dogPos.y) >= 15){
+            tile->getTileSprite()->setVisible(false);
+        }else{
+            tile->getTileSprite()->setVisible(true);
+        }
+        if (tile->getIsUpperDecor()&& find(upperPosHide.begin(),upperPosHide.end(), tile->getPosition()) != upperPosHide.end() ){
+            _decorToHide.push_back(tile->getTileSprite());
+        }
+    }
+    for (int i = 0; i < _decorToHide.size(); i++)
+    {
+        _decorToHide.at(i)->setColor(Color4f(1, 1, 1, 0.7f));
+    }
 }
 
 void GameScene::fixedUpdate()
@@ -739,7 +733,7 @@ void GameScene::addChildForeground()
                 std::shared_ptr<TileInfo> t = upperDecorWorld.at(n).at(i).at(j);
                 if (t->texture != nullptr)
                 {
-                    _worldnode->addChildWithName(t->getTileSprite(), "decoration" + std::to_string(i) + " " + std::to_string(j));
+                    _worldnode->addChild(t->getTileSprite());
                 }
             }
         }
