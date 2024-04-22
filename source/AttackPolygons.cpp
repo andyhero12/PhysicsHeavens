@@ -58,7 +58,7 @@ ActionPolygon::ActionPolygon( std::shared_ptr<SpriteAnimationNode> actionSprite,
     _expired = false;
     _polygon = false;
     spriteActionNode = actionSprite;
-    _scale = scale * BITE_SCALE;
+    _scale = scale;
     spriteActionNode->setScale(_scale);
 }
 

@@ -437,11 +437,11 @@ void GameScene::preUpdate(float dt)
         return;
     }
     if (_isHost){
-        float zoom = _zoom - (ROOT_NODE_SCALE - 0.6f* (float)overWorld.getDog()->getAbsorb() / (float)overWorld.getDog()->getMaxAbsorb());
+        float zoom = _zoom - (ROOT_NODE_SCALE - 0.5f* (float)overWorld.getDog()->getAbsorb() / (float)overWorld.getDog()->getMaxAbsorb());
         _zoom -= fmin(zoom, 0.01f) * (zoom < 0 ? 0.12f : 0.3f);
         _rootnode->setScale(_zoom);
     }else{
-        float zoom = _zoom - (ROOT_NODE_SCALE - 0.6f* (float)overWorld.getClientDog()->getAbsorb() / (float)overWorld.getClientDog()->getMaxAbsorb());
+        float zoom = _zoom - (ROOT_NODE_SCALE - 0.5f* (float)overWorld.getClientDog()->getAbsorb() / (float)overWorld.getClientDog()->getMaxAbsorb());
         _zoom -= fmin(zoom, 0.01f) * (zoom < 0 ? 0.12f : 0.3f);
         _rootnode->setScale(_zoom);
     }
@@ -517,23 +517,34 @@ void GameScene::postUpdate(float dt)
         delta = overWorld.getClientDog()->getPosition();
     }
 
-    for (int i = -1; i <= 1; i++)
-    {
-        for (int j = -1; j <= 1; j++)
-        {
-            _decorToHide.push_back(_worldnode->getChildByName("decoration" + std::to_string(int(delta.y + i)) + " " + std::to_string(int(delta.x + j))));
-        }
-    }
+    
+    // TODO OPTIMIZE THIS BY JUST HOLDING THE SHARED POINTER IN TILEINFO INSTEAD OF SEARCHING takes 5% CPU :((
+//    for (int i = -1; i <= 1; i++)
+//    {
+//        for (int j = -1; j <= 1; j++)
+//        {
+//            _decorToHide.push_back(_worldnode->getChildByName("decoration" + std::to_string(int(delta.y + i)) + " " + std::to_string(int(delta.x + j))));
+//        }
+//    }
+//
+//    for (int i = 0; i < _decorToHide.size(); i++)
+//    {
+//        if (_decorToHide.at(i))
+//        {
+//            _decorToHide.at(i)->setColor(Color4f(1, 1, 1, 0.7f));
+//        }
+//    }
 
-    for (int i = 0; i < _decorToHide.size(); i++)
-    {
-        if (_decorToHide.at(i))
-        {
-            _decorToHide.at(i)->setColor(Color4f(1, 1, 1, 0.7f));
-        }
-    }
-
-    // hiding decorations
+//    // hiding decorations
+//    for (const std::shared_ptr<TileInfo>& tile : _backgroundWrapper->getVisibleNodes()){
+//        Vec2 pos = tile->getPosition();
+//        Vec2 dogPos = _isHost ? overWorld.getDog()->getPosition() : overWorld.getClientDog()->getPosition();
+//        if (abs(pos.x - dogPos.x) >= 10 || abs(pos.y - dogPos.y) >= 10){
+//            tile->getTileSprite()->setVisible(false);
+//        }else{
+//            tile->getTileSprite()->setVisible(true);
+//        }
+//    }
 }
 
 void GameScene::fixedUpdate()
@@ -669,11 +680,10 @@ void GameScene::addChildBackground()
         for (int i = originalRows - 1; i > -1; i--)
         {
             std::shared_ptr<TileInfo> t = currentBackground.at(i).at(j);
-            auto image = t->texture;
-            auto sprite = scene2::PolygonNode::allocWithTexture(image);
-            sprite->setContentSize(Vec2(1, 1));
-            sprite->setPosition(t->getPosition());
-            _worldnode->addChildWithName(sprite, "tileworld" + std::to_string(i) + std::to_string(j));
+            if (t->texture != nullptr)
+            {
+                _worldnode->addChild(t->getTileSprite());
+            }
         }
     }
     const std::vector<std::vector<std::shared_ptr<TileInfo>>> &currentBoundaries = _backgroundWrapper->getBoundaryWorld();
@@ -704,11 +714,7 @@ void GameScene::addChildBackground()
                 std::shared_ptr<TileInfo> t = lowerDecorWorld.at(n).at(i).at(j);
                 if (t->texture != nullptr)
                 {
-                    auto image = t->texture;
-                    auto sprite = scene2::PolygonNode::allocWithTexture(image);
-                    sprite->setContentSize(Vec2(1, 1));
-                    sprite->setPosition(t->getPosition());
-                    _worldnode->addChild(sprite);
+                    _worldnode->addChild(t->getTileSprite());
                 }
             }
         }
@@ -733,11 +739,7 @@ void GameScene::addChildForeground()
                 std::shared_ptr<TileInfo> t = upperDecorWorld.at(n).at(i).at(j);
                 if (t->texture != nullptr)
                 {
-                    auto image = t->texture;
-                    auto sprite = scene2::PolygonNode::allocWithTexture(image);
-                    sprite->setContentSize(Vec2(1, 1));
-                    sprite->setPosition(t->getPosition());
-                    _worldnode->addChildWithName(sprite, "decoration" + std::to_string(i) + " " + std::to_string(j));
+                    _worldnode->addChildWithName(t->getTileSprite(), "decoration" + std::to_string(i) + " " + std::to_string(j));
                 }
             }
         }
