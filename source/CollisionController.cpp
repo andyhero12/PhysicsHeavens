@@ -274,11 +274,6 @@ void CollisionController::resolveBiteAttack(const std::shared_ptr<ActionPolygon>
             result += 360.0f;
         }
         float dist = diff.length();
-//        if (dist <= 3 && action->dealDamage()){
-//            CULog("%s %f",diff.toString().data(), result);
-////            CULog("Attack Angle: %f, angle enemy %f %d",action->getAngle(), ang, withinAngle(action->getAngle()-90.0f, ang, 180.0f));
-////            CULog("%f, %f %f %s %s", dist, ang, diff.getAngle(), enemy->getPosition().toString().data(), action->getCenter().toString().data());
-//        }
         if (withinAngle(action->getAngle()-90.0f, result, 180.0f) && dist <= 3 * action->getScale() && action->dealDamage()){
             hitSomething = true;
             enemy->setHealth(enemy->getHealth() - 1);
@@ -314,13 +309,22 @@ bool CollisionController::healFromBaseCollsion( BaseSet& bset, std::shared_ptr<D
 void CollisionController::hugeBlastCollision(const std::shared_ptr<ActionPolygon>& action, MonsterController& monsterController){
     Poly2 blastRectangle = action->getPolygon();
     std::unordered_set<std::shared_ptr<AbstractEnemy>>& enemies = monsterController.getEnemies();
+    bool hitSomething = false;
     auto itA = enemies.begin();
     while (itA != enemies.end()){
         const std::shared_ptr<AbstractEnemy>& enemy = *itA;
-        Vec2 enemyPos = enemy->getPosition();
         auto curA = itA;
         itA++;
-        if (blastRectangle.contains(enemyPos)){
+        Vec2 diff = enemy->getPosition() - action->getCenter();
+        float ang = diff.getAngle();
+        float result = ((ang > 0 ? ang : (2*M_PI +ang)) * 360 / (2*M_PI)) - 90.0f;
+        if (result < 0.0f){
+            result += 360.0f;
+        }
+        float dist = diff.length();
+        CULog("Distance %f Scale %f", dist, action->getScale());
+        if (withinAngle(action->getAngle()-45.0f, result, 90.0f) && dist <= 5.5f * action->getScale()){
+            hitSomething = true;
             monsterController.removeEnemy(enemy);
             enemies.erase(curA);
         }
@@ -333,7 +337,9 @@ void CollisionController::resolveBlowup(const std::shared_ptr<ActionPolygon>& ac
     while (itA != monsterEnemies.end()){
         const std::shared_ptr<AbstractEnemy>& enemy = *itA;
         auto curA = itA++;
-        if (blastCircle.contains(enemy->getPosition())){
+        Vec2 diff = enemy->getPosition() - action->getCenter();
+        float dist = diff.length();
+        if (dist <= 3.0f * action->getScale()){
             monsterController.removeEnemy(enemy);
             monsterEnemies.erase(curA);
         }
@@ -343,11 +349,10 @@ void CollisionController::resolveBlowup(const std::shared_ptr<ActionPolygon>& ac
         const std::shared_ptr<AbstractSpawner>& spawn = *itS;
         auto curS = itS;
         itS++;
-        if (blastCircle.contains(spawn->getPos())){
-            //CULog("wtf");
+        Vec2 diff = spawn->getPos() - action->getCenter();
+        float dist = diff.length();
+        if (dist <= 3.0f * action->getScale()){
             spawn->subHealth(999);
-            //spawn->getSpawnerNode()->removeFromParent();
-            //spawners.erase(curS);
         }
     }
 }
