@@ -49,6 +49,18 @@ public:
     
     virtual bool init(const cugl::Vec2& pos, const cugl::Size& size,Terrain m_type, std::shared_ptr<cugl::Texture> m_texture);
     std::shared_ptr<cugl::Texture> texture;
+    std::shared_ptr<scene2::PolygonNode> tileSprite;
+    bool isUpper;
+    
+    void setUpperTrue(){
+        isUpper = true;
+    }
+    bool getIsUpperDecor(){
+        return isUpper;
+    }
+    const std::shared_ptr<scene2::PolygonNode>& getTileSprite(){
+        return tileSprite;
+    }
     Terrain type;
     TileInfo(){
         
@@ -74,6 +86,9 @@ public:
     std::vector<std::vector<std::shared_ptr<TileInfo>>> boundaryWorld;
     std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>> lowerDecorWorld;
     std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>> upperDecorWorld;
+    
+    std::vector<std::shared_ptr<TileInfo>> allTiles;
+    
     World () {};
     ~World(){
         CULog("Destructing World");
@@ -82,6 +97,10 @@ public:
 
     std::shared_ptr<cugl::Texture> getBoxFromTileSet(int position, const std::map<int,TileSet>& tileSets);
     
+    
+    const std::vector<std::shared_ptr<TileInfo>>& getVisibleNodes(){
+        return allTiles;
+    }
     const std::vector<std::vector<std::shared_ptr<TileInfo>>>& getTileWorld(){
         return tileWorld;
     }

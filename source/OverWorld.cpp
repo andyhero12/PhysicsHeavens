@@ -516,12 +516,12 @@ void OverWorld::processBiteEvent(const std::shared_ptr<BiteEvent> &biteEvent)
     bool incomingHost = biteEvent->isHost();
     if (incomingHost)
     {
-        _attackPolygonSet.addBite(center, ang, _dog->getBiteRadius(), _dog->getAbsorb() / _dog->getMaxAbsorb());
+        _attackPolygonSet.addBite(center, ang, _dog->getBiteRadius(), (float)_dog->getAbsorb() / _dog->getMaxAbsorb());
         _dog->startBite();
     }
     else
     {
-        _clientAttackPolygonSet.addBite(center, ang, _dogClient->getBiteRadius(), _dogClient->getAbsorb() / _dogClient->getMaxAbsorb());
+        _clientAttackPolygonSet.addBite(center, ang, _dogClient->getBiteRadius(), (float)_dogClient->getAbsorb() / _dogClient->getMaxAbsorb());
         _dogClient->startBite();
     }
 }

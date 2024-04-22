@@ -30,6 +30,9 @@ World::World(std::shared_ptr<LevelModel> _level, std::shared_ptr<cugl::AssetMana
             std::shared_ptr<Texture> subTexture = getBoxFromTileSet((map.at(i).at(j)),tileSetTextures);
             Rect temp = Rect(Vec2(j,i), size); // VERY IMPORTANT DO NOT CHANGE Rotation Occurs Here
             tileWorld.at(i).at(j) = TileInfo::alloc(temp.origin, size, Terrain::PASSABLE, getBoxFromTileSet((map.at(i).at(j)),tileSetTextures));
+            if (subTexture != nullptr){
+                allTiles.push_back(tileWorld.at(i).at(j));
+            }
         }
     }
     boundaryWorld.resize(map.size());
@@ -54,8 +57,11 @@ World::World(std::shared_ptr<LevelModel> _level, std::shared_ptr<cugl::AssetMana
             lowerDecorWorld.at(n).at(i).resize(originalCols);
             for (int j =0 ;j < originalCols; j++){
                 std::shared_ptr<Texture> subTexture = getBoxFromTileSet((lowerDecorations.at(n).at(i).at(j)),tileSetTextures);
-                Rect temp = Rect(Vec2(j,i), size);
+                Rect temp = Rect(Vec2(j,i), size); // VERY IMPORTANT DO NOT CHANGE Rotation Occurs Here
                 lowerDecorWorld.at(n).at(i).at(j) = TileInfo::alloc(temp.origin, size, Terrain::IMPASSIBLE, getBoxFromTileSet((lowerDecorations.at(n).at(i).at(j)),tileSetTextures));
+                if (subTexture != nullptr){
+                    allTiles.push_back(lowerDecorWorld.at(n).at(i).at(j));
+                }
             }
         }
     }
@@ -69,6 +75,10 @@ World::World(std::shared_ptr<LevelModel> _level, std::shared_ptr<cugl::AssetMana
                 std::shared_ptr<Texture> subTexture = getBoxFromTileSet((upperDecorations.at(n).at(i).at(j)),tileSetTextures);
                 Rect temp = Rect(Vec2(j,i), size);
                 upperDecorWorld.at(n).at(i).at(j) = TileInfo::alloc(temp.origin, size, Terrain::IMPASSIBLE, getBoxFromTileSet((upperDecorations.at(n).at(i).at(j)),tileSetTextures));
+                if (subTexture != nullptr){
+                    allTiles.push_back(upperDecorWorld.at(n).at(i).at(j));
+                    upperDecorWorld.at(n).at(i).at(j)->setUpperTrue();
+                }
             }
         }
     }
@@ -77,6 +87,7 @@ World::World(std::shared_ptr<LevelModel> _level, std::shared_ptr<cugl::AssetMana
 bool TileInfo::init(const cugl::Vec2& pos, const cugl::Size& size,Terrain m_type, std::shared_ptr<cugl::Texture> m_texture)
 {
     if (BoxObstacle::init(pos,size)){
+        isUpper = false;
         setShared(false);
         clearSharingDirtyBits();
         setBodyType(b2_staticBody);
@@ -85,11 +96,17 @@ bool TileInfo::init(const cugl::Vec2& pos, const cugl::Size& size,Terrain m_type
         setRestitution(0.1);
         type = m_type;
         texture = m_texture;
+        if (texture){
+            tileSprite = scene2::PolygonNode::allocWithTexture(texture);
+            tileSprite->setContentSize(Vec2(1, 1));
+            tileSprite->setPosition(getPosition());
+        }else{
+            tileSprite = nullptr;
+        }
         return true;
     }
     return false;
 }
-
 std::shared_ptr<cugl::Texture> World::getBoxFromTileSet(int position, const std::map<int,TileSet>& tileSets){
     if (position == 0){
         return nullptr;
@@ -134,23 +151,5 @@ const bool World::isPassable(int x, int y){
     if(x < 0 || y < 0 || x >= getCols() || y >= getRows()){
         return false;
     }
-    
-//    for (int i = 0; i < getRows(); ++i) {
-//        for (int j = 0; j < getCols(); ++j) {
-//            CULog("IS PASSABLE: %d", (int) (getBoundaryWorld().at(i).at(j)->type == PASSABLE));
-//        }
-//    }
-    
-    // Iterate over rows
-//    for (const auto &row : getBoundaryWorld()) {
-//        // Iterate over columns
-//        for (std::shared_ptr<TileInfo> elem : row) {
-//            std::cout << elem->type << " ";
-//        }
-//        std::cout << std::endl; // Newline after each row for better formatting
-//    }
-    
-//    std::cout << std::endl;
-    
     return getBoundaryWorld().at(y).at(x)->type == PASSABLE;
 }
