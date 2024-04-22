@@ -411,8 +411,10 @@ bool OverWorld::initPolygons()
 {
     _attackPolygonSet.init();
     _attackPolygonSet.setTexture(_assets->get<cugl::Texture>("leftbite"), _assets->get<cugl::Texture>("rightbite"), _assets->get<cugl::Texture>("frontbite"), _assets->get<cugl::Texture>("leftbite"));
+    _attackPolygonSet.setBombTexture(_assets->get<cugl::Texture>("explodingGate"));
     _clientAttackPolygonSet.init();
     _clientAttackPolygonSet.setTexture(_assets->get<cugl::Texture>("leftbite"), _assets->get<cugl::Texture>("rightbite"), _assets->get<cugl::Texture>("frontbite"), _assets->get<cugl::Texture>("leftbite"));
+    _clientAttackPolygonSet.setBombTexture(_assets->get<cugl::Texture>("explodingGate"));
     return true;
 }
 
@@ -447,12 +449,6 @@ bool OverWorld::setRootNode(const std::shared_ptr<scene2::SceneNode> &_worldNode
     _worldNode->addChild(_decoys->getDecoySetNode());
 
     _worldNode->addChild(_bases->getBaseSetNode());
-//    // Add Bases to the World Node
-//    for (auto &base : _bases->_bases)
-//    {
-//        std::shared_ptr<scene2::SceneNode> baseNode = base->getSceneNode();
-//        _worldNode->addChild(base->getSceneNode());
-//    }
 
     // Add Dog to Obstacle World
     _worldNet->initObstacle(_dog);

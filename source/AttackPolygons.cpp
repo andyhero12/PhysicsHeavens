@@ -6,7 +6,7 @@
 
 #include "AttackPolygons.h"
 #define BITE_AGE 2
-
+#define EXPLODE_AGE 2
 #include "NLDog.h"
 // used to translate attacks to originate from the dog's head
 #define BITE_HEAD_OFFSET_RATIO 0.8f
@@ -115,11 +115,13 @@ void AttackPolygons::addShoot(Vec2 center, float angle, float shootRadius){
 }
 
 void AttackPolygons::addExplode(Vec2 center, float explosionRad){
+    std::shared_ptr<SpriteAnimationNode> explodeSprite = SpriteAnimationNode::allocWithSheet(bombTexture, 4, 5, 20, 3);
     PolyFactory curFactory;
     Poly2 resultingPolygon = curFactory.makeCircle(center, explosionRad);
-    std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(Action::EXPLODE, resultingPolygon, max_age, 1.0f , 0, center);
-    backAttackPolygonNode->addChild(curPtr->getActionNode());
-    curPtr->getActionNode()->setScale(OFFSET_SCALE * 1.5);
+    std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(explodeSprite, Action::EXPLODE, resultingPolygon, EXPLODE_AGE, 1.0f, 0, center);
+    frontAttackPolygonNode->addChild(curPtr->getActionNode());
+    Vec2 offset = Vec2(0,0);
+    curPtr->getActionNode()->setPosition(offset * OFFSET_SCALE);
     currentAttacks.insert(curPtr);
 }
 
@@ -153,7 +155,7 @@ void AttackPolygons::addBite(Vec2 center, float angle, float explosionRad, float
     else{
         backAttackPolygonNode->addChild(curPtr->getActionNode());
     }
-    Vec2 offset = Vec2(SDL_cosf((angle + 90) * 3.14f / 180), SDL_sinf((angle + 90) * 3.14f / 180)) * DOG_SIZE.x * BITE_HEAD_OFFSET_RATIO;
+    Vec2 offset = Vec2(cosf((angle + 90) * 3.14f / 180), sinf((angle + 90) * 3.14f / 180)) * DOG_SIZE.x * BITE_HEAD_OFFSET_RATIO;
     curPtr->getActionNode()->setPosition(offset * OFFSET_SCALE);
     currentAttacks.insert(curPtr);
 }
@@ -163,5 +165,10 @@ bool AttackPolygons::setTexture(const std::shared_ptr<cugl::Texture> &biteL, con
     biteLeftTexture = biteL;
     biteFrontTexture = biteF;
     biteBackTexture = biteF;
+    return true;
+}
+
+bool AttackPolygons::setBombTexture(const std::shared_ptr<cugl::Texture> &bomb){
+    bombTexture = bomb;
     return true;
 }

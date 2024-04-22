@@ -69,6 +69,7 @@ private:
     std::shared_ptr<cugl::Texture> biteLeftTexture;
     std::shared_ptr<cugl::Texture> biteFrontTexture;
     std::shared_ptr<cugl::Texture> biteBackTexture;
+    std::shared_ptr<cugl::Texture> bombTexture;
     float zorder;
 public:
     // Have AttackPolygon Set hold all possible textures for bite, shoot, explode
@@ -77,6 +78,9 @@ public:
     AttackPolygons();
     bool init();
     bool setTexture(const std::shared_ptr<cugl::Texture> &biteL, const std::shared_ptr<cugl::Texture> &biteR, const std::shared_ptr<cugl::Texture> &biteF, const std::shared_ptr<cugl::Texture> &biteB);
+    
+    bool setBombTexture(const std::shared_ptr<cugl::Texture>& bomb);
+    
     bool isEmpty() const { return currentAttacks.empty(); }
     void update();
     void addShoot(Vec2 center, float angle, float shootRadius);
