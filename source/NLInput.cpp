@@ -35,7 +35,6 @@ _didDebug(false),
 _didExit(false),
 _didFire(false),
 _didPause(false),
-_pause(false),
 _updown(0.0),
 _Leftright(0.0),
 _confirm(false),
@@ -51,7 +50,6 @@ _didBack(false)
 bool InputController::init() {
     // Needed
     resetKeys();
-    _pause = false;
     bool contSuccess = Input::activate<GameControllerInput>();
 
     if (contSuccess) {
@@ -170,7 +168,6 @@ void InputController::readInput() {
     
     // Pause the game
     if (keys->keyPressed(pause)) {
-        _pause = !_pause;
         _didPause = true;
         _UseKeyboard = true;
     }
@@ -291,7 +288,6 @@ void InputController::readInput_joystick() {
             _UseJoystick = true;
         }
           if (_gameContrl->isButtonPressed(Start)) {
-            _pause = !_pause;
             _didPause = true;
             _UseJoystick = true;
         }

@@ -42,8 +42,6 @@ private:
     AttackPolygons _clientAttackPolygonSet;
     std::shared_ptr<World> _world;
 
-    void drawDecoy(const std::shared_ptr<cugl::SpriteBatch> &batch);
-
 public:
     bool _isHost;
     OverWorld()
@@ -110,10 +108,6 @@ public:
     AttackPolygons &getAttackPolygonsClient()
     {
         return _clientAttackPolygonSet;
-    }
-    void setDog(std::shared_ptr<Dog> m_dog)
-    {
-        _dog = m_dog;
     }
     void dispose();
 };

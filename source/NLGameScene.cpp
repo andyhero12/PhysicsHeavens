@@ -442,8 +442,7 @@ void GameScene::preUpdate(float dt)
     }
     if (_input.didPressPause())
     {
-        CULog("pressed Pause");
-        _pause->setPause(_input.getPause());
+        _pause->togglePause();
     }
 
     if (_input.didPressReset())
