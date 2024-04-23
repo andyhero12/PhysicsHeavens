@@ -49,6 +49,9 @@ _didBack(false)
 }
 
 bool InputController::init() {
+    // Needed
+    resetKeys();
+    _pause = false;
     bool contSuccess = Input::activate<GameControllerInput>();
 
     if (contSuccess) {
@@ -167,9 +170,7 @@ void InputController::readInput() {
     
     // Pause the game
     if (keys->keyPressed(pause)) {
-//        CULog(" pressed P before : %d", _pause);
         _pause = !_pause;
-//        CULog(" pressed P after : %d", _pause);
         _didPause = true;
         _UseKeyboard = true;
     }
