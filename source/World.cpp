@@ -116,8 +116,8 @@ std::shared_ptr<cugl::Texture> World::getBoxFromTileSet(int position, const std:
     const TileSet& curTile = neededIterator->second;
 //    CULog("%s", curTile.tileJson->toString().data());
     int tileHeight = curTile.tileJson->get("tileheight")->asInt();
-    int tileWidth  = curTile.tileJson->get("tilewidth")->asInt();
-    int columns    =curTile.tileJson->get("columns")->asInt();
+//    int tileWidth  = curTile.tileJson->get("tilewidth")->asInt();
+//    int columns    =curTile.tileJson->get("columns")->asInt();
     int boxSize = tileHeight;  // Each box is 32x32 pixels (currently)
     float textureWidth = curTile.tileJson->get("imagewidth")->asFloat();
     float textureHeight = curTile.tileJson->get("imageheight")->asFloat();

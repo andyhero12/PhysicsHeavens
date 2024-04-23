@@ -212,7 +212,7 @@ bool CollisionController::monsterDecoyExplosionCollision(std::shared_ptr<DecoySe
     float decoyRadius = 2.00f;
     while (itDec != removedDecoys.end()){
         const std::shared_ptr<Decoy>& decoy= *itDec;
-        auto curDec = itDec;
+//        auto curDec = itDec;
         itDec++;
         while(itMon != curEnemies.end()){
             const std::shared_ptr<AbstractEnemy>& enemy = *itMon;
@@ -347,7 +347,7 @@ void CollisionController::resolveBlowup(const std::shared_ptr<ActionPolygon>& ac
     auto itS = spawners.begin();
     while (itS != spawners.end()){
         const std::shared_ptr<AbstractSpawner>& spawn = *itS;
-        auto curS = itS;
+//        auto curS = itS;
         itS++;
         Vec2 diff = spawn->getPos() - action->getCenter();
         float dist = diff.length();
@@ -365,7 +365,7 @@ bool CollisionController::absorbEnemMonsterCollision(MonsterController& monsterC
     auto itMon = monsterEnemies.begin();
     while (itAbs != absorbCurEnemies.end()){
         const std::shared_ptr<AbsorbEnemy>& absEnemy = *itAbs;
-        auto curAbs = itAbs;
+//        auto curAbs = itAbs;
         itAbs++;
         while(itMon != monsterEnemies.end()){
             const std::shared_ptr<AbstractEnemy>& curEnemy = *itMon;

@@ -274,15 +274,12 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 
     _uinode->setContentSize(dimen);
     _uinode->doLayout();
-    
-    CULog("%s", computeActiveSize().toString().data());
 
     loseNode = cugl::scene2::PolygonNode::allocWithTexture(_assets->get<cugl::Texture>("lose_screen"));
     loseNode->setContentSize(dimen);
     loseNode->setAnchor(Vec2::ANCHOR_CENTER);
     loseNode->setPosition(0.5 * loseNode->getSize());
     
-    CULog("%s", computeActiveSize().toString().data());
     winNode = cugl::scene2::PolygonNode::allocWithTexture(_assets->get<cugl::Texture>("win_screen"));
     winNode->setContentSize(dimen);
     winNode->setAnchor(Vec2::ANCHOR_CENTER);

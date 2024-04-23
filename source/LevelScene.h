@@ -116,7 +116,7 @@ public:
     level(1),
     firsttime(true),
     _backClicked(false){
-        frameTargets = {
+    frameTargets = {
         {1, 2},
         {2, 8},
         {3, 14}

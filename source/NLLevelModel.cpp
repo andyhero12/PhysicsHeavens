@@ -238,7 +238,7 @@ bool LevelModel::loadNumDecor(const std::shared_ptr<JsonValue>& json){
             _numUpperDecorLayers = properties->get(0)->get("value")->asInt();
             _upperDecorLayers.resize(_numUpperDecorLayers);
         }else{
-            CUAssertLog("name not lower or upper %s", name.data());
+            CUAssertLog(false, "name not lower or upper %s", name.data());
         }
     }
     return true;

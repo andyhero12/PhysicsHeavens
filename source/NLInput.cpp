@@ -162,6 +162,7 @@ void InputController::readInput() {
 
     // Reset the game
     if (keys->keyPressed(reset)) {
+        _didBack = true;
         _didReset = true;
         _UseKeyboard = true;
     }
@@ -171,7 +172,6 @@ void InputController::readInput() {
         _didPause = true;
         _UseKeyboard = true;
     }
-    
     // Movement forward/backward
 
     if (keys->keyPressed(mode)) {
