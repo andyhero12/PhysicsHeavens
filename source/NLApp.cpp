@@ -305,6 +305,7 @@ void NetApp::updateClientScene(float timestep) {
         _status = GAME;
     }
     else if (_network->getStatus() == NetEventController::Status::NETERROR) {
+        CULog("Got Net Error");
         _network->disconnect();
 		_joingame.setActive(false);
 		_mainmenu.setActive(true);
@@ -338,12 +339,14 @@ void NetApp::updateMainScene(float timestep)
         _level.setActive(true);
         _status = LEVEL;
         _level.resetLevel();
+        isHosting = true;
         break;
     case MainMenuScene::Choice::COOP:
         _mainmenu.setActive(false);
-        //_menu.setActive(true);
-        _joingame.setActive(true);
-        _status = CLIENT;
+        _level.setActive(true);
+        _status = LEVEL;
+        _level.resetLevel();
+        isHosting = false;
         break;
     case MainMenuScene::Choice::SETTING:
         //_mainmenu.setActive(false);
@@ -366,29 +369,42 @@ void NetApp::updateLevelScene(float timestep)
         _status = MAINMENU;
     }else{
         switch (_level.getLevel()) {
-        case LevelScene::Level::L1:
-            _level.setActive(false);
-            _hostgame.setActive(true);
-            _status = HOST;
-            break;
-        case LevelScene::Level::L2:
-            _level.setActive(false);
-            _hostgame.setActive(true);
-            _status = HOST;
-            break;
-        case LevelScene::Level::L3:
-            _level.setActive(false);
-            _hostgame.setActive(true);
-            _status = HOST;
-            break;
-        default :
-            // DO NOTHING
-            break;
-        }
+            case LevelScene::Level::L1:
+                _level.setActive(false);
+                if (isHosting){
+                    _hostgame.setActive(true);
+                    _status = HOST;
+                }else{
+                    _joingame.setActive(true);
+                    _status = CLIENT;
+                }
+                break;
+            case LevelScene::Level::L2:
+                _level.setActive(false);
+                if (isHosting){
+                    _hostgame.setActive(true);
+                    _status = HOST;
+                }else{
+                    _joingame.setActive(true);
+                    _status = CLIENT;
+                }
+                break;
+            case LevelScene::Level::L3:
+                _level.setActive(false);
+                if (isHosting){
+                    _hostgame.setActive(true);
+                    _status = HOST;
+                }else{
+                    _joingame.setActive(true);
+                    _status = CLIENT;
+                }
+                break;
+            default :
+                // DO NOTHING
+                break;
+            }
 
     }
-    
-    
 }
 
 /**

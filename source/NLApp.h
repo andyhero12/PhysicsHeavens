@@ -69,7 +69,7 @@ protected:
     
     /** Whether or not we have finished loading all assets */
     bool _loaded;
-    
+    bool isHosting;
     Status _status;
 
     float timeSinceLastSwitch;
@@ -87,7 +87,7 @@ public:
      * of initialization from the constructor allows main.cpp to perform
      * advanced configuration of the application before it starts.
      */
-    NetApp() : cugl::Application(), _loaded(false) {}
+    NetApp() : cugl::Application(), _loaded(false), isHosting(false) {}
     
     /**
      * Disposes of this application, releasing all resources.
