@@ -336,7 +336,24 @@ void GameScene::dispose()
         _world = nullptr;
         _worldnode = nullptr;
         _debugnode = nullptr;
+        _rootnode = nullptr;
+        _monsterSceneNode = nullptr;
+        _network = nullptr;
+        _decorToHide.clear();
+        _backgroundWrapper = nullptr;
+        _pause = nullptr;
+        _level = nullptr;
+        winNode = nullptr;
+        loseNode = nullptr;
+        _uinode = nullptr;
         _debug = false;
+        _constants = nullptr;
+        _assets = nullptr;
+        
+        _monsterController.dispose();
+        _spawnerController.dispose();
+        _collisionController.dispose();
+        overWorld.dispose();
         Scene2::dispose();
     }
 }

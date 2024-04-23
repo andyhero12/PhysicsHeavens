@@ -128,9 +128,6 @@ void MonsterController::setAbsorbAnimationData(std::shared_ptr<cugl::JsonValue> 
     _absorbEnemyFactory = AbsorbFactory::alloc(data, _assets);
     _absorbEnemyFactID = _network->getPhysController()->attachFactory(_absorbEnemyFactory);
 }
-void MonsterController::setHealthBar(std::shared_ptr<cugl::scene2::ProgressBar> bar){
-    _healthBar = bar;
-}
 
 void MonsterController::powerSize(float power, Size& size) {
     size *= power;
@@ -150,7 +147,6 @@ void MonsterController::spawnAbsorbEnemy(cugl::Vec2 pos, OverWorld& overWorld, f
     hp = powerHealth(power, hp);
     auto params = _absorbEnemyFactory->serializeParams(pos, mySize, 3, 0);
     auto pair = _network->getPhysController()->addSharedObstacle(_absorbEnemyFactID, params);
-//        static_enemy->setHealthBar(_healthBar);
     pair.first->setDebugScene(_debugNode);
     if (auto static_enemy = std::dynamic_pointer_cast<AbstractEnemy>(pair.first)){
         _pending.emplace(static_enemy);
@@ -170,7 +166,6 @@ void MonsterController::spawnBasicEnemy(cugl::Vec2 pos, OverWorld& overWorld, fl
     hp = powerHealth(power, hp);
     auto params = _meleeFactory->serializeParams(pos, mySize, hp, chosenTarget);
     auto pair = _network->getPhysController()->addSharedObstacle(_meleeFactID, params);
-//        static_enemy->setHealthBar(_healthBar);
     pair.first->setDebugScene(_debugNode);
     if (auto static_enemy = std::dynamic_pointer_cast<AbstractEnemy>(pair.first)){
         _pending.emplace(static_enemy);
@@ -188,7 +183,6 @@ void MonsterController::spawnSpawnerEnemy(cugl::Vec2 pos, OverWorld& overWorld, 
     hp = powerHealth(power, hp);
     auto params = _meleeFactory->serializeParams(pos, mySize, 3, chosenTarget);
     auto pair = _network->getPhysController()->addSharedObstacle(_spawnerEnemyFactID, params);
-//        static_enemy->setHealthBar(_healthBar);
     pair.first->setDebugScene(_debugNode);
     if (auto static_enemy = std::dynamic_pointer_cast<AbstractEnemy>(pair.first)){
         _pending.emplace(static_enemy);
@@ -205,7 +199,6 @@ void MonsterController::spawnStaticBasicEnemy(cugl::Vec2 pos, OverWorld& overWor
     hp = powerHealth(power, hp);
     auto params = _staticMeleeFactory->serializeParams(pos, mySize, hp, 0);
     auto pair = _network->getPhysController()->addSharedObstacle(_staticMeleeFactID, params);
-//        static_enemy->setHealthBar(_healthBar);
     pair.first->setDebugScene(_debugNode);
     if (auto static_enemy = std::dynamic_pointer_cast<AbstractEnemy>(pair.first)){
         _pending.emplace(static_enemy);
@@ -222,7 +215,6 @@ void MonsterController::spawnBombEnemy(cugl::Vec2 pos, OverWorld& overWorld, flo
     hp = powerHealth(power, hp);
     auto params = _bombEnemyFactory->serializeParams(pos, mySize, hp, 0);
     auto pair = _network->getPhysController()->addSharedObstacle(_bombEnemyFactID, params);
-//        static_enemy->setHealthBar(_healthBar);
     pair.first->setDebugScene(_debugNode);
     if (auto static_enemy = std::dynamic_pointer_cast<AbstractEnemy>(pair.first)){
         _pending.emplace(static_enemy);
@@ -234,4 +226,25 @@ void MonsterController::removeEnemy(std::shared_ptr<AbstractEnemy> enemy){
     if (auto absorb  = std::dynamic_pointer_cast<AbsorbEnemy>(enemy)){
         _absorbEnem.erase(absorb);
     }
+}
+
+void MonsterController::dispose(){
+    _staticMeleeFactory = nullptr;
+    _meleeFactory = nullptr;
+    _bombEnemyFactory = nullptr;
+    _spawnerEnemyFactory = nullptr;
+    _absorbEnemyFactory = nullptr;
+    _current.clear();
+    _pending.clear();
+    _absorbEnem.clear();
+    _network = nullptr;
+    _debugNode = nullptr;
+    monsterControllerSceneNode = nullptr;
+    meleeAnimationData._textures.clear();
+    meleeAnimationData._attackTextures.clear();
+    absorbAnimationData._textures.clear();
+    absorbAnimationData._attackTextures.clear();
+    bombAnimationData._textures.clear();
+    bombAnimationData._attackTextures.clear();
+    
 }

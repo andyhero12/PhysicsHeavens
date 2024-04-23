@@ -393,3 +393,6 @@ bool CollisionController::absorbEnemMonsterCollision(MonsterController& monsterC
     }
     return collision;
 }
+void CollisionController::dispose(){
+    
+}

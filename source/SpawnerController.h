@@ -21,7 +21,6 @@
 
 class SpawnerController{
 public:
-    std::shared_ptr<cugl::Texture> _texture;
     
     /* Set of spawners */
     std::unordered_set<std::shared_ptr<AbstractSpawner>> _spawners;
@@ -44,6 +43,7 @@ public:
     std::shared_ptr<cugl::scene2::SceneNode> getSpawnerNode() const{
         return baseSpawnerNode;
     }
+    void dispose();
 private:
     std::shared_ptr<cugl::scene2::SceneNode> baseSpawnerNode;
     std::shared_ptr<NetEventController> _network;
