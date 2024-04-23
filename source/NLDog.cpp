@@ -82,8 +82,8 @@ using namespace cugl;
  */
 bool Dog::init(const Vec2 pos, const Size size) {
     if (physics2::BoxObstacle::init(pos,size)){
-        std::string name("rocket");
-        setName(name);
+//        std::string name("rocket");
+//        setName(name);
         setShared(true);
         clearSharingDirtyBits();
         setDensity(DEFAULT_DENSITY);

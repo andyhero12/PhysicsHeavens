@@ -604,13 +604,11 @@ void GameScene::fixedUpdate()
         {
             winNode->setVisible(true);
             _pause->setPause(true);
-//            CULog("winEvent Event Got");
         }
         if (auto loseEvent = std::dynamic_pointer_cast<LoseEvent>(e))
         {
             loseNode->setVisible(true);
             _pause->setPause(true);
-//            CULog("loseEvent Event Got");
         }
     }
 #pragma mark END SOLUTION
