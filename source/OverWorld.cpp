@@ -570,13 +570,12 @@ void OverWorld::ownedDogUpdate(InputController& _input, cugl::Size, std::shared_
         _network->pushOutEvent(DashEvent::allocDashEvent(_isHost));
         _curDog->resetDash();
     }
-    if (_input.didPressFire() && _curDog->canFireWeapon())
+    if (_input.didPressFire() && _curDog->canFireWeapon() && _curDog->getAction() != Dog::Actions::DASH)
     {
-//        CULog("Send Attack");
         _network->pushOutEvent(BiteEvent::allocBiteEvent(_curDog->getBiteCenter(), _curDog->getDirInDegrees(), _isHost));
         _curDog->reloadWeapon();
     }
-    if (_input.didPressSpecial() && _curDog->canFireWeapon())
+    if (_input.didPressSpecial() && _curDog->canFireWeapon()&& _curDog->getAction() != Dog::Actions::DASH)
     {
         _curDog->reloadWeapon();
         if (_curDog->getMode() == "SHOOT" && _curDog->getAbsorb() >= 5)

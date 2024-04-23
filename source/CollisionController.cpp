@@ -322,7 +322,7 @@ void CollisionController::hugeBlastCollision(const std::shared_ptr<ActionPolygon
             result += 360.0f;
         }
         float dist = diff.length();
-        CULog("Distance %f Scale %f", dist, action->getScale());
+//        CULog("Distance %f Scale %f", dist, action->getScale());
         if (withinAngle(action->getAngle()-45.0f, result, 90.0f) && dist <= 5.5f * action->getScale()){
             hitSomething = true;
             monsterController.removeEnemy(enemy);

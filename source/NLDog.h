@@ -204,7 +204,9 @@ public:
      */
     virtual bool init(const cugl::Vec2 pos, const cugl::Size size) override;
     
-    
+    Actions getAction(){
+        return action;
+    }
     void setRecallAnimation(std::shared_ptr<AnimationSceneNode> recall);
     void setBelowPenta(std::shared_ptr<AnimationSceneNode> belowPenta);
     void setSmallAnimation(std::shared_ptr<AnimationSceneNode> idle, std::shared_ptr<AnimationSceneNode> run, std::shared_ptr<AnimationSceneNode> bite, std::shared_ptr<AnimationSceneNode> shoot,std::shared_ptr<AnimationSceneNode> dash);
