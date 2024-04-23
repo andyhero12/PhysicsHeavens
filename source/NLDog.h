@@ -74,7 +74,6 @@ private:
     
 protected:
     Actions action;
-    DogSize dogSize;
     
     AnimationSceneNode::Directions prevDirection;
     cugl::Vec2 dir;

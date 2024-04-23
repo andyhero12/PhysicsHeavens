@@ -30,7 +30,7 @@ void CameraController::update(float dt) {
     //_camera->translate((*dst).x - cameraPos.x, (*dst).y - cameraPos.y);
     
 //    _root->resetPane();
-    std::cout << (cameraPos.x) << " "  <<  ((*dst).y - cameraPos.y) << "\n";
+//    std::cout << (cameraPos.x) << " "  <<  ((*dst).y - cameraPos.y) << "\n";
     
     _root->applyPan((*dst).x - cameraPos.x, (*dst).y - cameraPos.y);
     delete dst;

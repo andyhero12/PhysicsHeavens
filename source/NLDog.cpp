@@ -271,7 +271,7 @@ void Dog::moveOnInputSetAction(InputController& _input){
 }
 void Dog::setDogSize(DogSize size){
     
-    if(idleAnimation != nullptr && size != dogSize){
+    if(idleAnimation != nullptr){
         idleAnimation->animate(AnimationSceneNode::Directions::SOUTH, false);
         runAnimation->animate(AnimationSceneNode::Directions::SOUTH, false);
         biteAnimation->animate(AnimationSceneNode::Directions::SOUTH, false);
@@ -494,6 +494,6 @@ void Dog::setMode(int mode){
 void Dog::addEffects(std::shared_ptr<cugl::scene2::SceneNode> fnode, std::shared_ptr<cugl::scene2::SceneNode> bnode){
     frontEffectsNode = fnode;
     backEffectsNode = bnode;
-    updateLocalAnimations(dogSize);
+    updateLocalAnimations(DogSize::SMALL);
     
 }
