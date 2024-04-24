@@ -14,12 +14,12 @@ SpawnerController::~SpawnerController(){
     
 }
 
-float generateRandomFloat(float lower, float higher) {
+float generateRandomFloat(float low, float high) {
     // Static used for the seed to ensure it's only seeded once
     static std::random_device rd;
     static std::mt19937 gen(rd());
-    std::uniform_real_distribution<> dis(0.0, 1.0);
-    return (float)(dis(gen) * (higher - lower)) - lower;
+    std::uniform_real_distribution<> dis(low, high);
+    return (float)dis(gen);
 }
 
 void SpawnerController::update(MonsterController& monsterController, OverWorld& overWorld, float timestep){

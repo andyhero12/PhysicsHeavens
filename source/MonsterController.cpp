@@ -19,6 +19,14 @@ int generateRandomInclusiveHighLow(int low, int high)
     return dis(gen);
 }
 
+float generateRandomFloat(float low, float high) {
+    // Static used for the seed to ensure it's only seeded once
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    std::uniform_real_distribution<> dis(low, high);
+    return (float)dis(gen);
+}
+
 void toLowerCase(std::string& s) {
     for (char& c : s) {
         c = std::tolower(c);
@@ -54,7 +62,7 @@ bool MonsterController::init(OverWorld& overWorld,
         std::string enemyType = cluster.enemy;
 
         for(int i = 0; i < cluster.count; i++) {
-            Vec2 pos = Vec2(cx + generateRandomInclusiveHighLow(-200, 200) / 100.0f, cy + generateRandomInclusiveHighLow(-200, 200) / 100.0f);
+            Vec2 pos = Vec2(cx + generateRandomFloat(-2f, 2f), cy + generateRandomFloat(-2f, 2f));
             
             spawnEnemyFromString(enemyType, pos, overWorld, power);
         }
