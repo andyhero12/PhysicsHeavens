@@ -103,7 +103,7 @@ void CollisionController::attackCollisions(OverWorld& overWorld, MonsterControll
                 resolveBlowup(action,monsterController, spawners); // play boom sound
                 break;
             case (Action::BITE):
-                resolveBiteAttack(action, monsterController, overWorld);
+                resolveBiteAttack(action, monsterController, overWorld, spawners);
                 break;
             default:
                 CULog("Action not used in Collisions\n");
@@ -119,7 +119,7 @@ void CollisionController::attackCollisions(OverWorld& overWorld, MonsterControll
                 resolveBlowup(action,monsterController, spawners); // play boom sound
                 break;
             case (Action::BITE):
-                resolveBiteAttack(action, monsterController, overWorld);
+                resolveBiteAttack(action, monsterController, overWorld, spawners);
                 break;
             default:
                 CULog("Action not used in Collisions\n");
@@ -257,11 +257,12 @@ bool CollisionController::monsterDogCollision(std::shared_ptr<Dog> curDog, std::
     return false;
 }
 
-void CollisionController::resolveBiteAttack(const std::shared_ptr<ActionPolygon>& action, MonsterController& monsterController, OverWorld& overWorld){
+void CollisionController::resolveBiteAttack(const std::shared_ptr<ActionPolygon>& action, MonsterController& monsterController, OverWorld& overWorld, std::unordered_set<std::shared_ptr<AbstractSpawner>>& spawners){
+    if (!action->dealDamage())
+        return;
     Poly2 bitePolygon = action->getPolygon();
     std::unordered_set<std::shared_ptr<AbstractEnemy>>& monsterEnemies = monsterController.getEnemies();
     auto itA = monsterEnemies.begin();
-    bool hitSomething = false;
     while ( itA != monsterEnemies.end()){
         const std::shared_ptr<AbstractEnemy>& enemy = *itA;
         auto curA = itA;
@@ -274,8 +275,7 @@ void CollisionController::resolveBiteAttack(const std::shared_ptr<ActionPolygon>
             result += 360.0f;
         }
         float dist = diff.length();
-        if (withinAngle(action->getAngle()-90.0f, result, 180.0f) && dist <= 3 * action->getScale() && action->dealDamage()){
-            hitSomething = true;
+        if (withinAngle(action->getAngle()-90.0f, result, 180.0f) && dist <= 3 * action->getScale()){
             enemy->setHealth(enemy->getHealth() - 1);
             if(enemy->getHealth() <= 0){
                 monsterController.removeEnemy(enemy);
@@ -283,6 +283,19 @@ void CollisionController::resolveBiteAttack(const std::shared_ptr<ActionPolygon>
                 overWorld.getDog()->addAbsorb((*curA)->getAbsorbValue());
                 monsterEnemies.erase(curA);
             }
+        }
+    }
+
+    for (auto& spawner : spawners){
+        Vec2 diff = spawner->getPos() - action->getCenter();
+        float ang = diff.getAngle();
+        float result = ((ang > 0 ? ang : (2*M_PI +ang)) * 360 / (2*M_PI)) - 90.0f;
+        if (result < 0.0f){
+            result += 360.0f;
+        }
+        float dist = diff.length();
+        if (withinAngle(action->getAngle()-90.0f, result, 180.0f) && dist <= 3 * action->getScale()){
+            spawner->subHealth(1);
         }
     }
 }
