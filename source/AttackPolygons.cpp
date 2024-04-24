@@ -149,7 +149,7 @@ void AttackPolygons::addBite(Vec2 center, float angle, float explosionRad, float
      }
     
     std::shared_ptr<SpriteAnimationNode> biteSprite = SpriteAnimationNode::allocWithSheet(bite, 3, 5, 15, ANIM_FREQ);
-    CULog("Ang %f" ,ang);
+//    CULog("Ang %f" ,ang);
     float rads = M_PI/180.0f * ang;
     if (ang <= 45){
         biteSprite->setAngle(rads);
