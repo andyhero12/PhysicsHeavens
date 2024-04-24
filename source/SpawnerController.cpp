@@ -14,13 +14,12 @@ SpawnerController::~SpawnerController(){
     
 }
 
-// Function to generate a random value between 1 and 3
-int generateRandomValue(int left, int right) {
+float generateRandomFloat(float lower, float higher) {
     // Static used for the seed to ensure it's only seeded once
     static std::random_device rd;
     static std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dis(left, right); // Range is 1 to 3, inclusive
-    return dis(gen);
+    std::uniform_real_distribution<> dis(0.0, 1.0);
+    return (float)(dis(gen) * (higher - lower)) - lower;
 }
 
 void SpawnerController::update(MonsterController& monsterController, OverWorld& overWorld, float timestep){
@@ -28,8 +27,9 @@ void SpawnerController::update(MonsterController& monsterController, OverWorld& 
    // _difficulty *= 1.00003851f;
     accumulatedTime += timestep;
     //cout << (std::to_string(difficulty));
+    float power = (float)std::pow(1.00231316, accumulatedTime) + difficulty;
     for(auto& spawner : _spawners) {
-        spawner->update(monsterController, overWorld, timestep, (float)std::pow(1.00231316, accumulatedTime) + difficulty);
+        spawner->update(monsterController, overWorld, timestep, power);
         
     }
     for (auto& spawner : animationNodes){
@@ -45,6 +45,22 @@ void SpawnerController::update(MonsterController& monsterController, OverWorld& 
             it = _spawners.erase(it);
             spawner->getSpawnerNode()->removeFromParent();
             difficulty += 0.1;
+
+            std::shared_ptr<SimpleSpawner> simpleSpawner = std::dynamic_pointer_cast<SimpleSpawner>(spawner);
+
+            if (simpleSpawner) {
+                monsterController.spawnEnemyFromString(simpleSpawner->getSpawnType1(), 
+                spawner->getPos().add(Vec2(generateRandomFloat(-1, 1), generateRandomFloat(-1, 1))),
+                overWorld, power * 1.5f);
+
+                monsterController.spawnEnemyFromString(simpleSpawner->getSpawnType2(), 
+                spawner->getPos().add(Vec2(generateRandomFloat(-1, 1), generateRandomFloat(-1, 1))),
+                overWorld, power * 1.5f);
+
+                monsterController.spawnEnemyFromString(simpleSpawner->getSpawnType3(), 
+                spawner->getPos().add(Vec2(generateRandomFloat(-1, 1), generateRandomFloat(-1, 1))),
+                overWorld, power * 1.5f);
+            }
         }
         else{
             ++it;
