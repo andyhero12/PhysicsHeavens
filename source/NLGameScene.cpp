@@ -292,7 +292,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     
     _pause = std::make_shared<PauseScene>();
     _pause->init(_assets, computeActiveSize());
-    _pause->setPause(false);
     _uinode->addChild(_pause);
     
     _pause->setContentSize(dimen);

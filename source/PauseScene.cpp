@@ -20,7 +20,8 @@ bool PauseScene::init(){
     if (!cugl::scene2::SceneNode::init()){
         return false;
     }
-    
+    CULog("Init Pause");
+    _paused = false;
     std::shared_ptr<cugl::scene2::SceneNode> resume =cugl::scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("resume"));
 
     std::shared_ptr<cugl::scene2::SceneNode> exit =cugl::scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("mainmenu"));
@@ -58,6 +59,8 @@ bool PauseScene::init(){
     resumeButton->setPosition(centerX - 100, centerY);
     exitButton->setPosition(centerX + 100,centerY);
 
+    setPause(false);
+    status = Choice::GAME;
     return true;
 }
 
@@ -78,8 +81,10 @@ void PauseScene::togglePause() {
 }
 
 void PauseScene::dispose(){
-    resumeButton->dispose();
-    exitButton->dispose();
+    resumeButton->deactivate();
+    exitButton->deactivate();
+    resumeButton = nullptr;
+    exitButton = nullptr;
 }
 
 void PauseScene::exitToMain(){

@@ -305,7 +305,6 @@ void NetApp::updateClientScene(float timestep) {
         _status = GAME;
     }
     else if (_network->getStatus() == NetEventController::Status::NETERROR) {
-        CULog("Got Net Error");
         _network->disconnect();
 		_joingame.setActive(false);
 		_mainmenu.setActive(true);
