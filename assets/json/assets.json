@@ -420,6 +420,14 @@
             "file": "textures/effects/gate_explode.png",
             "magfilter": "nearest"
         },
+        "enemySpawn": {
+            "file": "textures/effects/spawn_flame.png",
+            "magfilter": "nearest"
+        },
+        "enemyDeath": {
+            "file": "textures/effects/death_poof.png",
+            "magfilter": "nearest"
+        },
         "win_screen": {
           "file": "textures/win_screen.png"
         },

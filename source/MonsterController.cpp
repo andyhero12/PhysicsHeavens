@@ -21,6 +21,8 @@ bool MonsterController::init(OverWorld& overWorld,
     _current.clear();
     _pending.clear();
     _absorbEnem.clear();
+    _curAnimations.clear();
+    monsterControllerSceneNode = cugl::scene2::SceneNode::alloc();
     _debugNode = debugNode;
 
     for (const cugl::Vec3& cluster : overWorld.getLevelModel()->preSpawnLocs()){
@@ -103,6 +105,20 @@ void MonsterController::update(float timestep, OverWorld& overWorld){
             }
         }
     }
+    
+    auto itAnim = _curAnimations.begin();
+    while(itAnim != _curAnimations.end()){
+        std::shared_ptr<SpriteAnimationNode> curAnim = *itAnim;
+        auto curA = itAnim;
+        curAnim->update();
+        CULog("FRAME: %d", curAnim->getFrame());
+        itAnim++;
+        if (curAnim->getFrame() == curAnim->getSpan()-1){
+            _curAnimations.erase(curA);
+            monsterControllerSceneNode->removeChild(curAnim);
+            CULog("ANIMATION CHILD REMOVED");
+        }
+    }
 }
 void MonsterController::setMeleeAnimationData(std::shared_ptr<cugl::JsonValue> data,
                            std::shared_ptr<cugl::AssetManager> _assets){
@@ -168,6 +184,16 @@ void MonsterController::spawnBasicEnemy(cugl::Vec2 pos, OverWorld& overWorld, fl
     auto pair = _network->getPhysController()->addSharedObstacle(_meleeFactID, params);
     pair.first->setDebugScene(_debugNode);
     if (auto static_enemy = std::dynamic_pointer_cast<AbstractEnemy>(pair.first)){
+        //        _pending.emplace(static_enemy);
+        std::shared_ptr<SpriteAnimationNode> explodeAnim = SpriteAnimationNode::allocWithSheet(_spawnTexture, 2, 5, 10, 1);
+        explodeAnim->setScale(cugl::Size(1,1)/64);
+        explodeAnim->setAnchor(Vec2::ANCHOR_CENTER);
+        explodeAnim->setPosition(pos);
+        
+        _curAnimations.emplace(explodeAnim);
+        monsterControllerSceneNode->addChild(explodeAnim);
+        CULog("ANIMATION CHILD ADDED");
+        
         _pending.emplace(static_enemy);
     }
 }
@@ -237,6 +263,7 @@ void MonsterController::dispose(){
     _current.clear();
     _pending.clear();
     _absorbEnem.clear();
+    _curAnimations.clear();
     _network = nullptr;
     _debugNode = nullptr;
     monsterControllerSceneNode = nullptr;
@@ -246,5 +273,6 @@ void MonsterController::dispose(){
     absorbAnimationData._attackTextures.clear();
     bombAnimationData._textures.clear();
     bombAnimationData._attackTextures.clear();
+    
     
 }
