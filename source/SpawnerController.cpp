@@ -11,7 +11,7 @@ SpawnerController::SpawnerController(){
     
 }
 SpawnerController::~SpawnerController(){
-    
+
 }
 
 float generateRandomFloat(float low, float high) {
@@ -80,10 +80,28 @@ bool SpawnerController::init(const std::vector<LevelModel::Spawner>& startLocs, 
         std::shared_ptr<SimpleSpawner> curSpawner = std::make_shared<SimpleSpawner>(spawner.regularDelay,pos,health,spawner.initDelay,spawner.primaryEnemy, spawner.secondaryEnemy, spawner.tertiaryEnemy);
 //        auto drawNode = cugl::scene2::PolygonNode::allocWithTexture(assets->get<cugl::Texture>("spawner"));
         auto drawNode = SpriteAnimationNode::allocWithSheet(assets->get<cugl::Texture>("spawner"), 1,1,1);
-        drawNode->setScale(cugl::Size(1,1)/48);
+        float scale = 1 / 48.0f;
+        drawNode->setScale(scale);
 //        drawNode->setContentSize(cugl::Size(1,1));
         drawNode->setPosition(pos);
         drawNode->setAnchor(cugl::Vec2::ANCHOR_CENTER);
+
+        std::shared_ptr<cugl::Texture> barImage = assets->get<cugl::Texture>("progress");
+    
+        float textureWidth = barImage->getWidth();
+        float textureHeight = barImage->getHeight();
+        
+        std::shared_ptr<cugl::Texture> bg = barImage->getSubTexture(0/textureWidth, 320/textureWidth, 0/textureHeight, 45/textureHeight);
+        std::shared_ptr<cugl::Texture> fg = barImage->getSubTexture(24/textureWidth, 296/textureWidth, 45/textureHeight, 90/textureHeight);
+        std::shared_ptr<cugl::Texture> left_cap = barImage->getSubTexture(0/textureWidth, 24/textureWidth, 45/textureHeight, 90/textureHeight);
+        std::shared_ptr<cugl::Texture> right_cap = barImage->getSubTexture(296/textureWidth, 320/textureWidth, 45/textureHeight, 90/textureHeight);
+        
+        std::shared_ptr<cugl::scene2::ProgressBar> _bar = cugl::scene2::ProgressBar::allocWithCaps(bg, fg, left_cap, right_cap);
+        _bar->setProgress(1.0f);
+        _bar->setPosition(0, drawNode->getHeight() * (1 / scale));
+        curSpawner->setHealthBar(_bar);
+        drawNode->addChild(_bar);
+
 //        animationNodes.push_back(drawNode);
         baseSpawnerNode->addChild(drawNode);
         curSpawner->setSpawnerNode(drawNode);
