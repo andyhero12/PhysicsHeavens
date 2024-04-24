@@ -331,6 +331,8 @@ void CollisionController::hugeBlastCollision(const std::shared_ptr<ActionPolygon
     }
 }
 void CollisionController::resolveBlowup(const std::shared_ptr<ActionPolygon>& action, MonsterController& monsterController, std::unordered_set<std::shared_ptr<AbstractSpawner>>& spawners){
+    if (!action->dealDamage())
+        return;
     Poly2 blastCircle = action->getPolygon();
     std::unordered_set<std::shared_ptr<AbstractEnemy>>& monsterEnemies = monsterController.getEnemies();
     auto itA = monsterEnemies.begin();
@@ -344,6 +346,7 @@ void CollisionController::resolveBlowup(const std::shared_ptr<ActionPolygon>& ac
             monsterEnemies.erase(curA);
         }
     }
+    CULog("explode");
     auto itS = spawners.begin();
     while (itS != spawners.end()){
         const std::shared_ptr<AbstractSpawner>& spawn = *itS;

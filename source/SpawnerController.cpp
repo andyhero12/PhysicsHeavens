@@ -50,15 +50,15 @@ void SpawnerController::update(MonsterController& monsterController, OverWorld& 
 
             if (simpleSpawner) {
                 monsterController.spawnEnemyFromString(simpleSpawner->getSpawnType1(), 
-                spawner->getPos().add(Vec2(generateRandomFloat(-1, 1), generateRandomFloat(-1, 1))),
+                spawner->getPos().add(Vec2(generateRandomFloat(-0.1, 0.1), generateRandomFloat(-0.1, 0.1))),
                 overWorld, power * 1.5f);
 
                 monsterController.spawnEnemyFromString(simpleSpawner->getSpawnType2(), 
-                spawner->getPos().add(Vec2(generateRandomFloat(-1, 1), generateRandomFloat(-1, 1))),
+                spawner->getPos().add(Vec2(generateRandomFloat(-0.1, 0.1), generateRandomFloat(-0.1, 0.1))),
                 overWorld, power * 1.5f);
 
                 monsterController.spawnEnemyFromString(simpleSpawner->getSpawnType3(), 
-                spawner->getPos().add(Vec2(generateRandomFloat(-1, 1), generateRandomFloat(-1, 1))),
+                spawner->getPos().add(Vec2(generateRandomFloat(-0.1, 0.1), generateRandomFloat(-0.1, 0.1))),
                 overWorld, power * 1.5f);
             }
         }
