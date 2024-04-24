@@ -92,7 +92,6 @@ void AnimationSceneNode::stepAnimation(){
 
 void AnimationSceneNode::setAnchor(const cugl::Vec2 anchor){
     _anchor = anchor;
-//    std::cout << "animation" << anchor.x << " " <<anchor.y << std::endl;
     for(auto &node : _animationSprites){
         node->setAnchor(anchor);
     }

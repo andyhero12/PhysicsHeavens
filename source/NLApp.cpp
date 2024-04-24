@@ -142,7 +142,6 @@ void NetApp::preUpdate(float timestep){
         _mainmenu.setActive(true);
         _hostgame.init(_assets,_network);
         _joingame.init(_assets,_network);
-        //_gameplay.init(_assets);
         _status = MAINMENU;
     }
     else if(_status == MAINMENU){
@@ -320,11 +319,12 @@ void NetApp::updateGameScene(float timestep) {
     _gameplay.preUpdate(timestep);
     if(_gameplay.getStatus() == PauseScene::EXIT){
         _gameplay.dispose();
-        _network->disconnect();
+//        _network->disconnect(); // Get rid of This?
         _mainmenu.setActive(true);
-        _hostgame.setActive(false);
+        _gameplay.setActive(false);
+//        _hostgame.setActive(false);
         _hostgame.endGame();
-        _joingame.setActive(false);
+//        _joingame.setActive(false);
         _status = MAINMENU;
     }
 }
@@ -338,12 +338,14 @@ void NetApp::updateMainScene(float timestep)
         _level.setActive(true);
         _status = LEVEL;
         _level.resetLevel();
+        isHosting = true;
         break;
     case MainMenuScene::Choice::COOP:
         _mainmenu.setActive(false);
-        //_menu.setActive(true);
-        _joingame.setActive(true);
-        _status = CLIENT;
+        _level.setActive(true);
+        _status = LEVEL;
+        _level.resetLevel();
+        isHosting = false;
         break;
     case MainMenuScene::Choice::SETTING:
         //_mainmenu.setActive(false);
@@ -366,29 +368,42 @@ void NetApp::updateLevelScene(float timestep)
         _status = MAINMENU;
     }else{
         switch (_level.getLevel()) {
-        case LevelScene::Level::L1:
-            _level.setActive(false);
-            _hostgame.setActive(true);
-            _status = HOST;
-            break;
-        case LevelScene::Level::L2:
-            _level.setActive(false);
-            _hostgame.setActive(true);
-            _status = HOST;
-            break;
-        case LevelScene::Level::L3:
-            _level.setActive(false);
-            _hostgame.setActive(true);
-            _status = HOST;
-            break;
-        default :
-            // DO NOTHING
-            break;
-        }
+            case LevelScene::Level::L1:
+                _level.setActive(false);
+                if (isHosting){
+                    _hostgame.setActive(true);
+                    _status = HOST;
+                }else{
+                    _joingame.setActive(true);
+                    _status = CLIENT;
+                }
+                break;
+            case LevelScene::Level::L2:
+                _level.setActive(false);
+                if (isHosting){
+                    _hostgame.setActive(true);
+                    _status = HOST;
+                }else{
+                    _joingame.setActive(true);
+                    _status = CLIENT;
+                }
+                break;
+            case LevelScene::Level::L3:
+                _level.setActive(false);
+                if (isHosting){
+                    _hostgame.setActive(true);
+                    _status = HOST;
+                }else{
+                    _joingame.setActive(true);
+                    _status = CLIENT;
+                }
+                break;
+            default :
+                // DO NOTHING
+                break;
+            }
 
     }
-    
-    
 }
 
 /**

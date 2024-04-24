@@ -97,6 +97,7 @@ public:
     
     void attackCollisions(OverWorld& overWorld, MonsterController& monsterController, SpawnerController& spawnerController);
     
+    void dispose();
 };
 
 #endif /* __SL_COLLISION_CONTROLLER_H__ */

@@ -48,14 +48,11 @@ private:
     std::unordered_set<std::shared_ptr<AbsorbEnemy>> _absorbEnem;
     std::shared_ptr<NetEventController> _network;
     std::shared_ptr<cugl::scene2::SceneNode> _debugNode;
-    // Need a Wrapper class that contains each and every Sprite
-    // Each one needs its own sprite
     
     // Each Monster Type needs one of these
     AnimationDataStruct meleeAnimationData;
     AnimationDataStruct bombAnimationData;
     AnimationDataStruct absorbAnimationData;
-    std::shared_ptr<cugl::scene2::ProgressBar>  _healthBar;
     
     std::shared_ptr<cugl::scene2::SceneNode> monsterControllerSceneNode;
 public:
@@ -113,6 +110,8 @@ public:
     void powerSize(float power, Size& size);
 
     float powerHealth(float power, int hp);
+    
+    void dispose();
 };
 
 #endif /* MonsterController_h */

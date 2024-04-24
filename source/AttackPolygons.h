@@ -93,6 +93,6 @@ public:
         return backAttackPolygonNode;
     }
     int getZOrder() const { return zorder; }
-
+    void dispose();
 };
 #endif /* AttackPolygons_hpp */

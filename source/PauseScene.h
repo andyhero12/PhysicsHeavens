@@ -35,7 +35,8 @@ private:
     
     Choice status;
     
-    bool paused;
+    bool _paused;
+    
 
     /** The "pause" button */
     std::shared_ptr<cugl::scene2::Button>  resumeButton;
@@ -56,8 +57,8 @@ public:
      *
      * @return true if the gameplay controller is currently active
      */
-    bool getPause() const { return paused; }
-    
+    bool getPause() const { return _paused; }
+    void togglePause();
     void exitToMain();
 
     /**

@@ -212,7 +212,7 @@ bool CollisionController::monsterDecoyExplosionCollision(std::shared_ptr<DecoySe
     float decoyRadius = 2.00f;
     while (itDec != removedDecoys.end()){
         const std::shared_ptr<Decoy>& decoy= *itDec;
-        auto curDec = itDec;
+//        auto curDec = itDec;
         itDec++;
         while(itMon != curEnemies.end()){
             const std::shared_ptr<AbstractEnemy>& enemy = *itMon;
@@ -322,7 +322,7 @@ void CollisionController::hugeBlastCollision(const std::shared_ptr<ActionPolygon
             result += 360.0f;
         }
         float dist = diff.length();
-        CULog("Distance %f Scale %f", dist, action->getScale());
+//        CULog("Distance %f Scale %f", dist, action->getScale());
         if (withinAngle(action->getAngle()-45.0f, result, 90.0f) && dist <= 5.5f * action->getScale()){
             hitSomething = true;
             monsterController.removeEnemy(enemy);
@@ -347,7 +347,7 @@ void CollisionController::resolveBlowup(const std::shared_ptr<ActionPolygon>& ac
     auto itS = spawners.begin();
     while (itS != spawners.end()){
         const std::shared_ptr<AbstractSpawner>& spawn = *itS;
-        auto curS = itS;
+//        auto curS = itS;
         itS++;
         Vec2 diff = spawn->getPos() - action->getCenter();
         float dist = diff.length();
@@ -364,8 +364,9 @@ bool CollisionController::absorbEnemMonsterCollision(MonsterController& monsterC
     auto itAbs = absorbCurEnemies.begin();
     auto itMon = monsterEnemies.begin();
     while (itAbs != absorbCurEnemies.end()){
+        bool absorbAte = false;
         const std::shared_ptr<AbsorbEnemy>& absEnemy = *itAbs;
-        auto curAbs = itAbs;
+//        auto curAbs = itAbs;
         itAbs++;
         while(itMon != monsterEnemies.end()){
             const std::shared_ptr<AbstractEnemy>& curEnemy = *itMon;
@@ -373,23 +374,25 @@ bool CollisionController::absorbEnemMonsterCollision(MonsterController& monsterC
             itMon++;
             Vec2 norm = (absEnemy)->getPosition() - (curEnemy)->getPosition();
             float distance = norm.length();
-            float impactDistance = 1.5;
+            float impactDistance = 3.5;
             if (distance < impactDistance){
                 std::shared_ptr<AbsorbEnemy> isAbsorb = std::dynamic_pointer_cast<AbsorbEnemy>(curEnemy);
                 if (isAbsorb == nullptr && absEnemy->canAttack()){
                     collision = true;
-                    absEnemy->resetAttack();
+                    absorbAte = true;
                     absEnemy->increaseHealth(curEnemy->getHealth());
                     // SCALE ABSORB ENEMY
-//                    float newWidth = (*curAbs)->getDimension().width + 0.02;
-//                    float newHeight = (*curAbs)->getDimension().height + 0.02;
-//                    cugl::Size newSize(newWidth,newHeight);
-//                    (*curAbs)->setDimension(newSize);
                     monsterController.removeEnemy(curEnemy);
                     monsterEnemies.erase(curMon);
                 }
             }
         }
+        if (absorbAte){
+            absEnemy->resetAttack();
+        }
     }
     return collision;
+}
+void CollisionController::dispose(){
+    
 }

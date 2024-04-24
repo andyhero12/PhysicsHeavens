@@ -47,7 +47,6 @@ private:
     
     /** Did we press the pause button? */
     bool _didPause;
-    bool _pause;
     /** Did press the change mode button */
     bool _didChangeMode;
     /** Did we press the special button? */
@@ -106,10 +105,6 @@ public:
      */
     float getTurn() const {
         return _turning;
-    }
-    
-    bool getPause() const{
-        return _pause;
     }
 
     /**

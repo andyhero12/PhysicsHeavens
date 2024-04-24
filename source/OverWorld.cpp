@@ -15,7 +15,6 @@
 void OverWorld::reset()
 {
     initDogModel();
-    //    _devil->setPosition(resetSize/2);
     initBases();
     initDecoys();
     _attackPolygonSet.init();
@@ -381,16 +380,6 @@ bool OverWorld::initDogModel()
     return true;
 }
 
-bool OverWorld::initDevil()
-{
-    _devil = std::make_shared<Devil>(_dog, Vec2(1, 1), _constants->get("devil"));
-    std::vector<std::shared_ptr<cugl::Texture>> textures;
-    textures.push_back(_assets->get<cugl::Texture>("player0"));
-    textures.push_back(_assets->get<cugl::Texture>("player1"));
-    _devil->setRunTexture(textures);
-    return true;
-}
-
 bool OverWorld::initBases()
 {
     _bases = std::make_shared<BaseSet>();
@@ -439,7 +428,6 @@ bool OverWorld::init(const std::shared_ptr<cugl::AssetManager> &assets, const st
     initBases();
     initDecoys();
     initPolygons();
-    //    initDevil();
     return true;
 }
 
@@ -467,10 +455,6 @@ bool OverWorld::setRootNode(const std::shared_ptr<scene2::SceneNode> &_worldNode
     {
         _worldNet->initObstacle(_dogClient);
         _dogClient->setDebugScene(_debugNode);
-        if (_isHost)
-        {
-            _worldNet->getOwnedObstacles().insert({_dogClient, 0});
-        }
         _worldNode->addChild(_dogClient->getDogNode());
         if (!_isHost)
         {
@@ -582,13 +566,12 @@ void OverWorld::ownedDogUpdate(InputController& _input, cugl::Size, std::shared_
         _network->pushOutEvent(DashEvent::allocDashEvent(_isHost));
         _curDog->resetDash();
     }
-    if (_input.didPressFire() && _curDog->canFireWeapon())
+    if (_input.didPressFire() && _curDog->canFireWeapon() && _curDog->getAction() != Dog::Actions::DASH)
     {
-//        CULog("Send Attack");
         _network->pushOutEvent(BiteEvent::allocBiteEvent(_curDog->getBiteCenter(), _curDog->getDirInDegrees(), _isHost));
         _curDog->reloadWeapon();
     }
-    if (_input.didPressSpecial() && _curDog->canFireWeapon())
+    if (_input.didPressSpecial() && _curDog->canFireWeapon()&& _curDog->getAction() != Dog::Actions::DASH)
     {
         _curDog->reloadWeapon();
         if (_curDog->getMode() == "SHOOT" && _curDog->getAbsorb() >= 5)
@@ -626,16 +609,11 @@ void OverWorld::dogUpdate(InputController &_input, cugl::Size totalSize)
     }
 }
 
-void OverWorld::devilUpdate(InputController &_input, cugl::Size totalSize)
-{
-    _devil->move(totalSize * WORLD_SIZE);
-}
 void OverWorld::update(InputController &_input, cugl::Size totalSize, float timestep)
 {
     dogUpdate(_input, totalSize);
     _bases->update();
     _decoys->update(timestep);
-    //    devilUpdate(_input, totalSize);
     _attackPolygonSet.update();
     _clientAttackPolygonSet.update();
 }
@@ -643,4 +621,17 @@ void OverWorld::update(InputController &_input, cugl::Size totalSize, float time
 void OverWorld::postUpdate()
 {
     _decoys->postUpdate();
+}
+void OverWorld::dispose(){
+    _level = nullptr;
+    _network = nullptr;
+    _dog = nullptr;
+    _dogClient = nullptr;
+    _decoys = nullptr;
+    _bases = nullptr;
+    _constants = nullptr;
+    _assets = nullptr;
+    _attackPolygonSet.dispose();
+    _clientAttackPolygonSet.dispose();
+    _world = nullptr;
 }

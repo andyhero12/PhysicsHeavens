@@ -41,7 +41,7 @@ void SpawnerController::update(MonsterController& monsterController, OverWorld& 
         std::shared_ptr<AbstractSpawner> spawner = *it;
         
         if (spawner->dead()){
-            //CULog("nani");
+
             it = _spawners.erase(it);
             spawner->getSpawnerNode()->removeFromParent();
             difficulty += 0.1;
@@ -84,4 +84,10 @@ void SpawnerController::setRootNode(const std::shared_ptr<scene2::SceneNode>& _w
     _worldNode->addChild(baseSpawnerNode);
     
     
+}
+void SpawnerController::dispose(){
+    _spawners.clear();
+    animationNodes.clear();
+    baseSpawnerNode = nullptr;
+    _network = nullptr;
 }
