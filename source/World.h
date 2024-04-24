@@ -90,9 +90,7 @@ public:
     std::vector<std::shared_ptr<TileInfo>> allTiles;
     
     World () {};
-    ~World(){
-        CULog("Destructing World");
-    }
+    ~World(){};
     World(std::shared_ptr<LevelModel> _level,std::shared_ptr<cugl::AssetManager> assets);
 
     std::shared_ptr<cugl::Texture> getBoxFromTileSet(int position, const std::map<int,TileSet>& tileSets);

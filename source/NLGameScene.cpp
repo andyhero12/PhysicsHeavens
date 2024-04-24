@@ -274,15 +274,12 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 
     _uinode->setContentSize(dimen);
     _uinode->doLayout();
-    
-    CULog("%s", computeActiveSize().toString().data());
 
     loseNode = cugl::scene2::PolygonNode::allocWithTexture(_assets->get<cugl::Texture>("lose_screen"));
     loseNode->setContentSize(dimen);
     loseNode->setAnchor(Vec2::ANCHOR_CENTER);
     loseNode->setPosition(0.5 * loseNode->getSize());
     
-    CULog("%s", computeActiveSize().toString().data());
     winNode = cugl::scene2::PolygonNode::allocWithTexture(_assets->get<cugl::Texture>("win_screen"));
     winNode->setContentSize(dimen);
     winNode->setAnchor(Vec2::ANCHOR_CENTER);
@@ -295,7 +292,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     
     _pause = std::make_shared<PauseScene>();
     _pause->init(_assets, computeActiveSize());
-    _pause->setPause(false);
     _uinode->addChild(_pause);
     
     _pause->setContentSize(dimen);
@@ -336,7 +332,24 @@ void GameScene::dispose()
         _world = nullptr;
         _worldnode = nullptr;
         _debugnode = nullptr;
+        _rootnode = nullptr;
+        _monsterSceneNode = nullptr;
+        _network = nullptr;
+        _decorToHide.clear();
+        _backgroundWrapper = nullptr;
+        _pause = nullptr;
+        _level = nullptr;
+        winNode = nullptr;
+        loseNode = nullptr;
+        _uinode = nullptr;
         _debug = false;
+        _constants = nullptr;
+        _assets = nullptr;
+        
+        _monsterController.dispose();
+        _spawnerController.dispose();
+        _collisionController.dispose();
+        overWorld.dispose();
         Scene2::dispose();
     }
 }
@@ -425,8 +438,7 @@ void GameScene::preUpdate(float dt)
     }
     if (_input.didPressPause())
     {
-        CULog("pressed Pause");
-        _pause->setPause(_input.getPause());
+        _pause->togglePause();
     }
 
     if (_input.didPressReset())
@@ -590,12 +602,12 @@ void GameScene::fixedUpdate()
         if (auto winEvent = std::dynamic_pointer_cast<WinEvent>(e))
         {
             winNode->setVisible(true);
-//            CULog("winEvent Event Got");
+            _pause->setPause(true);
         }
         if (auto loseEvent = std::dynamic_pointer_cast<LoseEvent>(e))
         {
             loseNode->setVisible(true);
-//            CULog("loseEvent Event Got");
+            _pause->setPause(true);
         }
     }
 #pragma mark END SOLUTION

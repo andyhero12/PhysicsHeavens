@@ -11,7 +11,6 @@
 #include <unordered_set>
 #include "Base.h"
 #include "NLDog.h"
-#include "Devil.h"
 #include "Animation.h"
 #include "BaseSet.h"
 #include "NLInput.h"
@@ -35,7 +34,6 @@ private:
     cugl::Size _activeSize;
     std::shared_ptr<Dog> _dog;
     std::shared_ptr<Dog> _dogClient;
-    std::shared_ptr<Devil> _devil;
     std::shared_ptr<DecoySet> _decoys;
     std::shared_ptr<BaseSet> _bases;
     std::shared_ptr<cugl::JsonValue> _constants;
@@ -43,8 +41,6 @@ private:
     AttackPolygons _attackPolygonSet;
     AttackPolygons _clientAttackPolygonSet;
     std::shared_ptr<World> _world;
-
-    void drawDecoy(const std::shared_ptr<cugl::SpriteBatch> &batch);
 
 public:
     bool _isHost;
@@ -58,7 +54,6 @@ public:
     void reset();
     bool init(const std::shared_ptr<cugl::AssetManager> &assets, const std::shared_ptr<LevelModel> &_level, cugl::Size activeSize, std::shared_ptr<cugl::physics2::net::NetEventController> network, bool isHost, std::shared_ptr<World> world);
     bool initDogModel();
-    bool initDevil();
     bool initBases();
     bool initDecoys();
     bool initPolygons();
@@ -67,7 +62,6 @@ public:
     bool setRootNode(const std::shared_ptr<scene2::SceneNode> &_worldNode, const std::shared_ptr<scene2::SceneNode> &_debugNode, std::shared_ptr<cugl::physics2::net::NetWorld> _world);
     // will add Obstacle nodes too
     void dogUpdate(InputController &_input, cugl::Size totalSize);
-    void devilUpdate(InputController &_input, cugl::Size totalSize);
     void update(InputController &input, cugl::Size totalSize, float timestep);
     void postUpdate();
     void ownedDogUpdate(InputController& _input, cugl::Size, std::shared_ptr<Dog> _curDog);
@@ -85,10 +79,6 @@ public:
     std::shared_ptr<Dog> getClientDog() const
     {
         return _dogClient;
-    }
-    std::shared_ptr<Devil> getDevil() const
-    {
-        return _devil;
     }
     std::shared_ptr<DecoySet> getDecoys() const
     {
@@ -119,13 +109,6 @@ public:
     {
         return _clientAttackPolygonSet;
     }
-    void setDog(std::shared_ptr<Dog> m_dog)
-    {
-        _dog = m_dog;
-    }
-    void setDevil(std::shared_ptr<Devil> m_devil)
-    {
-        _devil = m_devil;
-    }
+    void dispose();
 };
 #endif /* OverWorld_hpp */

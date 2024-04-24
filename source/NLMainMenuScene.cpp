@@ -58,7 +58,6 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _input.init();
     _assets->loadDirectory("json/mainmenuassets.json");
     std::shared_ptr<scene2::SceneNode> layer = _assets->get<scene2::SceneNode>("Menu");
-    std::cout << dimen.width << "  " << dimen.height << std::endl;
     layer->setContentSize(dimen);
     layer->doLayout(); // This rearranges the children to fit the screen
     _buttonset.push_back(_button1 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("Menu_startmenu_button1")));
@@ -66,7 +65,6 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _buttonset.push_back(_button3 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("Menu_startmenu_button3")));
     // Program the buttons
     _button1->addListener([this](const std::string& name, bool down) {
-        std::cout << _input._confirm << std::endl;
         if (down) {  
             if(_input.getState()==InputController::State::CONTROLLER){
                 _isdown = Isdown::isSINGLE;
