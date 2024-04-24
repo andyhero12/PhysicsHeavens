@@ -74,7 +74,6 @@ bool InputController::init_withlistener() {
         if (deviceUUIDs.size() > 0) {
             _gameContrl = controller->open(deviceUUIDs.at(0));
             _controllerKey = controller->acquireKey();
-            //std::cout << _controllerKey << std::endl;
             _gameContrl->addAxisListener(_controllerKey, [=](const GameControllerAxisEvent& event, bool focus) {
             this->getAxisAngle(event, focus);
             });
