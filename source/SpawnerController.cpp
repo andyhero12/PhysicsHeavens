@@ -11,16 +11,15 @@ SpawnerController::SpawnerController(){
     
 }
 SpawnerController::~SpawnerController(){
-    
+
 }
 
-// Function to generate a random value between 1 and 3
-int generateRandomValue(int left, int right) {
+float generateRandomFloat(float low, float high) {
     // Static used for the seed to ensure it's only seeded once
     static std::random_device rd;
     static std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dis(left, right); // Range is 1 to 3, inclusive
-    return dis(gen);
+    std::uniform_real_distribution<> dis(low, high);
+    return (float)dis(gen);
 }
 
 void SpawnerController::update(MonsterController& monsterController, OverWorld& overWorld, float timestep){
@@ -28,8 +27,9 @@ void SpawnerController::update(MonsterController& monsterController, OverWorld& 
    // _difficulty *= 1.00003851f;
     accumulatedTime += timestep;
     //cout << (std::to_string(difficulty));
+    float power = (float)std::pow(1.00231316, accumulatedTime) + difficulty;
     for(auto& spawner : _spawners) {
-        spawner->update(monsterController, overWorld, timestep, (float)std::pow(1.00231316, accumulatedTime) + difficulty);
+        spawner->update(monsterController, overWorld, timestep, power);
         
     }
     for (auto& spawner : animationNodes){
@@ -45,6 +45,22 @@ void SpawnerController::update(MonsterController& monsterController, OverWorld& 
             it = _spawners.erase(it);
             spawner->getSpawnerNode()->removeFromParent();
             difficulty += 0.1;
+
+            std::shared_ptr<SimpleSpawner> simpleSpawner = std::dynamic_pointer_cast<SimpleSpawner>(spawner);
+
+            if (simpleSpawner) {
+                monsterController.spawnEnemyFromString(simpleSpawner->getSpawnType1(), 
+                spawner->getPos().add(Vec2(generateRandomFloat(-0.1, 0.1), generateRandomFloat(-0.1, 0.1))),
+                overWorld, power * 1.5f);
+
+                monsterController.spawnEnemyFromString(simpleSpawner->getSpawnType2(), 
+                spawner->getPos().add(Vec2(generateRandomFloat(-0.1, 0.1), generateRandomFloat(-0.1, 0.1))),
+                overWorld, power * 1.5f);
+
+                monsterController.spawnEnemyFromString(simpleSpawner->getSpawnType3(), 
+                spawner->getPos().add(Vec2(generateRandomFloat(-0.1, 0.1), generateRandomFloat(-0.1, 0.1))),
+                overWorld, power * 1.5f);
+            }
         }
         else{
             ++it;
@@ -64,10 +80,28 @@ bool SpawnerController::init(const std::vector<LevelModel::Spawner>& startLocs, 
         std::shared_ptr<SimpleSpawner> curSpawner = std::make_shared<SimpleSpawner>(spawner.regularDelay,pos,health,spawner.initDelay,spawner.primaryEnemy, spawner.secondaryEnemy, spawner.tertiaryEnemy);
 //        auto drawNode = cugl::scene2::PolygonNode::allocWithTexture(assets->get<cugl::Texture>("spawner"));
         auto drawNode = SpriteAnimationNode::allocWithSheet(assets->get<cugl::Texture>("spawner"), 1,1,1);
-        drawNode->setScale(cugl::Size(1,1)/48);
+        float scale = 1 / 48.0f;
+        drawNode->setScale(scale);
 //        drawNode->setContentSize(cugl::Size(1,1));
         drawNode->setPosition(pos);
         drawNode->setAnchor(cugl::Vec2::ANCHOR_CENTER);
+
+        std::shared_ptr<cugl::Texture> barImage = assets->get<cugl::Texture>("progress");
+    
+        float textureWidth = barImage->getWidth();
+        float textureHeight = barImage->getHeight();
+        
+        std::shared_ptr<cugl::Texture> bg = barImage->getSubTexture(0/textureWidth, 320/textureWidth, 0/textureHeight, 45/textureHeight);
+        std::shared_ptr<cugl::Texture> fg = barImage->getSubTexture(24/textureWidth, 296/textureWidth, 45/textureHeight, 90/textureHeight);
+        std::shared_ptr<cugl::Texture> left_cap = barImage->getSubTexture(0/textureWidth, 24/textureWidth, 45/textureHeight, 90/textureHeight);
+        std::shared_ptr<cugl::Texture> right_cap = barImage->getSubTexture(296/textureWidth, 320/textureWidth, 45/textureHeight, 90/textureHeight);
+        
+        std::shared_ptr<cugl::scene2::ProgressBar> _bar = cugl::scene2::ProgressBar::allocWithCaps(bg, fg, left_cap, right_cap);
+        _bar->setProgress(1.0f);
+        _bar->setPosition(0, drawNode->getHeight() * (1 / scale));
+        curSpawner->setHealthBar(_bar);
+        drawNode->addChild(_bar);
+
 //        animationNodes.push_back(drawNode);
         baseSpawnerNode->addChild(drawNode);
         curSpawner->setSpawnerNode(drawNode);
