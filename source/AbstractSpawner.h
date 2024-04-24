@@ -35,6 +35,9 @@ public:
         _healthBar = bar;
         _healthBar->setScale(0.1);
         _healthBar->setAnchor(Vec2::ANCHOR_CENTER);
+        if(_health == _maxHealth) {
+            _healthBar->setVisible(false);
+        }
     }
     AbstractSpawner(float regularDelay, cugl::Vec2 pos, int health, float delay)
     : _regularDelay(regularDelay)
@@ -69,8 +72,8 @@ public:
         return _position; }
     void subHealth(const int val) {
         _health -= val;
-        cout << _health;
         _healthBar->setProgress((float)_health/_maxHealth);
+        _healthBar->setVisible(_health < _maxHealth);
     }
     bool dead(){
         return _health <= 0;
