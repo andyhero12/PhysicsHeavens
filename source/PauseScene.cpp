@@ -17,18 +17,10 @@ bool PauseScene::init(std::shared_ptr<cugl::AssetManager> &assets, cugl::Size sc
 }
 
 bool PauseScene::init(){
-<<<<<<< HEAD
-    cugl::scene2::SceneNode::init();
-    
-    status = Choice::GAME;
-    
-=======
     if (!cugl::scene2::SceneNode::init()){
         return false;
     }
     CULog("Init Pause");
-    _paused = false;
->>>>>>> main
     std::shared_ptr<cugl::scene2::SceneNode> resume =cugl::scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("resume"));
 
     std::shared_ptr<cugl::scene2::SceneNode> exit =cugl::scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("mainmenu"));
@@ -88,16 +80,10 @@ void PauseScene::togglePause() {
 }
 
 void PauseScene::dispose(){
-<<<<<<< HEAD
-    status = Choice::GAME;
-    resumeButton->dispose();
-    exitButton->dispose();
-=======
     resumeButton->deactivate();
     exitButton->deactivate();
     resumeButton = nullptr;
     exitButton = nullptr;
->>>>>>> main
 }
 
 void PauseScene::exitToMain(){
