@@ -82,9 +82,6 @@ protected:
 
     std::shared_ptr<cugl::physics2::net::NetWorld> _world;
     
-//    std::shared_ptr<cugl::scene2::Label> loseNode;
-//    std::shared_ptr<cugl::scene2::Label> winNode;
-    
     std::shared_ptr<cugl::scene2::PolygonNode> loseNode;
     std::shared_ptr<cugl::scene2::PolygonNode> winNode;
     /** The level model */

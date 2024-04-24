@@ -174,3 +174,13 @@ bool AttackPolygons::setBombTexture(const std::shared_ptr<cugl::Texture> &bomb){
     bombTexture = bomb;
     return true;
 }
+void AttackPolygons::dispose(){
+    frontAttackPolygonNode = nullptr;
+    backAttackPolygonNode = nullptr;
+    biteRightTexture = nullptr;
+    biteLeftTexture = nullptr;
+    biteFrontTexture = nullptr;
+    biteBackTexture = nullptr;
+    bombTexture = nullptr;
+    currentAttacks.clear();
+}
