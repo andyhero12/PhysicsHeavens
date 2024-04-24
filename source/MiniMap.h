@@ -11,7 +11,8 @@
 #include <stdio.h>
 #include "SpawnerController.h"
 #include "NLDog.h"
-#include "BaseSet.h"
+#include "OverWorld.h"
+
 
 
 class Minimap:  public cugl::scene2::SceneNode {
@@ -19,9 +20,12 @@ private:
     std::unordered_set<std::shared_ptr<AbstractSpawner>> _spawners;
     std::vector<std::shared_ptr<Base>> _bases;
     std::shared_ptr<Dog> _dog;
+    std::vector<cugl::scene2::SceneNode> minimapObjects;
+    cugl::Size _screenSize;
 public:
     Minimap(){};
-    bool init(std::shared_ptr<cugl::AssetManager> &assets, cugl::Size screenSize,  std::unordered_set<std::shared_ptr<AbstractSpawner>> spawners, std::vector<std::shared_ptr<Base>> bases, std::shared_ptr<Dog> dog);
+    bool init(std::shared_ptr<cugl::AssetManager> &assets, cugl::Size screenSize, OverWorld &overWorld, SpawnerController &spawnerController);
+    void update();
 };
 
 #endif /* MiniMap_hpp */

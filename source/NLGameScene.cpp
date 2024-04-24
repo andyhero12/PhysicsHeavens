@@ -316,6 +316,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 
     addChildForeground();
     
+    _minimap->init(_assets, computeActiveSize(), overWorld, _spawnerController);
+    _uinode->addChild(_minimap);
+    
     return true;
 }
 
