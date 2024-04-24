@@ -76,7 +76,7 @@ public:
     
     void resolveBlowup(const std::shared_ptr<ActionPolygon>& action, MonsterController& monsterController, std::unordered_set<std::shared_ptr<AbstractSpawner>>& spawners);
     
-    void hugeBlastCollision(const std::shared_ptr<ActionPolygon>& action, MonsterController& monsterController);
+    void hugeBlastCollision(const std::shared_ptr<ActionPolygon>& action, MonsterController& monsterController, std::unordered_set<std::shared_ptr<AbstractSpawner>>& spawners);
     
     bool healFromBaseCollsion( BaseSet& bset, std::shared_ptr<Dog> ship);
     

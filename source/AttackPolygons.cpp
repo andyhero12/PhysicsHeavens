@@ -15,6 +15,7 @@
 #define BITE_SCALE 1
 #define BITE_FRAME 5
 #define EXPLODE_TIME 5
+#define SHOOT_TIME 1
 #define OFFSET_SCALE 1/0.0234375f
 
 
@@ -24,6 +25,9 @@ bool ActionPolygon::dealDamage(){
     }
     else if (polygonAction == Action::EXPLODE) {
         return _age == EXPLODE_TIME;
+    }
+    else if (polygonAction == Action::SHOOT) {
+        return _age == SHOOT_TIME;
     }
     else{
         return true;

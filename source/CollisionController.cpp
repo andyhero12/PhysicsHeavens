@@ -97,7 +97,7 @@ void CollisionController::attackCollisions(OverWorld& overWorld, MonsterControll
     for (const std::shared_ptr<ActionPolygon>& action: attacks.currentAttacks){
         switch (action->getAction()){
             case (Action::SHOOT):
-                hugeBlastCollision(action, monsterController); // Play blast sound
+                hugeBlastCollision(action, monsterController, spawners); // Play blast sound
                 break;
             case (Action::EXPLODE):
                 resolveBlowup(action,monsterController, spawners); // play boom sound
@@ -113,7 +113,7 @@ void CollisionController::attackCollisions(OverWorld& overWorld, MonsterControll
     for (const std::shared_ptr<ActionPolygon>& action: attacksClient.currentAttacks){
         switch (action->getAction()){
             case (Action::SHOOT):
-                hugeBlastCollision(action, monsterController); // Play blast sound
+                hugeBlastCollision(action, monsterController, spawners); // Play blast sound
                 break;
             case (Action::EXPLODE):
                 resolveBlowup(action,monsterController, spawners); // play boom sound
@@ -306,7 +306,9 @@ bool CollisionController::healFromBaseCollsion( BaseSet& bset, std::shared_ptr<D
     }
     return false;
 }
-void CollisionController::hugeBlastCollision(const std::shared_ptr<ActionPolygon>& action, MonsterController& monsterController){
+void CollisionController::hugeBlastCollision(const std::shared_ptr<ActionPolygon>& action, MonsterController& monsterController, std::unordered_set<std::shared_ptr<AbstractSpawner>>& spawners){
+    if (!action->dealDamage())
+        return;
     Poly2 blastRectangle = action->getPolygon();
     std::unordered_set<std::shared_ptr<AbstractEnemy>>& enemies = monsterController.getEnemies();
     bool hitSomething = false;
@@ -327,6 +329,20 @@ void CollisionController::hugeBlastCollision(const std::shared_ptr<ActionPolygon
             hitSomething = true;
             monsterController.removeEnemy(enemy);
             enemies.erase(curA);
+        }
+    }
+    for (auto& spawner : spawners){
+        Vec2 diff = spawner->getPos() - action->getCenter();
+        float ang = diff.getAngle();
+        float result = ((ang > 0 ? ang : (2*M_PI +ang)) * 360 / (2*M_PI)) - 90.0f;
+        if (result < 0.0f){
+            result += 360.0f;
+        }
+        float dist = diff.length();
+//        CULog("Distance %f Scale %f", dist, action->getScale());
+        if (withinAngle(action->getAngle()-45.0f, result, 90.0f) && dist <= 5.5f * action->getScale()){
+            hitSomething = true;
+            spawner->subHealth(25);
         }
     }
 }
