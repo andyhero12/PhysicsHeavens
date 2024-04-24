@@ -17,7 +17,9 @@ bool PauseScene::init(std::shared_ptr<cugl::AssetManager> &assets, cugl::Size sc
 }
 
 bool PauseScene::init(){
-    _childOffset = -1;
+    cugl::scene2::SceneNode::init();
+    
+    status = Choice::GAME;
     
     std::shared_ptr<cugl::scene2::SceneNode> resume =cugl::scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("resume"));
 //    resume->setScale(PAUSE_SCALE);
@@ -73,6 +75,7 @@ void PauseScene::setPause(bool value) {
 }
 
 void PauseScene::dispose(){
+    status = Choice::GAME;
     resumeButton->dispose();
     exitButton->dispose();
 }
