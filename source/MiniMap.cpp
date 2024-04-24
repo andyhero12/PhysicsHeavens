@@ -62,6 +62,9 @@ void Minimap::createMap(){
     float k = 0.005; // Decay control parameter
 
     for (const auto& spawner : _spawners) {
+        if(spawner->dead()){
+            continue;
+        }
         std::shared_ptr<cugl::scene2::PolygonNode> spawnerObj = cugl::scene2::PolygonNode::allocWithTexture(spawnerTexture);
         cugl::Vec2 dist = spawner->getPos() - dogPos;
         float actualDistance = dist.length();
