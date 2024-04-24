@@ -7,7 +7,7 @@
 
 #include "SimpleSpawner.h"
 #include <cctype> // for tolower()
-
+#include <cstdlib>
 
 
 
@@ -43,6 +43,10 @@ void SimpleSpawner::update(MonsterController& monsterController, OverWorld& over
             s = spawnType3;
         }
         float power = difficulty;
+
+        float r = rand() / (float)RAND_MAX;
+        r = r * r * r;
+        power *= 0.8f + r;
 
         monsterController.spawnEnemyFromString(s, getPos(), overWorld, power);
     }
