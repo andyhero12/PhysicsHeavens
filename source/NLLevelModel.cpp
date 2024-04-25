@@ -147,10 +147,22 @@ bool LevelModel::loadPreSpawnedClusters(const std::shared_ptr<JsonValue>& json) 
     for (int i = 0 ; i< clusters->size() ;i++){
         float spawnX = json->get("objects")->get(i)->get("x")->asFloat();
         float spawnY = json->get("objects")->get(i)->get("y")->asFloat();
-        auto spawnNum = json->get("objects")->get(i)->get("properties")->get(0)->get("value")->asFloat();
-         
-        _preSpawnLocs.emplace_back(cugl::Vec3(spawnX/_tileWidth,(_levelHeight * _tileHeight - spawnY)/_tileWidth, spawnNum));
+        int count = 1;
+        std::string enemy;
+        std::shared_ptr<JsonValue> properties = json->get("objects")->get(i)->get("properties");
+        for (int i = 0; i < properties->size(); i++){
+            std::string name = properties->get(i)->get("name")->asString();
+            if(name == "numSpawn") {
+                count = properties->get(i)->get("value")->asInt();
+            }else if (name == "enemyType"){
+                enemy = properties->get(i)->get("value")->asString();
+            }
+        }
+        std::string power = json->get("objects")->get(i)->get("name")->asString();
+        PreSpawned prespawned = { spawnX / _tileWidth, (_levelHeight * _tileHeight - spawnY) / _tileWidth, count, power, enemy};
+        _preSpawnLocs.emplace_back(prespawned);
     }
+
     return true;
 }
 bool LevelModel::loadTiles(const std::shared_ptr<JsonValue>& json) {

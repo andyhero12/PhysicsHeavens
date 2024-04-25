@@ -14,6 +14,8 @@
 #define ANIM_FREQ 1
 #define BITE_SCALE 1
 #define BITE_FRAME 5
+#define EXPLODE_TIME 5
+#define SHOOT_TIME 1
 #define OFFSET_SCALE 1/0.0234375f
 
 
@@ -21,12 +23,19 @@ bool ActionPolygon::dealDamage(){
     if(!_polygon && polygonAction == Action::BITE){
         return spriteActionNode->getFrame() == BITE_FRAME;
     }
+    else if (polygonAction == Action::EXPLODE) {
+        return _age == EXPLODE_TIME;
+    }
+    else if (polygonAction == Action::SHOOT) {
+        return _age == SHOOT_TIME;
+    }
     else{
         return true;
     }
 }
 
 void ActionPolygon::update(){
+    _age++;
     if(!_polygon){
         _expired = (spriteActionNode->getFrame() + 1) == spriteActionNode->getSpan();
         if(_expired){
@@ -35,7 +44,6 @@ void ActionPolygon::update(){
         spriteActionNode->update();
     }
     else{
-        _age++;
         _expired = _age >= _maxage;
     }
     // update animation when needed
