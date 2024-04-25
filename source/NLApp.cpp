@@ -130,10 +130,9 @@ void NetApp::onResume() {
 
 void NetApp::preUpdate(float timestep){
 //    std::cout << _status << std::endl;
-    if (_status == LOAD && _loading.isActive()) {
+    if (_status == LOAD && !_loading.doneLoading()) {
         _loading.update(0.01f);
-    }
-    else if (_status == LOAD) {
+    }else if (_status == LOAD) {
         _network = NetEventController::alloc(_assets);
         _loading.dispose(); // Disables the input listeners in this mode
         _mainmenu.init(_assets);
@@ -210,8 +209,7 @@ void NetApp::updateMenuScene(float timestep) {
         _menu.setActive(false);
         _mainmenu.setActive(true);
         _status = MAINMENU;
-    }
-    else{
+    }else{
         switch (_menu.getChoice()) {
         case MenuScene::Choice::HOST:
             _menu.setActive(false);

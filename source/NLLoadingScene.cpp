@@ -59,10 +59,6 @@ bool LoadingScene::init(const std::shared_ptr<AssetManager>& assets) {
     
     _bar = std::dynamic_pointer_cast<scene2::ProgressBar>(assets->get<scene2::SceneNode>("load_bar"));
     _brand = assets->get<scene2::SceneNode>("load_name");
-    _button = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("load_play"));
-    _button->addListener([=](const std::string& name, bool down) {
-        this->_active = down;
-    });
     background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("backgroundl"), 1, 18);
     background->setScale(6.5);
     background->setPosition(0.5 * background->getSize());
@@ -77,11 +73,6 @@ bool LoadingScene::init(const std::shared_ptr<AssetManager>& assets) {
  * Disposes of all (non-static) resources allocated to this mode.
  */
 void LoadingScene::dispose() {
-    // Deactivate the button (platform dependent)
-    if (isPending()) {
-        _button->deactivate();
-    }
-    _button = nullptr;
     _brand = nullptr;
     _bar->removeFromParent();
     _bar = nullptr;
@@ -115,19 +106,12 @@ void LoadingScene::update(float progress) {
             _progress = 1.0f;
             _bar->setVisible(false);
             _brand->setVisible(false);
-            _button->setVisible(true);
-            _button->activate();
         }
         _bar->setProgress(_progress);
     }
 }
 
-/**
- * Returns true if loading is complete, but the player has not pressed play
- *
- * @return true if loading is complete, but the player has not pressed play
- */
-bool LoadingScene::isPending( ) const {
-    return _button != nullptr && _button->isVisible();
-}
 
+bool LoadingScene::doneLoading() const {
+    return _progress >= 1.0f;
+}

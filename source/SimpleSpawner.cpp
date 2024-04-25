@@ -7,21 +7,14 @@
 
 #include "SimpleSpawner.h"
 #include <cctype> // for tolower()
+#include <cstdlib>
+#include <cmath>
 
-
-void toLowerCase(std::string& s) {
-    for (char& c : s) {
-        c = std::tolower(c);
-    }
-}
 
 
 SimpleSpawner::SimpleSpawner(int rate, cugl::Vec2 pos, int health, int delay, std::string s1, std::string s2, std::string s3)
 :AbstractSpawner(rate, pos, health, delay)
 {
-    toLowerCase(s1);
-    toLowerCase(s2);
-    toLowerCase(s3);
     spawnType1 = s1;
     if (s2.empty()) {
         s2 = s1;
@@ -35,7 +28,7 @@ SimpleSpawner::SimpleSpawner(int rate, cugl::Vec2 pos, int health, int delay, st
 
 
 void SimpleSpawner::update(MonsterController& monsterController, OverWorld& overWorld, float timestep, float difficulty){
-    updateTime(timestep);
+    updateTime(timestep * difficulty);
     int r = rand() % 10;
     if (canSpawn()){
         reloadSpawner();
@@ -52,20 +45,11 @@ void SimpleSpawner::update(MonsterController& monsterController, OverWorld& over
         }
         float power = difficulty;
 
-        if (s == "basic") {
-            monsterController.spawnBasicEnemy(getPos(), overWorld, power);
-        }
-        else if (s == "spawner") {
-            monsterController.spawnSpawnerEnemy(getPos(), overWorld, power);
-        }
-        else if (s == "bomb") {
-            monsterController.spawnBombEnemy(getPos(), overWorld, power);
-        }
-        else if (s == "eating") {
-            monsterController.spawnAbsorbEnemy(getPos(), overWorld, power);
-        }
-        else {
-            throw std::runtime_error("Unknown enemy type: " + spawnType1);
-        }
+        float r = rand() / (float)RAND_MAX;
+        r = r * r * r;
+        power *= 0.8f + r;
+        power = (float)sqrt(power);
+
+        monsterController.spawnEnemyFromString(s, getPos(), overWorld, power);
     }
 }
