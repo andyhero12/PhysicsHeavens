@@ -316,6 +316,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 
     addChildForeground();
     
+    _minimap = Minimap::alloc(_assets, computeActiveSize(), overWorld, _spawnerController);
+    _uinode->addChild(_minimap);
+    
     return true;
 }
 
@@ -551,6 +554,7 @@ void GameScene::postUpdate(float dt)
     {
         _decorToHide.at(i)->setColor(Color4f(1, 1, 1, 0.7f));
     }
+    _minimap->update();
 }
 
 void GameScene::fixedUpdate()
