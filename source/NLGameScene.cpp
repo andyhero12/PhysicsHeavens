@@ -191,7 +191,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     }
     _assets = assets;
     _input.init();
-    _input.update();
 
     // IMPORTANT: SCALING MUST BE UNIFORM
     // This means that we cannot change the aspect ratio of the physics world
@@ -319,6 +318,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _minimap = Minimap::alloc(_assets, computeActiveSize(), overWorld, _spawnerController);
     _uinode->addChild(_minimap);
     
+    tutorialTile = Tutorial::alloc(10, Tutorial::PROGRESS::BITE);
     return true;
 }
 
@@ -434,20 +434,7 @@ void GameScene::addInitObstacle(const std::shared_ptr<physics2::Obstacle> &obj,
 
 void GameScene::preUpdate(float dt)
 {
-    _input.update();
-    if (_input.didPressExit())
-    {
-        Application::get()->quit();
-    }
-    if (_input.didPressPause())
-    {
-        _pause->togglePause();
-    }
-
-    if (_input.didPressReset())
-    {
-        _pause->exitToMain();
-    }
+    updateInputController();
     if (loseNode->isVisible() || winNode->isVisible()){
         return;
     }
@@ -461,11 +448,6 @@ void GameScene::preUpdate(float dt)
         _rootnode->setScale(_zoom);
     }
 
-    // Process the toggled key commands
-    if (_input.didPressDebug())
-    {
-        setDebug(!isDebug());
-    }
     overWorld.update(_input, computeActiveSize(), dt);
     _spawnerController.update(_monsterController, overWorld, dt);
     _monsterController.update(dt, overWorld);
@@ -505,6 +487,8 @@ void GameScene::postUpdate(float dt)
     overWorld.postUpdate();
 
     _rootnode->resetPane();
+    
+    // reverting hidden tiles
     for (int i = 0; i < _decorToHide.size(); i++)
     {
         _decorToHide.at(i)->setColor(Color4::WHITE);
@@ -528,16 +512,17 @@ void GameScene::postUpdate(float dt)
 
         delta = overWorld.getClientDog()->getPosition();
     }
-
+    
+    // search only tiles around dog
     std::vector<Vec2> upperPosHide;
     for (int i = -1; i <= 1; i++)
     {
         for (int j = -1; j <= 1; j++)
         {
-            
             upperPosHide.push_back(Vec2(int(delta.x + j),int(delta.y + i)));
         }
     }
+    
     for (const std::shared_ptr<TileInfo>& tile : _backgroundWrapper->getVisibleNodes()){
         Vec2 pos = tile->getPosition();
         Vec2 dogPos = _isHost ? overWorld.getDog()->getPosition() : overWorld.getClientDog()->getPosition();
@@ -550,6 +535,8 @@ void GameScene::postUpdate(float dt)
             _decorToHide.push_back(tile->getTileSprite());
         }
     }
+    
+    // tinting tiles
     for (int i = 0; i < _decorToHide.size(); i++)
     {
         _decorToHide.at(i)->setColor(Color4f(1, 1, 1, 0.7f));
@@ -752,6 +739,35 @@ void GameScene::addChildForeground()
                     _worldnode->addChild(t->getTileSprite());
                 }
             }
+        }
+    }
+}
+
+void GameScene::updateInputController(){
+    bool tutorial = tutorialTile->getX() == (int)overWorld.getDog()->getX();
+//    std::cout << overWorld.getDog()->getX() << std::endl;
+    if(tutorial && !tutorialTile->didPass()){
+        tutorialTile->setPass(_input.update(tutorialTile->getProgress()));
+    }
+    else{
+        _input.update();
+        if (_input.didPressExit())
+        {
+            Application::get()->quit();
+        }
+        if (_input.didPressPause())
+        {
+            _pause->togglePause();
+        }
+        
+        if (_input.didPressHome())
+        {
+            _pause->exitToMain();
+        }
+        // Process the toggled key commands
+        if (_input.didPressDebug())
+        {
+            setDebug(!isDebug());
         }
     }
 }

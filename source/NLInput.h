@@ -14,6 +14,7 @@
 #ifndef __SL_INPUT_CONTROLLER_H__
 #define __SL_INPUT_CONTROLLER_H__
 
+#include "Tutorial.h"
 /**
  * Device-independent input manager.
  *
@@ -43,7 +44,7 @@ private:
     bool _didFire;
 
     /** Did we press the reset button? */
-    bool _didReset;
+    bool _didHome;
     
     /** Did we press the pause button? */
     bool _didPause;
@@ -130,8 +131,8 @@ public:
      *
      * @return whether the reset button was pressed.
      */
-    bool didPressReset() const {
-        return _didReset;
+    bool didPressHome() const {
+        return _didHome;
     }
     bool didPressLeft() const {
         return _didPressLeft;
@@ -183,9 +184,17 @@ public:
     void readInput();
 
     void readInput_joystick();
+    
+    bool readInput(Tutorial::PROGRESS progress);
+
+    bool readInput_joystick(Tutorial::PROGRESS progress);
 
     
     void update();
+    
+    bool update(Tutorial::PROGRESS progress);
+    
+    
     cugl::Vec2 getVelocity() const {
         return _Vel;
     }

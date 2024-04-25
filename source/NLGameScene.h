@@ -43,6 +43,7 @@
 #include "GlobalConstants.h"
 #include "PauseScene.h"
 #include "MiniMap.h"
+#include "Tutorial.h"
 
 using namespace cugl::physics2::net;
 using namespace cugl;
@@ -107,6 +108,7 @@ protected:
     cugl::Affine2 _transform;
 
     float _zoom;
+    std::shared_ptr<Tutorial> tutorialTile;
 
     /**
      * Lays out the game geography.
@@ -150,6 +152,9 @@ protected:
      * ratios
      */
     cugl::Size computeActiveSize() const;
+    
+    /** Updates input controller */
+    void updateInputController();
 
 public:
 #pragma mark -

@@ -27,7 +27,7 @@ using namespace cugl;
 InputController::InputController() :
 _forward(0),
 _turning(0),
-_didReset(false),
+_didHome(false),
 _didDash(false),
 _didChangeMode(false),
 _didSpecial(false),
@@ -97,12 +97,44 @@ void InputController::update(){
     readInput_joystick();
     readInput();
 }
+
+bool InputController::update(Tutorial::PROGRESS progress){
+    resetKeys();
+    return readInput(progress) || readInput_joystick(progress);
+}
+
 void InputController::resetcontroller()
 {
     _updown = 0;
     _Leftright = 0;
     _confirm = false;
     _back = false;
+}
+
+bool InputController::readInput(Tutorial::PROGRESS progress){
+    Keyboard* keys = Input::get<Keyboard>();
+    
+    if(progress == Tutorial::PROGRESS::MOVEMENT){
+        if (keys->keyPressed(KeyCode::ARROW_UP) || keys->keyPressed(KeyCode::ARROW_DOWN) || keys->keyPressed(KeyCode::ARROW_LEFT) || keys->keyPressed(KeyCode::ARROW_RIGHT)){
+            return true;
+        }
+    }
+    else if (progress == Tutorial::PROGRESS::BITE){
+        if(keys->keyPressed(KeyCode::SPACE)){
+            return true;
+        }
+    }
+    else if(progress == Tutorial::PROGRESS::CHANGEABILITY){
+        if(keys->keyPressed(KeyCode::F)){
+            return true;
+        }
+    }
+    else if(progress == Tutorial::SPECIALS){
+        if(keys->keyPressed(KeyCode::G)){
+            return true;
+        }
+    }
+    return false;
 }
 /**
  * Reads the input for this player and converts the result into game logic.
@@ -163,7 +195,7 @@ void InputController::readInput() {
     // Reset the game
     if (keys->keyPressed(reset)) {
         _didBack = true;
-        _didReset = true;
+        _didHome = true;
         _UseKeyboard = true;
     }
     
@@ -210,7 +242,7 @@ void InputController::readInput() {
 
 void InputController::resetKeys(){
     _didFire = false;
-    _didReset = false;
+    _didHome = false;
     _didPause = false;
     _didChangeMode = false;
     _didSpecial = false;
@@ -228,6 +260,40 @@ void InputController::resetKeys(){
     _updown = 0;
     _Leftright = 0;
     _Vel = cugl::Vec2(0, 0);
+}
+
+bool InputController::readInput_joystick(Tutorial::PROGRESS progress) {
+    cugl::GameController::Button buttons = cugl::GameController::Button::INVALID;
+    cugl::GameController::Axis X_left = cugl::GameController::Axis::INVALID;
+    cugl::GameController::Axis Y_left = cugl::GameController::Axis::INVALID;
+    // define button // trigger based on progress
+    if(progress == Tutorial::PROGRESS::MOVEMENT){
+        buttons = cugl::GameController::Button::A;
+    }
+    else if (progress == Tutorial::PROGRESS::BITE){
+        buttons = cugl::GameController::Button::A;
+    }
+    else if(progress == Tutorial::PROGRESS::CHANGEABILITY){
+        buttons = cugl::GameController::Button::A;
+    }
+    else if(progress == Tutorial::SPECIALS){
+        X_left = cugl::GameController::Axis::LEFT_X;
+        Y_left = cugl::GameController::Axis::LEFT_Y;
+    }
+    
+    if (_gameContrl) {
+        if (_gameContrl->isButtonPressed(buttons)) {
+            return true;
+        }
+        
+        float LR = _gameContrl->getAxisPosition(X_left);
+        float UD = _gameContrl->getAxisPosition(Y_left);
+        
+        if (abs(LR) >= 0.2 || abs(UD) >= 0.2) {
+            return true;
+        }
+    }
+    return false;
 }
 
 void InputController::readInput_joystick() {
@@ -272,7 +338,7 @@ void InputController::readInput_joystick() {
         }
 
         if (_gameContrl->isButtonPressed(Y)) {
-            _didReset = true;
+            _didHome = true;
             _UseJoystick = true;
         }
         if (_gameContrl->isButtonPressed(LT)) {
@@ -284,7 +350,7 @@ void InputController::readInput_joystick() {
             _UseJoystick = true;
         }
           if (_gameContrl->isButtonPressed(Back)) {
-            _didReset = true;
+            _didHome = true;
             _UseJoystick = true;
         }
           if (_gameContrl->isButtonPressed(Start)) {
