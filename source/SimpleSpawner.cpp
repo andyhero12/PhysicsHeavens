@@ -7,7 +7,8 @@
 
 #include "SimpleSpawner.h"
 #include <cctype> // for tolower()
-
+#include <cstdlib>
+#include <cmath>
 
 
 
@@ -27,7 +28,7 @@ SimpleSpawner::SimpleSpawner(int rate, cugl::Vec2 pos, int health, int delay, st
 
 
 void SimpleSpawner::update(MonsterController& monsterController, OverWorld& overWorld, float timestep, float difficulty){
-    updateTime(timestep);
+    updateTime(timestep * difficulty);
     int r = rand() % 10;
     if (canSpawn()){
         reloadSpawner();
@@ -43,6 +44,11 @@ void SimpleSpawner::update(MonsterController& monsterController, OverWorld& over
             s = spawnType3;
         }
         float power = difficulty;
+
+        float r = rand() / (float)RAND_MAX;
+        r = r * r * r;
+        power *= 0.8f + r;
+        power = (float)sqrt(power);
 
         monsterController.spawnEnemyFromString(s, getPos(), overWorld, power);
     }

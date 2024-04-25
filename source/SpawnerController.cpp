@@ -27,7 +27,8 @@ void SpawnerController::update(MonsterController& monsterController, OverWorld& 
    // _difficulty *= 1.00003851f;
     accumulatedTime += timestep;
     //cout << (std::to_string(difficulty));
-    float power = (float)std::pow(1.00231316, accumulatedTime) + difficulty;
+    float timeDifficulty = (accumulatedTime / 90.0f) * (accumulatedTime / 90.0f) / (1 + accumulatedTime / 90.0f);
+    float power = 1 + timeDifficulty + difficulty;
     for(auto& spawner : _spawners) {
         spawner->update(monsterController, overWorld, timestep, power);
         
