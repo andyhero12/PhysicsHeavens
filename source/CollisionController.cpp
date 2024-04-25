@@ -35,24 +35,6 @@ void CollisionController::intraOverWorldCollisions(OverWorld& overWorld){
     }
 }
 
-float vectorAngle(Vec2 vec){
-    if (vec.x == 0) // special cases
-        return (vec.y > 0)? 90
-            : (vec.y == 0)? 0
-            : 270;
-    else if (vec.y == 0) // special cases
-        return (vec.x >= 0)? 0
-            : 180;
-    float ret = vec.getAngle() * 180 /M_PI;
-    if (vec.x < 0 && vec.y < 0) // quadrant Ⅲ
-        ret = 180 + ret;
-    else if (vec.x < 0) // quadrant Ⅱ
-        ret = 180 + ret; // it actually substracts
-    else if (vec.y < 0) // quadrant Ⅳ
-        ret = 270 + (90 + ret); // it actually substracts
-    return ret;
-}
-
 static inline double angle_1to360(float angle){
     if (angle >= 360.0f){
         angle -= 360.0f;
@@ -270,7 +252,7 @@ void CollisionController::resolveBiteAttack(const std::shared_ptr<ActionPolygon>
         
         Vec2 diff = enemy->getPosition() - action->getCenter();
         float ang = diff.getAngle();
-        float result = ((ang > 0 ? ang : (2*M_PI +ang)) * 360 / (2*M_PI)) - 90.0f;
+        float result = ((ang > 0 ? ang : (2*M_PI +ang)) * 360 / (2*M_PI));
         if (result < 0.0f){
             result += 360.0f;
         }
@@ -332,7 +314,7 @@ void CollisionController::hugeBlastCollision(const std::shared_ptr<ActionPolygon
         itA++;
         Vec2 diff = enemy->getPosition() - action->getCenter();
         float ang = diff.getAngle();
-        float result = ((ang > 0 ? ang : (2*M_PI +ang)) * 360 / (2*M_PI)) - 90.0f;
+        float result = ((ang > 0 ? ang : (2*M_PI +ang)) * 360 / (2*M_PI));
         if (result < 0.0f){
             result += 360.0f;
         }
