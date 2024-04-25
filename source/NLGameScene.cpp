@@ -318,7 +318,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _minimap = Minimap::alloc(_assets, computeActiveSize(), overWorld, _spawnerController);
     _uinode->addChild(_minimap);
     
-    tutorialTile = Tutorial::alloc(10, Tutorial::PROGRESS::BITE);
+    tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::PROGRESS::BITE));
+    tutorialTiles.push_back(Tutorial::alloc(14, Tutorial::PROGRESS::CHANGEABILITY));
+    
     return true;
 }
 
@@ -744,12 +746,15 @@ void GameScene::addChildForeground()
 }
 
 void GameScene::updateInputController(){
-    bool tutorial = tutorialTile->getX() == (int)overWorld.getDog()->getX();
-//    std::cout << overWorld.getDog()->getX() << std::endl;
-    if(tutorial && !tutorialTile->didPass()){
-        tutorialTile->setPass(_input.update(tutorialTile->getProgress()));
+    bool normal = true;
+    for (auto& tile : tutorialTiles) {
+        bool tutorial = tile->getX() == (int) overWorld.getDog()->getX();
+        if (tutorial && !tile->didPass()) {
+            tile->setPass(_input.update(tile->getProgress()));
+            normal = false;
+        }
     }
-    else{
+    if(normal){
         _input.update();
         if (_input.didPressExit())
         {

@@ -108,7 +108,7 @@ protected:
     cugl::Affine2 _transform;
 
     float _zoom;
-    std::shared_ptr<Tutorial> tutorialTile;
+    std::vector<std::shared_ptr<Tutorial>> tutorialTiles;
 
     /**
      * Lays out the game geography.

@@ -339,11 +339,7 @@ void InputController::readInput_joystick() {
         }
 
         if (_gameContrl->isButtonPressed(Y)) {
-<<<<<<< HEAD
             _didHome = true;
-=======
-            //_didReset = true;
->>>>>>> 89838ef9d94fe0fd4ef471ac536c0e776e8d139b
             _UseJoystick = true;
         }
         if (_gameContrl->isButtonPressed(X)) {
