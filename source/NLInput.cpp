@@ -242,6 +242,10 @@ void InputController::readInput_joystick() {
     cugl::GameController::Button Start = cugl::GameController::Button::START;
     cugl::GameController::Axis LT = cugl::GameController::Axis::TRIGGER_LEFT;
     cugl::GameController::Axis RT = cugl::GameController::Axis::TRIGGER_RIGHT;
+    cugl::GameController::Button up = cugl::GameController::Button::DPAD_UP;
+    cugl::GameController::Button down = cugl::GameController::Button::DPAD_DOWN;
+    cugl::GameController::Button left = cugl::GameController::Button::DPAD_LEFT;
+    cugl::GameController::Button right = cugl::GameController::Button::DPAD_RIGHT;
     /* Movement using controller*/
     if (_gameContrl) {
         float LR = _gameContrl->getAxisPosition(X_left);
