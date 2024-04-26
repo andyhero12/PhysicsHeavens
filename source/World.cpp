@@ -19,8 +19,10 @@ World::World(std::shared_ptr<LevelModel> _level, std::shared_ptr<cugl::AssetMana
     const std::vector<std::vector<std::vector<int>>>& lowerDecorations = _level->getLowerDecorations();
     const std::vector<std::vector<std::vector<int>>>& upperDecorations = _level->getUpperDecorations();
     const std::map<int,TileSet>& tileSetTextures = _level->getTileSetWithTextures();
+    tilesAtCoords.resize(map.size());
     tileWorld.resize(map.size());
     for(int i = 0; i < map.size(); i++){
+        tilesAtCoords.at(i).resize(map[0].size());
         tileWorld.at(i).resize(map[0].size());
     }
     int originalRows = (int) tileWorld.size();
@@ -32,6 +34,7 @@ World::World(std::shared_ptr<LevelModel> _level, std::shared_ptr<cugl::AssetMana
             tileWorld.at(i).at(j) = TileInfo::alloc(temp.origin, size, Terrain::PASSABLE, getBoxFromTileSet((map.at(i).at(j)),tileSetTextures));
             if (subTexture != nullptr){
                 allTiles.push_back(tileWorld.at(i).at(j));
+                tilesAtCoords.at(i).at(j).push_back(tileWorld.at(i).at(j));
             }
         }
     }
@@ -61,6 +64,7 @@ World::World(std::shared_ptr<LevelModel> _level, std::shared_ptr<cugl::AssetMana
                 lowerDecorWorld.at(n).at(i).at(j) = TileInfo::alloc(temp.origin, size, Terrain::IMPASSIBLE, getBoxFromTileSet((lowerDecorations.at(n).at(i).at(j)),tileSetTextures));
                 if (subTexture != nullptr){
                     allTiles.push_back(lowerDecorWorld.at(n).at(i).at(j));
+                    tilesAtCoords.at(i).at(j).push_back(lowerDecorWorld.at(n).at(i).at(j));
                 }
             }
         }
@@ -77,6 +81,7 @@ World::World(std::shared_ptr<LevelModel> _level, std::shared_ptr<cugl::AssetMana
                 upperDecorWorld.at(n).at(i).at(j) = TileInfo::alloc(temp.origin, size, Terrain::IMPASSIBLE, getBoxFromTileSet((upperDecorations.at(n).at(i).at(j)),tileSetTextures));
                 if (subTexture != nullptr){
                     allTiles.push_back(upperDecorWorld.at(n).at(i).at(j));
+                    tilesAtCoords.at(i).at(j).push_back(upperDecorWorld.at(n).at(i).at(j));
                     upperDecorWorld.at(n).at(i).at(j)->setUpperTrue();
                 }
             }

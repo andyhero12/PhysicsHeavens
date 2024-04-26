@@ -87,6 +87,7 @@ public:
     std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>> lowerDecorWorld;
     std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>> upperDecorWorld;
     
+    std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>> tilesAtCoords;
     std::vector<std::shared_ptr<TileInfo>> allTiles;
     
     World () {};
@@ -101,6 +102,9 @@ public:
     }
     const std::vector<std::vector<std::shared_ptr<TileInfo>>>& getTileWorld(){
         return tileWorld;
+    }
+    const std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>>& getTileDisplay(){
+        return tilesAtCoords;
     }
     
     const std::vector<std::vector<std::shared_ptr<TileInfo>>>& getBoundaryWorld(){
