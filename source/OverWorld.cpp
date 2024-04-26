@@ -399,10 +399,14 @@ bool OverWorld::initDecoys()
 bool OverWorld::initPolygons()
 {
     _attackPolygonSet.init();
-    _attackPolygonSet.setTexture(_assets->get<cugl::Texture>("leftbite"), _assets->get<cugl::Texture>("rightbite"), _assets->get<cugl::Texture>("frontbite"), _assets->get<cugl::Texture>("leftbite"));
+    _attackPolygonSet.setTexture(_assets->get<cugl::Texture>("leftbite"), _assets->get<cugl::Texture>("rightbite"), _assets->get<cugl::Texture>("frontbite"), _assets->get<cugl::Texture>("backbite"));
+    _attackPolygonSet.setTextureShoot(_assets->get<cugl::Texture>("leftShoot"), _assets->get<cugl::Texture>("rightShoot"), _assets->get<cugl::Texture>("downShoot"), _assets->get<cugl::Texture>("upShoot"));
+    
     _attackPolygonSet.setBombTexture(_assets->get<cugl::Texture>("explodingGate"));
+    
     _clientAttackPolygonSet.init();
-    _clientAttackPolygonSet.setTexture(_assets->get<cugl::Texture>("leftbite"), _assets->get<cugl::Texture>("rightbite"), _assets->get<cugl::Texture>("frontbite"), _assets->get<cugl::Texture>("leftbite"));
+    _clientAttackPolygonSet.setTexture(_assets->get<cugl::Texture>("leftbite"), _assets->get<cugl::Texture>("rightbite"), _assets->get<cugl::Texture>("frontbite"), _assets->get<cugl::Texture>("backbite"));
+    _clientAttackPolygonSet.setTextureShoot(_assets->get<cugl::Texture>("leftShoot"), _assets->get<cugl::Texture>("rightShoot"), _assets->get<cugl::Texture>("downShoot"), _assets->get<cugl::Texture>("upShoot"));
     _clientAttackPolygonSet.setBombTexture(_assets->get<cugl::Texture>("explodingGate"));
     return true;
 }

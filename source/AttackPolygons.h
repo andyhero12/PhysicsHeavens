@@ -38,6 +38,7 @@ public:
     bool _polygon;
     bool _expired;
     int _freq;
+    bool canAttack;
     
     ActionPolygon(Action curAction, Poly2& mintPoly, int mx, float scale, float ang, Vec2 center);
     ActionPolygon(std::shared_ptr<SpriteAnimationNode> actionSprite, Action curAction, Poly2& mintPoly, int mx, float scale, float ang, Vec2 center);
@@ -55,7 +56,14 @@ public:
     std::shared_ptr<SpriteAnimationNode> getSpriteNode(){
         return spriteActionNode;
     }
+    
     bool dealDamage();
+    bool canDamage(){
+        return canAttack;
+    };
+    void resetAttack(){
+        canAttack = false;
+    }
     float getAngle() const { return _ang;}
     Vec2 getCenter() const { return _center;}
 };
@@ -69,6 +77,12 @@ private:
     std::shared_ptr<cugl::Texture> biteLeftTexture;
     std::shared_ptr<cugl::Texture> biteFrontTexture;
     std::shared_ptr<cugl::Texture> biteBackTexture;
+    
+    std::shared_ptr<cugl::Texture> shootRightTexture;
+    std::shared_ptr<cugl::Texture> shootLeftTexture;
+    std::shared_ptr<cugl::Texture> shootFrontTexture;
+    std::shared_ptr<cugl::Texture> shootBackTexture;
+    
     std::shared_ptr<cugl::Texture> bombTexture;
     float zorder;
 public:
@@ -78,6 +92,8 @@ public:
     AttackPolygons();
     bool init();
     bool setTexture(const std::shared_ptr<cugl::Texture> &biteL, const std::shared_ptr<cugl::Texture> &biteR, const std::shared_ptr<cugl::Texture> &biteF, const std::shared_ptr<cugl::Texture> &biteB);
+    
+    bool setTextureShoot(const std::shared_ptr<cugl::Texture> &shootL, const std::shared_ptr<cugl::Texture> &shootR, const std::shared_ptr<cugl::Texture> &shootF, const std::shared_ptr<cugl::Texture> &shootB);
     
     bool setBombTexture(const std::shared_ptr<cugl::Texture>& bomb);
     
