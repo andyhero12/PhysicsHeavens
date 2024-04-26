@@ -90,6 +90,7 @@ public:
     std::unordered_set<std::shared_ptr<AbsorbEnemy>>& getAbsorbEnemies(){
         return _absorbEnem;
     }
+    void spawnEnemyFromString(std::string enemyType, cugl::Vec2 pos, OverWorld& overWorld, float power);
     void spawnBasicEnemy(cugl::Vec2 pos, OverWorld& overWorld, float power);
     void spawnStaticBasicEnemy(cugl::Vec2 pos, OverWorld& overWorld, float power);
     void spawnBombEnemy(cugl::Vec2 pos, OverWorld& overWorld, float power);

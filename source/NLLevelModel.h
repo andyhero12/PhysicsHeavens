@@ -77,6 +77,14 @@ public:
         std::string secondaryEnemy;
         std::string tertiaryEnemy;
     };
+
+    struct PreSpawned{
+        float x;
+        float y;
+        int count;
+        std::string power;
+        std::string enemy;
+    };
     
 private:
     std::shared_ptr<cugl::AssetManager> _assets;
@@ -99,7 +107,7 @@ private:
     cugl::Vec2 _playerPos;
     
     std::vector<cugl::Vec3> _basesPos;
-    std::vector<cugl::Vec3> _preSpawnLocs;
+    std::vector<PreSpawned> _preSpawnLocs;
     std::vector<Spawner> _spawnersPos;
     
     std::vector<std::vector<int>> _tiles;
@@ -148,7 +156,7 @@ public:
     const std::vector<cugl::Vec3>& getBasesPos(){
         return _basesPos;
     };
-    const std::vector<cugl::Vec3>& preSpawnLocs(){
+    const std::vector<PreSpawned>& preSpawnLocs(){
         return _preSpawnLocs;
     };
     

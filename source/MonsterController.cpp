@@ -6,6 +6,9 @@
 //
 #include "MonsterController.h"
 
+#include <cctype> // for tolower()
+
+
 #define DYNAMIC_COLOR   Color4::YELLOW
 int generateRandomInclusiveHighLow(int low, int high)
 {
@@ -14,6 +17,14 @@ int generateRandomInclusiveHighLow(int low, int high)
     static std::mt19937 gen(rd());
     std::uniform_int_distribution<> dis(low, high); // Range is 1 to 3, inclusive
     return dis(gen);
+}
+
+
+
+void toLowerCase(std::string& s) {
+    for (char& c : s) {
+        c = std::tolower(c);
+    }
 }
 
 bool MonsterController::init(OverWorld& overWorld,
@@ -25,16 +36,32 @@ bool MonsterController::init(OverWorld& overWorld,
     monsterControllerSceneNode = cugl::scene2::SceneNode::alloc();
     _debugNode = debugNode;
 
-    for (const cugl::Vec3& cluster : overWorld.getLevelModel()->preSpawnLocs()){
+    for (const LevelModel::PreSpawned& cluster : overWorld.getLevelModel()->preSpawnLocs()){
         float cx = cluster.x;
         float cy = cluster.y;
-//        int count = (int) round(cluster.z);
-//        for(int i = 0; i < count; i++) {
-            spawnStaticBasicEnemy(Vec2(cx,cy), overWorld, 1);
-            spawnBombEnemy(Vec2(cx,cy), overWorld, 1);
-//        spawnAbsorbEnemy(Vec2(cx,cy), overWorld, 1);
-        spawnSpawnerEnemy(Vec2(cx,cy), overWorld, 1); // TODO SPAWN ENEMY IN MONSTER CONTROLLER
-//        }
+
+        std::string powerString = cluster.power;
+        toLowerCase(powerString);
+
+        float power;
+
+        if (powerString == "large") {
+            power = 2.0f;
+        }
+        else if (powerString == "med") {
+            power = 1.4f;
+        }
+        else {
+            power = 1;
+        }
+
+        std::string enemyType = cluster.enemy;
+
+        for(int i = 0; i < cluster.count; i++) {
+            Vec2 pos = Vec2(cx + generateRandomInclusiveHighLow(-200, 200) / 100.0f, cy + generateRandomInclusiveHighLow(-200, 200) / 100.0f);
+            
+            spawnEnemyFromString(enemyType, pos, overWorld, power);
+        }
     }
     return true;
 }
@@ -151,6 +178,25 @@ void MonsterController::powerSize(float power, Size& size) {
 
 float MonsterController::powerHealth(float power, int hp) {
     return (int)(hp * power * power);
+}
+
+void MonsterController::spawnEnemyFromString(std::string enemyType, cugl::Vec2 pos, OverWorld& overWorld, float power) {
+    toLowerCase(enemyType);
+    if (enemyType == "basic") {
+        spawnBasicEnemy(pos, overWorld, power);
+    }
+    else if (enemyType == "spawner") {
+        spawnSpawnerEnemy(pos, overWorld, power);
+    }
+    else if (enemyType == "bomb") {
+        spawnBombEnemy(pos, overWorld, power);
+    }
+    else if (enemyType == "eating") {
+        spawnAbsorbEnemy(pos, overWorld, power);
+    }
+    else {
+        throw std::runtime_error("Unknown enemy type: " + enemyType);
+    }
 }
 
 void MonsterController::spawnAbsorbEnemy(cugl::Vec2 pos, OverWorld& overWorld, float power){

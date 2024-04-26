@@ -1,5 +1,25 @@
 {
     "textures": {
+        "minimap": {
+            "file": "textures/minimap/minimap.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "dogmap": {
+            "file": "textures/minimap/dog.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "spawnermap": {
+            "file": "textures/minimap/spawner.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "basemap": {
+            "file": "textures/minimap/base.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
         "leftbite": {
             "file": "textures/dog/effects/magic_chomp_left.png",
             "minfilter": "linear",

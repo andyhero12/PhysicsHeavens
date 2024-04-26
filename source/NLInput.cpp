@@ -74,7 +74,6 @@ bool InputController::init_withlistener() {
         if (deviceUUIDs.size() > 0) {
             _gameContrl = controller->open(deviceUUIDs.at(0));
             _controllerKey = controller->acquireKey();
-            //std::cout << _controllerKey << std::endl;
             _gameContrl->addAxisListener(_controllerKey, [=](const GameControllerAxisEvent& event, bool focus) {
             this->getAxisAngle(event, focus);
             });
@@ -237,10 +236,12 @@ void InputController::readInput_joystick() {
     cugl::GameController::Button X = cugl::GameController::Button::X;
     cugl::GameController::Button B = cugl::GameController::Button::B;
     cugl::GameController::Button Y = cugl::GameController::Button::Y;
-    cugl::GameController::Button LT = cugl::GameController::Button::LEFT_SHOULDER;
-    cugl::GameController::Button RT = cugl::GameController::Button::RIGHT_SHOULDER;
+    cugl::GameController::Button LB = cugl::GameController::Button::LEFT_SHOULDER;
+    cugl::GameController::Button RB = cugl::GameController::Button::RIGHT_SHOULDER;
     cugl::GameController::Button Back = cugl::GameController::Button::BACK;
     cugl::GameController::Button Start = cugl::GameController::Button::START;
+    cugl::GameController::Axis LT = cugl::GameController::Axis::TRIGGER_LEFT;
+    cugl::GameController::Axis RT = cugl::GameController::Axis::TRIGGER_RIGHT;
     /* Movement using controller*/
     if (_gameContrl) {
         float LR = _gameContrl->getAxisPosition(X_left);
@@ -256,30 +257,30 @@ void InputController::readInput_joystick() {
             _UseJoystick = true;
         }
 
-        if (_gameContrl->isButtonPressed(X)) {
+        if (_gameContrl->isButtonPressed(A)) {
             _didFire = true;
             _UseJoystick = true;
         }
 
-        if (_gameContrl->isButtonPressed(A)) {
+        if (_gameContrl->getAxisPosition(LT)>=0.5||_gameContrl->getAxisPosition(RT)>=0.5) {
             _didSpecial = true;
             _UseJoystick = true;
         }
 
         if (_gameContrl->isButtonPressed(B)) {
-            _didChangeMode = true;
+            //_didChangeMode = true;
             _UseJoystick = true;
         }
 
         if (_gameContrl->isButtonPressed(Y)) {
-            _didReset = true;
+            //_didReset = true;
             _UseJoystick = true;
         }
-        if (_gameContrl->isButtonPressed(LT)) {
+        if (_gameContrl->isButtonPressed(X)) {
             _didDash = true;
             _UseJoystick = true;
         }
-        if (_gameContrl->isButtonPressed(RT)) {
+        if (_gameContrl->isButtonPressed(RB)) {
             _didChangeMode = true;
             _UseJoystick = true;
         }

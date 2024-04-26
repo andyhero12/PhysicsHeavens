@@ -42,6 +42,7 @@
 #include "MonsterController.h"
 #include "GlobalConstants.h"
 #include "PauseScene.h"
+#include "MiniMap.h"
 
 using namespace cugl::physics2::net;
 using namespace cugl;
@@ -92,6 +93,8 @@ protected:
     std::shared_ptr<World> _backgroundWrapper;
     
     std::vector<std::shared_ptr<scene2::SceneNode>> _decorToHide;
+    
+    std::shared_ptr<Minimap> _minimap;
     
     /** Host is by default the left cannon */
     bool _isHost;
