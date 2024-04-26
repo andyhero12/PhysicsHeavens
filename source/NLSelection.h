@@ -15,6 +15,7 @@
 #include <chrono>
 #include "GlobalConstants.h"
 #include "NLInput.h"
+#include "SpriteAnimationNode.h"
 
 
 /**
@@ -78,6 +79,7 @@ protected:
     float timeSinceLastSwitch;
 
     float switchFreq;
+    std::shared_ptr<SpriteAnimationNode> background;
     
 public:
 #pragma mark -

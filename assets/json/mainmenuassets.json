@@ -1,7 +1,9 @@
 {
   "textures": {
-    "background": {
-      "file": "textures/Menu/background.png"
+    "backgroundx":{
+      "file" : "textures/Menu/title-screen.png",
+      "minfilter": "linear",
+      "magfilter": "nearest"
     },
     "menu": {
       "file": "textures/Menu/menu.png"
@@ -45,33 +47,6 @@
             "visible": true
         },
         "children": {
-            "background": {
-                "type": "Image",
-                "data": {
-                    "texture": "background",
-                    "anchor": [
-                        0,
-                        1
-                    ],
-                    "size": [
-                        1297,
-                        720
-                    ],
-                    "angle": 0,
-                    "position": [
-                        0,
-                        0
-                    ],
-                    "visible": true
-                },
-                "layout": {
-                    "x_anchor": "left",
-                    "y_anchor": "top",
-                    "absolute": false,
-                    "x_offset": 0,
-                    "y_offset": 0
-                }
-            },
             "startmenu": {
                 "type": "Node",
                 "format": {

@@ -15,6 +15,7 @@
 #include <chrono>
 #include "GlobalConstants.h"
 #include "NLInput.h"
+#include "SpriteAnimationNode.h"
 
 
 /**
@@ -78,6 +79,7 @@ protected:
     std::shared_ptr<cugl::scene2::Button>    _button2;
     std::shared_ptr<cugl::scene2::Button>    _button3;
     std::vector<std::shared_ptr<cugl::scene2::Button>> _buttonset;
+    std::shared_ptr<SpriteAnimationNode> background;
 
     // MODEL
     /** The progress displayed on the screen */

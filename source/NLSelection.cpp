@@ -94,6 +94,15 @@ bool SelectionScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _counter = 0;
     switchFreq = 0.2;
     _isdown = Isdown::isNONE;
+    
+    
+    
+    
+    background = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("backgroundslection"), 1, 6, 5);
+    background->setScale(SCENE_HEIGHT/background->getTexture()->getHeight());
+    background->setPosition(0.5 * background->getSize());
+    addChild(background);
+
     addChild(layer);
     setActive(false);
     return true;
@@ -138,6 +147,7 @@ void SelectionScene::setActive(bool value) {
 
 void SelectionScene::update(float timestep)
 {
+    background->update();
     _input.update();
     timeSinceLastSwitch += timestep;
     //std::cout << timeSinceLastSwitch << std::endl;
