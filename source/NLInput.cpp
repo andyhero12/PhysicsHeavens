@@ -99,7 +99,8 @@ void InputController::update(){
 
 bool InputController::update(Tutorial::MODE progress){
     resetKeys();
-    return readInput(progress) || readInput_joystick(progress);
+    return readInput(progress);
+//    || readInput_joystick(progress);
 }
 
 void InputController::resetcontroller()
