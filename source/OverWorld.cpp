@@ -586,7 +586,7 @@ void OverWorld::ownedDogUpdate(InputController& _input, cugl::Size, std::shared_
         }
         else if (_curDog->getMode() == "BOMB" && _curDog->getAbsorb() >= 5)
         {
-            _curDog->subAbsorb(5);
+            _curDog->subAbsorb(15);
             _network->pushOutEvent(ExplodeEvent::allocExplodeEvent(_curDog->getPosition()));
         }else if (_curDog->getMode() == "RECALL"){
             _network->pushOutEvent(RecallEvent::allocRecallEvent(_curDog->getPosition(),_isHost));
