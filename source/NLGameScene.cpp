@@ -401,6 +401,22 @@ void GameScene::linkSceneToObs(const std::shared_ptr<physics2::Obstacle> &obj,
         scene2::SceneNode *weak = node.get(); // No need for smart pointer in callback
         obj->setListener([=](physics2::Obstacle *obs)
                          {
+            if (auto enemy = dynamic_cast<AbstractEnemy*>(obs)){
+                // check state -> to animations
+                auto topLevel = enemy->getTopLevelNode();
+                auto dog = overWorld.getDog();
+                auto clientDog = overWorld.getClientDog();
+                
+                cugl::Vec2 dist = dog->getPosition()-enemy->getPosition();
+                float actualDistance = dist.length();
+                
+                if(actualDistance < 5){
+                    enemy->setCurAction(AbsorbEnemy::EnemyActions::ATTACK);
+                }
+                else{
+                    enemy->setCurAction(AbsorbEnemy::EnemyActions::RUN);
+                }
+            }
             float leftover = Application::get()->getFixedRemainder() / 1000000.f;
             Vec2 pos = obs->getPosition() + leftover * obs->getLinearVelocity();
             float angle = obs->getAngle() + leftover * obs->getAngularVelocity();

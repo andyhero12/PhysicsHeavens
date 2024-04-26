@@ -148,6 +148,9 @@ public:
         return topLevelPlaceHolder;
     }
     
+    void setCurAction(EnemyActions act){curAction = act;}
+    
+    
 protected:
     int _maxHealth;
     int _health;
