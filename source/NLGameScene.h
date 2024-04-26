@@ -305,6 +305,8 @@ public:
      */
     void addChildBackground();
     void addChildForeground();
+    void executeSlidingWindow(Vec2 dest);
+    void resetDraw();
 };
 
 #endif /* __NL_GAME_SCENE_H__ */
