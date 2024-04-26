@@ -590,7 +590,7 @@ void GameScene::postUpdate(float dt)
     int oldmaxX = fmin(olddogPos.x + DRAW_SIZE, _backgroundWrapper->getCols() - 1);
     
     if (maxY > oldmaxY){ // move tiles Up
-        std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>> tileDisplay = _backgroundWrapper->getTileDisplay();
+        const std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>>& tileDisplay = _backgroundWrapper->getTileDisplay();
         int rowToAdd = maxY;
         int rowToRemove = minY -1;
         for (int j = 0; j < tileDisplay.at(0).size(); j++){
@@ -605,7 +605,7 @@ void GameScene::postUpdate(float dt)
         }
         
     }else if (minY < oldminY){ // move tiles Down
-        std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>> tileDisplay = _backgroundWrapper->getTileDisplay();
+        const std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>>& tileDisplay = _backgroundWrapper->getTileDisplay();
         int rowToAdd = minY;
         int rowToRemove = maxY+1;
         for (int j = 0; j < tileDisplay.at(0).size(); j++){
@@ -620,7 +620,7 @@ void GameScene::postUpdate(float dt)
         }
     }
     if (maxX > oldmaxX){ // move tiles right
-        std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>> tileDisplay = _backgroundWrapper->getTileDisplay();
+        const std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>>& tileDisplay = _backgroundWrapper->getTileDisplay();
         int colToAdd = maxX;
         int colToRemove = minX -1;
         for (int i = 0; i < tileDisplay.size(); i++){
@@ -634,7 +634,7 @@ void GameScene::postUpdate(float dt)
             }
         }
     }else if (minX < oldminX){ // move tiles left
-        std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>> tileDisplay = _backgroundWrapper->getTileDisplay();
+        const std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>>& tileDisplay = _backgroundWrapper->getTileDisplay();
         int colToAdd = minX;
         int colToRemove = maxX + 1;
         for (int i = 0; i < tileDisplay.size(); i++){
@@ -649,7 +649,7 @@ void GameScene::postUpdate(float dt)
         }
     }
     _minimap->update();
-    std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>> tileDisplay = _backgroundWrapper->getTileDisplay();
+    const std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>>& tileDisplay = _backgroundWrapper->getTileDisplay();
     int counter = 0;
     for (int i =0 ; i< tileDisplay.size(); i++){
         for (int j =0 ; j < tileDisplay.at(i).size();j++){
