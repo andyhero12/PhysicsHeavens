@@ -141,6 +141,7 @@ void NetApp::preUpdate(float timestep){
         _mainmenu.setActive(true);
         _hostgame.init(_assets,_network);
         _joingame.init(_assets,_network);
+        _selection.init(_assets);
         _status = MAINMENU;
     }
     else if(_status == MAINMENU){
@@ -160,6 +161,9 @@ void NetApp::preUpdate(float timestep){
     }
     else if (_status == GAME){
         updateGameScene(timestep);
+    }
+    else if(_status == SELECTION){
+        updateSelectionScene(timestep);
     }
 
 }
@@ -213,13 +217,15 @@ void NetApp::updateMenuScene(float timestep) {
         switch (_menu.getChoice()) {
         case MenuScene::Choice::HOST:
             _menu.setActive(false);
-            _hostgame.setActive(true);
-            _status = HOST;
+            _level.setActive(true);
+            _status = LEVEL;
+            isHosting = true;
             break;
         case MenuScene::Choice::JOIN:
             _menu.setActive(false);
-            _joingame.setActive(true);
-            _status = CLIENT;
+            _level.setActive(true);
+            _status = LEVEL;
+            isHosting = false;
             break;
         case MenuScene::Choice::NONE:
             // DO NOTHING
@@ -289,9 +295,9 @@ void NetApp::updateClientScene(float timestep) {
 #pragma mark SOLUTION
     _joingame.update(timestep);
     if(_joingame.getBackClicked()){
-        _status = MAINMENU;
+        _status = LEVEL;
         _joingame.setActive(false);
-        _mainmenu.setActive(true);
+        _level.setActive(true);
     }
     else if (_network->getStatus() == NetEventController::Status::HANDSHAKE && _network->getShortUID()) {
         _gameplay.init(_assets, _network, false, LEVEL_TWO_KEY);
@@ -333,17 +339,16 @@ void NetApp::updateMainScene(float timestep)
     switch (_mainmenu.getChoice()) {
     case MainMenuScene::Choice::SINGLE:
         _mainmenu.setActive(false);
-        _level.setActive(true);
-        _status = LEVEL;
-        _level.resetLevel();
+        _selection.setActive(true);
+        _status = SELECTION;
         isHosting = true;
         break;
     case MainMenuScene::Choice::COOP:
-        _mainmenu.setActive(false);
-        _level.setActive(true);
-        _status = LEVEL;
-        _level.resetLevel();
-        isHosting = false;
+        // _mainmenu.setActive(false);
+        // _level.setActive(true);
+        // _status = LEVEL;
+        // _level.resetLevel();
+        // //isHosting = false;
         break;
     case MainMenuScene::Choice::SETTING:
         //_mainmenu.setActive(false);
@@ -351,6 +356,28 @@ void NetApp::updateMainScene(float timestep)
         //_status = MENU;
         break;
     case MainMenuScene::Choice::NONE:
+        // DO NOTHING
+        break;
+    }
+}
+
+void NetApp::updateSelectionScene(float timestep)
+{
+    _selection.update(timestep);
+    switch (_selection.getChoice()) {
+    case SelectionScene::Choice::PLAYER1:
+        _selection.setActive(false);
+        _level.setActive(true);
+        _status = LEVEL;
+        _level.resetLevel();
+        isHosting = true;
+        break;
+    case SelectionScene::Choice::PLAYER2:
+        _selection.setActive(false);
+        _menu.setActive(true);
+        _status = MENU;
+        break;
+    case SelectionScene::Choice::NONE:
         // DO NOTHING
         break;
     }
@@ -435,6 +462,10 @@ void NetApp::draw() {
             break;
         case GAME:
             _gameplay.render(_batch);
+            break;
+        case SELECTION:
+            _selection.render(_batch);
+            break;
         default:
             break;
     }

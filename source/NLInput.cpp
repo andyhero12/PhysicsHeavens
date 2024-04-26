@@ -254,7 +254,6 @@ void InputController::readInput_joystick() {
         if (_gameContrl->isButtonPressed(A)) {
             _didConfirm = true;
             _UseJoystick = true;
-            std::cout<<"pressed"<<std::endl;
         }
         if (_gameContrl->isButtonPressed(B)) {
             _didBack = true;
@@ -288,12 +287,20 @@ void InputController::readInput_joystick() {
             _didChangeMode = true;
             _UseJoystick = true;
         }
-          if (_gameContrl->isButtonPressed(Back)) {
+        if (_gameContrl->isButtonPressed(Back)) {
             _didReset = true;
             _UseJoystick = true;
         }
-          if (_gameContrl->isButtonPressed(Start)) {
+        if (_gameContrl->isButtonPressed(Start)) {
             _didPause = true;
+            _UseJoystick = true;
+        }
+        if(_gameContrl->isButtonPressed(up)){
+            _updown = 1;
+            _UseJoystick = true;
+        }
+        if(_gameContrl->isButtonPressed(down)){
+            _updown = -1;
             _UseJoystick = true;
         }
 
