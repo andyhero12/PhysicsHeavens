@@ -304,6 +304,16 @@ void InputController::readInput_joystick() {
             _UseJoystick = true;
         }
 
+        if(_gameContrl->isButtonPressed(cugl::GameController::Button::DPAD_LEFT)){
+            _Leftright = -1;
+            _UseJoystick = true;
+        }
+        if(_gameContrl->isButtonPressed(cugl::GameController::Button::DPAD_RIGHT)){
+            _Leftright = 1;
+            _UseJoystick = true;
+        }
+
+
         if (abs(LR) >= 0.2 || abs(UD) >= 0.2) {
 
             _Vel = cugl::Vec2(LR, -UD);

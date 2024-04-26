@@ -14,6 +14,7 @@
 #include <vector>
 #include <chrono>
 #include "GlobalConstants.h"
+#include "NLInput.h"
 
 
 /**
@@ -37,8 +38,20 @@ public:
         /** User wants to host a game */
         HOST,
         /** User wants to join a game */
-        JOIN
+        JOIN,
+
+        Back
     };
+    enum Isdown {
+        /** User has not yet made a choice */
+        isHOST,
+        /** User wants to host a game */
+        isJOIN,
+        /** User wants to join a game */
+        isNONE,
+
+        isBACK
+    };   
 
 protected:
     /** The asset manager for this scene. */
@@ -50,8 +63,19 @@ protected:
     /** The player menu choice */
     std::shared_ptr<cugl::scene2::Button> _back;
     Choice _choice;
+    Isdown _isdown;
 
+    InputController _input;
     bool _backclicked;
+
+    int _counter;
+
+    float timeSinceLastSwitch;
+
+    float switchFreq;
+
+    std::vector<std::shared_ptr<cugl::scene2::Button>> _buttonset;
+
     
 public:
 #pragma mark -
@@ -62,7 +86,7 @@ public:
      * This constructor does not allocate any objects or start the game.
      * This allows us to use the object without a heap pointer.
      */
-    MenuScene() : cugl::Scene2() {}
+    MenuScene() : cugl::Scene2(),_isdown(isNONE),_choice(NONE), _counter(0), timeSinceLastSwitch(0.0),switchFreq(0.20),_buttonset() {}
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.
@@ -113,7 +137,9 @@ public:
      */
     Choice getChoice() const { return _choice; }
 
-    bool getBackclick(){ return _backclicked; }
+    bool getBackclick(){ return _backclicked;}
+
+    virtual void update(float timestep) override;
 };
 
 #endif /* __NL_MENU_SCENE_H__ */
