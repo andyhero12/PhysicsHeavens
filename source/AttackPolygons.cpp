@@ -122,7 +122,7 @@ void AttackPolygons::addShoot(Vec2 center, float angle, float shootRadius){
     Poly2 resultingPolygon_shoot = curFactory.makeArc(center, shootRadius, ang - degree/2, degree);
     std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(Action::SHOOT, resultingPolygon_shoot, max_age, 1.0f, ang, center);
     backAttackPolygonNode->addChild(curPtr->getActionNode());
-    Vec2 offset = Vec2(SDL_cosf((ang) * 3.14f / 180), SDL_sinf((ang) * 3.14f / 180)) * DOG_SIZE.x * SHOOT_HEAD_OFFSET_RATIO;
+    Vec2 offset = Vec2(cosf((angle + 90) * 3.14f / 180), sinf((angle + 90) * 3.14f / 180)) * DOG_SIZE.x * SHOOT_HEAD_OFFSET_RATIO;
     curPtr->getActionNode()->setScale(OFFSET_SCALE);
     curPtr->getActionNode()->setPosition(offset * OFFSET_SCALE);
     currentAttacks.insert(curPtr);
