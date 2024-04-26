@@ -111,7 +111,7 @@ protected:
     float _zoom;
     std::vector<std::shared_ptr<Tutorial>> tutorialTiles;
     
-    size_t tutorialIndex;
+    int tutorialIndex;
 
     /**
      * Lays out the game geography.

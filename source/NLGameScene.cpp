@@ -101,7 +101,9 @@ using namespace cugl::physics2::net;
  */
 GameScene::GameScene() : cugl::Scene2(),
                          _debug(false),
-                         _isHost(false)
+                         _isHost(false),
+                        tutorialIndex(0)
+
 {
 }
 
@@ -331,7 +333,8 @@ void GameScene::dispose()
     {
         removeAllChildren();
         _pause->dispose();
-        //        _input.dispose();
+        //        _input.dispose();]
+        tutorialTiles.clear();
         _world = nullptr;
         _worldnode = nullptr;
         _debugnode = nullptr;
@@ -746,10 +749,12 @@ void GameScene::addChildForeground()
 void GameScene::updateInputController(){
     bool normal = true;
     if(tutorialIndex < tutorialTiles.size()){
+        CULog("Running Tutorial");
         std::shared_ptr<Tutorial> tile = tutorialTiles.at(tutorialIndex);
         bool atLocation = tile->atArea(overWorld.getDog()->getX());
         std::shared_ptr<scene2::SceneNode> node = _tutorialnode->getChildByName(Tutorial::toString(tile->getProgress()));
         // just do tile->setVisible(tutorial) to draw stuff
+        std::cout<< atLocation << " " <<!tile->didPass() << std::endl;
         if (atLocation && !tile->didPass()) {
             node->setVisible(true);
             if(_input.update(tile->getProgress())){
@@ -788,7 +793,6 @@ void GameScene::initTutorial(){
     tutorialIndex = 0;
     _tutorialnode = scene2::SceneNode::alloc();
     _uinode->addChild(_tutorialnode);
-    
     tutorialTiles.push_back(Tutorial::alloc(14, Tutorial::MODE::BITE));
     tutorialTiles.push_back(Tutorial::alloc(18, Tutorial::MODE::CHANGEABILITY));
     

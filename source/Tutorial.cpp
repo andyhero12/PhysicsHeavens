@@ -7,10 +7,10 @@
 
 #include "Tutorial.h"
 
-bool Tutorial::init(int tile, MODE progress){
-    this->tileX = tile;
-    this->passed = false;
-    this->progress = progress;
+bool Tutorial::init(int tile, MODE m_progress){
+    tileX = tile;
+    passed = false;
+    progress = m_progress;
     return true;
 }
 
