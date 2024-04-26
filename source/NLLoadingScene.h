@@ -40,16 +40,12 @@ protected:
     std::shared_ptr<cugl::scene2::ProgressBar>  _bar;
     /** The engine name */
     std::shared_ptr<cugl::scene2::SceneNode>  _brand;
-    /** The "play" button */
-    std::shared_ptr<cugl::scene2::Button>    _button;
 
     std::shared_ptr<cugl::scene2::SpriteNode> background;
 
     // MODEL
     /** The progress displayed on the screen */
     float _progress;
-    /** Whether or not the player has pressed play to continue */
-    bool  _completed;
     
     int frame;
     /**
@@ -109,12 +105,7 @@ public:
      */
     void update(float timestep);
     
-    /**
-     * Returns true if loading is complete, but the player has not pressed play
-     *
-     * @return true if loading is complete, but the player has not pressed play
-     */
-    bool isPending( ) const;
+    bool doneLoading() const;
 };
 
 

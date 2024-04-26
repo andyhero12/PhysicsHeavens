@@ -400,11 +400,6 @@ public:
     float getDirInDegrees() const {
         // normalize to our coordinates
         float res =_ang.getAngle() * (180 / M_PI);
-        res -= 90.0f;
-        if (res < 0){
-            res += 360.0f;
-        }
-        
         return res;
     }
     
@@ -412,7 +407,7 @@ public:
         return getPosition();
     }
     Vec2 getShootCenter() const{
-        return _ang*0.3 +  getPosition();
+        return getPosition();
     }
     std::string getMode(){
         return modes.at(_mode);

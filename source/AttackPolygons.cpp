@@ -14,6 +14,8 @@
 #define ANIM_FREQ 1
 #define BITE_SCALE 1
 #define BITE_FRAME 5
+#define EXPLODE_TIME 5
+#define SHOOT_TIME 1
 #define OFFSET_SCALE 1/0.0234375f
 
 
@@ -21,12 +23,19 @@ bool ActionPolygon::dealDamage(){
     if(!_polygon && polygonAction == Action::BITE){
         return spriteActionNode->getFrame() == BITE_FRAME;
     }
+    else if (polygonAction == Action::EXPLODE) {
+        return _age == EXPLODE_TIME;
+    }
+    else if (polygonAction == Action::SHOOT) {
+        return _age == SHOOT_TIME;
+    }
     else{
         return true;
     }
 }
 
 void ActionPolygon::update(){
+    _age++;
     if(!_polygon){
         _expired = (spriteActionNode->getFrame() + 1) == spriteActionNode->getSpan();
         if(_expired){
@@ -35,7 +44,6 @@ void ActionPolygon::update(){
         spriteActionNode->update();
     }
     else{
-        _age++;
         _expired = _age >= _maxage;
     }
     // update animation when needed
@@ -101,12 +109,18 @@ void AttackPolygons::update(){
         }
     }
 }
-
+float convertArcTanToAngAttack(float ang){
+    if (ang >= 0){
+        return ang;
+    }
+    return ang + 360.0f;
+}
 void AttackPolygons::addShoot(Vec2 center, float angle, float shootRadius){
     float degree = 60;
+    float ang = convertArcTanToAngAttack(angle);
     PolyFactory curFactory;
-    Poly2 resultingPolygon_shoot = curFactory.makeArc(center, shootRadius, angle + degree, degree);
-    std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(Action::SHOOT, resultingPolygon_shoot, max_age, 1.0f, angle, center);
+    Poly2 resultingPolygon_shoot = curFactory.makeArc(center, shootRadius, ang - degree/2, degree);
+    std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(Action::SHOOT, resultingPolygon_shoot, max_age, 1.0f, ang, center);
     backAttackPolygonNode->addChild(curPtr->getActionNode());
     Vec2 offset = Vec2(cosf((angle + 90) * 3.14f / 180), sinf((angle + 90) * 3.14f / 180)) * DOG_SIZE.x * SHOOT_HEAD_OFFSET_RATIO;
     curPtr->getActionNode()->setScale(OFFSET_SCALE);
@@ -129,25 +143,33 @@ void AttackPolygons::addExplode(Vec2 center, float explosionRad){
 
 void AttackPolygons::addBite(Vec2 center, float angle, float explosionRad, float scale){
     std::shared_ptr<cugl::Texture> bite;
-    
+    float ang = convertArcTanToAngAttack(angle);
     bool front = true;
-    float ang = angle;
-    if (angle >= 45 && angle <= 135) {
-         bite = biteLeftTexture;
-         ang -= 90;
-     } else if (angle > 135 && angle < 225) {
-         bite = biteFrontTexture;
-         ang -= 180;
-     } else if (angle >= 225 && angle <= 315) {
-         bite = biteRightTexture;
-         ang -= 270;
-     } else{
+    if (ang > 45 && ang < 135) {
          bite = biteBackTexture;
          front = false;
+     } else if (ang >= 135 && ang <= 225) {
+         bite = biteLeftTexture;
+     } else if (ang > 225 && ang < 315) {
+         bite = biteFrontTexture;
+     } else{
+         bite = biteRightTexture;
      }
     
     std::shared_ptr<SpriteAnimationNode> biteSprite = SpriteAnimationNode::allocWithSheet(bite, 3, 5, 15, ANIM_FREQ);
-    //biteSprite->setAngle(ang);
+//    CULog("Ang %f" ,ang);
+    float rads = M_PI/180.0f * ang;
+    if (ang <= 45){
+        biteSprite->setAngle(rads);
+    }else if (ang > 45 && ang < 135) {
+        
+    } else if (ang >= 135 && ang <= 225) {
+        biteSprite->setAngle(rads - M_PI);
+    } else if (ang > 225 && ang < 315) {
+        
+    } else{
+        biteSprite->setAngle(rads);
+    }
     PolyFactory curFactory;
     Poly2 resultingPolygon = curFactory.makeArc(center, explosionRad * (1 + scale), angle, 180);
     std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(biteSprite, Action::BITE, resultingPolygon, BITE_AGE, 1 + scale, angle, center);
@@ -157,7 +179,7 @@ void AttackPolygons::addBite(Vec2 center, float angle, float explosionRad, float
     else{
         backAttackPolygonNode->addChild(curPtr->getActionNode());
     }
-    Vec2 offset = Vec2(cosf((angle + 90) * 3.14f / 180), sinf((angle + 90) * 3.14f / 180)) * DOG_SIZE.x * BITE_HEAD_OFFSET_RATIO;
+    Vec2 offset = Vec2(cosf((angle) * 3.14f / 180), sinf((angle) * 3.14f / 180)) * DOG_SIZE.x * BITE_HEAD_OFFSET_RATIO;
     curPtr->getActionNode()->setPosition(offset * OFFSET_SCALE);
     currentAttacks.insert(curPtr);
 }
