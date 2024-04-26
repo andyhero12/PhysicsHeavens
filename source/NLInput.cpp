@@ -277,32 +277,50 @@ bool InputController::readInput_joystick(Tutorial::MODE progress) {
     cugl::GameController::Axis X_left = cugl::GameController::Axis::INVALID;
     cugl::GameController::Axis Y_left = cugl::GameController::Axis::INVALID;
     // define button // trigger based on progress
-    if(progress == Tutorial::MODE::MOVEMENT){
-        buttons = cugl::GameController::Button::A;
-    }
-    else if (progress == Tutorial::MODE::BITE){
-        buttons = cugl::GameController::Button::A;
-    }
-    else if(progress == Tutorial::MODE::CHANGEABILITY){
-        buttons = cugl::GameController::Button::A;
-    }
-    else if(progress == Tutorial::SPECIALS){
-        X_left = cugl::GameController::Axis::LEFT_X;
-        Y_left = cugl::GameController::Axis::LEFT_Y;
-    }
     
-    if (_gameContrl) {
-        if (_gameContrl->isButtonPressed(buttons)) {
-            return true;
-        }
-        
+    if(progress == Tutorial::MODE::MOVEMENT){
         float LR = _gameContrl->getAxisPosition(X_left);
         float UD = _gameContrl->getAxisPosition(Y_left);
-        
         if (abs(LR) >= 0.2 || abs(UD) >= 0.2) {
+            _Vel = cugl::Vec2(LR, -UD);
+            _UseJoystick = true;
+            if (UD < -0.2) {
+                _updown = 1; //Up
+            }
+            else if (UD > 0.2) {
+                _updown = -1; //down
+            }
+            if (LR < -0.2) {
+                _Leftright = -1; //Left
+            }
+            else if (LR > 0.2) {
+                _Leftright = 1; //Right
+            }
             return true;
         }
     }
+    else if (progress == Tutorial::MODE::BITE){
+        if (_gameContrl->isButtonPressed(cugl::GameController::Button::A)) {
+            _didFire = true;
+            _UseJoystick = true;
+        }
+
+    }
+    else if(progress == Tutorial::MODE::CHANGEABILITY){
+        if (_gameContrl->isButtonPressed(cugl::GameController::Button::RIGHT_SHOULDER)) {
+            _didChangeMode = true;
+            _UseJoystick = true;
+        }
+    }
+    else if(progress == Tutorial::SPECIALS){
+        cugl::GameController::Axis LT = cugl::GameController::Axis::TRIGGER_LEFT;
+        cugl::GameController::Axis RT = cugl::GameController::Axis::TRIGGER_RIGHT;
+        if (_gameContrl->getAxisPosition(LT)>=0.5||_gameContrl->getAxisPosition(RT)>=0.5) {
+            _didSpecial = true;
+            _UseJoystick = true;
+        }
+    }
+    
     return false;
 }
 
