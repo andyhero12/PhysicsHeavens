@@ -60,7 +60,7 @@ using namespace cugl;
 #define MAX_ABSORB 30
 #define BITE_RADIUS 8.0f
 #define SHOOT_RADIUS 8.5f
-#define EXPLOSION_RADIUS 1.4f
+#define EXPLOSION_RADIUS 1.86f
 #define DASH_RATE 50
 #pragma mark -
 #pragma mark Constructors
