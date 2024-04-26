@@ -132,7 +132,7 @@ void AttackPolygons::addExplode(Vec2 center, float explosionRad){
     std::shared_ptr<SpriteAnimationNode> explodeSprite = SpriteAnimationNode::allocWithSheet(bombTexture, 4, 5, 20, 3);
     PolyFactory curFactory;
     Poly2 resultingPolygon = curFactory.makeCircle(center, explosionRad);
-    std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(explodeSprite, Action::EXPLODE, resultingPolygon, EXPLODE_AGE, 1.0f, 0, center);
+    std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(explodeSprite, Action::EXPLODE, resultingPolygon, EXPLODE_AGE, explosionRad, 0, center);
     frontAttackPolygonNode->addChild(curPtr->getActionNode());
     Vec2 offset = Vec2(0,0);
     curPtr->getActionNode()->setAnchor(Vec2::ANCHOR_CENTER);
