@@ -11,7 +11,7 @@
 // used to translate attacks to originate from the dog's head
 #define BITE_HEAD_OFFSET_RATIO 0.8f
 #define SHOOT_HEAD_OFFSET_RATIO 1.5f
-#define ANIM_FREQ 1
+#define ANIM_FREQ 2
 #define BITE_SCALE 1
 #define BITE_FRAME 5
 #define EXPLODE_TIME 5
@@ -21,7 +21,7 @@
 
 bool ActionPolygon::dealDamage(){
     if(!_polygon && polygonAction == Action::BITE){
-        return spriteActionNode->getFrame() == BITE_FRAME;
+        return spriteActionNode->getFrame() == BITE_FRAME && canDamage();
     }
     else if (polygonAction == Action::EXPLODE) {
         return _age == EXPLODE_TIME;
@@ -81,6 +81,7 @@ ActionPolygon::ActionPolygon(Action curAction, Poly2& mintPoly, int mx, float sc
 , _ang{ang}
 , _center(center)
 {
+    canAttack = true;
     polyActionNode = cugl::scene2::SpriteNode::allocWithPoly(mintPoly);
 }
 
@@ -116,14 +117,46 @@ float convertArcTanToAngAttack(float ang){
     return ang + 360.0f;
 }
 void AttackPolygons::addShoot(Vec2 center, float angle, float shootRadius){
-    float degree = 60;
     float ang = convertArcTanToAngAttack(angle);
+    bool front = true;
+    std::shared_ptr<cugl::Texture> shoot;
+    if (ang > 45 && ang < 135) {
+        shoot = shootBackTexture;
+         front = false;
+     } else if (ang >= 135 && ang <= 225) {
+         shoot = shootLeftTexture;
+     } else if (ang > 225 && ang < 315) {
+         shoot = shootFrontTexture;
+     } else{
+         shoot = shootRightTexture;
+     }
+    std::shared_ptr<SpriteAnimationNode> shootSprite = SpriteAnimationNode::allocWithSheet(shoot, 1, 6, 6, 5);
+    float rads = M_PI/180.0f * ang;
+    if (ang <= 45){
+        shootSprite->setAngle(rads);
+    }else if (ang > 45 && ang < 135) {
+        
+    } else if (ang >= 135 && ang <= 225) {
+        shootSprite->setAngle(rads - M_PI);
+    } else if (ang > 225 && ang < 315) {
+        
+    } else{
+        shootSprite->setAngle(rads);
+    }
+    float degree = 60;
     PolyFactory curFactory;
     Poly2 resultingPolygon_shoot = curFactory.makeArc(center, shootRadius, ang - degree/2, degree);
-    std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(Action::SHOOT, resultingPolygon_shoot, max_age, 1.0f, ang, center);
-    backAttackPolygonNode->addChild(curPtr->getActionNode());
+    
+    std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(shootSprite, Action::SHOOT, resultingPolygon_shoot, max_age, 1.0f, ang, center);
+    if(front){
+        frontAttackPolygonNode->addChild(curPtr->getActionNode());
+    }
+    else{
+        backAttackPolygonNode->addChild(curPtr->getActionNode());
+    }
+//    std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(Action::SHOOT, resultingPolygon_shoot, max_age, 1.0f, ang, center);
+//    backAttackPolygonNode->addChild(curPtr->getActionNode());
     Vec2 offset = Vec2(cosf((angle) * 3.14f / 180), sinf((angle) * 3.14f / 180)) * DOG_SIZE.x * SHOOT_HEAD_OFFSET_RATIO;
-    curPtr->getActionNode()->setScale(OFFSET_SCALE);
     curPtr->getActionNode()->setPosition(offset * OFFSET_SCALE);
     currentAttacks.insert(curPtr);
 }
@@ -189,6 +222,13 @@ bool AttackPolygons::setTexture(const std::shared_ptr<cugl::Texture> &biteL, con
     biteLeftTexture = biteL;
     biteFrontTexture = biteF;
     biteBackTexture = biteF;
+    return true;
+}
+bool AttackPolygons::setTextureShoot(const std::shared_ptr<cugl::Texture> &shootL, const std::shared_ptr<cugl::Texture> &shootR, const std::shared_ptr<cugl::Texture> &shootF, const std::shared_ptr<cugl::Texture> &shootB){
+    shootRightTexture = shootR;
+    shootLeftTexture = shootL;
+    shootFrontTexture = shootF;
+    shootBackTexture = shootB;
     return true;
 }
 
