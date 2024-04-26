@@ -5,6 +5,8 @@
 //  Created by Andrew Cheng on 3/14/24.
 //
 
+#define SPRITE_SCALE 1.14f
+
 #define MELEE_DAMAGE 5
 #include "MeleeEnemy.h"
 #define DYNAMIC_COLOR   Color4::YELLOW
@@ -55,7 +57,7 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
     static_enemy->setWalkingSceneNode(runAnimations);
     static_enemy->setAttackingSceneNode(attackAnimations);
     static_enemy->setFinalEnemy(topLevel);
-    topLevel->setScale(m_size.height / _textures.at(0)->getHeight());
+    topLevel->setScale(m_size.height / _textures.at(0)->getHeight() * SPRITE_SCALE);
     static_enemy->setShared(true);
 
     return std::make_pair(static_enemy, topLevel);
