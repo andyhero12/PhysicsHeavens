@@ -272,8 +272,8 @@ protected:
         }
         
         //Move towards the next tile
-        setVX(direction.normalize().x * 0.5);
-        setVY(direction.normalize().y * 0.5);
+        setVX(direction.normalize().x * 0.75);
+        setVY(direction.normalize().y * 0.75);
         setX(getX());
         setY(getY());
         _prevDirection =_curDirection;

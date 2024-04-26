@@ -643,6 +643,21 @@ void GameScene::update(float dt)
  */
 void GameScene::beginContact(b2Contact *contact)
 {
+    b2Fixture* fix1 = contact->GetFixtureA();
+    b2Fixture* fix2 = contact->GetFixtureB();
+
+    b2Body* body1 = fix1->GetBody();
+    b2Body* body2 = fix2->GetBody();
+    
+    physics2::Obstacle* bd1 = reinterpret_cast<physics2::Obstacle*>(body1->GetUserData().pointer);
+    physics2::Obstacle* bd2 = reinterpret_cast<physics2::Obstacle*>(body2->GetUserData().pointer);
+    
+    MeleeEnemy* enemy1 = dynamic_cast<MeleeEnemy*>(bd1);
+    MeleeEnemy* enemy2 = dynamic_cast<MeleeEnemy*>(bd2);
+    
+    if(enemy1 && enemy2){
+        CULog("Two Enemies Collided");
+    }
 }
 
 /**

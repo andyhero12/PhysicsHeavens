@@ -141,24 +141,26 @@ AnimationSceneNode::Directions AnimationSceneNode::convertRadiansToDirections(do
     return convertAngleToDirections(rad * (180 / M_PI));
 }
 
+float convertArcTanToAng(float ang){
+    if (ang >= 0){
+        return ang;
+    }
+    return ang + 360.0f;
+}
 /** Convert Angle to Direction: 0 radians is east */
 AnimationSceneNode::Directions AnimationSceneNode::convertAngleToDirections(float ang){
-    ang += 90.0f;
-    if (ang >= 360){
-         ang -= 360.0f;
-     }
-    if (ang < 0) {
-        ang += 360.0f;
+    ang = convertArcTanToAng(ang);
+    if (ang <= 46.0f){
+        return Directions::EAST;
+    }else if (ang <= 136.0f){
+        return Directions::NORTH;
+    }else if (ang <= 226.0f){
+        return Directions::WEST;
+    }else if (ang <= 316.0f){
+        return Directions::SOUTH;
+    }else{
+        return Directions::EAST;
     }
-    if (ang <= 0) return Directions::SOUTH;
-    else if (ang <= 45.0f) return Directions::SOUTHEAST;
-    else if (ang <= 90.0f) return Directions::EAST;
-    else if (ang <= 135.0f) return Directions::NORTHEAST;
-    else if (ang <= 180.0f) return Directions::NORTH;
-    else if (ang <= 225.0f) return Directions::NORTHWEST;
-    else if (ang <= 270.0f) return Directions::WEST;
-    else if (ang <= 315.0f) return Directions::SOUTHWEST;
-    else return Directions::SOUTH;
 }
 
 #pragma mark -
