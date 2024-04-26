@@ -258,7 +258,8 @@ void CollisionController::resolveBiteAttack(const std::shared_ptr<ActionPolygon>
         }
         float dist = diff.length();
         if (withinAngle(action->getAngle()-90.0f, result, 180.0f) && dist <= 3 * action->getScale()){
-            enemy->setHealth(enemy->getHealth() - 1);
+            int damage = (int)(action->getScale() * action->getScale() * 3);
+            enemy->setHealth(enemy->getHealth() - damage);
             collided = true;
             if(enemy->getHealth() <= 0){
                 monsterController.removeEnemy(enemy);
