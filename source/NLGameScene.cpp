@@ -749,12 +749,10 @@ void GameScene::addChildForeground()
 void GameScene::updateInputController(){
     bool normal = true;
     if(tutorialIndex < tutorialTiles.size()){
-        CULog("Running Tutorial");
         std::shared_ptr<Tutorial> tile = tutorialTiles.at(tutorialIndex);
         bool atLocation = tile->atArea(overWorld.getDog()->getX());
         std::shared_ptr<scene2::SceneNode> node = _tutorialnode->getChildByName(Tutorial::toString(tile->getProgress()));
         // just do tile->setVisible(tutorial) to draw stuff
-        std::cout<< atLocation << " " <<!tile->didPass() << std::endl;
         if (atLocation && !tile->didPass()) {
             node->setVisible(true);
             if(_input.update(tile->getProgress())){
