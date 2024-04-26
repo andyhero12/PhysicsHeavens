@@ -318,24 +318,19 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 
     addChildForeground();
     std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>> tileDisplay = _backgroundWrapper->getTileDisplay();
-    int orgAvail = 0;
     for (int i =0 ; i< tileDisplay.size(); i++){
         for (int j= 0 ;j < tileDisplay.at(i).size(); j++){
             for (std::shared_ptr<TileInfo>& tile: tileDisplay.at(i).at(j)){
                 Vec2 dogPos =_isHost ? overWorld.getDog()->getPosition() : overWorld.getClientDog()->getPosition();
                 Vec2 tilePos = tile->getTileSprite()->getPosition();
-                CULog("Dog POS %s", dogPos.toString().data());
                 if (abs(tilePos.x - dogPos.x) >= 15 || abs(tilePos.y - dogPos.y) >= 15){
                     tile->getTileSprite()->setVisible(false);
                 }else{
                     tile->getTileSprite()->setVisible(true);
-                    orgAvail++;
                 }
             }
         }
     }
-    CULog("TileDisplay Height %zu, Width %zu", tileDisplay.size(), tileDisplay.at(0).size());
-    CULog("Org Print %d",orgAvail);
     _minimap = Minimap::alloc(_assets, computeActiveSize(), overWorld, _spawnerController);
     _uinode->addChild(_minimap);
     olddogPos = overWorld.getDog()->getPosition();
@@ -594,11 +589,11 @@ void GameScene::postUpdate(float dt)
         int rowToAdd = maxY;
         int rowToRemove = minY -1;
         for (int j = 0; j < tileDisplay.at(0).size(); j++){
-            for (std::shared_ptr<TileInfo> tile: tileDisplay.at(rowToAdd).at(j)){
+            for (const std::shared_ptr<TileInfo>& tile: tileDisplay.at(rowToAdd).at(j)){
                 tile->getTileSprite()->setVisible(true);
             }
             if (rowToRemove >= 0){
-                for (std::shared_ptr<TileInfo> tile: tileDisplay.at(rowToRemove).at(j)){
+                for (const std::shared_ptr<TileInfo>& tile: tileDisplay.at(rowToRemove).at(j)){
                     tile->getTileSprite()->setVisible(false);
                 }
             }
@@ -609,11 +604,11 @@ void GameScene::postUpdate(float dt)
         int rowToAdd = minY;
         int rowToRemove = maxY+1;
         for (int j = 0; j < tileDisplay.at(0).size(); j++){
-            for (std::shared_ptr<TileInfo> tile: tileDisplay.at(rowToAdd).at(j)){
+            for (const std::shared_ptr<TileInfo>& tile: tileDisplay.at(rowToAdd).at(j)){
                 tile->getTileSprite()->setVisible(true);
             }
             if (rowToRemove < tileDisplay.size()){
-                for (std::shared_ptr<TileInfo> tile: tileDisplay.at(rowToRemove).at(j)){
+                for (const std::shared_ptr<TileInfo>& tile: tileDisplay.at(rowToRemove).at(j)){
                     tile->getTileSprite()->setVisible(false);
                 }
             }
@@ -638,29 +633,17 @@ void GameScene::postUpdate(float dt)
         int colToAdd = minX;
         int colToRemove = maxX + 1;
         for (int i = 0; i < tileDisplay.size(); i++){
-            for (std::shared_ptr<TileInfo> tile: tileDisplay.at(i).at(colToAdd)){
+            for (const std::shared_ptr<TileInfo>& tile: tileDisplay.at(i).at(colToAdd)){
                 tile->getTileSprite()->setVisible(true);
             }
             if (colToRemove < tileDisplay.at(i).size()){
-                for (std::shared_ptr<TileInfo> tile: tileDisplay.at(i).at(colToRemove)){
+                for (const std::shared_ptr<TileInfo>& tile: tileDisplay.at(i).at(colToRemove)){
                     tile->getTileSprite()->setVisible(false);
                 }
             }
         }
     }
     _minimap->update();
-    const std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>>& tileDisplay = _backgroundWrapper->getTileDisplay();
-    int counter = 0;
-    for (int i =0 ; i< tileDisplay.size(); i++){
-        for (int j =0 ; j < tileDisplay.at(i).size();j++){
-            for (std::shared_ptr<TileInfo> tile : tileDisplay.at(i).at(j)){
-                if (tile->getTileSprite()->isVisible()){
-                    counter++;
-                }
-            }
-        }
-    }
-    CULog("num visible %d original %zu", counter ,_backgroundWrapper->getVisibleNodes().size());
     olddogPos = dogPos;
 }
 
