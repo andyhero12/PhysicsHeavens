@@ -97,7 +97,7 @@ void InputController::update(){
     readInput();
 }
 
-bool InputController::update(Tutorial::PROGRESS progress){
+bool InputController::update(Tutorial::MODE progress){
     resetKeys();
     return readInput(progress) || readInput_joystick(progress);
 }
@@ -110,28 +110,39 @@ void InputController::resetcontroller()
     _back = false;
 }
 
-bool InputController::readInput(Tutorial::PROGRESS progress){
+bool InputController::readInput(Tutorial::MODE progress){
     Keyboard* keys = Input::get<Keyboard>();
     
-    if(progress == Tutorial::PROGRESS::MOVEMENT){
+    if(progress == Tutorial::MODE::MOVEMENT){
         if (keys->keyPressed(KeyCode::ARROW_UP) || keys->keyPressed(KeyCode::ARROW_DOWN) || keys->keyPressed(KeyCode::ARROW_LEFT) || keys->keyPressed(KeyCode::ARROW_RIGHT)){
             return true;
         }
     }
-    else if (progress == Tutorial::PROGRESS::BITE){
+    else if (progress == Tutorial::MODE::BITE){
         if(keys->keyPressed(KeyCode::SPACE)){
+            _didFire = true;
+            _UseKeyboard = true;
             return true;
         }
     }
-    else if(progress == Tutorial::PROGRESS::CHANGEABILITY){
+    else if(progress == Tutorial::MODE::CHANGEABILITY){
         if(keys->keyPressed(KeyCode::F)){
+            _didChangeMode = true;
+            _UseKeyboard = true;
             return true;
         }
     }
     else if(progress == Tutorial::SPECIALS){
         if(keys->keyPressed(KeyCode::G)){
+            _didSpecial = true;
+            _UseKeyboard = true;
             return true;
         }
+    }
+    KeyCode exit = KeyCode::ESCAPE;
+    if (keys->keyPressed(exit)) {
+        _didExit = true;
+        _UseKeyboard = true;
     }
     return false;
 }
@@ -261,18 +272,18 @@ void InputController::resetKeys(){
     _Vel = cugl::Vec2(0, 0);
 }
 
-bool InputController::readInput_joystick(Tutorial::PROGRESS progress) {
+bool InputController::readInput_joystick(Tutorial::MODE progress) {
     cugl::GameController::Button buttons = cugl::GameController::Button::INVALID;
     cugl::GameController::Axis X_left = cugl::GameController::Axis::INVALID;
     cugl::GameController::Axis Y_left = cugl::GameController::Axis::INVALID;
     // define button // trigger based on progress
-    if(progress == Tutorial::PROGRESS::MOVEMENT){
+    if(progress == Tutorial::MODE::MOVEMENT){
         buttons = cugl::GameController::Button::A;
     }
-    else if (progress == Tutorial::PROGRESS::BITE){
+    else if (progress == Tutorial::MODE::BITE){
         buttons = cugl::GameController::Button::A;
     }
-    else if(progress == Tutorial::PROGRESS::CHANGEABILITY){
+    else if(progress == Tutorial::MODE::CHANGEABILITY){
         buttons = cugl::GameController::Button::A;
     }
     else if(progress == Tutorial::SPECIALS){

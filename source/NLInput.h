@@ -185,14 +185,14 @@ public:
 
     void readInput_joystick();
     
-    bool readInput(Tutorial::PROGRESS progress);
+    bool readInput(Tutorial::MODE progress);
 
-    bool readInput_joystick(Tutorial::PROGRESS progress);
+    bool readInput_joystick(Tutorial::MODE progress);
 
     
     void update();
     
-    bool update(Tutorial::PROGRESS progress);
+    bool update(Tutorial::MODE progress);
     
     
     cugl::Vec2 getVelocity() const {

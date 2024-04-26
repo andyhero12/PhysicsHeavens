@@ -318,9 +318,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _minimap = Minimap::alloc(_assets, computeActiveSize(), overWorld, _spawnerController);
     _uinode->addChild(_minimap);
     
-    tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::PROGRESS::BITE));
-    tutorialTiles.push_back(Tutorial::alloc(14, Tutorial::PROGRESS::CHANGEABILITY));
-    
+    initTutorial();
     return true;
 }
 
@@ -747,14 +745,22 @@ void GameScene::addChildForeground()
 
 void GameScene::updateInputController(){
     bool normal = true;
-    for (auto& tile : tutorialTiles) {
-        bool tutorial = tile->getX() == (int) overWorld.getDog()->getX();
-        if (tutorial && !tile->didPass()) {
-            tile->setPass(_input.update(tile->getProgress()));
+    if(tutorialIndex < tutorialTiles.size()){
+        std::shared_ptr<Tutorial> tile = tutorialTiles.at(tutorialIndex);
+        bool atLocation = tile->atArea(overWorld.getDog()->getX());
+        std::shared_ptr<scene2::SceneNode> node = _tutorialnode->getChildByName(Tutorial::toString(tile->getProgress()));
+        // just do tile->setVisible(tutorial) to draw stuff
+        if (atLocation && !tile->didPass()) {
+            node->setVisible(true);
+            if(_input.update(tile->getProgress())){
+                tile->setPass(true);
+                node->setVisible(false);
+                tutorialIndex ++;
+            }
             normal = false;
         }
     }
-    if(normal){
+    if(normal) {
         _input.update();
         if (_input.didPressExit())
         {
@@ -774,5 +780,30 @@ void GameScene::updateInputController(){
         {
             setDebug(!isDebug());
         }
+    }
+}
+
+
+void GameScene::initTutorial(){
+    tutorialIndex = 0;
+    _tutorialnode = scene2::SceneNode::alloc();
+    _uinode->addChild(_tutorialnode);
+    
+    tutorialTiles.push_back(Tutorial::alloc(14, Tutorial::MODE::BITE));
+    tutorialTiles.push_back(Tutorial::alloc(18, Tutorial::MODE::CHANGEABILITY));
+    
+    Size screen = computeActiveSize();
+    std::shared_ptr<scene2::PolygonNode> node;
+    std::string str;
+
+    for(int i = 0; i < tutorialTiles.size(); i++){
+        str = Tutorial::toString(tutorialTiles.at(i)->getProgress());
+        node = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>(str));
+        _tutorialnode->addChildWithName(node, str);
+        node->setScale(2);
+        node->setAnchor(Vec2::ANCHOR_CENTER);
+        node->setPositionX(screen.width/2);
+        node->setPositionY(node->getScaleY() * node->getTexture()->getHeight()/2);
+        node->setVisible(false);
     }
 }

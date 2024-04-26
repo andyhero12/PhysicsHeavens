@@ -1,5 +1,35 @@
 {
     "textures": {
+        "CHANGEABILITY":{
+            "file": "textures/tutorial/unleash-ult.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "MOVEMENT":{
+            "file": "textures/tutorial/swap-skewers.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "BITE":{
+            "file": "textures/tutorial/swap-skewers.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "SPECIALS":{
+            "file": "textures/tutorial/swap-skewers.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "DEFENDGATE":{
+            "file": "textures/tutorial/swap-skewers.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "DESTORYSPAWNER":{
+            "file": "textures/tutorial/swap-skewers.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
         "minimap": {
             "file": "textures/minimap/minimap.png",
             "minfilter": "linear",

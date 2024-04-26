@@ -80,6 +80,7 @@ protected:
     std::shared_ptr<cugl::scene2::SceneNode> _debugnode;
 
     std::shared_ptr<cugl::scene2::SceneNode> _uinode;
+    std::shared_ptr<cugl::scene2::SceneNode> _tutorialnode;
     
 
     std::shared_ptr<cugl::physics2::net::NetWorld> _world;
@@ -109,6 +110,8 @@ protected:
 
     float _zoom;
     std::vector<std::shared_ptr<Tutorial>> tutorialTiles;
+    
+    size_t tutorialIndex;
 
     /**
      * Lays out the game geography.
@@ -155,6 +158,10 @@ protected:
     
     /** Updates input controller */
     void updateInputController();
+    
+    
+    /** Initialize tutorial */
+    void initTutorial();
 
 public:
 #pragma mark -
