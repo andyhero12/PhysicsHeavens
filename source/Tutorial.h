@@ -12,6 +12,7 @@
 #include <functional>
 #include <stdexcept>
 #include <string>
+#include <memory>
 
 class Tutorial{
 public:
