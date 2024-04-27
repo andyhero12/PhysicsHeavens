@@ -14,6 +14,8 @@
 
 class WorldSearchVertex{
 private:
+    // Returns whether this node is close to an impassible corner
+    bool closeToEdge();
     
 public:
     
