@@ -113,23 +113,88 @@ bool AbsorbEnemy::init(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_
     return false;
 }
 
-void AbsorbEnemy::preUpdate(float dt, OverWorld& overWorld){
+//void AbsorbEnemy::preUpdate(float dt, OverWorld& overWorld){
+//    if (_attackCooldown < 60){
+//        _attackCooldown++;
+//    }
+//    
+//    if (_counter < updateRate){
+//        _counter++;
+//    }
+//    
+//    
+//    // target
+//    cugl::Vec2 target_pos = getTargetPositionFromIndex(overWorld);
+//    cugl::Vec2 direction = target_pos - getPosition();
+//    if (overWorld._isHost && _counter >= updateRate){
+//        setVX(direction.normalize().x * 0.5);
+//        setVY(direction.normalize().y * 0.5);
+//        setX(getX());
+//        setY(getY());
+//        _counter = 0;
+//        _prevDirection =_curDirection;
+//        _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
+//    }
+//}
+
+void AbsorbEnemy::preUpdate(float dt, OverWorld& overWorld) {
+    // Update the counter for timed actions
     if (_attackCooldown < 60){
         _attackCooldown++;
     }
-    
+
     if (_counter < updateRate){
         _counter++;
     }
+
+    // Determine the action based on the state
+    if (curAction == EnemyActions::SPAWN){
+        handleSpawn();
+    }
+    else if (curAction == EnemyActions::WANDER){
+        handleWander(dt);
+    }
+    else if(curAction == EnemyActions::CHASE){
+        handleChase(overWorld);
+    }
+    else if(curAction == EnemyActions::LOWHEALTH){
+        handleLowHealth();
+    }
+    else if(curAction == EnemyActions::ATTACK){
+        handleAttack(overWorld);
+    }
+}
+
+void AbsorbEnemy::handleSpawn() {
+    setHealth(_maxHealth);
+    _wanderAngle = 0.0f;
+    timeSinceLastMajorChange = 0.0f;
+    curAction = EnemyActions::WANDER;
+}
+
+void AbsorbEnemy::handleChase(OverWorld& overWorld) {
     cugl::Vec2 target_pos = getTargetPositionFromIndex(overWorld);
     cugl::Vec2 direction = target_pos - getPosition();
     if (overWorld._isHost && _counter >= updateRate){
-        setVX(direction.normalize().x * 0.5);
-        setVY(direction.normalize().y * 0.5);
-        setX(getX());
-        setY(getY());
-        _counter = 0;
-        _prevDirection =_curDirection;
-        _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
+      setVX(direction.normalize().x * 0.5);
+      setVY(direction.normalize().y * 0.5);
+      setX(getX());
+      setY(getY());
+      _counter = 0;
+      _prevDirection =_curDirection;
+      _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
     }
+}
+
+void AbsorbEnemy::handleLowHealth() {
+    // Behavior when health is low
+//    setColor(cugl::Color4::RED); // Change color to red
+//    increaseSpeed(1.5); // Increase speed or some other effect
+}
+
+void AbsorbEnemy::handleAttack(OverWorld& overWorld) {
+    // Attack logic, could be a direct move towards the player or shooting
+//    if (isPlayerInRange(overWorld)) {
+//        performAttack();
+//    }
 }

@@ -134,11 +134,18 @@ public:
         CULog("TODO ABSORB VALUE OF ABSORB ENEMY \n");
         return 1;
     }
-    
-    
+ 
 protected:
     int _contactDamage;
     int _attackCooldown;
+    
+    
+    virtual void handleSpawn() override;
+    virtual void handleChase(OverWorld& overWorld) override;
+    virtual void handleLowHealth() override;
+    virtual void handleAttack(OverWorld& overWorld) override;
+    
+    
 };
 
 #endif /* AbsorbEnemy_h */

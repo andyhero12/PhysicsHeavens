@@ -113,14 +113,43 @@ bool MeleeEnemy::init(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_t
     return false;
 }
 void MeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
+    // Update the counter for timed actions
     if (_attackCooldown < 60){
         _attackCooldown++;
     }
-    
+
     if (_counter < updateRate){
         _counter++;
     }
+
+    // Determine the action based on the state
+    if (curAction == EnemyActions::SPAWN){
+        handleSpawn();
+    }
+    else if (curAction == EnemyActions::WANDER){
+        handleWander(dt);
+    }
+    else if(curAction == EnemyActions::CHASE){
+        handleChase(overWorld);
+    }
+    else if(curAction == EnemyActions::LOWHEALTH){
+        handleLowHealth();
+    }
+    else if(curAction == EnemyActions::ATTACK){
+        handleAttack(overWorld);
+    }
+}
+
+
+void MeleeEnemy::handleSpawn() {
+    setHealth(_maxHealth);
+    _wanderAngle = 0.0f;
+    timeSinceLastMajorChange = 0.0f;
+    curAction = EnemyActions::WANDER;
     
+}
+
+void MeleeEnemy::handleChase(OverWorld& overWorld) {
     cugl::Vec2 target_pos = getTargetPositionFromIndex(overWorld);
     cugl::Vec2 direction = target_pos - getPosition();
     if (overWorld._isHost && _counter >= updateRate){
@@ -136,4 +165,17 @@ void MeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
 //        _prevDirection =_curDirection;
 //        _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
     }
+}
+
+void MeleeEnemy::handleLowHealth() {
+    // Behavior when health is low
+//    setColor(cugl::Color4::RED); // Change color to red
+//    increaseSpeed(1.5); // Increase speed or some other effect
+}
+
+void MeleeEnemy::handleAttack(OverWorld& overWorld) {
+    // Attack logic, could be a direct move towards the player or shooting
+//    if (isPlayerInRange(overWorld)) {
+//        performAttack();
+//    }
 }

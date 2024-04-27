@@ -8,6 +8,7 @@
 #ifndef AbstractEnemy_h
 #define AbstractEnemy_h
 #include <cugl/cugl.h>
+#include <random>
 #include "OverWorld.h"
 #include "AnimationSceneNode.h"
 #define MAGIC_NUMBER_ENEMY_ANIMATION_FREQUENECY 4
@@ -34,7 +35,11 @@ class AbstractEnemy : public cugl::physics2::BoxObstacle {
 public:
     
     enum class EnemyActions : int {
-        RUN,
+        SPAWN,
+        WANDER,
+        CHASE,
+        LOWHEALTH,
+        RUNAWAY,
         ATTACK
     };
     
@@ -55,13 +60,19 @@ public:
             setRestitution(DEFAULT_RESTITUTION);
             setFixedRotation(true);
             
-            curAction = EnemyActions::RUN;
+            curAction = EnemyActions::SPAWN;
             _health = m_health;
             _maxHealth = m_health;
             targetIndex = m_targetIndex;
             _prevDirection =AnimationSceneNode::Directions::EAST;
             _curDirection = AnimationSceneNode::Directions::EAST;
             _pathfinder = std::make_shared<AStarSearch<WorldSearchVertex>>();
+            _time = 0;
+            _wanderAngle = 0.0f;
+            timeSinceLastMajorChange = 0.0f;
+            
+            _previousDirection = getPosition();
+            _inContact = false;
             
             return true;
         }
@@ -71,19 +82,28 @@ public:
     void update(float delta) override{
         Obstacle::update(delta);
         _prevDirection =_curDirection;
-        Vec2 direction = getLinearVelocity();
-        _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
+//        Vec2 direction = getLinearVelocity();
+//        _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
+        if(!_inContact){
+            _curDirection = AnimationSceneNode::convertRadiansToDirections((_previousDirection - getPosition()).getAngle());
+            _previousDirection = getPosition();
+        }
 
-        runAnimations->animate(_curDirection, curAction == EnemyActions::RUN);
+        runAnimations->animate(_curDirection, curAction != EnemyActions::ATTACK);
         attackAnimations->animate(_curDirection, curAction == EnemyActions::ATTACK);
     }
     
     virtual void preUpdate(float dt, OverWorld& overWorld) = 0;
     
+    bool isInContact() const { return _inContact; }
+    void setInContact(bool value) { _inContact = value; }
+    
     virtual int getDamage() = 0;
     virtual bool canAttack() const = 0;
     virtual void resetAttack() = 0;
     virtual int getAbsorbValue() const = 0;
+    
+    
     virtual void executeDeath(OverWorld& overWorld) {
         CULog("executing Death\n");
     }
@@ -157,6 +177,15 @@ protected:
     int targetIndex;
     int updateRate;
     int _counter;
+    int _time;
+    // used for wander
+    float _wanderAngle;
+    const float wanderStrength = 0.3f;
+    const float directionChangeInterval = 5.0f;
+    float timeSinceLastMajorChange;
+    // update animations; remove jitter
+    Vec2 _previousDirection;
+    bool _inContact;
     
     /** The next step along the enemy's path */
     Vec2 _nextStep = Vec2(-1, -1);
@@ -317,6 +346,45 @@ protected:
     /** Returns whether the last pathfind was successful */
     bool searchSuccess(){
         return _pathfinder->GetSolutionEnd() && _pathfinder->SearchStep() == AStarSearch<WorldSearchVertex>::SEARCH_STATE_SUCCEEDED;
+    }
+    
+    // update state
+    virtual void handleSpawn() = 0;
+    virtual void handleChase(OverWorld& overWorld) = 0;
+    virtual void handleLowHealth() = 0;
+    virtual void handleAttack(OverWorld& overWorld) = 0;
+    void handleWander(float dt){
+        // Update time since last major direction change
+         timeSinceLastMajorChange += dt;
+
+         // Random device and generator setup
+         std::random_device rd;
+         std::mt19937 gen(rd());
+         std::uniform_real_distribution<> minorChange(-wanderStrength, wanderStrength);
+         std::uniform_real_distribution<> majorChange(0.0f, 360.0f);
+
+         // Apply a minor random adjustment regularly
+         _wanderAngle += minorChange(gen);
+
+         // Check to change directions
+         if (timeSinceLastMajorChange >= directionChangeInterval) {
+             _wanderAngle = majorChange(gen); // new random angle
+             timeSinceLastMajorChange = 0.0f; // Reset the timer
+         }
+
+         // Normalize the angle
+         _wanderAngle = std::fmod(_wanderAngle, 360.0f);
+         if (_wanderAngle < 0) _wanderAngle += 360.0f;
+
+         // Calculate new velocity based on the wander angle
+         float radAngle = _wanderAngle * (M_PI / 180.0f);
+         float vx = cos(radAngle);
+         float vy = sin(radAngle);
+
+         // Set the new velocity, scaled by a speed factor
+         float speed = 0.5f;
+         setVX(vx * speed);
+         setVY(vy * speed);
     }
     
 };

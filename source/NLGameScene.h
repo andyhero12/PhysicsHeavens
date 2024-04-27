@@ -44,6 +44,7 @@
 #include "PauseScene.h"
 #include "MiniMap.h"
 #include "Tutorial.h"
+#include "CollisionListener.h"
 
 using namespace cugl::physics2::net;
 using namespace cugl;
@@ -98,13 +99,15 @@ protected:
     
     std::shared_ptr<Minimap> _minimap;
     
+    std::shared_ptr<CollisionListener> enemyListener;
+    
     /** Host is by default the left cannon */
     bool _isHost;
 
     bool _todoReset;
     /** Whether or not debug mode is active */
     bool _debug;
-
+    Vec2 olddogPos;
     std::shared_ptr<NetEventController> _network;
     cugl::Affine2 _transform;
 
@@ -317,6 +320,8 @@ public:
      */
     void addChildBackground();
     void addChildForeground();
+    void executeSlidingWindow(Vec2 dest);
+    void resetDraw();
 };
 
 #endif /* __NL_GAME_SCENE_H__ */

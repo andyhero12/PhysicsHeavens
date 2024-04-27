@@ -134,23 +134,30 @@ bool BombEnemy::init(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_ta
 //}
 
 void BombEnemy::preUpdate(float dt, OverWorld& overWorld){
+    // Update the counter for timed actions
     if (_attackCooldown < 60){
         _attackCooldown++;
     }
-    
+
     if (_counter < updateRate){
         _counter++;
     }
-    cugl::Vec2 target_pos = getTargetPositionFromIndex(overWorld);
-    cugl::Vec2 direction = target_pos - getPosition();
-    if (overWorld._isHost && _counter >= updateRate){
-        setVX(direction.normalize().x * 0.5);
-        setVY(direction.normalize().y * 0.5);
-        setX(getX());
-        setY(getY());
-        _counter = 0;
-        _prevDirection =_curDirection;
-        _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
+
+    // Determine the action based on the state
+    if (curAction == EnemyActions::SPAWN){
+        handleSpawn();
+    }
+    else if (curAction == EnemyActions::WANDER){
+        handleWander(dt);
+    }
+    else if(curAction == EnemyActions::CHASE){
+        handleChase(overWorld);
+    }
+    else if(curAction == EnemyActions::LOWHEALTH){
+        handleLowHealth();
+    }
+    else if(curAction == EnemyActions::ATTACK){
+        handleAttack(overWorld);
     }
 }
 void BombEnemy::executeDeath(OverWorld& overWorld){
@@ -164,5 +171,41 @@ void BombEnemy::executeDeath(OverWorld& overWorld){
     }
     curDog->setHealth(curDog->getHealth() - getExplosionDamage());
 //    CULog("Dog got exploded on %d", curDog->getHealth());
+}
+
+
+
+void BombEnemy::handleSpawn() {
+    setHealth(_maxHealth);
+    _wanderAngle = 0.0f;
+    timeSinceLastMajorChange = 0.0f;
+    curAction = EnemyActions::WANDER;
+}
+
+void BombEnemy::handleChase(OverWorld& overWorld) {
+    cugl::Vec2 target_pos = getTargetPositionFromIndex(overWorld);
+    cugl::Vec2 direction = target_pos - getPosition();
+    if (overWorld._isHost && _counter >= updateRate){
+      setVX(direction.normalize().x * 0.5);
+      setVY(direction.normalize().y * 0.5);
+      setX(getX());
+      setY(getY());
+      _counter = 0;
+      _prevDirection =_curDirection;
+      _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
+    }
+}
+
+void BombEnemy::handleLowHealth() {
+    // Behavior when health is low
+//    setColor(cugl::Color4::RED); // Change color to red
+//    increaseSpeed(1.5); // Increase speed or some other effect
+}
+
+void BombEnemy::handleAttack(OverWorld& overWorld) {
+    // Attack logic, could be a direct move towards the player or shooting
+//    if (isPlayerInRange(overWorld)) {
+//        performAttack();
+//    }
 }
 
