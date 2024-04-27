@@ -52,6 +52,7 @@ void AbstractEnemy::postUpdate(){
 
     runAnimations->animate(_curDirection, curAction != EnemyActions::ATTACK);
     attackAnimations->animate(_curDirection, curAction == EnemyActions::ATTACK);
+    
 }
 
 #pragma mark -
@@ -222,10 +223,11 @@ void AbstractEnemy::handleWander(float dt){
 
      // Check to change directions
      if (timeSinceLastMajorChange >= directionChangeInterval) {
-         _wanderAngle = majorChange(gen); // new random angle
          timeSinceLastMajorChange = 0.0f; // Reset the timer
      }
-
+    if(timeSinceLastMajorChange == 0.0f){
+        _wanderAngle = majorChange(gen); // new random angle
+    }
      // Normalize the angle
      _wanderAngle = std::fmod(_wanderAngle, 360.0f);
      if (_wanderAngle < 0) _wanderAngle += 360.0f;

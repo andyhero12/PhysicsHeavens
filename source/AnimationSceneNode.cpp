@@ -105,12 +105,6 @@ void AnimationSceneNode::setContentSize(const cugl::Size size) {
 //    }
 }
 
-//void AnimationSceneNode::setColor(cugl::Color4 color){
-//    for(auto &node : _animationSprites){
-//        node->setColor(color);
-//    }
-//}
-
 void AnimationSceneNode::setPosition(const cugl::Vec2 &position){
     _position = position;
     for(std::shared_ptr<cugl::scene2::SpriteNode> &node : _animationSprites){

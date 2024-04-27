@@ -154,7 +154,7 @@ void BombEnemy::preUpdate(float dt, OverWorld& overWorld){
         handleChase(overWorld);
     }
     else if(curAction == EnemyActions::LOWHEALTH){
-        handleLowHealth();
+        handleLowHealth(overWorld);
     }
     else if(curAction == EnemyActions::ATTACK){
         handleAttack(overWorld);
@@ -189,19 +189,12 @@ void BombEnemy::handleChase(OverWorld& overWorld) {
     }
 }
 
-void BombEnemy::handleLowHealth() {
-    // Behavior when health is low
-//    setColor(cugl::Color4::RED); // Change color to red
-//    increaseSpeed(1.5); // Increase speed or some other effect
+void BombEnemy::handleLowHealth(OverWorld& overWorld) {
 }
 
 void BombEnemy::handleAttack(OverWorld& overWorld) {
-    // Attack logic, could be a direct move towards the player or shooting
-//    if (isPlayerInRange(overWorld)) {
-//        performAttack();
-//    }
 }
 
 
-void BombEnemy::handleStay() {}
+void BombEnemy::handleStay(OverWorld& overWorld) {}
 void BombEnemy::handleRunaway(OverWorld& overWorld){}

@@ -417,9 +417,6 @@ void Dog::updateDogSize(int absorbValue){
 void Dog::updateLocalAnimations(DogSize size){
     baseBlankNode->removeAllChildren();
     
-    if(frontEffectsNode){
-        baseBlankNode->addChild(frontEffectsNode);
-    }
     if(backEffectsNode){
         baseBlankNode->addChild(backEffectsNode);
     }
@@ -449,6 +446,10 @@ void Dog::updateLocalAnimations(DogSize size){
     
     baseBlankNode->setPosition(getPosition());
     
+    if(frontEffectsNode){
+        baseBlankNode->addChild(frontEffectsNode);
+    }
+
     
 }
 

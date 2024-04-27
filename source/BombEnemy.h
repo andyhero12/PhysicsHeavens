@@ -134,9 +134,9 @@ protected:
     int _baseExplosionDamage;
     
     virtual void handleChase(OverWorld& overWorld) override;
-    virtual void handleLowHealth() override;
+    virtual void handleLowHealth(OverWorld& overWorld) override;
     virtual void handleAttack(OverWorld& overWorld) override;
-    virtual void handleStay() override;
+    virtual void handleStay(OverWorld& overWorld) override;
     virtual void handleRunaway(OverWorld& overWorld) override;
     
 };

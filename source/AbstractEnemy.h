@@ -181,9 +181,9 @@ protected:
     
     // update state
     virtual void handleChase(OverWorld& overWorld) = 0;
-    virtual void handleLowHealth() = 0;
+    virtual void handleLowHealth(OverWorld& overWorld) = 0;
     virtual void handleAttack(OverWorld& overWorld) = 0;
-    virtual void handleStay() = 0;
+    virtual void handleStay(OverWorld& overWorld) = 0;
     virtual void handleRunaway(OverWorld& overWorld)= 0;
     
     virtual void handleSpawn();

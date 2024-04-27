@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include<cugl/cugl.h>
 #include "AbstractEnemy.h"
-#include <Box2D/Box2D.h>
+#include <box2d/box2d.h>
 
 
 class ContactListener : public b2ContactListener {

@@ -118,7 +118,8 @@ void SpawnerEnemy::preUpdate(float dt, OverWorld& overWorld){
         _counter++;
     }
     
-    // Determine the action based on the state
+    // Determine the action based on the state; for now it's alway in atttack but should change
+    curAction = AbstractEnemy::EnemyActions::ATTACK;
     if (curAction == EnemyActions::SPAWN){
         handleSpawn();
     }
@@ -129,20 +130,13 @@ void SpawnerEnemy::preUpdate(float dt, OverWorld& overWorld){
         handleChase(overWorld);
     }
     else if(curAction == EnemyActions::LOWHEALTH){
-        handleLowHealth();
+        handleLowHealth(overWorld);
     }
     else if(curAction == EnemyActions::ATTACK){
         handleAttack(overWorld);
     }
 }
 
-
-void SpawnerEnemy::handleSpawn() {
-    setHealth(_maxHealth);
-    _wanderAngle = 0.0f;
-    timeSinceLastMajorChange = 0.0f;
-    curAction = EnemyActions::WANDER;
-}
 
 void SpawnerEnemy::handleChase(OverWorld& overWorld) {
     cugl::Vec2 target_pos = getTargetPositionFromIndex(overWorld);
@@ -158,19 +152,7 @@ void SpawnerEnemy::handleChase(OverWorld& overWorld) {
     }
 }
 
-void SpawnerEnemy::handleLowHealth() {
-    // Behavior when health is low
-//    setColor(cugl::Color4::RED); // Change color to red
-//    increaseSpeed(1.5); // Increase speed or some other effect
-}
-
-void SpawnerEnemy::handleAttack(OverWorld& overWorld) {
-    // Attack logic, could be a direct move towards the player or shooting
-//    if (isPlayerInRange(overWorld)) {
-//        performAttack();
-//    }
-}
-
-
-void SpawnerEnemy::handleStay() {}
+void SpawnerEnemy::handleLowHealth(OverWorld& overWorld){}
+void SpawnerEnemy::handleAttack(OverWorld& overWorld){}
+void SpawnerEnemy::handleStay(OverWorld& overWorld){}
 void SpawnerEnemy::handleRunaway(OverWorld& overWorld){}

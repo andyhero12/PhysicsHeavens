@@ -50,11 +50,13 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
     topLevel->setAnchor(Vec2::ANCHOR_CENTER);
     std::shared_ptr<AnimationSceneNode> runAnimations = AnimationSceneNode::allocWithTextures(_textures, rows,_framecols, _framesize, _freqAnims);
     runAnimations->setContentSize(m_size);
+
     // Temp PlaceHolder
     runAnimations->setAnchor(Vec2::ANCHOR_CENTER);
     std::shared_ptr<AnimationSceneNode> attackAnimations = AnimationSceneNode::allocWithTextures(_textures, rows,_framecols, _framesize, _freqAnims);
     attackAnimations->setAnchor(Vec2::ANCHOR_CENTER);
     attackAnimations->setContentSize(m_size);
+    
     topLevel->setPosition(m_pos);
     static_enemy->setWalkingSceneNode(runAnimations);
     static_enemy->setAttackingSceneNode(attackAnimations);
@@ -135,50 +137,80 @@ void MeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
     }
     
     // Determine the action based on the state
+    runAnimations->setColor(cugl::Color4::WHITE);
     if (curAction == EnemyActions::SPAWN){
         handleSpawn();
     }
     else if (curAction == EnemyActions::WANDER){
         handleWander(dt);
-//        if(_time == FRAMES){
-//            curAction = AbstractEnemy::EnemyActions::CHASE;
-//            _time = 0;
-//        }
+        if(_time >= FRAMES){
+            curAction = AbstractEnemy::EnemyActions::CHASE;
+            _time = 0;
+        }
     }
     else if(curAction == EnemyActions::CHASE){
         handleChase(overWorld);
-//        if(_time == FRAMES){
-//            if(!atGoal()){
-//                curAction = AbstractEnemy::EnemyActions::WANDER;
-//            }
-//            else{
-//                curAction = AbstractEnemy::EnemyActions::ATTACK;
-//            }
-//            _time = 0;
-//        }
+        if(_time >= FRAMES) {
+            curAction = AbstractEnemy::EnemyActions::WANDER;
+            _time = 0;
+        }
     }
     else if(curAction == EnemyActions::LOWHEALTH){
-        handleLowHealth();
+        handleLowHealth(overWorld);
+    }
+    else if(curAction == EnemyActions::STAY){
+        handleStay(overWorld);
+        if(_time >= FRAMES){
+            curAction = AbstractEnemy::EnemyActions::WANDER;
+            _time = 0;
+        }
     }
     else if(curAction == EnemyActions::ATTACK){
         handleAttack(overWorld);
+        if(_time >= FRAMES){
+            curAction = AbstractEnemy::EnemyActions::STAY;
+            _time = 0;
+        }
     }
 }
 
 
 void MeleeEnemy::handleChase(OverWorld& overWorld) {
     cugl::Vec2 target_pos = getTargetPositionFromIndex(overWorld);
+    
+    cugl::Vec2 dist = target_pos - getPosition();
+    
     setGoal(target_pos, overWorld.getWorld());
     goToGoal();
     _counter = 0;
+    
+    if( dist.length() < 4 && curAction == AbstractEnemy::EnemyActions::CHASE){
+        curAction = AbstractEnemy::EnemyActions::ATTACK;
+        _time = 0;
+    }
 }
 
-void MeleeEnemy::handleLowHealth() {
-//    runAnimations->setColor(cugl::Color4::RED); // Change color to red
+void MeleeEnemy::handleLowHealth(OverWorld& overWorld) {
+    runAnimations->setColor(cugl::Color4::BLUE);
+    handleRunaway(overWorld);
 }
 
 void MeleeEnemy::handleAttack(OverWorld& overWorld) {
+    attackAnimations->setColor(Color4::GREEN);
+    handleChase(overWorld);
 }
 
-void MeleeEnemy::handleStay() {}
-void MeleeEnemy::handleRunaway(OverWorld& overWorld){}
+void MeleeEnemy::handleStay(OverWorld& overWorld) {}
+
+void MeleeEnemy::handleRunaway(OverWorld& overWorld){
+    cugl::Vec2 dogPos = overWorld.getDog()->getPosition();
+       cugl::Vec2 myPos = getPosition();
+       cugl::Vec2 direction = myPos - dogPos;
+       float distance = direction.length();
+
+       if (distance < 4) {
+           direction.normalize();
+           setVX(-direction.x * 0.1f);
+           setVY(-direction.y * 0.1f);
+       }
+}

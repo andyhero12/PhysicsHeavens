@@ -123,45 +123,72 @@ void StaticMeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
     if (_counter < updateRate){
         _counter++;
     }
-    //CULog("Boundary World Size in Melee Enemy Preupdate: %zu", overWorld.getWorld()->getBoundaryWorld().size());
-    
+    // Determine the action based on the state; for now it's alway in atttack but should change
     cugl::Vec2 dog_pos = overWorld.getDog()->getPosition();
-    
-//    setGoal(dog_pos, overWorld.getWorld());
-//    goToGoal();
     cugl::Vec2 org_dist = dog_pos - original_pos;
     float distance = org_dist.length();
-    cugl::Vec2 direction;
-//    CULog("distance %f %d", distance, DISTANCE_CUTOFF);
-    if (distance > DISTANCE_CUTOFF){ // too far from origin return
-        direction = original_pos - getPosition();
-        if (overWorld._isHost && _counter >= updateRate){
-            _counter = 0;
-            if (direction.lengthSquared() >= 1){
-                setVX(direction.normalize().x);
-                setVY(direction.normalize().y);
-            }else{
-                setVX(0);
-                setVY(0);
-            }
-            _prevDirection =_curDirection;
-            _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
-        }
-    }else{ // chase dog
-        direction = dog_pos - getPosition();
-        if (overWorld._isHost && _counter >= updateRate){
-            _counter = 0;
-            setVX(direction.normalize().x);
-            setVY(direction.normalize().y);
-            _prevDirection =_curDirection;
-            _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
-        }
+    if (distance > DISTANCE_CUTOFF){
+        curAction = AbstractEnemy::EnemyActions::ATTACK;
+    }
+    else{
+        curAction = AbstractEnemy::EnemyActions::RUNAWAY;
+    }
+    
+    
+    // FSM handle update and actions
+    if (curAction == EnemyActions::SPAWN){
+        handleSpawn();
+    }
+    else if (curAction == EnemyActions::WANDER){
+        handleWander(dt);
+    }
+    else if(curAction == EnemyActions::CHASE){
+        handleChase(overWorld);
+    }
+    else if(curAction == EnemyActions::LOWHEALTH){
+        handleLowHealth(overWorld);
+    }
+    else if(curAction == EnemyActions::ATTACK){
+        handleAttack(overWorld);
     }
 }
 
 
-void StaticMeleeEnemy::handleChase(OverWorld& overWorld){}
-void StaticMeleeEnemy::handleLowHealth(){}
+void StaticMeleeEnemy::handleChase(OverWorld& overWorld){
+    //CULog("Boundary World Size in Melee Enemy Preupdate: %zu", overWorld.getWorld()->getBoundaryWorld().size());
+    
+    cugl::Vec2 dog_pos = overWorld.getDog()->getPosition();
+    cugl::Vec2 org_dist = dog_pos - original_pos;
+    float distance = org_dist.length();
+    cugl::Vec2 direction;
+    direction = dog_pos - getPosition();
+    if (overWorld._isHost && _counter >= updateRate){
+        _counter = 0;
+        setVX(direction.normalize().x);
+        setVY(direction.normalize().y);
+        _prevDirection =_curDirection;
+        _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
+    }
+}
+void StaticMeleeEnemy::handleLowHealth(OverWorld& overWorld){}
 void StaticMeleeEnemy::handleAttack(OverWorld& overWorld){}
-void StaticMeleeEnemy::handleStay(){}
-void StaticMeleeEnemy::handleRunaway(OverWorld& overWorld){}
+void StaticMeleeEnemy::handleStay(OverWorld& overWorld){}
+void StaticMeleeEnemy::handleRunaway(OverWorld& overWorld){
+    cugl::Vec2 dog_pos = overWorld.getDog()->getPosition();
+    cugl::Vec2 org_dist = dog_pos - original_pos;
+    float distance = org_dist.length();
+    cugl::Vec2 direction;
+    direction = original_pos - getPosition();
+    if (overWorld._isHost && _counter >= updateRate){
+        _counter = 0;
+        if (direction.lengthSquared() >= 1){
+            setVX(direction.normalize().x);
+            setVY(direction.normalize().y);
+        }else{
+            setVX(0);
+            setVY(0);
+        }
+        _prevDirection =_curDirection;
+        _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
+    }
+}
