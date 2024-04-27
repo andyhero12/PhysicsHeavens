@@ -59,12 +59,12 @@ public:
         std::vector<std::shared_ptr<cugl::Texture>> textures;
         textures.push_back(_assets->get<Texture>("absorbEnemyRightWalk"));
         textures.push_back(_assets->get<Texture>("absorbEnemyRightWalk"));
+        textures.push_back(_assets->get<Texture>("absorbEnemyLeftWalk"));
+        textures.push_back(_assets->get<Texture>("absorbEnemyLeftWalk"));
+        textures.push_back(_assets->get<Texture>("absorbEnemyLeftWalk"));
+        textures.push_back(_assets->get<Texture>("absorbEnemyLeftWalk"));
         textures.push_back(_assets->get<Texture>("absorbEnemyRightWalk"));
         textures.push_back(_assets->get<Texture>("absorbEnemyRightWalk"));
-        textures.push_back(_assets->get<Texture>("absorbEnemyLeftWalk"));
-        textures.push_back(_assets->get<Texture>("absorbEnemyLeftWalk"));
-        textures.push_back(_assets->get<Texture>("absorbEnemyLeftWalk"));
-        textures.push_back(_assets->get<Texture>("absorbEnemyLeftWalk"));
         staticEnemyStruct._walkTextures  = textures;
         staticEnemyStruct._attackTextures  = textures;
         staticEnemyStruct._framesize = _framesize;
@@ -144,6 +144,8 @@ protected:
     virtual void handleChase(OverWorld& overWorld) override;
     virtual void handleLowHealth() override;
     virtual void handleAttack(OverWorld& overWorld) override;
+    virtual void handleStay() override;
+    virtual void handleRunaway(OverWorld& overWorld) override;
     
     
 };

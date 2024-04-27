@@ -29,5 +29,13 @@ public:
 private:
     
     int rangedDamage;
+    
+protected:
+//    virtual void handleSpawn() override;
+//    virtual void handleChase(OverWorld& overWorld) override;
+//    virtual void handleLowHealth() override;
+//    virtual void handleAttack(OverWorld& overWorld) override;
+//    virtual void handleStay() override;
+//    virtual void handleRunaway(OverWorld& overWorld) override;
 };
 #endif /* RangedEnemy_hpp */

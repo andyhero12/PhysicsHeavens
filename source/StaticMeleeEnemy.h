@@ -104,6 +104,15 @@ public:
     
 private:
     cugl::Vec2 original_pos;
+    
+protected:
+    // update state
+    virtual void handleSpawn() override;
+    virtual void handleChase(OverWorld& overWorld) override;
+    virtual void handleLowHealth() override;
+    virtual void handleAttack(OverWorld& overWorld) override;
+    virtual void handleStay() override;
+    virtual void handleRunaway(OverWorld& overWorld) override;
 };
 
 #endif /* StaticMeleeEnemy_hpp */

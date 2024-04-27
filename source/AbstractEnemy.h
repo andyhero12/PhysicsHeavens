@@ -37,6 +37,7 @@ public:
     enum class EnemyActions : int {
         SPAWN,
         WANDER,
+        STAY,
         CHASE,
         LOWHEALTH,
         RUNAWAY,
@@ -353,6 +354,8 @@ protected:
     virtual void handleChase(OverWorld& overWorld) = 0;
     virtual void handleLowHealth() = 0;
     virtual void handleAttack(OverWorld& overWorld) = 0;
+    virtual void handleStay() = 0;
+    virtual void handleRunaway(OverWorld& overWorld)= 0;
     void handleWander(float dt){
         // Update time since last major direction change
          timeSinceLastMajorChange += dt;

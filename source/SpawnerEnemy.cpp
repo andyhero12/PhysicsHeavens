@@ -170,3 +170,7 @@ void SpawnerEnemy::handleAttack(OverWorld& overWorld) {
 //        performAttack();
 //    }
 }
+
+
+void SpawnerEnemy::handleStay() {}
+void SpawnerEnemy::handleRunaway(OverWorld& overWorld){}

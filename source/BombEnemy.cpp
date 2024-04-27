@@ -209,3 +209,6 @@ void BombEnemy::handleAttack(OverWorld& overWorld) {
 //    }
 }
 
+
+void BombEnemy::handleStay() {}
+void BombEnemy::handleRunaway(OverWorld& overWorld){}

@@ -198,3 +198,6 @@ void AbsorbEnemy::handleAttack(OverWorld& overWorld) {
 //        performAttack();
 //    }
 }
+
+void AbsorbEnemy::handleStay() {}
+void AbsorbEnemy::handleRunaway(OverWorld& overWorld){}
