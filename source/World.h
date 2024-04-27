@@ -48,9 +48,6 @@ public:
 #pragma mark Constructors
     
     virtual bool init(const cugl::Vec2& pos, const cugl::Size& size,Terrain m_type, std::shared_ptr<cugl::Texture> m_texture);
-    std::shared_ptr<cugl::Texture> texture;
-    std::shared_ptr<scene2::PolygonNode> tileSprite;
-    bool isUpper;
     
     void setUpperTrue(){
         isUpper = true;
@@ -62,13 +59,15 @@ public:
         return tileSprite;
     }
     Terrain type;
-    TileInfo(){
-        
-    }
-    ~TileInfo(){
-//        std::cout <<"TODO DISPOSE\n";
-    }
+    TileInfo(){}
+    ~TileInfo()=default;
+    
+    std::shared_ptr<cugl::Texture> getTexture() const {return texture;}
 private:
+    std::shared_ptr<cugl::Texture> texture;
+    std::shared_ptr<scene2::PolygonNode> tileSprite;
+    bool isUpper;
+    
 };
 
 class World{
@@ -90,8 +89,8 @@ public:
     std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>> tilesAtCoords;
     std::vector<std::shared_ptr<TileInfo>> allTiles;
     
-    World () {};
-    ~World(){};
+    World (){};
+    ~World() = default;
     World(std::shared_ptr<LevelModel> _level,std::shared_ptr<cugl::AssetManager> assets);
 
     std::shared_ptr<cugl::Texture> getBoxFromTileSet(int position, const std::map<int,TileSet>& tileSets);

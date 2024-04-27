@@ -756,7 +756,7 @@ void GameScene::addChildBackground()
         for (int i = originalRows - 1; i > -1; i--)
         {
             std::shared_ptr<TileInfo> t = currentBackground.at(i).at(j);
-            if (t->texture != nullptr)
+            if (t->getTexture() != nullptr)
             {
                 _worldnode->addChild(t->getTileSprite());
             }
@@ -768,7 +768,7 @@ void GameScene::addChildBackground()
         for (int j = 0; j < originalCols; j++)
         {
             std::shared_ptr<TileInfo> t = currentBoundaries.at(i).at(j);
-            if (t->texture != nullptr)
+            if (t->getTexture() != nullptr)
             {
                 t->setDebugColor(DYNAMIC_COLOR);
                 _world->initObstacle(t);
@@ -788,7 +788,7 @@ void GameScene::addChildBackground()
             for (int j = 0; j < originalCols; j++)
             {
                 std::shared_ptr<TileInfo> t = lowerDecorWorld.at(n).at(i).at(j);
-                if (t->texture != nullptr)
+                if (t->getTexture() != nullptr)
                 {
                     _worldnode->addChild(t->getTileSprite());
                 }
@@ -813,7 +813,7 @@ void GameScene::addChildForeground()
             for (int j = 0; j < originalCols; j++)
             {
                 std::shared_ptr<TileInfo> t = upperDecorWorld.at(n).at(i).at(j);
-                if (t->texture != nullptr)
+                if (t->getTexture() != nullptr)
                 {
                     _worldnode->addChild(t->getTileSprite());
                 }
