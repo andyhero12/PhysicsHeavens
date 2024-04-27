@@ -165,12 +165,6 @@ void AbsorbEnemy::preUpdate(float dt, OverWorld& overWorld) {
     }
 }
 
-void AbsorbEnemy::handleSpawn() {
-    setHealth(_maxHealth);
-    _wanderAngle = 0.0f;
-    timeSinceLastMajorChange = 0.0f;
-    curAction = EnemyActions::WANDER;
-}
 
 void AbsorbEnemy::handleChase(OverWorld& overWorld) {
     cugl::Vec2 target_pos = getTargetPositionFromIndex(overWorld);

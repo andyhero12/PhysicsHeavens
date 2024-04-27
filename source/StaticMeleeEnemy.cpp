@@ -160,7 +160,6 @@ void StaticMeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
 }
 
 
-void StaticMeleeEnemy::handleSpawn(){}
 void StaticMeleeEnemy::handleChase(OverWorld& overWorld){}
 void StaticMeleeEnemy::handleLowHealth(){}
 void StaticMeleeEnemy::handleAttack(OverWorld& overWorld){}

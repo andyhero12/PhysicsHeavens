@@ -175,13 +175,6 @@ void BombEnemy::executeDeath(OverWorld& overWorld){
 
 
 
-void BombEnemy::handleSpawn() {
-    setHealth(_maxHealth);
-    _wanderAngle = 0.0f;
-    timeSinceLastMajorChange = 0.0f;
-    curAction = EnemyActions::WANDER;
-}
-
 void BombEnemy::handleChase(OverWorld& overWorld) {
     cugl::Vec2 target_pos = getTargetPositionFromIndex(overWorld);
     cugl::Vec2 direction = target_pos - getPosition();

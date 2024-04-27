@@ -417,6 +417,9 @@ void Dog::updateDogSize(int absorbValue){
 void Dog::updateLocalAnimations(DogSize size){
     baseBlankNode->removeAllChildren();
     
+    if(frontEffectsNode){
+        baseBlankNode->addChild(frontEffectsNode);
+    }
     if(backEffectsNode){
         baseBlankNode->addChild(backEffectsNode);
     }
@@ -447,9 +450,6 @@ void Dog::updateLocalAnimations(DogSize size){
     baseBlankNode->setPosition(getPosition());
     
     
-    if(frontEffectsNode){
-        baseBlankNode->addChild(frontEffectsNode);
-    }
 }
 
 void Dog::resetCurrentAnimations(DogSize size){
@@ -492,8 +492,8 @@ void Dog::setMode(int mode){
 }
 
 void Dog::addEffects(std::shared_ptr<cugl::scene2::SceneNode> fnode, std::shared_ptr<cugl::scene2::SceneNode> bnode){
-    frontEffectsNode = fnode;
     backEffectsNode = bnode;
+    frontEffectsNode = fnode;
     updateLocalAnimations(DogSize::SMALL);
     
 }

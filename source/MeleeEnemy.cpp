@@ -8,6 +8,8 @@
 #define SPRITE_SCALE 1.14f
 
 #define MELEE_DAMAGE 5
+#define FRAMES 200
+
 #include "MeleeEnemy.h"
 #define DYNAMIC_COLOR   Color4::YELLOW
 std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode>> MeleeFactory::createObstacle(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex) {
@@ -122,8 +124,14 @@ void MeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
         _counter++;
     }
     
+    _time += 1;
+    
     if (!(overWorld._isHost && _counter >= updateRate)){
         return;
+    }
+    
+    if(_health < _maxHealth/3){
+        curAction = AbstractEnemy::EnemyActions::LOWHEALTH;
     }
     
     // Determine the action based on the state
@@ -132,9 +140,22 @@ void MeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
     }
     else if (curAction == EnemyActions::WANDER){
         handleWander(dt);
+//        if(_time == FRAMES){
+//            curAction = AbstractEnemy::EnemyActions::CHASE;
+//            _time = 0;
+//        }
     }
     else if(curAction == EnemyActions::CHASE){
         handleChase(overWorld);
+//        if(_time == FRAMES){
+//            if(!atGoal()){
+//                curAction = AbstractEnemy::EnemyActions::WANDER;
+//            }
+//            else{
+//                curAction = AbstractEnemy::EnemyActions::ATTACK;
+//            }
+//            _time = 0;
+//        }
     }
     else if(curAction == EnemyActions::LOWHEALTH){
         handleLowHealth();
@@ -145,41 +166,18 @@ void MeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
 }
 
 
-void MeleeEnemy::handleSpawn() {
-    setHealth(_maxHealth);
-    _wanderAngle = 0.0f;
-    timeSinceLastMajorChange = 0.0f;
-    curAction = EnemyActions::WANDER;
-    
-}
-
 void MeleeEnemy::handleChase(OverWorld& overWorld) {
     cugl::Vec2 target_pos = getTargetPositionFromIndex(overWorld);
-    
-        setGoal(target_pos, overWorld.getWorld());
-        goToGoal();
-        
-//        setVX(direction.normalize().x * 0.5);
-//        setVY(direction.normalize().y * 0.5);
-//        setX(getX());
-//        setY(getY());
-        _counter = 0;
-//        _prevDirection =_curDirection;
-//        _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
-
+    setGoal(target_pos, overWorld.getWorld());
+    goToGoal();
+    _counter = 0;
 }
 
 void MeleeEnemy::handleLowHealth() {
-    // Behavior when health is low
-//    setColor(cugl::Color4::RED); // Change color to red
-//    increaseSpeed(1.5); // Increase speed or some other effect
+//    runAnimations->setColor(cugl::Color4::RED); // Change color to red
 }
 
 void MeleeEnemy::handleAttack(OverWorld& overWorld) {
-    // Attack logic, could be a direct move towards the player or shooting
-//    if (isPlayerInRange(overWorld)) {
-//        performAttack();
-//    }
 }
 
 void MeleeEnemy::handleStay() {}

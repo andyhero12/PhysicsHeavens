@@ -133,7 +133,6 @@ protected:
     int _attackCooldown;
     int _baseExplosionDamage;
     
-    virtual void handleSpawn() override;
     virtual void handleChase(OverWorld& overWorld) override;
     virtual void handleLowHealth() override;
     virtual void handleAttack(OverWorld& overWorld) override;

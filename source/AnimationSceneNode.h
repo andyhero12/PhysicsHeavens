@@ -259,6 +259,7 @@ public:
     void setPosition(const cugl::Vec2 &position);
     void setAngle(float angle);
 
+//    virtual void setColor(cugl::Color4 color) override;
 #pragma mark -
 #pragma mark Rendering
     /**

@@ -68,6 +68,10 @@ void MonsterController::postUpdate(){
         _current.insert(curEnemy);
     }
     _pending.clear();
+    
+    for (std::shared_ptr<AbstractEnemy> curEnemy: _current){
+        curEnemy->postUpdate();
+    }
 }
 
 void MonsterController::retargetToDecoy( OverWorld& overWorld){
