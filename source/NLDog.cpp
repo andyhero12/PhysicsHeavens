@@ -54,6 +54,8 @@ using namespace cugl;
 /** The restitution of this rocket */
 #define DEFAULT_RESTITUTION 0.4f
 
+#define DAMAGED_DURATION 0.4f
+
 #define FIRE_RATE 25
 #define HEAL_RATE 50
 #define HEALTH 100
@@ -112,6 +114,7 @@ bool Dog::init(const Vec2 pos, const Size size) {
         _shootRadius = SHOOT_RADIUS;
         prevDirection =AnimationSceneNode::Directions::EAST;
         _curDirection = AnimationSceneNode::Directions::EAST;
+        _damagedTimer = 0;
         return true;
     }
     
@@ -366,6 +369,20 @@ void Dog::update(float delta) {
         baseBlankNode->setAngle(getAngle());
     }
     dogActions();
+    
+    if(_damagedTimer > 0) {
+        _damagedTimer -= delta;
+    }
+    if(_damagedTimer < 0) {
+        _damagedTimer = 0;
+        //tints may be expensive, so separating out this special case may be worthwhile
+        baseBlankNode->setColor(cugl::Color4(255, 255, 255));
+    }
+    if(_damagedTimer > 0) {
+        float ratio = (DAMAGED_DURATION - _damagedTimer) / DAMAGED_DURATION;
+        float brightness = 255 * (0.8f + ratio * 0.2f);
+        baseBlankNode->setColor(cugl::Color4(brightness, brightness * ratio, brightness * ratio));
+    }
 }
 
 void Dog::setRecallAnimation(std::shared_ptr<AnimationSceneNode> recall){
@@ -458,6 +475,9 @@ void Dog::resetCurrentAnimations(DogSize size){
 }
 
 void Dog::setHealth(int value){
+    if(value < _health) {
+        _damagedTimer = DAMAGED_DURATION;
+    }
     _health = std::max(0,value);
     _uiController->setHealthBarTexture(float(_health)/_maxHealth);
 }

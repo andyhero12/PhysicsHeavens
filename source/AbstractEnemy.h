@@ -91,7 +91,7 @@ public:
         if(_damagedTimer < 0) {
             _damagedTimer = 0;
             //tints may be expensive, so separating out this special case may be worthwhile
-            topLevelPlaceHolder->setColor(cugl::Color4(1, 1, 1));
+            topLevelPlaceHolder->setColor(cugl::Color4(255, 255, 255));
         }
         if(_damagedTimer > 0) {
             float ratio = (DAMAGED_DURATION - _damagedTimer) / DAMAGED_DURATION;
