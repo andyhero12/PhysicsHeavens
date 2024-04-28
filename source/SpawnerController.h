@@ -9,7 +9,6 @@
 #ifndef SpawnerController_hpp
 #define SpawnerController_hpp
 
-#include "Spawner.h"
 #include <cugl/cugl.h>
 #include <unordered_set>
 #include <vector>
@@ -17,6 +16,7 @@
 #include "AbstractSpawner.h"
 #include "SimpleSpawner.h"
 #include "OverWorld.h"
+#include "NLDeathEvent.h"
 
 
 class SpawnerController{
@@ -33,13 +33,17 @@ public:
     SpawnerController();
     
     ~SpawnerController();
+    
+    void drawFlames();
+    
     void update(MonsterController& monsterController, OverWorld& overWorld, float timestep);
     
     bool init(const std::vector<LevelModel::Spawner>& startLocs, std::shared_ptr<cugl::AssetManager> assets );
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl::Size size);
     void setRootNode(const std::shared_ptr<scene2::SceneNode>& _worldNode, bool isHost);
+    void setAnimNode(const std::shared_ptr<scene2::SceneNode>& _worldNode);
     bool win(){return _spawners.empty();}
-    
+    void processDeathEvent(const std::shared_ptr<DeathEvent>& deathEvent);
     std::shared_ptr<cugl::scene2::SceneNode> getSpawnerNode() const{
         return baseSpawnerNode;
     }
@@ -51,8 +55,13 @@ public:
     void dispose();
 private:
     std::shared_ptr<cugl::scene2::SceneNode> baseSpawnerNode;
+    std::shared_ptr<cugl::scene2::SceneNode> animSpawnerNode;
     std::shared_ptr<NetEventController> _network;
     bool _isHost;
+    
+    std::shared_ptr<cugl::Texture> _deathTexture;
+    std::shared_ptr<cugl::Texture> _spawnTexture;
+    std::unordered_set<std::shared_ptr<SpriteAnimationNode>> _curAnimations;
 };
 
 

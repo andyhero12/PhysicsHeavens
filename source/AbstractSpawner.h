@@ -21,6 +21,8 @@ protected:
     int _maxHealth;
     float _delay;
     float _timeElapsed;
+    bool _notCreated;
+    float _flameDelay;
     cugl::Vec2 _position;
     
 public:
@@ -46,6 +48,8 @@ public:
     , _maxHealth(health)
     , _timeElapsed(0.0)
     , _accumulatedDelay(-delay + regularDelay)
+    , _notCreated(true)
+    , _flameDelay(-delay + regularDelay)
     , _delay{delay}
     {
     }
@@ -57,13 +61,22 @@ public:
     void updateTime(float dt){
         _accumulatedDelay += dt;
         _timeElapsed += dt;
+        _flameDelay += dt;
     }
 
     bool canSpawn() const {
         return (_accumulatedDelay > _regularDelay);
     }
+    bool canGenerateFlame() const {
+        return (_flameDelay > (_regularDelay - 0.1)) && _notCreated;
+    }
     void reloadSpawner() {
         _accumulatedDelay = 0;
+        _notCreated = true;
+        _flameDelay = 0;
+    }
+    void reloadFlame() {
+        _notCreated = false;
     }
     const float getAccumulatedDelay() const {
         return _accumulatedDelay;

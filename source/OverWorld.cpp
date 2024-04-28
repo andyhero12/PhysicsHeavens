@@ -206,39 +206,41 @@ bool OverWorld::initDogModel()
     clientMediumDogDash->setAnchor(Vec2::ANCHOR_CENTER);
     clientMediumDogDash->setContentSize(DOG_SIZE);
 
-    textures.clear();
-    textures.push_back(_assets->get<cugl::Texture>("largedogrightrun"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogrightrun"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogfrontrun"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogfrontrun"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogleftrun"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogleftrun"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogbackrun"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogbackrun"));
+    std::vector<std::shared_ptr<cugl::Texture>> largeRun;
+    largeRun.push_back(_assets->get<cugl::Texture>("largedogrightrun"));
+    largeRun.push_back(_assets->get<cugl::Texture>("largedogrightrun"));
+    largeRun.push_back(_assets->get<cugl::Texture>("largedogfrontrun"));
+    largeRun.push_back(_assets->get<cugl::Texture>("largedogfrontrun"));
+    largeRun.push_back(_assets->get<cugl::Texture>("largedogleftrun"));
+    largeRun.push_back(_assets->get<cugl::Texture>("largedogleftrun"));
+    largeRun.push_back(_assets->get<cugl::Texture>("largedogbackrun"));
+    largeRun.push_back(_assets->get<cugl::Texture>("largedogbackrun"));
 
-    std::shared_ptr<AnimationSceneNode> largeDogRun = AnimationSceneNode::allocWithTextures(textures, 1, 4, 4, 5);
+    std::shared_ptr<AnimationSceneNode> largeDogRun = AnimationSceneNode::allocWithTextures(largeRun, 1, 4, 4, 5);
     largeDogRun->setAnchor(Vec2::ANCHOR_CENTER);
     largeDogRun->setContentSize(DOG_SIZE);
 
-    std::shared_ptr<AnimationSceneNode> clientLargeDogRun = AnimationSceneNode::allocWithTextures(textures, 1, 4, 4, 5);
+    std::shared_ptr<AnimationSceneNode> clientLargeDogRun = AnimationSceneNode::allocWithTextures(largeRun, 1, 4, 4, 5);
     clientLargeDogRun->setAnchor(Vec2::ANCHOR_CENTER);
     clientLargeDogRun->setContentSize(DOG_SIZE);
 
-    textures.clear();
-    textures.push_back(_assets->get<cugl::Texture>("largedogrightidle"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogrightidle"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogfrontidle"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogfrontidle"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogleftidle"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogleftidle"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogbackidle"));
-    textures.push_back(_assets->get<cugl::Texture>("largedogbackidle"));
+    
+    std::vector<std::shared_ptr<cugl::Texture>> largeIdle;
+    largeIdle.clear();
+    largeIdle.push_back(_assets->get<cugl::Texture>("largedogrightidle"));
+    largeIdle.push_back(_assets->get<cugl::Texture>("largedogrightidle"));
+    largeIdle.push_back(_assets->get<cugl::Texture>("largedogfrontidle"));
+    largeIdle.push_back(_assets->get<cugl::Texture>("largedogfrontidle"));
+    largeIdle.push_back(_assets->get<cugl::Texture>("largedogleftidle"));
+    largeIdle.push_back(_assets->get<cugl::Texture>("largedogleftidle"));
+    largeIdle.push_back(_assets->get<cugl::Texture>("largedogbackidle"));
+    largeIdle.push_back(_assets->get<cugl::Texture>("largedogbackidle"));
 
-    std::shared_ptr<AnimationSceneNode> largeDogIdle = AnimationSceneNode::allocWithTextures(textures, 1, 4, 4, 15);
+    std::shared_ptr<AnimationSceneNode> largeDogIdle = AnimationSceneNode::allocWithTextures(largeIdle, 1, 4, 4, 15);
     largeDogIdle->setAnchor(Vec2::ANCHOR_CENTER);
     largeDogIdle->setContentSize(DOG_SIZE);
 
-    std::shared_ptr<AnimationSceneNode> clientLargeDogIdle = AnimationSceneNode::allocWithTextures(textures, 1, 4, 4, 15);
+    std::shared_ptr<AnimationSceneNode> clientLargeDogIdle = AnimationSceneNode::allocWithTextures(largeIdle, 1, 4, 4, 15);
     clientLargeDogIdle->setAnchor(Vec2::ANCHOR_CENTER);
     clientLargeDogIdle->setContentSize(DOG_SIZE);
 
