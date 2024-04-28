@@ -9,7 +9,6 @@
 #ifndef SpawnerController_hpp
 #define SpawnerController_hpp
 
-#include "Spawner.h"
 #include <cugl/cugl.h>
 #include <unordered_set>
 #include <vector>

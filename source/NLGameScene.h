@@ -29,6 +29,7 @@
 #include "NLDashEvent.h"
 #include "NLRecallEvent.h"
 #include "NLSizeEvent.h"
+#include "NLDeathEvent.h"
 #include "NLWinEvent.h"
 #include "NLLoseEvent.h"
 #include "NLCameraController.h"

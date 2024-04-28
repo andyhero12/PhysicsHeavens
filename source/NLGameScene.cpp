@@ -269,6 +269,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _network->attachEventType<ExplodeEvent>();
     _network->attachEventType<DashEvent>();
     _network->attachEventType<SizeEvent>();
+    _network->attachEventType<DeathEvent>();
     _network->attachEventType<ShootEvent>();
     _network->attachEventType<GameResEvent>();
 
@@ -627,6 +628,10 @@ void GameScene::fixedUpdate()
         {
             //            CULog("Explode Event Got");
             overWorld.processSizeEvent(sizeEvent);
+        }
+        if (auto deathEvent = std::dynamic_pointer_cast<DeathEvent>(e))
+        {
+            CULog("Death Event Got");
         }
         if (auto winEvent = std::dynamic_pointer_cast<WinEvent>(e))
         {

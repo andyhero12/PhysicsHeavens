@@ -18,6 +18,7 @@
 #include <unordered_set>
 #include <vector>
 #include <random>
+#include "NLDeathEvent.h"
 struct AnimationDataStruct{
     std::vector<std::shared_ptr<cugl::Texture>> _textures;
     std::vector<std::shared_ptr<cugl::Texture>> _attackTextures;

@@ -61,13 +61,14 @@ public:
     void updateTime(float dt){
         _accumulatedDelay += dt;
         _timeElapsed += dt;
+        _flameDelay += dt;
     }
 
     bool canSpawn() const {
         return (_accumulatedDelay > _regularDelay);
     }
     bool canGenerateFlame() const {
-        return (_flameDelay > _regularDelay - 20) && _notCreated;
+        return (_flameDelay > (_regularDelay - 0.1)) && _notCreated;
     }
     void reloadSpawner() {
         _accumulatedDelay = 0;

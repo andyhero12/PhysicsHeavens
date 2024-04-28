@@ -43,14 +43,18 @@ void SpawnerController::update(MonsterController& monsterController, OverWorld& 
     //cout << (std::to_string(difficulty));
     float timeDifficulty = (accumulatedTime / 90.0f) * (accumulatedTime / 90.0f) / (1 + accumulatedTime / 90.0f);
     float power = 1 + timeDifficulty + difficulty;
+    float r = rand() / (float)RAND_MAX;
+    r = r * r * r;
+    power *= 0.8f + r;
+    power = (float)sqrt(power);
+    // Jank Change
     for(auto& spawner : _spawners) {
         spawner->update(monsterController, overWorld, timestep, power);
         if (spawner->canGenerateFlame()){
             spawner->reloadFlame();
             std::shared_ptr<SpriteAnimationNode> spawnAnim = SpriteAnimationNode::allocWithSheet(_spawnTexture, 2, 5, 10, 2);
-            spawnAnim->setScale(cugl::Size(2,2)/64);
-            spawnAnim->setAnchor(cugl::Vec2(0.5,0.3));
             spawnAnim->setAnchor(Vec2::ANCHOR_CENTER);
+            spawnAnim->setScale(power * cugl::Size(1,1)/32.0);
             spawnAnim->setPosition(spawner->getPos());
             _curAnimations.emplace(spawnAnim);
             animSpawnerNode->addChild(spawnAnim);
