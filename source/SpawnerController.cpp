@@ -98,6 +98,15 @@ void SpawnerController::update(MonsterController& monsterController, OverWorld& 
     
 }
 
+void SpawnerController::processDeathEvent(const std::shared_ptr<DeathEvent>& deathEvent){
+    std::shared_ptr<SpriteAnimationNode> deathAnim = SpriteAnimationNode::allocWithSheet(_deathTexture, 2, 5, 10, 6);
+    deathAnim->setAnchor(Vec2::ANCHOR_CENTER);
+//    spawnAnim->setScale(power * cugl::Size(1,1)/32.0);
+    deathAnim->setScale(deathEvent->getSize()/32.0);
+    deathAnim->setPosition(deathEvent->getPos());
+    _curAnimations.emplace(deathAnim);
+    animSpawnerNode->addChild(deathAnim);
+}
 bool SpawnerController::init(const std::vector<LevelModel::Spawner>& startLocs, std::shared_ptr<cugl::AssetManager> assets) {
     _spawners.clear();
     animationNodes.clear();
@@ -105,6 +114,7 @@ bool SpawnerController::init(const std::vector<LevelModel::Spawner>& startLocs, 
     baseSpawnerNode = cugl::scene2::SceneNode::alloc();
     animSpawnerNode = cugl::scene2::SceneNode::alloc();
     _spawnTexture = assets->get<cugl::Texture>("enemySpawn");
+    _deathTexture = assets->get<cugl::Texture>("enemyDeath");
     for (int i =0; i< startLocs.size(); i++){
         LevelModel::Spawner spawner = startLocs.at(i);
         cugl::Vec2 pos = Vec2(spawner.spawnerX, spawner.spawnerY);

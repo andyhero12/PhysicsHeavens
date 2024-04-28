@@ -21,6 +21,7 @@ protected:
     LWDeserializer _deserializer;
     
     Vec2 _pos;
+    Size _size;
     bool _isHost;
     
 public:
@@ -33,7 +34,7 @@ public:
      */
     std::shared_ptr<NetEvent> newEvent() override;
     
-    static std::shared_ptr<NetEvent> allocDeathEvent(Vec2 pos, bool isHost);
+    static std::shared_ptr<NetEvent> allocDeathEvent(Vec2 pos, bool isHost, Size size);
     
     /**
      * Serialize any paramater that the event contains to a vector of bytes.
@@ -54,6 +55,8 @@ public:
     Vec2 getPos() { return _pos; }
     
     bool isHost() {return _isHost; }
+    
+    Size getSize() { return _size; }
 };
 
 

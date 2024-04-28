@@ -16,6 +16,7 @@
 #include "AbstractSpawner.h"
 #include "SimpleSpawner.h"
 #include "OverWorld.h"
+#include "NLDeathEvent.h"
 
 
 class SpawnerController{
@@ -42,7 +43,7 @@ public:
     void setRootNode(const std::shared_ptr<scene2::SceneNode>& _worldNode, bool isHost);
     void setAnimNode(const std::shared_ptr<scene2::SceneNode>& _worldNode);
     bool win(){return _spawners.empty();}
-    
+    void processDeathEvent(const std::shared_ptr<DeathEvent>& deathEvent);
     std::shared_ptr<cugl::scene2::SceneNode> getSpawnerNode() const{
         return baseSpawnerNode;
     }

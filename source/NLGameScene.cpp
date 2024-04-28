@@ -631,7 +631,7 @@ void GameScene::fixedUpdate()
         }
         if (auto deathEvent = std::dynamic_pointer_cast<DeathEvent>(e))
         {
-            CULog("Death Event Got");
+            _spawnerController.processDeathEvent(deathEvent);
         }
         if (auto winEvent = std::dynamic_pointer_cast<WinEvent>(e))
         {
