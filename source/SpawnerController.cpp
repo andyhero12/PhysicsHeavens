@@ -22,6 +22,20 @@ float generateRandomFloat(float low, float high) {
     return (float)dis(gen);
 }
 
+void SpawnerController::drawFlames(){
+    auto itAnim = _curAnimations.begin();
+    while(itAnim != _curAnimations.end()){
+        std::shared_ptr<SpriteAnimationNode> curAnim = *itAnim;
+        auto curA = itAnim;
+        curAnim->update();
+        itAnim++;
+        if (curAnim->getFrame() == curAnim->getSpan()-1){
+            _curAnimations.erase(curA);
+            curAnim->removeFromParent();
+        }
+    }
+}
+
 void SpawnerController::update(MonsterController& monsterController, OverWorld& overWorld, float timestep){
     //_difficulty *= 1.00077046f;
    // _difficulty *= 1.00003851f;
@@ -31,11 +45,21 @@ void SpawnerController::update(MonsterController& monsterController, OverWorld& 
     float power = 1 + timeDifficulty + difficulty;
     for(auto& spawner : _spawners) {
         spawner->update(monsterController, overWorld, timestep, power);
-        
+        if (spawner->canGenerateFlame()){
+            spawner->reloadFlame();
+            std::shared_ptr<SpriteAnimationNode> spawnAnim = SpriteAnimationNode::allocWithSheet(_spawnTexture, 2, 5, 10, 2);
+            spawnAnim->setScale(cugl::Size(2,2)/64);
+            spawnAnim->setAnchor(cugl::Vec2(0.5,0.3));
+            spawnAnim->setAnchor(Vec2::ANCHOR_CENTER);
+            spawnAnim->setPosition(spawner->getPos());
+            _curAnimations.emplace(spawnAnim);
+            animSpawnerNode->addChild(spawnAnim);
+        }
     }
     for (auto& spawner : animationNodes){
         spawner->update();
     }
+    drawFlames();
     
     auto it = _spawners.begin();
     while (it != _spawners.end()){
@@ -73,7 +97,10 @@ void SpawnerController::update(MonsterController& monsterController, OverWorld& 
 bool SpawnerController::init(const std::vector<LevelModel::Spawner>& startLocs, std::shared_ptr<cugl::AssetManager> assets) {
     _spawners.clear();
     animationNodes.clear();
+    _curAnimations.clear();
     baseSpawnerNode = cugl::scene2::SceneNode::alloc();
+    animSpawnerNode = cugl::scene2::SceneNode::alloc();
+    _spawnTexture = assets->get<cugl::Texture>("enemySpawn");
     for (int i =0; i< startLocs.size(); i++){
         LevelModel::Spawner spawner = startLocs.at(i);
         cugl::Vec2 pos = Vec2(spawner.spawnerX, spawner.spawnerY);
@@ -120,9 +147,15 @@ void SpawnerController::setRootNode(const std::shared_ptr<scene2::SceneNode>& _w
     
     
 }
+
+void SpawnerController::setAnimNode(const std::shared_ptr<scene2::SceneNode>& _worldNode){
+    _worldNode->addChild(animSpawnerNode);
+}
 void SpawnerController::dispose(){
     _spawners.clear();
     animationNodes.clear();
+    _curAnimations.clear();
     baseSpawnerNode = nullptr;
+    animSpawnerNode = nullptr;
     _network = nullptr;
 }

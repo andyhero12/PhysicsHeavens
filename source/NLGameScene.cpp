@@ -255,6 +255,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _monsterController.setAbsorbAnimationData(_constants->get("absorbEnemy"), assets);
     _monsterController.init(overWorld, _debugnode);
 
+    _spawnerController.setAnimNode(_worldnode);
     _collisionController.init();
 
     _active = true;

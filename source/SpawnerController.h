@@ -33,11 +33,15 @@ public:
     SpawnerController();
     
     ~SpawnerController();
+    
+    void drawFlames();
+    
     void update(MonsterController& monsterController, OverWorld& overWorld, float timestep);
     
     bool init(const std::vector<LevelModel::Spawner>& startLocs, std::shared_ptr<cugl::AssetManager> assets );
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl::Size size);
     void setRootNode(const std::shared_ptr<scene2::SceneNode>& _worldNode, bool isHost);
+    void setAnimNode(const std::shared_ptr<scene2::SceneNode>& _worldNode);
     bool win(){return _spawners.empty();}
     
     std::shared_ptr<cugl::scene2::SceneNode> getSpawnerNode() const{
@@ -51,8 +55,13 @@ public:
     void dispose();
 private:
     std::shared_ptr<cugl::scene2::SceneNode> baseSpawnerNode;
+    std::shared_ptr<cugl::scene2::SceneNode> animSpawnerNode;
     std::shared_ptr<NetEventController> _network;
     bool _isHost;
+    
+    std::shared_ptr<cugl::Texture> _deathTexture;
+    std::shared_ptr<cugl::Texture> _spawnTexture;
+    std::unordered_set<std::shared_ptr<SpriteAnimationNode>> _curAnimations;
 };
 
 
