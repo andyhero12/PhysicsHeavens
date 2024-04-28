@@ -87,21 +87,6 @@ public:
 
     void update(float delta) override {
         Obstacle::update(delta);
-    }
-
-    
-    virtual void preUpdate(float dt, OverWorld& overWorld) = 0;
-
-    void postUpdate(){
-        _prevDirection =_curDirection;
-        if(!_knockbacked){
-            Vec2 direction = movementDirection;
-            _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
-
-            runAnimations->animate(_curDirection, curAction != EnemyActions::ATTACK);
-            attackAnimations->animate(_curDirection, curAction == EnemyActions::ATTACK);
-        }
-        
         if(_damagedTimer > 0) {
             _damagedTimer -= delta;
             
@@ -116,8 +101,20 @@ public:
             float brightness = 255 * (0.8f + ratio * 0.2f);
             topLevelPlaceHolder->setColor(cugl::Color4(brightness, brightness * ratio, brightness * ratio));
         }
+    }
 
-        
+    
+    virtual void preUpdate(float dt, OverWorld& overWorld) = 0;
+
+    void postUpdate(){
+        _prevDirection =_curDirection;
+        if(!_knockbacked){
+            Vec2 direction = movementDirection;
+            _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
+
+            runAnimations->animate(_curDirection, curAction != EnemyActions::ATTACK);
+            attackAnimations->animate(_curDirection, curAction == EnemyActions::ATTACK);
+        }
     }
     
     bool isInContact() const { return _inContact; }
