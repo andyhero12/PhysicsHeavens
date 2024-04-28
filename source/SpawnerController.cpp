@@ -22,17 +22,34 @@ float generateRandomFloat(float low, float high) {
     return (float)dis(gen);
 }
 
+void SpawnerController::drawFlames(float timestep){
+    auto itAnim = _curAnimations.begin();
+    while(itAnim != _curAnimations.end()){
+        std::shared_ptr<SpriteAnimationNode> curAnim = *itAnim;
+        auto curA = itAnim;
+        curAnim->update();
+        itAnim++;
+        if (curAnim->getFrame() == curAnim->getSpan()-1){
+            _curAnimations.erase(curA);
+            animSpawnerNode->removeChild(curAnim);
+        }
+    }
+}
+
 void SpawnerController::update(MonsterController& monsterController, OverWorld& overWorld, float timestep){
     //_difficulty *= 1.00077046f;
    // _difficulty *= 1.00003851f;
     accumulatedTime += timestep;
+    
     //cout << (std::to_string(difficulty));
+
     float timeDifficulty = (accumulatedTime / 90.0f) * (accumulatedTime / 90.0f) / (1 + accumulatedTime / 90.0f);
     float power = 1 + timeDifficulty + difficulty;
     for(auto& spawner : _spawners) {
         spawner->update(monsterController, overWorld, timestep, power);
         
     }
+
     for (auto& spawner : animationNodes){
         spawner->update();
     }
@@ -40,9 +57,18 @@ void SpawnerController::update(MonsterController& monsterController, OverWorld& 
     auto it = _spawners.begin();
     while (it != _spawners.end()){
         std::shared_ptr<AbstractSpawner> spawner = *it;
-        
-        if (spawner->dead()){
-
+        if(spawner->getSpawnCount() > 0){
+            spawner->setSpawnCount(0);
+            std::shared_ptr<SpriteAnimationNode> explodeAnim = SpriteAnimationNode::allocWithSheet(_spawnTexture, 2, 5, 10, 2);
+            explodeAnim->setScale(cugl::Size(2,2)/64);
+            explodeAnim->setAnchor(cugl::Vec2(0.5,0.3));
+//            explodeAnim->setAnchor(Vec2::ANCHOR_CENTER);
+            explodeAnim->setPosition(spawner->getPos());
+            
+            _curAnimations.emplace(explodeAnim);
+            animSpawnerNode->addChild(explodeAnim);
+        }
+        else if (spawner->dead()){
             it = _spawners.erase(it);
             spawner->getSpawnerNode()->removeFromParent();
             difficulty += 0.1;
@@ -66,6 +92,20 @@ void SpawnerController::update(MonsterController& monsterController, OverWorld& 
         else{
             ++it;
         }
+        spawner->update(monsterController, overWorld, timestep, (float)std::pow(1.00231316, accumulatedTime) + difficulty);
+        spawner->updateTime(timestep);
+    }
+    
+    auto itAnim = _curAnimations.begin();
+    while(itAnim != _curAnimations.end()){
+        std::shared_ptr<SpriteAnimationNode> curAnim = *itAnim;
+        auto curA = itAnim;
+        curAnim->update();
+        itAnim++;
+        if (curAnim->getFrame() == curAnim->getSpan()-1){
+            _curAnimations.erase(curA);
+            animSpawnerNode->removeChild(curAnim);
+        }
     }
     
 }
@@ -73,7 +113,9 @@ void SpawnerController::update(MonsterController& monsterController, OverWorld& 
 bool SpawnerController::init(const std::vector<LevelModel::Spawner>& startLocs, std::shared_ptr<cugl::AssetManager> assets) {
     _spawners.clear();
     animationNodes.clear();
+    _curAnimations.clear();
     baseSpawnerNode = cugl::scene2::SceneNode::alloc();
+    animSpawnerNode = cugl::scene2::SceneNode::alloc();
     for (int i =0; i< startLocs.size(); i++){
         LevelModel::Spawner spawner = startLocs.at(i);
         cugl::Vec2 pos = Vec2(spawner.spawnerX, spawner.spawnerY);
@@ -110,6 +152,7 @@ bool SpawnerController::init(const std::vector<LevelModel::Spawner>& startLocs, 
     }
     difficulty = 0;
     accumulatedTime = 0;
+    updateCalls = 0;
     return true;
 }
 void SpawnerController::setRootNode(const std::shared_ptr<scene2::SceneNode>& _worldNode, bool isHost){
@@ -120,9 +163,20 @@ void SpawnerController::setRootNode(const std::shared_ptr<scene2::SceneNode>& _w
     
     
 }
+
+void SpawnerController::setAnimNode(const std::shared_ptr<scene2::SceneNode>& _worldNode, bool isHost){
+    
+    _isHost = isHost;
+    // Add the Anim Spawner Node
+    _worldNode->addChild(animSpawnerNode);
+    
+    
+}
 void SpawnerController::dispose(){
     _spawners.clear();
     animationNodes.clear();
+    _curAnimations.clear();
     baseSpawnerNode = nullptr;
+    animSpawnerNode = nullptr;
     _network = nullptr;
 }

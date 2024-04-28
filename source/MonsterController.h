@@ -56,9 +56,6 @@ private:
     
     std::shared_ptr<cugl::scene2::SceneNode> monsterControllerSceneNode;
     
-    std::shared_ptr<cugl::Texture> _deathTexture;
-    std::shared_ptr<cugl::Texture> _spawnTexture;
-    std::unordered_set<std::shared_ptr<SpriteAnimationNode>> _curAnimations;
 public:
     
     void removeEnemy(std::shared_ptr<AbstractEnemy> enemy);
@@ -118,9 +115,6 @@ public:
     
     void dispose();
     
-    void setSpawnTexture(const std::shared_ptr<cugl::Texture> &value){_spawnTexture = value;}
-    
-    void setDeathTexture(const std::shared_ptr<cugl::Texture> &value){_deathTexture = value;}
 };
 
 #endif /* MonsterController_h */

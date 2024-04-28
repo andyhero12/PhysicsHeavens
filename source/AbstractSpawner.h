@@ -22,6 +22,8 @@ protected:
     float _delay;
     float _timeElapsed;
     cugl::Vec2 _position;
+    int _spwnCount;
+    int _spwnDelay;
     
 public:
 
@@ -47,7 +49,25 @@ public:
     , _timeElapsed(0.0)
     , _accumulatedDelay(-delay + regularDelay)
     , _delay{delay}
+    , _spwnCount(0)
+    , _spwnDelay(0)
     {
+    }
+    
+    int getSpawnCount() const{
+        return _spwnCount;
+    }
+    
+    void setSpawnCount(int value){
+        _spwnCount =  value;
+    }
+    
+    int getSpawnDelay() const{
+        return _spwnDelay;
+    }
+    
+    void setSpawnDelay(int value){
+        _spwnDelay =  value;
     }
     
     float getTimeElapsed() const{
@@ -67,6 +87,9 @@ public:
     }
     const float getAccumulatedDelay() const {
         return _accumulatedDelay;
+    }
+    const float getRegularDelay() const {
+        return _regularDelay;
     }
     cugl::Vec2 getPos() const {
         return _position; }

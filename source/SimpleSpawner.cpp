@@ -51,5 +51,25 @@ void SimpleSpawner::update(MonsterController& monsterController, OverWorld& over
         power = (float)sqrt(power);
 
         monsterController.spawnEnemyFromString(s, getPos(), overWorld, power);
+        
+        if (s == "Basic") {
+            setSpawnCount(getSpawnCount()+1);
+            monsterController.spawnBasicEnemy(getPos(), overWorld, power);
+        }
+        else if (s == "Spawner") {
+            setSpawnCount(getSpawnCount()+1);
+            monsterController.spawnSpawnerEnemy(getPos(), overWorld, power);
+        }
+        else if (s == "Bomb") {
+            setSpawnCount(getSpawnCount()+1);
+            monsterController.spawnBombEnemy(getPos(), overWorld, power);
+        }
+        else if (s == "Eating") {
+            setSpawnCount(getSpawnCount()+1);
+            monsterController.spawnAbsorbEnemy(getPos(), overWorld, power);
+        }
+        else {
+            throw std::runtime_error("Unknown enemy type: " + spawnType1);
+        }
     }
 }

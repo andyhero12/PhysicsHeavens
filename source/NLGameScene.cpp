@@ -236,9 +236,29 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 
     _spawnerController.init(_level->getSpawnersPos(), assets);
     _spawnerController.setRootNode(_worldnode, _isHost);
+    _spawnerController.setSpawnTexture(_assets->get<cugl::Texture>("enemySpawn"));
+//    _spawnerController.setDeathTexture(_assets->get<cugl::Texture>("enemyDeath"));
     _worldnode->addChild(_monsterSceneNode);
     overWorld.init(assets, _level, computeActiveSize(), _network, isHost, _backgroundWrapper);
     overWorld.setRootNode(_worldnode, _debugnode, _world);
+//    if (isHost)
+//    {
+//        _uinode->addChild(overWorld.getDog()->getUINode());
+//    }
+//    else
+//    {
+//        _uinode->addChild(overWorld.getClientDog()->getUINode());
+//    }
+
+    _monsterController.setNetwork(_network);
+    _monsterController.setMeleeAnimationData(_constants->get("basicEnemy"), assets);
+    _monsterController.setSpawnerAnimationData(_constants->get("spawnerEnemy"), assets);
+    _monsterController.setBombAnimationData(_constants->get("bomb"), assets);
+    _monsterController.setAbsorbAnimationData(_constants->get("absorbEnemy"), assets);
+    _monsterController.init(overWorld, _debugnode);
+    
+    _spawnerController.setAnimNode(_worldnode, _isHost); //SPAWNERS IN FRONT OF ENEMIES
+    
     if (isHost)
     {
         _uinode->addChild(overWorld.getDog()->getUINode());
@@ -247,15 +267,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     {
         _uinode->addChild(overWorld.getClientDog()->getUINode());
     }
-
-    _monsterController.setNetwork(_network);
-    _monsterController.setMeleeAnimationData(_constants->get("basicEnemy"), assets);
-    _monsterController.setSpawnerAnimationData(_constants->get("spawnerEnemy"), assets);
-    _monsterController.setBombAnimationData(_constants->get("bomb"), assets);
-    _monsterController.setAbsorbAnimationData(_constants->get("absorbEnemy"), assets);
-    _monsterController.setSpawnTexture(_assets->get<cugl::Texture>("enemySpawn"));
-    _monsterController.setDeathTexture(_assets->get<cugl::Texture>("enemyDeath"));
-    _monsterController.init(overWorld, _debugnode);
 
     _collisionController.init();
 
@@ -486,11 +497,12 @@ void GameScene::preUpdate(float dt)
         setDebug(!isDebug());
     }
     overWorld.update(_input, computeActiveSize(), dt);
-    _spawnerController.update(_monsterController, overWorld, dt);
     _monsterController.update(dt, overWorld);
     if (overWorld.getDog()->readyToRecall()){
         resetDraw();
     }
+//    _spawnerController.drawFlames(dt);
+    _spawnerController.update(_monsterController, overWorld, dt);
     if (_isHost)
     {
         _collisionController.intraOverWorldCollisions(overWorld);
