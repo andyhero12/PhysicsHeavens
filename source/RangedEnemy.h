@@ -1,33 +1,40 @@
+////
+////  RangedEnemy.hpp
+////  Ship
+////
+////  Created by Andrew Cheng on 3/14/24.
+////
 //
-//  RangedEnemy.hpp
-//  Ship
+//#ifndef RangedEnemy_hpp
+//#define RangedEnemy_hpp
 //
-//  Created by Andrew Cheng on 3/14/24.
+//#include "AbstractEnemy.h"
+//class RangedEnemy : public AbstractEnemy {
+//public:
+//    virtual void draw(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl::Size size,  std::shared_ptr<cugl::Font> font) override;
+//    
+//    virtual void update(float dt, OverWorld& overWorld) override;
+//    
+//    virtual int getDamage() override{
+//        return rangedDamage;
+//    }
+//    virtual int getAbsorbValue() const override{
+//        CULog("TODO ABSORB RANGE\n");
+//        return 1;
+//    }
+//    virtual ~RangedEnemy() {
+//        
+//    }
+//    
+//private:
+//    
+//    int rangedDamage;
+//    
+//protected:
 //
-
-#ifndef RangedEnemy_hpp
-#define RangedEnemy_hpp
-
-#include "AbstractEnemy.h"
-class RangedEnemy : public AbstractEnemy {
-public:
-    virtual void draw(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl::Size size,  std::shared_ptr<cugl::Font> font) override;
-    
-    virtual void update(float dt, OverWorld& overWorld) override;
-    
-    virtual int getDamage() override{
-        return rangedDamage;
-    }
-    virtual int getAbsorbValue() const override{
-        CULog("TODO ABSORB RANGE\n");
-        return 1;
-    }
-    virtual ~RangedEnemy() {
-        
-    }
-    
-private:
-    
-    int rangedDamage;
-};
-#endif /* RangedEnemy_hpp */
+////    virtual void handleChase(OverWorld& overWorld) override;
+////    virtual void handleLowHealth() override;
+////    virtual void handleAttack(OverWorld& overWorld) override;
+////    virtual void handleRunaway(OverWorld& overWorld) override;
+//};
+//#endif /* RangedEnemy_hpp */

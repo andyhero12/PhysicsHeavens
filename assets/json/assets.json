@@ -1,5 +1,35 @@
 {
     "textures": {
+        "CHANGEABILITY":{
+            "file": "textures/tutorial/unleash-ult.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "MOVEMENT":{
+            "file": "textures/tutorial/swap-skewers.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "BITE":{
+            "file": "textures/tutorial/swap-skewers.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "SPECIALS":{
+            "file": "textures/tutorial/swap-skewers.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "DEFENDGATE":{
+            "file": "textures/tutorial/swap-skewers.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "DESTORYSPAWNER":{
+            "file": "textures/tutorial/swap-skewers.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
         "minimap": {
             "file": "textures/minimap/minimap.png",
             "minfilter": "linear",
@@ -460,6 +490,14 @@
             "file": "textures/effects/gate_explode.png",
             "magfilter": "nearest"
         },
+        "enemySpawn": {
+             "file": "textures/effects/spawn_flame.png",
+             "magfilter": "nearest"
+         },
+         "enemyDeath": {
+             "file": "textures/effects/death_poof.png",
+             "magfilter": "nearest"
+         },
         "win_screen": {
           "file": "textures/win_screen.png"
         },

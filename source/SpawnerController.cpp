@@ -22,6 +22,20 @@ float generateRandomFloat(float low, float high) {
     return (float)dis(gen);
 }
 
+void SpawnerController::drawFlames(){
+    auto itAnim = _curAnimations.begin();
+    while(itAnim != _curAnimations.end()){
+        std::shared_ptr<SpriteAnimationNode> curAnim = *itAnim;
+        auto curA = itAnim;
+        curAnim->update();
+        itAnim++;
+        if (curAnim->getFrame() == curAnim->getSpan()-1){
+            _curAnimations.erase(curA);
+            curAnim->removeFromParent();
+        }
+    }
+}
+
 void SpawnerController::update(MonsterController& monsterController, OverWorld& overWorld, float timestep){
     //_difficulty *= 1.00077046f;
    // _difficulty *= 1.00003851f;
@@ -29,13 +43,27 @@ void SpawnerController::update(MonsterController& monsterController, OverWorld& 
     //cout << (std::to_string(difficulty));
     float timeDifficulty = (accumulatedTime / 90.0f) * (accumulatedTime / 90.0f) / (1 + accumulatedTime / 90.0f);
     float power = 1 + timeDifficulty + difficulty;
+    float r = rand() / (float)RAND_MAX;
+    r = r * r * r;
+    power *= 0.8f + r;
+    power = (float)sqrt(power);
+    // Jank Change
     for(auto& spawner : _spawners) {
         spawner->update(monsterController, overWorld, timestep, power);
-        
+        if (spawner->canGenerateFlame()){
+            spawner->reloadFlame();
+            std::shared_ptr<SpriteAnimationNode> spawnAnim = SpriteAnimationNode::allocWithSheet(_spawnTexture, 2, 5, 10, 2);
+            spawnAnim->setAnchor(Vec2::ANCHOR_CENTER);
+            spawnAnim->setScale(power * cugl::Size(1,1)/32.0);
+            spawnAnim->setPosition(spawner->getPos());
+            _curAnimations.emplace(spawnAnim);
+            animSpawnerNode->addChild(spawnAnim);
+        }
     }
     for (auto& spawner : animationNodes){
         spawner->update();
     }
+    drawFlames();
     
     auto it = _spawners.begin();
     while (it != _spawners.end()){
@@ -70,10 +98,23 @@ void SpawnerController::update(MonsterController& monsterController, OverWorld& 
     
 }
 
+void SpawnerController::processDeathEvent(const std::shared_ptr<DeathEvent>& deathEvent){
+    std::shared_ptr<SpriteAnimationNode> deathAnim = SpriteAnimationNode::allocWithSheet(_deathTexture, 2, 5, 10, 6);
+    deathAnim->setAnchor(Vec2::ANCHOR_CENTER);
+//    spawnAnim->setScale(power * cugl::Size(1,1)/32.0);
+    deathAnim->setScale(deathEvent->getSize()/32.0);
+    deathAnim->setPosition(deathEvent->getPos());
+    _curAnimations.emplace(deathAnim);
+    animSpawnerNode->addChild(deathAnim);
+}
 bool SpawnerController::init(const std::vector<LevelModel::Spawner>& startLocs, std::shared_ptr<cugl::AssetManager> assets) {
     _spawners.clear();
     animationNodes.clear();
+    _curAnimations.clear();
     baseSpawnerNode = cugl::scene2::SceneNode::alloc();
+    animSpawnerNode = cugl::scene2::SceneNode::alloc();
+    _spawnTexture = assets->get<cugl::Texture>("enemySpawn");
+    _deathTexture = assets->get<cugl::Texture>("enemyDeath");
     for (int i =0; i< startLocs.size(); i++){
         LevelModel::Spawner spawner = startLocs.at(i);
         cugl::Vec2 pos = Vec2(spawner.spawnerX, spawner.spawnerY);
@@ -120,9 +161,15 @@ void SpawnerController::setRootNode(const std::shared_ptr<scene2::SceneNode>& _w
     
     
 }
+
+void SpawnerController::setAnimNode(const std::shared_ptr<scene2::SceneNode>& _worldNode){
+    _worldNode->addChild(animSpawnerNode);
+}
 void SpawnerController::dispose(){
     _spawners.clear();
     animationNodes.clear();
+    _curAnimations.clear();
     baseSpawnerNode = nullptr;
+    animSpawnerNode = nullptr;
     _network = nullptr;
 }

@@ -32,7 +32,6 @@ void SimpleSpawner::update(MonsterController& monsterController, OverWorld& over
     int r = rand() % 10;
     if (canSpawn()){
         reloadSpawner();
-
         std::string s;
         if (r < 5) {
             s = spawnType1;
@@ -43,13 +42,7 @@ void SimpleSpawner::update(MonsterController& monsterController, OverWorld& over
         else {
             s = spawnType3;
         }
-        float power = difficulty;
 
-        float r = rand() / (float)RAND_MAX;
-        r = r * r * r;
-        power *= 0.8f + r;
-        power = (float)sqrt(power);
-
-        monsterController.spawnEnemyFromString(s, getPos(), overWorld, power);
+        monsterController.spawnEnemyFromString(s, getPos(), overWorld, difficulty);
     }
 }

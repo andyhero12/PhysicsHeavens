@@ -52,7 +52,7 @@ using namespace cugl;
 /** The friction of this rocket */
 #define DEFAULT_FRICTION 0.1f
 /** The restitution of this rocket */
-#define DEFAULT_RESTITUTION 0.4f
+#define DEFAULT_RESTITUTION 0
 
 #define FIRE_RATE 25
 #define HEAL_RATE 50
@@ -446,10 +446,11 @@ void Dog::updateLocalAnimations(DogSize size){
     
     baseBlankNode->setPosition(getPosition());
     
-    
     if(frontEffectsNode){
         baseBlankNode->addChild(frontEffectsNode);
     }
+
+    
 }
 
 void Dog::resetCurrentAnimations(DogSize size){
@@ -492,8 +493,8 @@ void Dog::setMode(int mode){
 }
 
 void Dog::addEffects(std::shared_ptr<cugl::scene2::SceneNode> fnode, std::shared_ptr<cugl::scene2::SceneNode> bnode){
-    frontEffectsNode = fnode;
     backEffectsNode = bnode;
+    frontEffectsNode = fnode;
     updateLocalAnimations(DogSize::SMALL);
     
 }
