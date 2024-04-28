@@ -102,7 +102,7 @@ protected:
     bool _todoReset;
     /** Whether or not debug mode is active */
     bool _debug;
-
+    Vec2 olddogPos;
     std::shared_ptr<NetEventController> _network;
     cugl::Affine2 _transform;
 
@@ -305,6 +305,8 @@ public:
      */
     void addChildBackground();
     void addChildForeground();
+    void executeSlidingWindow(Vec2 dest);
+    void resetDraw();
 };
 
 #endif /* __NL_GAME_SCENE_H__ */
