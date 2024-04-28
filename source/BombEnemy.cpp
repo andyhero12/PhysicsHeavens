@@ -9,6 +9,7 @@
 #define EXPLOSION_RADIUS 1.5f
 #define CONTACT_DAMAGE 4
 #define EXPLOSION_DAMAGE 11
+#define SPRITE_SCALE 1.14f
 #define DYNAMIC_COLOR   Color4::YELLOW
 std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode>> BombFactory::createObstacle(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex) {
     std::vector<std::shared_ptr<cugl::Texture>>& _textures = staticEnemyStruct._walkTextures;
@@ -56,7 +57,7 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
     static_enemy->setWalkingSceneNode(runAnimations);
     static_enemy->setAttackingSceneNode(attackAnimations);
     static_enemy->setFinalEnemy(topLevel);
-    topLevel->setScale(m_size.height / _textures.at(0)->getHeight());
+    topLevel->setScale(m_size.height / _textures.at(0)->getHeight() * SPRITE_SCALE);
     static_enemy->setShared(true);
     
 //        static_enemy->setHealthBar(_healthBar);

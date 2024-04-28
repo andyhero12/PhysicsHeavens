@@ -10,6 +10,7 @@
 #define EXPLOSION_RADIUS 1.5f
 #define CONTACT_DAMAGE 4
 #define DYNAMIC_COLOR   Color4::YELLOW
+#define SPRITE_SCALE 1.14f
 std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode>> AbsorbFactory::createObstacle(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex) {
     std::vector<std::shared_ptr<cugl::Texture>>& _textures = staticEnemyStruct._walkTextures;
     if (_textures.size() == 0){
@@ -56,7 +57,7 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
     static_enemy->setWalkingSceneNode(runAnimations);
     static_enemy->setAttackingSceneNode(attackAnimations);
     static_enemy->setFinalEnemy(topLevel);
-    topLevel->setScale(m_size.height / _textures.at(0)->getHeight());
+    topLevel->setScale(m_size.height / _textures.at(0)->getHeight() * SPRITE_SCALE);
     static_enemy->setShared(true);
     
 //        static_enemy->setHealthBar(_healthBar);

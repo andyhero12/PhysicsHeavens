@@ -20,6 +20,26 @@
             "minfilter": "linear",
             "magfilter": "nearest"
         },
+        "leftShoot": {
+            "file": "textures/dog/effects/bark_shoot_left.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "rightShoot": {
+            "file": "textures/dog/effects/bark_shoot_right.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "upShoot": {
+            "file": "textures/dog/effects/bark_shoot_up.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "downShoot": {
+            "file": "textures/dog/effects/bark_shoot_down.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
         "leftbite": {
             "file": "textures/dog/effects/magic_chomp_left.png",
             "minfilter": "linear",
@@ -35,7 +55,7 @@
             "minfilter": "linear",
             "magfilter": "nearest"
         },
-        "frontbite": {
+        "backbite": {
             "file": "textures/dog/effects/magic_chomp_back.png",
             "minfilter": "linear",
             "magfilter": "nearest"

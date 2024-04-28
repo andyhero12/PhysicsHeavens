@@ -101,7 +101,9 @@ using namespace cugl::physics2::net;
  */
 GameScene::GameScene() : cugl::Scene2(),
                          _debug(false),
-                         _isHost(false)
+                         _isHost(false),
+                        olddogPos(Vec2(0,0)),
+_network(nullptr)
 {
 }
 
@@ -165,7 +167,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rect, const Vec2 gravity, const std::shared_ptr<NetEventController> network, bool isHost, std::string level_string)
 {
     Size dimen = computeActiveSize();
-
+    
     if (assets == nullptr)
     {
         return false;
@@ -317,13 +319,28 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     }
 
     addChildForeground();
-    
+    resetDraw();
     _minimap = Minimap::alloc(_assets, computeActiveSize(), overWorld, _spawnerController);
     _uinode->addChild(_minimap);
-    
+    olddogPos = overWorld.getDog()->getPosition();
     return true;
 }
-
+void GameScene::resetDraw(){
+    std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>> tileDisplay = _backgroundWrapper->getTileDisplay();
+    for (int i =0 ; i< tileDisplay.size(); i++){
+        for (int j= 0 ;j < tileDisplay.at(i).size(); j++){
+            for (std::shared_ptr<TileInfo>& tile: tileDisplay.at(i).at(j)){
+                Vec2 dogPos =_isHost ? overWorld.getDog()->getPosition() : overWorld.getClientDog()->getPosition();
+                Vec2 tilePos = tile->getTileSprite()->getPosition();
+                if (abs(tilePos.x - dogPos.x) > 16 || abs(tilePos.y - dogPos.y) > 16){
+                    tile->getTileSprite()->setVisible(false);
+                }else{
+                    tile->getTileSprite()->setVisible(true);
+                }
+            }
+        }
+    }
+}
 /**
  * Disposes of all (non-static) resources allocated to this mode.
  */
@@ -471,7 +488,9 @@ void GameScene::preUpdate(float dt)
     overWorld.update(_input, computeActiveSize(), dt);
     _spawnerController.update(_monsterController, overWorld, dt);
     _monsterController.update(dt, overWorld);
-
+    if (overWorld.getDog()->readyToRecall()){
+        resetDraw();
+    }
     if (_isHost)
     {
         _collisionController.intraOverWorldCollisions(overWorld);
@@ -530,33 +549,38 @@ void GameScene::postUpdate(float dt)
 
         delta = overWorld.getClientDog()->getPosition();
     }
-
-    std::vector<Vec2> upperPosHide;
-    for (int i = -1; i <= 1; i++)
-    {
-        for (int j = -1; j <= 1; j++)
-        {
-            
-            upperPosHide.push_back(Vec2(int(delta.x + j),int(delta.y + i)));
-        }
-    }
-    for (const std::shared_ptr<TileInfo>& tile : _backgroundWrapper->getVisibleNodes()){
-        Vec2 pos = tile->getPosition();
-        Vec2 dogPos = _isHost ? overWorld.getDog()->getPosition() : overWorld.getClientDog()->getPosition();
-        if (abs(pos.x - dogPos.x) >= 15 || abs(pos.y - dogPos.y) >= 15){
-            tile->getTileSprite()->setVisible(false);
-        }else{
-            tile->getTileSprite()->setVisible(true);
-        }
-        if (tile->getIsUpperDecor()&& find(upperPosHide.begin(),upperPosHide.end(), tile->getPosition()) != upperPosHide.end() ){
-            _decorToHide.push_back(tile->getTileSprite());
-        }
-    }
-    for (int i = 0; i < _decorToHide.size(); i++)
-    {
-        _decorToHide.at(i)->setColor(Color4f(1, 1, 1, 0.7f));
-    }
+//
+//    std::vector<Vec2> upperPosHide;
+//    for (int i = -1; i <= 1; i++)
+//    {
+//        for (int j = -1; j <= 1; j++)
+//        {
+//            
+//            upperPosHide.push_back(Vec2(int(delta.x + j),int(delta.y + i)));
+//        }
+//    }
+//    for (const std::shared_ptr<TileInfo>& tile : _backgroundWrapper->getVisibleNodes()){
+//        Vec2 pos = tile->getPosition();
+//        Vec2 dogPos = _isHost ? overWorld.getDog()->getPosition() : overWorld.getClientDog()->getPosition();
+//        if (abs(pos.x - dogPos.x) >= 15 || abs(pos.y - dogPos.y) >= 15){
+//            tile->getTileSprite()->setVisible(false);
+//        }else{
+//            tile->getTileSprite()->setVisible(true);
+//        }
+//        if (tile->getIsUpperDecor()&& find(upperPosHide.begin(),upperPosHide.end(), tile->getPosition()) != upperPosHide.end() ){
+//            _decorToHide.push_back(tile->getTileSprite());
+//        }
+//    }
+//    for (int i = 0; i < _decorToHide.size(); i++)
+//    {
+//        _decorToHide.at(i)->setColor(Color4f(1, 1, 1, 0.7f));
+//    }
+    
+    Vec2 dogPos = _isHost ? overWorld.getDog()->getPosition() : overWorld.getClientDog()->getPosition();
+    executeSlidingWindow(dogPos);
+    
     _minimap->update();
+    olddogPos = dogPos;
 }
 
 void GameScene::fixedUpdate()
@@ -658,7 +682,7 @@ void GameScene::beginContact(b2Contact *contact)
     MeleeEnemy* enemy2 = dynamic_cast<MeleeEnemy*>(bd2);
     
     if(enemy1 && enemy2){
-        CULog("Two Enemies Collided");
+//        CULog("Two Enemies Collided");
     }
 }
 
@@ -767,6 +791,81 @@ void GameScene::addChildForeground()
                 if (t->texture != nullptr)
                 {
                     _worldnode->addChild(t->getTileSprite());
+                }
+            }
+        }
+    }
+}
+void GameScene::executeSlidingWindow(Vec2 dogPos){
+    
+    const int DRAW_SIZE = 15;
+// New Values
+    int minY = fmax(dogPos.y - DRAW_SIZE, 0);
+    int maxY = fmin(dogPos.y + DRAW_SIZE, _backgroundWrapper->getRows() - 1);
+    int minX = fmax(dogPos.x - DRAW_SIZE, 0);
+    int maxX = fmin(dogPos.x + DRAW_SIZE, _backgroundWrapper->getCols() - 1);
+
+// Old Values
+    int oldminY = fmax(olddogPos.y - DRAW_SIZE, 0);
+    int oldmaxY = fmin(olddogPos.y + DRAW_SIZE, _backgroundWrapper->getRows() - 1);
+    int oldminX = fmax(olddogPos.x - DRAW_SIZE, 0);
+    int oldmaxX = fmin(olddogPos.x + DRAW_SIZE, _backgroundWrapper->getCols() - 1);
+    
+    if (maxY > oldmaxY){ // move tiles Up
+        const std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>>& tileDisplay = _backgroundWrapper->getTileDisplay();
+        int rowToAdd = maxY;
+        int rowToRemove = minY -1;
+        for (int j = 0; j < tileDisplay.at(0).size(); j++){
+            for (const std::shared_ptr<TileInfo>& tile: tileDisplay.at(rowToAdd).at(j)){
+                tile->getTileSprite()->setVisible(true);
+            }
+            if (rowToRemove >= 0){
+                for (const std::shared_ptr<TileInfo>& tile: tileDisplay.at(rowToRemove).at(j)){
+                    tile->getTileSprite()->setVisible(false);
+                }
+            }
+        }
+        
+    }else if (minY < oldminY){ // move tiles Down
+        const std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>>& tileDisplay = _backgroundWrapper->getTileDisplay();
+        int rowToAdd = minY;
+        int rowToRemove = maxY+1;
+        for (int j = 0; j < tileDisplay.at(0).size(); j++){
+            for (const std::shared_ptr<TileInfo>& tile: tileDisplay.at(rowToAdd).at(j)){
+                tile->getTileSprite()->setVisible(true);
+            }
+            if (rowToRemove < tileDisplay.size()){
+                for (const std::shared_ptr<TileInfo>& tile: tileDisplay.at(rowToRemove).at(j)){
+                    tile->getTileSprite()->setVisible(false);
+                }
+            }
+        }
+    }
+    if (maxX > oldmaxX){ // move tiles right
+        const std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>>& tileDisplay = _backgroundWrapper->getTileDisplay();
+        int colToAdd = maxX;
+        int colToRemove = minX -1;
+        for (int i = 0; i < tileDisplay.size(); i++){
+            for (std::shared_ptr<TileInfo> tile: tileDisplay.at(i).at(colToAdd)){
+                tile->getTileSprite()->setVisible(true);
+            }
+            if (colToRemove >= 0){
+                for (std::shared_ptr<TileInfo> tile: tileDisplay.at(i).at(colToRemove)){
+                    tile->getTileSprite()->setVisible(false);
+                }
+            }
+        }
+    }else if (minX < oldminX){ // move tiles left
+        const std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>>& tileDisplay = _backgroundWrapper->getTileDisplay();
+        int colToAdd = minX;
+        int colToRemove = maxX + 1;
+        for (int i = 0; i < tileDisplay.size(); i++){
+            for (const std::shared_ptr<TileInfo>& tile: tileDisplay.at(i).at(colToAdd)){
+                tile->getTileSprite()->setVisible(true);
+            }
+            if (colToRemove < tileDisplay.at(i).size()){
+                for (const std::shared_ptr<TileInfo>& tile: tileDisplay.at(i).at(colToRemove)){
+                    tile->getTileSprite()->setVisible(false);
                 }
             }
         }

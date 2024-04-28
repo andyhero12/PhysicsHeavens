@@ -204,10 +204,10 @@ void MonsterController::spawnAbsorbEnemy(cugl::Vec2 pos, OverWorld& overWorld, f
         return;
     }
     Size mySize(1.0,1.0);
-    int hp = 3;
+    int hp = 8;
     powerSize(power, mySize);
     hp = powerHealth(power, hp);
-    auto params = _absorbEnemyFactory->serializeParams(pos, mySize, 3, 0);
+    auto params = _absorbEnemyFactory->serializeParams(pos, mySize, hp, 0);
     auto pair = _network->getPhysController()->addSharedObstacle(_absorbEnemyFactID, params);
     pair.first->setDebugScene(_debugNode);
     if (auto static_enemy = std::dynamic_pointer_cast<AbstractEnemy>(pair.first)){
@@ -223,7 +223,7 @@ void MonsterController::spawnBasicEnemy(cugl::Vec2 pos, OverWorld& overWorld, fl
     int numTargets =  overWorld.getTotalTargets();
     int chosenTarget = generateRandomInclusiveHighLow(0, numTargets-1);
     Size mySize(1,1);
-    int hp = 3;
+    int hp = 10;
     powerSize(power, mySize);
     hp = powerHealth(power, hp);
     auto params = _meleeFactory->serializeParams(pos, mySize, hp, chosenTarget);
@@ -250,10 +250,10 @@ void MonsterController::spawnSpawnerEnemy(cugl::Vec2 pos, OverWorld& overWorld, 
     }
     int chosenTarget = 0;
     Size mySize(1,1);
-    int hp = 3;
+    int hp = 20;
     powerSize(power, mySize);
     hp = powerHealth(power, hp);
-    auto params = _meleeFactory->serializeParams(pos, mySize, 3, chosenTarget);
+    auto params = _meleeFactory->serializeParams(pos, mySize, hp, chosenTarget);
     auto pair = _network->getPhysController()->addSharedObstacle(_spawnerEnemyFactID, params);
     pair.first->setDebugScene(_debugNode);
     if (auto static_enemy = std::dynamic_pointer_cast<AbstractEnemy>(pair.first)){
@@ -266,7 +266,7 @@ void MonsterController::spawnStaticBasicEnemy(cugl::Vec2 pos, OverWorld& overWor
         return;
     }
     Size mySize(1,1);
-    int hp = 3;
+    int hp = 10;
     powerSize(power, mySize);
     hp = powerHealth(power, hp);
     auto params = _staticMeleeFactory->serializeParams(pos, mySize, hp, 0);
