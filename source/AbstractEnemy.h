@@ -26,6 +26,8 @@
 #define CLOSE_DISTANCE 2
 #define STRAY_DISTANCE 3
 
+#define DAMAGED_DURATION 0.5f
+
 #include "stlastar.h"
 #include "WorldSearchVertex.h"
 
@@ -62,6 +64,9 @@ public:
             _prevDirection =AnimationSceneNode::Directions::EAST;
             _curDirection = AnimationSceneNode::Directions::EAST;
             _pathfinder = std::make_shared<AStarSearch<WorldSearchVertex>>();
+
+            _damagedTimer = 0;
+            _knockbacked = false;
             
             return true;
         }
@@ -71,11 +76,29 @@ public:
     void update(float delta) override{
         Obstacle::update(delta);
         _prevDirection =_curDirection;
-        Vec2 direction = getLinearVelocity();
-        _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
+        if(! (_knockbacked)) {
+            Vec2 direction = getLinearVelocity();
+            _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
 
-        runAnimations->animate(_curDirection, curAction == EnemyActions::RUN);
-        attackAnimations->animate(_curDirection, curAction == EnemyActions::ATTACK);
+            runAnimations->animate(_curDirection, curAction == EnemyActions::RUN);
+            attackAnimations->animate(_curDirection, curAction == EnemyActions::ATTACK);
+        }
+        
+        if(_damagedTimer > 0) {
+            _damagedTimer -= delta;
+            
+        }
+        if(_damagedTimer < 0) {
+            _damagedTimer = 0;
+            //tints may be expensive, so separating out this special case may be worthwhile
+            topLevelPlaceHolder->setColor(cugl::Color4(1, 1, 1));
+        }
+        if(_damagedTimer > 0) {
+            float ratio = (DAMAGED_DURATION - _damagedTimer) / DAMAGED_DURATION;
+            float brightness = 255 * (0.8f + ratio * 0.2f);
+            topLevelPlaceHolder->setColor(cugl::Color4(brightness, brightness * ratio, brightness * ratio));
+        }
+
     }
     
     virtual void preUpdate(float dt, OverWorld& overWorld) = 0;
@@ -98,6 +121,10 @@ public:
         return _health;
     }
     void setHealth(int m_health) {
+        // are there attacks that do no damage?
+        if(m_health < _health) {
+            _damagedTimer = DAMAGED_DURATION;
+        }
         _health = m_health;
         _healthBar->setProgress((float)_health/_maxHealth);
     }
@@ -154,6 +181,8 @@ protected:
     int targetIndex;
     int updateRate;
     int _counter;
+    bool _knockbacked;
+    float _damagedTimer;
     
     /** The next step along the enemy's path */
     Vec2 _nextStep = Vec2(-1, -1);
