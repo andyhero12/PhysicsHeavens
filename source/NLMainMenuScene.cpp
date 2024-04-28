@@ -88,7 +88,12 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
 
     _button3->addListener([this](const std::string& name, bool down) {
         if (down) {
-            //_choice = Choice::LEVEL;
+            if(_input.getState()==InputController::State::CONTROLLER){
+                _isdown = Isdown::isSETTING;
+            }
+            else{
+                _choice = Choice::SETTING;
+            }
         }
         });
     _counter = 0;

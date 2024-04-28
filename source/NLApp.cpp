@@ -142,6 +142,7 @@ void NetApp::preUpdate(float timestep){
         _hostgame.init(_assets,_network);
         _joingame.init(_assets,_network);
         _selection.init(_assets);
+        _setting.init(_assets);
         _status = MAINMENU;
     }
     else if(_status == MAINMENU){
@@ -165,8 +166,9 @@ void NetApp::preUpdate(float timestep){
     else if(_status == SELECTION){
         updateSelectionScene(timestep);
     }
-
-}
+    else if(_status == SETTING)
+        updateSettingScene(timestep);
+    }
 
 void NetApp::postUpdate(float timestep) {
     if (_status == GAME) {
@@ -351,8 +353,9 @@ void NetApp::updateMainScene(float timestep)
         // //isHosting = false;
         break;
     case MainMenuScene::Choice::SETTING:
-        //_mainmenu.setActive(false);
-        //_menu.setActive(true);
+        _mainmenu.setActive(false);
+        _setting.setActive(true);
+        _status = SETTING;
         //_status = MENU;
         break;
     case MainMenuScene::Choice::NONE:
@@ -431,6 +434,12 @@ void NetApp::updateLevelScene(float timestep)
     }
 }
 
+void NetApp::updateSettingScene(float timestep){
+    _setting.update(timestep);
+    _setting.setActive(true);
+    _mainmenu.setActive(false);
+}
+
 /**
  * The method called to draw the application to the screen.
  *
@@ -465,6 +474,9 @@ void NetApp::draw() {
             break;
         case SELECTION:
             _selection.render(_batch);
+            break;
+        case SETTING:
+            _setting.render(_batch);
             break;
         default:
             break;

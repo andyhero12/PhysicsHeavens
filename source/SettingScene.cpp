@@ -14,7 +14,7 @@
 //  Author: Walker White
 //  Version: 1/10/17
 //
-#include "LevelScene.h"
+#include "Setting.h"
 
 using namespace cugl;
 
@@ -35,7 +35,7 @@ using namespace cugl;
  *
  * @return true if the controller is initialized properly, false otherwise.
  */
-bool LevelScene::init(const std::shared_ptr<AssetManager> &assets)
+bool SettingScene::init(const std::shared_ptr<AssetManager> &assets)
 {
     // Initialize the scene to a locked width
     Size dimen = Application::get()->getDisplaySize();
@@ -60,28 +60,28 @@ bool LevelScene::init(const std::shared_ptr<AssetManager> &assets)
     _input.init();
     // IMMEDIATELY load the splash screen assets
     _assets = assets;
-    _assets->loadDirectory("json/level.json");
-    std::shared_ptr<cugl::scene2::SceneNode> layer = assets->get<scene2::SceneNode>("level");
+    _assets->loadDirectory("json/setting.json");
+    std::shared_ptr<cugl::scene2::SceneNode> layer = assets->get<scene2::SceneNode>("setting");
     layer->setContentSize(dimen);
     layer->doLayout(); // This rearranges the children to fit the screen
 
     //_bar = std::dynamic_pointer_cast<scene2::ProgressBar>(assets->get<scene2::SceneNode>("level_bar"));
     //_brand = assets->get<scene2::SceneNode>("level_name");
-    _button = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("level_play"));
+    _button = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("setting_play"));
     _button->addListener([this](const std::string &name, bool down){
     if(down) { // Check if the button is pressed down
         switch (level) { // Use the current level stored in _level
             case 1:
                 CULog("Current Level: L1");
-                _level = Level::L1; // Move to next level
+                _buttonselection = button::b1; // Move to next level
                 break;
             case 2:
                 CULog("Current Level: L2");
-                _level = Level::L2;
+                _buttonselection = button::b2;
                 break;
             case 3:
                 CULog("Current Level: L3");
-                _level = Level::L3; // Assuming there's a level 4
+                _buttonselection = button::b3; // Assuming there's a level 4
                 break;
             case 4:
                 CULog("Current Level: L4");
@@ -92,9 +92,8 @@ bool LevelScene::init(const std::shared_ptr<AssetManager> &assets)
         }
     }
 });
-    background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("Background"), 1, 15);
-    std::cout << "height of level scene "<< background->getTexture()->getHeight()<<std::endl;
-    background->setScale(SCENE_SIZE/background->getTexture()->getHeight());
+    background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("setting_background"), 1, 9);
+    background->setScale(4);
     background->setPosition(0.5 * background->getSize());
     addChild(background);
     layer->setColor(Color4(0, 0, 0, 1));
@@ -106,7 +105,7 @@ bool LevelScene::init(const std::shared_ptr<AssetManager> &assets)
 /**
  * Disposes of all (non-static) resources allocated to this mode.
  */
-void LevelScene::dispose()
+void SettingScene::dispose()
 {
     // Deactivate the button (platform dependent)
     if (isPending())
@@ -126,7 +125,7 @@ void LevelScene::dispose()
  *
  * @param timestep  The amount of time (in seconds) since the last frame
  */
-void LevelScene::update(float progress)
+void SettingScene::update(float progress)
 {
     _input.update();
     
@@ -174,12 +173,12 @@ void LevelScene::update(float progress)
  *
  * @return true if loading is complete, but the player has not pressed play
  */
-bool LevelScene::isPending() const
+bool SettingScene::isPending() const
 {
     return _button != nullptr && _button->isVisible();
 }
 
-void LevelScene::setActive(bool value)
+void SettingScene::setActive(bool value)
 {
 
     if (isActive() != value)
@@ -187,7 +186,7 @@ void LevelScene::setActive(bool value)
         Scene2::setActive(value);
         if (value)
         {
-            _level = Level::NONE;
+            _buttonselection = button::NONE;
             _button->activate();
             firsttime = true;
             _backClicked = false;
@@ -202,7 +201,7 @@ void LevelScene::setActive(bool value)
     }
 }
 
-void LevelScene::adjustFrame(int level){
+void SettingScene::adjustFrame(int level){
     if (readToAnim()) {
             int targetFrame = frameTargets[level];
             if (background->getFrame() != targetFrame) {

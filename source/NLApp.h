@@ -24,6 +24,7 @@
 #include "LevelScene.h"
 #include "NLInput.h"
 #include "NLSelection.h"
+#include "Setting.h"
 
 using namespace cugl::physics2::net;
 
@@ -40,6 +41,7 @@ enum Status {
     HOST,
     CLIENT,
     SELECTION,
+    SETTING,
     GAME
 };
 
@@ -70,6 +72,8 @@ protected:
     InputController _input;
 
     SelectionScene _selection;
+
+    SettingScene _setting;
     
     /** Whether or not we have finished loading all assets */
     bool _loaded;
@@ -215,6 +219,8 @@ public:
     void updateLevelScene(float timestep);
 
     void updateSelectionScene(float timestep);
+
+    void updateSettingScene(float timestep);
 
     /**
      * The method called to draw the application to the screen.
