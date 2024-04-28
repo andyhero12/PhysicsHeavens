@@ -149,6 +149,7 @@ void SpawnerEnemy::handleChase(OverWorld& overWorld) {
         _counter = 0;
         _prevDirection =_curDirection;
         _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
+        movementDirection = direction;
     }
 }
 

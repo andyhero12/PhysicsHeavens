@@ -168,6 +168,7 @@ void StaticMeleeEnemy::handleChase(OverWorld& overWorld){
         setVY(direction.normalize().y);
         _prevDirection =_curDirection;
         _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
+        movementDirection = direction;
     }
 }
 void StaticMeleeEnemy::handleLowHealth(OverWorld& overWorld){}
@@ -190,5 +191,6 @@ void StaticMeleeEnemy::handleRunaway(OverWorld& overWorld){
         }
         _prevDirection =_curDirection;
         _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
+        movementDirection = direction;
     }
 }
