@@ -27,6 +27,8 @@
 #define CLOSE_DISTANCE 2
 #define STRAY_DISTANCE 3
 
+#define DAMAGED_DURATION 0.5f
+
 #include "stlastar.h"
 #include "WorldSearchVertex.h"
 
@@ -72,6 +74,9 @@ public:
             _time = 0;
             _wanderAngle = 0.0f;
             timeSinceLastMajorChange = 0.0f;
+
+            _damagedTimer = 0;
+            _knockbacked = false;
             
             _inContact = false;
             movementDirection = Vec2(0,0);
@@ -82,6 +87,20 @@ public:
 
     void update(float delta) override {
         Obstacle::update(delta);
+        if(_damagedTimer > 0) {
+            _damagedTimer -= delta;
+            
+        }
+        if(_damagedTimer < 0) {
+            _damagedTimer = 0;
+            //tints may be expensive, so separating out this special case may be worthwhile
+            topLevelPlaceHolder->setColor(cugl::Color4(255, 255, 255));
+        }
+        if(_damagedTimer > 0) {
+            float ratio = (DAMAGED_DURATION - _damagedTimer) / DAMAGED_DURATION;
+            float brightness = 255 * (0.8f + ratio * 0.2f);
+            topLevelPlaceHolder->setColor(cugl::Color4(brightness, brightness * ratio, brightness * ratio));
+        }
     }
 
     
@@ -89,14 +108,13 @@ public:
 
     void postUpdate(){
         _prevDirection =_curDirection;
-        if(!_inContact){
+        if(!_knockbacked){
             Vec2 direction = movementDirection;
             _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
-        }
 
-        runAnimations->animate(_curDirection, curAction != EnemyActions::ATTACK);
-        attackAnimations->animate(_curDirection, curAction == EnemyActions::ATTACK);
-        
+            runAnimations->animate(_curDirection, curAction != EnemyActions::ATTACK);
+            attackAnimations->animate(_curDirection, curAction == EnemyActions::ATTACK);
+        }
     }
     
     bool isInContact() const { return _inContact; }
@@ -122,6 +140,10 @@ public:
         return _health;
     }
     void setHealth(int m_health) {
+        // are there attacks that do no damage?
+        if(m_health < _health) {
+            _damagedTimer = DAMAGED_DURATION;
+        }
         _health = m_health;
         _healthBar->setProgress((float)_health/_maxHealth);
     }
@@ -181,6 +203,8 @@ protected:
     int targetIndex;
     int updateRate;
     int _counter;
+    bool _knockbacked;
+    float _damagedTimer;
     int _time;
     // used for wander
     float _wanderAngle;

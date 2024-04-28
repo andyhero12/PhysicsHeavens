@@ -133,6 +133,7 @@ protected:
     float _biteRadius;
     float _shootRadius;
     AnimationSceneNode::Directions _curDirection;
+    float _damagedTimer;
 public:
 #pragma mark Constructors
     /**

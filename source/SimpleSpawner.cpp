@@ -45,4 +45,18 @@ void SimpleSpawner::update(MonsterController& monsterController, OverWorld& over
 
         monsterController.spawnEnemyFromString(s, getPos(), overWorld, difficulty);
     }
+
+    if(_damagedTimer > 0) {
+        _damagedTimer -= timestep;
+    }
+    if(_damagedTimer < 0) {
+        _damagedTimer = 0;
+        //tints may be expensive, so separating out this special case may be worthwhile
+        sceneNode->setColor(cugl::Color4(255, 255, 255));
+    }
+    if(_damagedTimer > 0) {
+        float ratio = (DAMAGED_DURATION - _damagedTimer) / DAMAGED_DURATION;
+        float brightness = 255 * (0.8f + ratio * 0.2f);
+        sceneNode->setColor(cugl::Color4(brightness, brightness * ratio, brightness * ratio));
+    }
 }
