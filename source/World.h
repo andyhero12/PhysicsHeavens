@@ -65,8 +65,9 @@ public:
     TileInfo(){
         
     }
-    ~TileInfo(){
-//        std::cout <<"TODO DISPOSE\n";
+    virtual ~TileInfo(){
+        texture = nullptr;
+        tileSprite = nullptr;
     }
 private:
 };
@@ -91,7 +92,10 @@ public:
     std::vector<std::shared_ptr<TileInfo>> allTiles;
     
     World () {};
-    ~World(){};
+    ~World(){
+        tile = nullptr;
+        _assets = nullptr;
+    };
     World(std::shared_ptr<LevelModel> _level,std::shared_ptr<cugl::AssetManager> assets);
 
     std::shared_ptr<cugl::Texture> getBoxFromTileSet(int position, const std::map<int,TileSet>& tileSets);

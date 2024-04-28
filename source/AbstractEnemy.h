@@ -8,6 +8,7 @@
 #ifndef AbstractEnemy_h
 #define AbstractEnemy_h
 #include <cugl/cugl.h>
+#include <random>
 #include "OverWorld.h"
 #include "AnimationSceneNode.h"
 #define MAGIC_NUMBER_ENEMY_ANIMATION_FREQUENECY 4
@@ -36,7 +37,12 @@ class AbstractEnemy : public cugl::physics2::BoxObstacle {
 public:
     
     enum class EnemyActions : int {
-        RUN,
+        SPAWN,
+        WANDER,
+        STAY,
+        CHASE,
+        LOWHEALTH,
+        RUNAWAY,
         ATTACK
     };
     
@@ -44,6 +50,7 @@ public:
     // Virtual destructor
     virtual ~AbstractEnemy() {}
     
+
     bool init(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex){
         bool result = physics2::BoxObstacle::init(m_pos,m_size);
         
@@ -57,30 +64,41 @@ public:
             setRestitution(DEFAULT_RESTITUTION);
             setFixedRotation(true);
             
-            curAction = EnemyActions::RUN;
+            curAction = EnemyActions::SPAWN;
             _health = m_health;
             _maxHealth = m_health;
             targetIndex = m_targetIndex;
             _prevDirection =AnimationSceneNode::Directions::EAST;
             _curDirection = AnimationSceneNode::Directions::EAST;
             _pathfinder = std::make_shared<AStarSearch<WorldSearchVertex>>();
+            _time = 0;
+            _wanderAngle = 0.0f;
+            timeSinceLastMajorChange = 0.0f;
 
             _damagedTimer = 0;
             _knockbacked = false;
             
+            _inContact = false;
+            movementDirection = Vec2(0,0);
             return true;
         }
         return false;
     }
-    
-    void update(float delta) override{
+
+    void update(float delta) override {
         Obstacle::update(delta);
+    }
+
+    
+    virtual void preUpdate(float dt, OverWorld& overWorld) = 0;
+
+    void postUpdate(){
         _prevDirection =_curDirection;
-        if(! (_knockbacked)) {
-            Vec2 direction = getLinearVelocity();
+        if(!_knockbacked){
+            Vec2 direction = movementDirection;
             _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
 
-            runAnimations->animate(_curDirection, curAction == EnemyActions::RUN);
+            runAnimations->animate(_curDirection, curAction != EnemyActions::ATTACK);
             attackAnimations->animate(_curDirection, curAction == EnemyActions::ATTACK);
         }
         
@@ -99,14 +117,18 @@ public:
             topLevelPlaceHolder->setColor(cugl::Color4(brightness, brightness * ratio, brightness * ratio));
         }
 
+        
     }
     
-    virtual void preUpdate(float dt, OverWorld& overWorld) = 0;
+    bool isInContact() const { return _inContact; }
+    void setInContact(bool value) { _inContact = value; }
     
     virtual int getDamage() = 0;
     virtual bool canAttack() const = 0;
     virtual void resetAttack() = 0;
     virtual int getAbsorbValue() const = 0;
+    
+    
     virtual void executeDeath(OverWorld& overWorld) {
         CULog("executing Death\n");
     }
@@ -175,6 +197,9 @@ public:
         return topLevelPlaceHolder;
     }
     
+    void setCurAction(EnemyActions act){curAction = act;}
+    
+    
 protected:
     int _maxHealth;
     int _health;
@@ -183,7 +208,15 @@ protected:
     int _counter;
     bool _knockbacked;
     float _damagedTimer;
-    
+    int _time;
+    // used for wander
+    float _wanderAngle;
+    const float wanderStrength = 0.3f;
+    const float directionChangeInterval = 5.0f;
+    float timeSinceLastMajorChange;
+    // update animations; remove jitter
+    bool _inContact;
+    Vec2 movementDirection;
     /** The next step along the enemy's path */
     Vec2 _nextStep = Vec2(-1, -1);
     
@@ -211,7 +244,7 @@ protected:
         
         // Garbage collect the nodes used for the previous path if they exist
         if(_pathfinder->GetSolutionEnd() && _pathfinder->SearchStep() == AStarSearch<WorldSearchVertex>::SEARCH_STATE_SUCCEEDED){
-//            CULog("Garbage Collecting Path...");
+    //            CULog("Garbage Collecting Path...");
             _pathfinder->FreeSolutionNodes();
         }
         
@@ -232,7 +265,7 @@ protected:
         // Check if the search was successful
         if( SearchState == AStarSearch<WorldSearchVertex>::SEARCH_STATE_SUCCEEDED ){
             
-//            CULog("Found Solution from (%d, %d) to (%d, %d)", start.x, start.y, end.x, end.y);
+    //            CULog("Found Solution from (%d, %d) to (%d, %d)", start.x, start.y, end.x, end.y);
             
             _pathfinder->GetSolutionStart();
             WorldSearchVertex* nextNode = _pathfinder->GetSolutionNext();
@@ -256,8 +289,8 @@ protected:
         
         return false;
     };
-    
-    /** Goes towards the goal. If there is no goal, do nothing. */
+
+
     void goToGoal(){
         
         // Get the goal
@@ -315,8 +348,8 @@ protected:
         // If we have been stuck on the same tile for too long, move randomly and then restart pathfinding
         
     };
-    
-    /** Returns whether the enemy is at its goal */
+
+
     bool atGoal(){
         // Get the goal
         WorldSearchVertex* goalNode = _pathfinder->GetSolutionEnd();
@@ -325,8 +358,7 @@ protected:
         
         return atTile(goal);
     };
-    
-    /** Returns whether the enemy is on the given tile , i. e. close  to its center. Tiles should have integer coordinates*/
+
     bool atTile(Vec2 tile){
         
         // Get the center of the tile
@@ -345,5 +377,58 @@ protected:
         return _pathfinder->GetSolutionEnd() && _pathfinder->SearchStep() == AStarSearch<WorldSearchVertex>::SEARCH_STATE_SUCCEEDED;
     }
     
+    // update state
+    virtual void handleChase(OverWorld& overWorld) = 0;
+    virtual void handleLowHealth(OverWorld& overWorld) = 0;
+    virtual void handleAttack(OverWorld& overWorld) = 0;
+    virtual void handleStay(OverWorld& overWorld) = 0;
+    virtual void handleRunaway(OverWorld& overWorld)= 0;
+    
+    virtual void handleSpawn() {
+        setHealth(_maxHealth);
+        _wanderAngle = 0.0f;
+        timeSinceLastMajorChange = 0.0f;
+        curAction = EnemyActions::WANDER;
+        
+    }
+
+    void handleWander(float dt){
+        // Update time since last major direction change
+         timeSinceLastMajorChange += dt;
+
+         // Random device and generator setup
+         std::random_device rd;
+         std::mt19937 gen(rd());
+         std::uniform_real_distribution<> minorChange(-wanderStrength, wanderStrength);
+         std::uniform_real_distribution<> majorChange(0.0f, 360.0f);
+
+         // Apply a minor random adjustment regularly
+         _wanderAngle += minorChange(gen);
+
+         // Check to change directions
+         if (timeSinceLastMajorChange >= directionChangeInterval) {
+             timeSinceLastMajorChange = 0.0f; // Reset the timer
+         }
+        if(timeSinceLastMajorChange == 0.0f){
+            _wanderAngle = majorChange(gen); // new random angle
+        }
+         // Normalize the angle
+         _wanderAngle = std::fmod(_wanderAngle, 360.0f);
+         if (_wanderAngle < 0) _wanderAngle += 360.0f;
+
+         // Calculate new velocity based on the wander angle
+         float radAngle = _wanderAngle * (M_PI / 180.0f);
+         float vx = cos(radAngle);
+         float vy = sin(radAngle);
+
+         // Set the new velocity, scaled by a speed factor
+         float speed = 0.5f;
+         setVX(vx * speed);
+         setVY(vy * speed);
+        
+        movementDirection.x = vx;
+        movementDirection.y = vy;
+    }
+
 };
 #endif /* AbstractEnemy_h */

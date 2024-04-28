@@ -44,6 +44,8 @@
 #include "GlobalConstants.h"
 #include "PauseScene.h"
 #include "MiniMap.h"
+#include "Tutorial.h"
+#include "CollisionListener.h"
 
 using namespace cugl::physics2::net;
 using namespace cugl;
@@ -80,6 +82,7 @@ protected:
     std::shared_ptr<cugl::scene2::SceneNode> _debugnode;
 
     std::shared_ptr<cugl::scene2::SceneNode> _uinode;
+    std::shared_ptr<cugl::scene2::SceneNode> _tutorialnode;
     
 
     std::shared_ptr<cugl::physics2::net::NetWorld> _world;
@@ -108,6 +111,11 @@ protected:
     cugl::Affine2 _transform;
 
     float _zoom;
+    std::vector<std::shared_ptr<Tutorial>> tutorialTiles;
+    
+    int tutorialIndex;
+    
+    Vec2 previousPan;
 
     /**
      * Lays out the game geography.
@@ -151,6 +159,13 @@ protected:
      * ratios
      */
     cugl::Size computeActiveSize() const;
+    
+    /** Updates input controller */
+    void updateInputController();
+    
+    
+    /** Initialize tutorial */
+    void initTutorial();
 
 public:
 #pragma mark -
@@ -288,7 +303,7 @@ public:
      * @param  contact  The two bodies that collided
      */
     void beginContact(b2Contact *contact);
-
+    void endContact(b2Contact *contact);
     /**
      * Handles any modifications necessary before collision resolution
      *

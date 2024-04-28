@@ -117,6 +117,28 @@ void SpawnerEnemy::preUpdate(float dt, OverWorld& overWorld){
     if (_counter < updateRate){
         _counter++;
     }
+    
+    // Determine the action based on the state; for now it's alway in atttack but should change
+    curAction = AbstractEnemy::EnemyActions::ATTACK;
+    if (curAction == EnemyActions::SPAWN){
+        handleSpawn();
+    }
+    else if (curAction == EnemyActions::WANDER){
+        handleWander(dt);
+    }
+    else if(curAction == EnemyActions::CHASE){
+        handleChase(overWorld);
+    }
+    else if(curAction == EnemyActions::LOWHEALTH){
+        handleLowHealth(overWorld);
+    }
+    else if(curAction == EnemyActions::ATTACK){
+        handleAttack(overWorld);
+    }
+}
+
+
+void SpawnerEnemy::handleChase(OverWorld& overWorld) {
     cugl::Vec2 target_pos = getTargetPositionFromIndex(overWorld);
     cugl::Vec2 direction = target_pos - getPosition();
     if (overWorld._isHost && _counter >= updateRate){
@@ -129,3 +151,8 @@ void SpawnerEnemy::preUpdate(float dt, OverWorld& overWorld){
         _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
     }
 }
+
+void SpawnerEnemy::handleLowHealth(OverWorld& overWorld){}
+void SpawnerEnemy::handleAttack(OverWorld& overWorld){}
+void SpawnerEnemy::handleStay(OverWorld& overWorld){}
+void SpawnerEnemy::handleRunaway(OverWorld& overWorld){}

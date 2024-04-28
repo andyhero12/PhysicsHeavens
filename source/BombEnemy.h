@@ -58,12 +58,12 @@ public:
         std::vector<std::shared_ptr<cugl::Texture>> textures;
         textures.push_back(_assets->get<Texture>("bombFrontRightWalk"));
         textures.push_back(_assets->get<Texture>("bombFrontRightWalk"));
+        textures.push_back(_assets->get<Texture>("bombFrontLeftWalk"));
+        textures.push_back(_assets->get<Texture>("bombFrontLeftWalk"));
+        textures.push_back(_assets->get<Texture>("bombFrontLeftWalk"));
+        textures.push_back(_assets->get<Texture>("bombFrontLeftWalk"));
         textures.push_back(_assets->get<Texture>("bombFrontRightWalk"));
         textures.push_back(_assets->get<Texture>("bombFrontRightWalk"));
-        textures.push_back(_assets->get<Texture>("bombFrontLeftWalk"));
-        textures.push_back(_assets->get<Texture>("bombFrontLeftWalk"));
-        textures.push_back(_assets->get<Texture>("bombFrontLeftWalk"));
-        textures.push_back(_assets->get<Texture>("bombFrontLeftWalk"));
         staticEnemyStruct._walkTextures  = textures;
         staticEnemyStruct._attackTextures  = textures;
         staticEnemyStruct._framesize = _framesize;
@@ -132,5 +132,12 @@ protected:
     int _contactDamage;
     int _attackCooldown;
     int _baseExplosionDamage;
+    
+    virtual void handleChase(OverWorld& overWorld) override;
+    virtual void handleLowHealth(OverWorld& overWorld) override;
+    virtual void handleAttack(OverWorld& overWorld) override;
+    virtual void handleStay(OverWorld& overWorld) override;
+    virtual void handleRunaway(OverWorld& overWorld) override;
+    
 };
 #endif /* BombEnemy_hpp */

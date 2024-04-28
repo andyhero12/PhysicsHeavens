@@ -59,12 +59,12 @@ public:
         std::vector<std::shared_ptr<cugl::Texture>> textures;
         textures.push_back(_assets->get<Texture>("absorbEnemyRightWalk"));
         textures.push_back(_assets->get<Texture>("absorbEnemyRightWalk"));
+        textures.push_back(_assets->get<Texture>("absorbEnemyLeftWalk"));
+        textures.push_back(_assets->get<Texture>("absorbEnemyLeftWalk"));
+        textures.push_back(_assets->get<Texture>("absorbEnemyLeftWalk"));
+        textures.push_back(_assets->get<Texture>("absorbEnemyLeftWalk"));
         textures.push_back(_assets->get<Texture>("absorbEnemyRightWalk"));
         textures.push_back(_assets->get<Texture>("absorbEnemyRightWalk"));
-        textures.push_back(_assets->get<Texture>("absorbEnemyLeftWalk"));
-        textures.push_back(_assets->get<Texture>("absorbEnemyLeftWalk"));
-        textures.push_back(_assets->get<Texture>("absorbEnemyLeftWalk"));
-        textures.push_back(_assets->get<Texture>("absorbEnemyLeftWalk"));
         staticEnemyStruct._walkTextures  = textures;
         staticEnemyStruct._attackTextures  = textures;
         staticEnemyStruct._framesize = _framesize;
@@ -134,11 +134,19 @@ public:
         CULog("TODO ABSORB VALUE OF ABSORB ENEMY \n");
         return 1;
     }
-    
-    
+ 
 protected:
     int _contactDamage;
     int _attackCooldown;
+    
+    
+    virtual void handleChase(OverWorld& overWorld) override;
+    virtual void handleLowHealth(OverWorld& overWorld) override;
+    virtual void handleAttack(OverWorld& overWorld) override;
+    virtual void handleStay(OverWorld& overWorld) override;
+    virtual void handleRunaway(OverWorld& overWorld) override;
+    
+    
 };
 
 #endif /* AbsorbEnemy_h */

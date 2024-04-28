@@ -72,6 +72,10 @@ private:
     /** This macro disables the copy constructor (not allowed on scene graphs) */
     CU_DISALLOW_COPY_AND_ASSIGN(Dog);
     
+//    std::shared_ptr<cugl::scene2::SceneNode> backEffectsNode;
+    std::shared_ptr<cugl::scene2::SceneNode> frontEffectsNode;
+    std::shared_ptr<cugl::scene2::SceneNode> backEffectsNode;
+    
 protected:
     Actions action;
     
@@ -79,8 +83,6 @@ protected:
     cugl::Vec2 dir;
     cugl::Vec2 _ang;
     std::shared_ptr<cugl::scene2::OrderedNode> baseBlankNode;
-    std::shared_ptr<cugl::scene2::SceneNode> frontEffectsNode;
-    std::shared_ptr<cugl::scene2::SceneNode> backEffectsNode;
     
     std::shared_ptr<AnimationSceneNode> idleAnimation;
     std::shared_ptr<AnimationSceneNode> runAnimation;

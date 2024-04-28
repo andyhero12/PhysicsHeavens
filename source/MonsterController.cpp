@@ -55,11 +55,12 @@ bool MonsterController::init(OverWorld& overWorld,
 
         std::string enemyType = cluster.enemy;
 
-        for(int i = 0; i < cluster.count; i++) {
-            Vec2 pos = Vec2(cx + generateRandomInclusiveHighLow(-200, 200) / 100.0f, cy + generateRandomInclusiveHighLow(-200, 200) / 100.0f);
-            
-            spawnEnemyFromString(enemyType, pos, overWorld, power);
-        }
+//        for(int i = 0; i < cluster.count; i++) {
+        // Check that the Position is a Valid Spot
+//            Vec2 pos = Vec2(cx + generateRandomInclusiveHighLow(-200, 200) / 100.0f, cy + generateRandomInclusiveHighLow(-200, 200) / 100.0f);
+//            
+//            spawnEnemyFromString(enemyType, pos, overWorld, power);
+//        }
     }
     return true;
 }
@@ -68,6 +69,10 @@ void MonsterController::postUpdate(){
         _current.insert(curEnemy);
     }
     _pending.clear();
+    
+    for (std::shared_ptr<AbstractEnemy> curEnemy: _current){
+        curEnemy->postUpdate();
+    }
 }
 
 void MonsterController::retargetToDecoy( OverWorld& overWorld){
