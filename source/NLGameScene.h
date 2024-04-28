@@ -99,8 +99,6 @@ protected:
     
     std::shared_ptr<Minimap> _minimap;
     
-    std::shared_ptr<CollisionListener> enemyListener;
-    
     /** Host is by default the left cannon */
     bool _isHost;
 
@@ -302,7 +300,7 @@ public:
      * @param  contact  The two bodies that collided
      */
     void beginContact(b2Contact *contact);
-
+    void endContact(b2Contact *contact);
     /**
      * Handles any modifications necessary before collision resolution
      *

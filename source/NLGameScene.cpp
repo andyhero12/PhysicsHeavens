@@ -377,8 +377,6 @@ void GameScene::dispose()
         _debug = false;
         _constants = nullptr;
         _assets = nullptr;
-        
-        enemyListener = nullptr;
 
         _monsterController.dispose();
         _spawnerController.dispose();
@@ -403,14 +401,13 @@ void GameScene::dispose()
  */
 void GameScene::populate()
 {
-    enemyListener = CollisionListener::alloc();
     _world = physics2::net::NetWorld::alloc(Rect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT), Vec2(0, DEFAULT_GRAVITY));
     _world->activateCollisionCallbacks(true);
     _world->onBeginContact = [this](b2Contact* contact) {
-        this->enemyListener->BeginContact(contact);
+        this->beginContact(contact);
     };
     _world->onEndContact = [this](b2Contact* contact) {
-        this->enemyListener->EndContact(contact);
+        this->endContact(contact);
     };
     _world->beforeSolve = [this](b2Contact *contact, const b2Manifold *oldManifold)
     {
@@ -693,21 +690,36 @@ void GameScene::update(float dt)
  */
 void GameScene::beginContact(b2Contact *contact)
 {
-    b2Fixture *fix1 = contact->GetFixtureA();
-    b2Fixture *fix2 = contact->GetFixtureB();
+    auto* bodyA = contact->GetFixtureA()->GetBody();
+    auto* bodyB = contact->GetFixtureB()->GetBody();
 
-    b2Body *body1 = fix1->GetBody();
-    b2Body *body2 = fix2->GetBody();
+    // Check if either body is the correct type and then cast
+    auto* enemyA = dynamic_cast<AbstractEnemy*>(reinterpret_cast<AbstractEnemy*>(bodyA->GetUserData().pointer));
+    auto* enemyB = dynamic_cast<AbstractEnemy*>(reinterpret_cast<AbstractEnemy*>(bodyB->GetUserData().pointer));
 
-    physics2::Obstacle *bd1 = reinterpret_cast<physics2::Obstacle *>(body1->GetUserData().pointer);
-    physics2::Obstacle *bd2 = reinterpret_cast<physics2::Obstacle *>(body2->GetUserData().pointer);
+    if (enemyA) {
+        enemyA->setInContact(true);
+    }
+    if (enemyB) {
+        enemyB->setInContact(true);
+    }
+}
 
-    MeleeEnemy *enemy1 = dynamic_cast<MeleeEnemy *>(bd1);
-    MeleeEnemy *enemy2 = dynamic_cast<MeleeEnemy *>(bd2);
+void GameScene::endContact(b2Contact *contact)
+{
+    auto* bodyA = contact->GetFixtureA()->GetBody();
+    auto* bodyB = contact->GetFixtureB()->GetBody();
 
-    if (enemy1 && enemy2)
-    {
-        //        CULog("Two Enemies Collided");
+    // Check if either body is the correct type and then cast
+    auto* enemyA = dynamic_cast<AbstractEnemy*>(reinterpret_cast<AbstractEnemy*>(bodyA->GetUserData().pointer));
+    auto* enemyB = dynamic_cast<AbstractEnemy*>(reinterpret_cast<AbstractEnemy*>(bodyB->GetUserData().pointer));
+
+    // Set inContact to false if the object is an AbstractEnemy
+    if (enemyA) {
+        enemyA->setInContact(false);
+    }
+    if (enemyB) {
+        enemyB->setInContact(false);
     }
 }
 

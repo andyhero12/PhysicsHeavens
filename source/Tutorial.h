@@ -12,7 +12,7 @@
 #include <functional>
 #include <stdexcept>
 #include <string>
-
+#include <cugl/cugl.h>
 class Tutorial{
 public:
    
