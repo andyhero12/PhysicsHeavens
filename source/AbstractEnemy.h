@@ -74,6 +74,7 @@ public:
             timeSinceLastMajorChange = 0.0f;
             
             _inContact = false;
+            movementDirection = Vec2(0,0);
             return true;
         }
         return false;
@@ -89,7 +90,7 @@ public:
     void postUpdate(){
         _prevDirection =_curDirection;
         if(!_inContact){
-            Vec2 direction = getLinearVelocity();
+            Vec2 direction = movementDirection;
             _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
         }
 
@@ -188,7 +189,7 @@ protected:
     float timeSinceLastMajorChange;
     // update animations; remove jitter
     bool _inContact;
-    
+    Vec2 movementDirection;
     /** The next step along the enemy's path */
     Vec2 _nextStep = Vec2(-1, -1);
     
@@ -397,6 +398,9 @@ protected:
          float speed = 0.5f;
          setVX(vx * speed);
          setVY(vy * speed);
+        
+        movementDirection.x = vx;
+        movementDirection.y = vy;
     }
 
 };

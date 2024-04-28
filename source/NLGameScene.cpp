@@ -303,21 +303,21 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _pause->doLayout();
 
     _zoom = ROOT_NODE_SCALE;
-
+    
+    Vec2 delta;
     if (isHost)
     {
-        Vec2 delta = overWorld.getDog()->getDogNode()->getWorldPosition();
-        delta -= (computeActiveSize() / 2);
-        _rootnode->applyPan(-delta / _zoom);
-        _rootnode->setScale(_zoom);
+        delta = overWorld.getDog()->getDogNode()->getWorldPosition();
     }
     else
     {
-        Vec2 delta = overWorld.getClientDog()->getDogNode()->getWorldPosition();
-        delta -= (computeActiveSize() / 2);
-        _rootnode->applyPan(-delta / _zoom);
-        _rootnode->setScale(_zoom);
+        delta = overWorld.getClientDog()->getDogNode()->getWorldPosition();
     }
+    delta -= (computeActiveSize() / 2);
+    _rootnode->applyPan(-delta / _zoom);
+    _rootnode->setScale(_zoom);
+    previousPan = (-delta / _zoom);
+    
 
     addChildForeground();
     resetDraw();
@@ -327,6 +327,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     if (level_string == LEVEL_ONE_KEY){
         initTutorial();
     }
+    
     
     return true;
 }
@@ -560,19 +561,16 @@ void GameScene::postUpdate(float dt)
     if (_isHost)
     {
         delta = overWorld.getDog()->getDogNode()->getWorldPosition();
-        delta -= (computeActiveSize() / 2);
-        _rootnode->applyPan(-delta / _zoom);
-
-        delta = overWorld.getDog()->getPosition();
     }
     else
     {
         delta = overWorld.getClientDog()->getDogNode()->getWorldPosition();
-        delta -= (computeActiveSize() / 2);
-        _rootnode->applyPan(-delta / _zoom);
-
-        delta = overWorld.getClientDog()->getPosition();
     }
+    delta -= (computeActiveSize() / 2);
+    Vec2 curr = -delta / _zoom;
+    Vec2 pan = curr.lerp(previousPan, 0.9f);
+    _rootnode->applyPan(pan);
+    previousPan = pan;
     //
     //    std::vector<Vec2> upperPosHide;
     //    for (int i = -1; i <= 1; i++)

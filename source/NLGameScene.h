@@ -114,6 +114,8 @@ protected:
     std::vector<std::shared_ptr<Tutorial>> tutorialTiles;
     
     int tutorialIndex;
+    
+    Vec2 previousPan;
 
     /**
      * Lays out the game geography.

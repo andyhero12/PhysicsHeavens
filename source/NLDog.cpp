@@ -52,7 +52,7 @@ using namespace cugl;
 /** The friction of this rocket */
 #define DEFAULT_FRICTION 0.1f
 /** The restitution of this rocket */
-#define DEFAULT_RESTITUTION 0.4f
+#define DEFAULT_RESTITUTION 0
 
 #define FIRE_RATE 25
 #define HEAL_RATE 50

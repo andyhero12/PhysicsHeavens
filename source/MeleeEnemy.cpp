@@ -184,6 +184,8 @@ void MeleeEnemy::handleChase(OverWorld& overWorld) {
     goToGoal();
     _counter = 0;
     
+    movementDirection = dist;
+    
     if( dist.length() < 4 && curAction == AbstractEnemy::EnemyActions::CHASE){
         curAction = AbstractEnemy::EnemyActions::ATTACK;
         _time = 0;
@@ -191,7 +193,7 @@ void MeleeEnemy::handleChase(OverWorld& overWorld) {
 }
 
 void MeleeEnemy::handleLowHealth(OverWorld& overWorld) {
-    runAnimations->setColor(cugl::Color4::BLUE);
+    runAnimations->setColor(cugl::Color4::BLACK);
     handleRunaway(overWorld);
 }
 
@@ -212,5 +214,11 @@ void MeleeEnemy::handleRunaway(OverWorld& overWorld){
            direction.normalize();
            setVX(-direction.x * 0.1f);
            setVY(-direction.y * 0.1f);
+           movementDirection.x = -direction.x ;
+           movementDirection.y = -direction.y ;
+       }
+       else{
+           movementDirection.x = 0;
+           movementDirection.y = 0 ;
        }
 }
