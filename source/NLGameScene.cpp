@@ -322,7 +322,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _minimap = Minimap::alloc(_assets, computeActiveSize(), overWorld, _spawnerController);
     _uinode->addChild(_minimap);
 
-    initTutorial();
+    if (level_string == LEVEL_ONE_KEY){
+        initTutorial();
+    }
     
     return true;
 }
