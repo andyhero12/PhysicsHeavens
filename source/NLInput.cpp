@@ -245,6 +245,7 @@ void InputController::readInput(int value) {
         _UseKeyboard = true;
     }
 
+
     // Shooting
     if(value >= static_cast<int>(Tutorial::BITE)){
         if (keys->keyPressed(shoot)) {
@@ -332,6 +333,8 @@ void InputController::resetKeys(){
     _UseKeyboard = false;
     _didPressLeft = false;
     _didPressRight = false;
+    _didPressDown = false;
+    _didPressUp = false;
     _didPressDown = false;
     _didPressUp = false;
     _didConfirm =false;
@@ -506,6 +509,24 @@ void InputController::readInput_joystick(int value) {
             _didPause = true;
             _UseJoystick = true;
         }
+        if(_gameContrl->isButtonPressed(up)){
+            _updown = 1;
+            _UseJoystick = true;
+        }
+        if(_gameContrl->isButtonPressed(down)){
+            _updown = -1;
+            _UseJoystick = true;
+        }
+
+        if(_gameContrl->isButtonPressed(cugl::GameController::Button::DPAD_LEFT)){
+            _Leftright = -1;
+            _UseJoystick = true;
+        }
+        if(_gameContrl->isButtonPressed(cugl::GameController::Button::DPAD_RIGHT)){
+            _Leftright = 1;
+            _UseJoystick = true;
+        }
+
 
 
 

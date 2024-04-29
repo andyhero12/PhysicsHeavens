@@ -8,14 +8,14 @@
     "menu": {
       "file": "textures/Menu/menu.png"
     },
-    "redbutton": {
-      "file": "textures/Menu/redbutton.png"
+    "redbuttonx": {
+      "file": "textures/Menu/playbutton.png"
     },
-    "purplebutton": {
-      "file": "textures/Menu/purplebutton.png"
+    "purplebuttonx": {
+      "file": "textures/Menu/settingbutton.png"
     },
     "heavens_devils_logo": {
-      "file": "textures/Menu/heavens_devils_logo.png"
+      "file": "textures/Menu/Title.png"
     }
   },
   "fonts": {
@@ -37,7 +37,7 @@
             ],
             "size": [
                 1280,
-                720
+                800
             ],
             "angle": 0,
             "position": [
@@ -86,7 +86,7 @@
                                 -9,
                                 35.51
                             ],
-                            "visible": true
+                            "visible": false
                         },
                         "layout": {
                             "x_anchor": "center",
@@ -122,7 +122,7 @@
                             "purplebutton": {
                                 "type": "Image",
                                 "data": {
-                                    "texture": "purplebutton",
+                                    "texture": "purplebuttonx",
                                     "anchor": [
                                         0,
                                         0
@@ -145,45 +145,6 @@
                                     "x_offset": 0,
                                     "y_offset": -0.28
                                 }
-                            },
-                            "Setting": {
-                                "type": "Label",
-                                "data": {
-                                    "anchor": [
-                                        0.5,
-                                        0
-                                    ],
-                                    "size": [
-                                        214,
-                                        39
-                                    ],
-                                    "position": [
-                                        37.87963104248047,
-                                        7.013360977172852
-                                    ],
-                                    "angle": 0,
-                                    "visible": true,
-                                    "font": "04b3038.6204719543457",
-                                    "text": "Setting",
-                                    "foreground": "#ffffffff",
-                                    "background": "#00000000",
-                                    "padding": [
-                                        0,
-                                        0,
-                                        0,
-                                        0
-                                    ],
-                                    "valign": "middle",
-                                    "halign": "center"
-                                },
-                                "children": {},
-                                "layout": {
-                                    "x_anchor": "center",
-                                    "y_anchor": "bottom",
-                                    "absolute": false,
-                                    "x_offset": 0,
-                                    "y_offset": 0.12
-                                }
                             }
                         },
                         "layout": {
@@ -192,104 +153,6 @@
                             "absolute": false,
                             "x_offset": 0.22,
                             "y_offset": -0.73
-                        }
-                    },
-                    "button2": {
-                        "type": "Button",
-                        "format": {
-                            "type": "Anchored"
-                        },
-                        "data": {
-                            "anchor": [
-                                0,
-                                1
-                            ],
-                            "size": [
-                                276,
-                                63
-                            ],
-                            "angle": 0,
-                            "position": [
-                                121.71,
-                                215.78
-                            ],
-                            "visible": true,
-                            "upnode": "purplebutton"
-                        },
-                        "children": {
-                            "purplebutton": {
-                                "type": "Image",
-                                "data": {
-                                    "texture": "purplebutton",
-                                    "anchor": [
-                                        0,
-                                        0
-                                    ],
-                                    "size": [
-                                        294.95,
-                                        83.73
-                                    ],
-                                    "angle": 0,
-                                    "position": [
-                                        -9.69,
-                                        -10.53
-                                    ],
-                                    "visible": true
-                                },
-                                "layout": {
-                                    "x_anchor": "left",
-                                    "y_anchor": "bottom",
-                                    "absolute": false,
-                                    "x_offset": -0.04,
-                                    "y_offset": -0.17
-                                }
-                            },
-                            "LEVELS": {
-                                "type": "Label",
-                                "data": {
-                                    "anchor": [
-                                        0.5,
-                                        0
-                                    ],
-                                    "size": [
-                                        214,
-                                        39
-                                    ],
-                                    "position": [
-                                        31.28997802734375,
-                                        12.84197998046875
-                                    ],
-                                    "angle": 0,
-                                    "visible": true,
-                                    "font": "04b3038.6204719543457",
-                                    "text": "COOP",
-                                    "foreground": "#ffffffff",
-                                    "background": "#00000000",
-                                    "padding": [
-                                        0,
-                                        0,
-                                        0,
-                                        0
-                                    ],
-                                    "valign": "middle",
-                                    "halign": "center"
-                                },
-                                "children": {},
-                                "layout": {
-                                    "x_anchor": "center",
-                                    "y_anchor": "bottom",
-                                    "absolute": false,
-                                    "x_offset": 0,
-                                    "y_offset": 0.2
-                                }
-                            }
-                        },
-                        "layout": {
-                            "x_anchor": "left",
-                            "y_anchor": "top",
-                            "absolute": false,
-                            "x_offset": 0.23,
-                            "y_offset": -0.6
                         }
                     },
                     "button1": {
@@ -318,7 +181,7 @@
                             "redbutton": {
                                 "type": "Image",
                                 "data": {
-                                    "texture": "redbutton",
+                                    "texture": "redbuttonx",
                                     "anchor": [
                                         0,
                                         0
@@ -341,46 +204,7 @@
                                     "x_offset": -0.04,
                                     "y_offset": -0.17
                                 }
-                            },
-                            "Play": {
-                                "type": "Label",
-                                "data": {
-                                    "anchor": [
-                                        0.5,
-                                        0
-                                    ],
-                                    "size": [
-                                        143.30226135253906,
-                                        51.578651428222656
-                                    ],
-                                    "position": [
-                                        36.28997802734375,
-                                        4.644523620605469
-                                    ],
-                                    "angle": 0,
-                                    "visible": true,
-                                    "font": "04b3038.6204719543457",
-                                    "text": "PLAY",
-                                    "foreground": "#ffffffff",
-                                    "background": "#00000000",
-                                    "padding": [
-                                        0,
-                                        0,
-                                        0,
-                                        0
-                                    ],
-                                    "valign": "middle",
-                                    "halign": "center"
-                                },
-                                "children": {},
-                                "layout": {
-                                    "x_anchor": "center",
-                                    "y_anchor": "bottom",
-                                    "absolute": false,
-                                    "x_offset": 0,
-                                    "y_offset": 0.08
-                                }
-                            }
+                            }              
                         },
                         "layout": {
                             "x_anchor": "left",
@@ -390,7 +214,7 @@
                             "y_offset": -0.48
                         }
                     },
-                    "heavens_devils_logo": {
+                    "Logo": {
                         "type": "Image",
                         "data": {
                             "texture": "heavens_devils_logo",
@@ -404,7 +228,7 @@
                             ],
                             "angle": 0,
                             "position": [
-                                13,
+                                -30,
                                 333.8
                             ],
                             "visible": true
@@ -413,7 +237,7 @@
                             "x_anchor": "fill",
                             "y_anchor": "top",
                             "absolute": false,
-                            "x_offset": 0.02,
+                            "x_offset": -0.03,
                             "y_offset": 0
                         }
                     }
