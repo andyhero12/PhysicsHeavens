@@ -40,8 +40,8 @@ bool GateUIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const
     
     _gatefill->setPosition(gatefillx, gatey);
     
-    node->addChild(_gateframe);
     node->addChild(_gatefill);
+    node->addChild(_gateframe);
     
     return true;
 }

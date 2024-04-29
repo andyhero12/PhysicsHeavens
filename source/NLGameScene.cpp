@@ -881,7 +881,7 @@ void GameScene::addChildForeground()
 void GameScene::updateInputController()
 {
     
-    std::cout <<overWorld.getDog()->getX() << std::endl;
+//    std::cout <<overWorld.getDog()->getX() << std::endl;
     if (tutorialIndex < tutorialTiles.size())
     {
         std::shared_ptr<Tutorial> tile = tutorialTiles.at(tutorialIndex);
@@ -935,16 +935,16 @@ void GameScene::initTutorialOne(){
     _tutorialnode = scene2::SceneNode::alloc();
     _uinode->addChild(_tutorialnode);
     tutorialTiles = std::vector<std::shared_ptr<Tutorial>>();
-    tutorialTiles.clear();
+    
     tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::GREETING));
     tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::MOVEMENT));
     tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::MODE::DEFENDGATE));
     tutorialTiles.push_back(Tutorial::alloc(30, Tutorial::MODE::BITE));
     tutorialTiles.push_back(Tutorial::alloc(30, Tutorial::MODE::GROW));
     tutorialTiles.push_back(Tutorial::alloc(30, Tutorial::MODE::SPECIALSONE));
-    tutorialTiles.push_back(Tutorial::alloc(30, Tutorial::MODE::CHANGEABILITYTWO));
-    tutorialTiles.push_back(Tutorial::alloc(30, Tutorial::MODE::DESTROYSPAWNER));
-    tutorialTiles.push_back(Tutorial::alloc(30, Tutorial::MODE::SPECIALSTWO));
+    tutorialTiles.push_back(Tutorial::alloc(31, Tutorial::MODE::CHANGEABILITYTWO));
+    tutorialTiles.push_back(Tutorial::alloc(31, Tutorial::MODE::DESTROYSPAWNER));
+    tutorialTiles.push_back(Tutorial::alloc(31, Tutorial::MODE::SPECIALSTWO));
 //
     std::vector<std::string> modes = {"RECALL", "SHOOT"};
     overWorld.getDog()->setAbility(modes);

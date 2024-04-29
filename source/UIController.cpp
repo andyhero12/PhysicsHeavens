@@ -97,9 +97,9 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     _initialFlash->setVisible(false);
     _toggleFlash->setVisible(false);
     
-    node->addChild(_healthframe);
     node->addChild(_healthfill);
     node->addChild(_sizefill);
+    node->addChild(_healthframe);
 //    node->addChild(_gateframe);
 //    node->addChild(_gatefill);
     
