@@ -333,12 +333,12 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     if (level_string == LEVEL_ONE_KEY){
         initTutorialOne();
     }
-    else if(level_string == LEVEL_TWO_KEY){
-        initTutorialTwo();
-    }
-    else if(level_string == LEVEL_THREE_KEY){
-        initTutorialThree();
-    }
+//    else if(level_string == LEVEL_TWO_KEY){
+//        initTutorialTwo();
+//    }
+//    else if(level_string == LEVEL_THREE_KEY){
+//        initTutorialThree();
+//    }
     
     return true;
 }
@@ -928,6 +928,8 @@ void GameScene::initTutorialOne(){
     tutorialIndex = 0;
     _tutorialnode = scene2::SceneNode::alloc();
     _uinode->addChild(_tutorialnode);
+    tutorialTiles = std::vector<std::shared_ptr<Tutorial>>();
+    tutorialTiles.clear();
     tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::GREETING));
     tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::MOVEMENT));
     tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::MODE::DEFENDGATE));
