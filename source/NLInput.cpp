@@ -43,7 +43,9 @@ _didPressRight(false),
 _didPressLeft(false),
 _back(false),
 _didConfirm(false),
-_didBack(false)
+_didBack(false),
+_didPressDown(false),
+_didPressUp(false)
 {
 }
 
@@ -196,6 +198,16 @@ void InputController::readInput() {
         _UseKeyboard = true;
         _didPressLeft = true;
     }
+
+    if (keys->keyDown(up)) {
+        _didPressUp = true;
+        _UseKeyboard = true;
+    }
+    else if (keys->keyDown(down)) {
+        _didPressDown = true;
+        _UseKeyboard = true;
+    }
+
     // Shooting
     if (keys->keyPressed(shoot)) {
         _didFire = true;
@@ -263,6 +275,8 @@ void InputController::resetKeys(){
     _UseKeyboard = false;
     _didPressLeft = false;
     _didPressRight = false;
+    _didPressDown = false;
+    _didPressUp = false;
     _didConfirm =false;
     _didBack = false;
     _forward  = 0;
@@ -396,12 +410,14 @@ void InputController::readInput_joystick() {
             _Vel = cugl::Vec2(LR, -UD);
             _UseJoystick = true;
             if (UD < -0.2) {
+                
                 _updown = 1; //Up
             }
             else if (UD > 0.2) {
+                
                 _updown = -1; //down
             }
-             if (LR < -0.2) {
+            if (LR < -0.2) {
                 _Leftright = -1; //Left
             }
             else if (LR > 0.2) {

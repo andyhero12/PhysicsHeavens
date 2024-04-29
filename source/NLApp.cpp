@@ -435,9 +435,13 @@ void NetApp::updateLevelScene(float timestep)
 }
 
 void NetApp::updateSettingScene(float timestep){
+    if(_setting.getBackclick())
+    {
+        _setting.setActive(false);
+        _mainmenu.setActive(true);
+        _status = MAINMENU;
+    }
     _setting.update(timestep);
-    _setting.setActive(true);
-    _mainmenu.setActive(false);
 }
 
 /**

@@ -59,6 +59,8 @@ private:
     bool _didPressRight;
     bool _didConfirm;
     bool _didBack;
+    bool _didPressUp;
+    bool _didPressDown;
     cugl::Vec2 _Vel;
 
     bool _UseKeyboard;
@@ -139,6 +141,13 @@ public:
     }
     bool didPressRight() const {
         return _didPressRight;
+    }
+
+    bool didPressUp() const {
+        return _didPressUp;
+    }
+    bool didPressDown() const {
+        return _didPressDown;
     }
     
     bool didChangeMode() const {

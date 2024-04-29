@@ -39,21 +39,10 @@ bool SettingScene::init(const std::shared_ptr<AssetManager> &assets)
 {
     // Initialize the scene to a locked width
     Size dimen = Application::get()->getDisplaySize();
-    // Lock the scene to a reasonable resolution
-    if (dimen.width > dimen.height)
-    {
-        dimen *= SCENE_SIZE / dimen.width;
-    }
-    else
-    {
-        dimen *= SCENE_SIZE / dimen.height;
-    }
-    if (assets == nullptr)
-    {
+    dimen *= SCENE_SIZE/dimen.height;
+    if (assets == nullptr) {
         return false;
-    }
-    else if (!Scene2::init(dimen))
-    {
+    } else if (!Scene2::init(dimen)) {
         return false;
     }
     //_input.init_withlistener();
@@ -93,7 +82,7 @@ bool SettingScene::init(const std::shared_ptr<AssetManager> &assets)
     }
 });
     background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("setting_background"), 1, 9);
-    background->setScale(4);
+    background->setScale(4.3);
     background->setPosition(0.5 * background->getSize());
     addChild(background);
     layer->setColor(Color4(0, 0, 0, 1));
@@ -128,23 +117,29 @@ void SettingScene::dispose()
 void SettingScene::update(float progress)
 {
     _input.update();
+    if (firsttime)
+    {
+        _button->activate();
+        _button->setVisible(false);
+        firsttime = false;
+    }
     
     if (curMoveAnim <= moveCooldown){
         curMoveAnim++;
     }
-
-    if(_input._Leftright == 1 && readyToChangeLevel()){
+    //right == down and left == up
+    if(_input._updown == -1 && readyToChangeLevel()){
         _goright = true;
     }
 
-    if(_input._Leftright == -1 && readyToChangeLevel()){
+    if(_input._updown == 1 && readyToChangeLevel()){
         _goleft = true;
     }
 
-    if(_input.didPressRight() && readyToChangeLevel()){
+    if(_input.didPressDown() && readyToChangeLevel()){
         _goright = true;
     }
-    if(_input.didPressLeft() && readyToChangeLevel()){
+    if(_input.didPressUp() && readyToChangeLevel()){
         _goleft = true;
     }
     
@@ -160,12 +155,7 @@ void SettingScene::update(float progress)
         _backClicked = true;
     }
 
-    if (firsttime)
-    {
-        _button->activate();
-        _button->setVisible(false);
-        firsttime = false;
-    }
+
 }
 
 /**
@@ -192,11 +182,13 @@ void SettingScene::setActive(bool value)
             _backClicked = false;
         }
         else
-        {
+        {   
+            background->setFrame(0);
             _button->deactivate();
             _button->setDown(false);
             firsttime = true;
             _backClicked = false;
+            level = 1;
         }
     }
 }

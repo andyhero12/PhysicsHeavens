@@ -1,7 +1,7 @@
 {
 	"textures": {
         "Background":{
-            "file":      "textures/update_level_select_15.png",
+            "file":      "textures/Newlevel.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },

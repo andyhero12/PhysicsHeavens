@@ -104,7 +104,7 @@ public:
     _progress(0.0f), 
     frame(0.0f), 
     curMoveAnim(0), 
-    moveCooldown(6), 
+    moveCooldown(10), 
     _goleft(false), 
     _goright(false), 
     _buttonselection(NONE), 
@@ -112,9 +112,10 @@ public:
     firsttime(true),
     _backClicked(false){
     frameTargets = {
-        {1, 5},
-        {2, 6},
-        {3, 7}
+        {1, 4},
+        {2, 5},
+        {3, 6},
+        {4, 7}
         // Add new levels and frames as needed
     };
 
@@ -174,16 +175,19 @@ public:
     }
     
     bool readyToChangeLevel(){
-        return finAnimLevel1() || finAnimLevel2() || finAnimLevel3();
+        return (finAnimLevel1() || finAnimLevel2() || finAnimLevel3()||finAnimLevel4())&&readToAnim();
     }
     bool finAnimLevel1(){
-        return level == 1 && background->getFrame() == 5;
+        return level == 1 && background->getFrame() == 4;
     }
     bool finAnimLevel2(){
-        return level == 2 && background->getFrame() == 6;
+        return level == 2 && background->getFrame() == 5;
     }
     bool finAnimLevel3(){
-        return level == 3 && background->getFrame() == 7;
+        return level == 3 && background->getFrame() == 6;
+    }
+    bool finAnimLevel4(){
+        return level == 4 && background->getFrame() == 7;
     }
     void resetAnimCD(){
         curMoveAnim = 0;
@@ -197,7 +201,7 @@ public:
     }
     
     void updatelevelscene(){
-       if (_goright && level < 3) {
+       if (_goright && level < 4) {
         level += 1;
         } else if (_goleft && level > 1) {
             level -= 1;

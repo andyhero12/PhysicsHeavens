@@ -39,21 +39,10 @@ bool LevelScene::init(const std::shared_ptr<AssetManager> &assets)
 {
     // Initialize the scene to a locked width
     Size dimen = Application::get()->getDisplaySize();
-    // Lock the scene to a reasonable resolution
-    if (dimen.width > dimen.height)
-    {
-        dimen *= SCENE_SIZE / dimen.width;
-    }
-    else
-    {
-        dimen *= SCENE_SIZE / dimen.height;
-    }
-    if (assets == nullptr)
-    {
+    dimen *= SCENE_SIZE/dimen.height;
+    if (assets == nullptr) {
         return false;
-    }
-    else if (!Scene2::init(dimen))
-    {
+    } else if (!Scene2::init(dimen)) {
         return false;
     }
     //_input.init_withlistener();
@@ -94,7 +83,7 @@ bool LevelScene::init(const std::shared_ptr<AssetManager> &assets)
 });
     background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("Background"), 1, 15);
     std::cout << "height of level scene "<< background->getTexture()->getHeight()<<std::endl;
-    background->setScale(SCENE_SIZE/background->getTexture()->getHeight());
+    background->setScale(4.3);
     background->setPosition(0.5 * background->getSize());
     addChild(background);
     layer->setColor(Color4(0, 0, 0, 1));
