@@ -128,9 +128,9 @@ void MeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
         _counter++;
     }
     
-    if (!(overWorld._isHost && _counter >= updateRate)){
-        return;
-    }
+    // if (!(overWorld._isHost && _counter >= updateRate)){
+    //     return;
+    // }
     
     if(_health < _maxHealth/3){
         curAction = AbstractEnemy::EnemyActions::LOWHEALTH;
