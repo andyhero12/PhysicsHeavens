@@ -13,15 +13,19 @@
 #include <unordered_set>
 #include <vector>
 #include "SpriteAnimationNode.h"
+#include "GateUIController.h"
+
 class Base{
     
 private:
     int _health;
+    int _maxHealth;
     int _healVal;
     cugl::Vec2 _position;
+    std::shared_ptr<GateUIController> _gateUIController;
     
 public:
-    Base(int health, cugl::Vec2 pos);
+    Base(int health, cugl::Vec2 pos, std::shared_ptr<GateUIController> uiController);
     void update();
     void reduceHealth(int val);
     

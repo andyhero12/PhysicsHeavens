@@ -27,13 +27,15 @@ int BaseSet::getFirstHealth()
 {
     return (*_bases.begin())->getHealth();
 }
-bool BaseSet::init(const std::vector<cugl::Vec3>& basePoses, std::shared_ptr<cugl::AssetManager> assets)
+bool BaseSet::init(const std::vector<cugl::Vec3>& basePoses, std::shared_ptr<cugl::AssetManager> assets, std::shared_ptr<GateUIController> uiController)
 {
     _bases.clear();
     animationNodes.clear();
     baseSetNode = cugl::scene2::SceneNode::alloc();
+    _uiController = uiController;
+    
     for (const cugl::Vec3& base : basePoses){
-        auto baseObj = std::make_shared<Base>(base.z, cugl::Vec2(base.x,base.y));
+        auto baseObj = std::make_shared<Base>(base.z, cugl::Vec2(base.x,base.y), uiController);
         _bases.emplace_back(baseObj);
         auto drawNode = SpriteAnimationNode::allocWithSheet(assets->get<cugl::Texture>("gate"), 3,5, 5);
 //        drawNode->setContentSize(cugl::Size(4,4));
@@ -45,6 +47,8 @@ bool BaseSet::init(const std::vector<cugl::Vec3>& basePoses, std::shared_ptr<cug
     }
     return true;
 }
+
+
 bool BaseSet::baseLost()
 {
     for (auto &base : _bases)
@@ -56,3 +60,8 @@ bool BaseSet::baseLost()
     }
     return false;
 }
+
+std::shared_ptr<scene2::SceneNode> BaseSet::getUINode(){
+    return _uiController->getUINode();
+}
+

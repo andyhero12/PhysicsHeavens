@@ -31,8 +31,10 @@ private:
     const Vec2 origin = Vec2(0, 0);
     
     std::shared_ptr<cugl::scene2::PolygonNode> _healthframe;
+    std::shared_ptr<cugl::scene2::PolygonNode> _gateframe;
     std::shared_ptr<SubTextureNode> _healthfill;
     std::shared_ptr<SubTextureNode> _sizefill;
+    std::shared_ptr<SubTextureNode> _gatefill;
     std::shared_ptr<cugl::scene2::PolygonNode> _bombtoggle;
     std::shared_ptr<cugl::scene2::PolygonNode> _shoottoggle;
     std::shared_ptr<cugl::scene2::PolygonNode> _baittoggle;
@@ -55,6 +57,7 @@ public:
     
     void setHealthBarTexture(float percentage);
     void setSizeBarTexture(float percentage);
+    void setGateBarTexture(float percentage);
     void setToggle(std::string mode);
     void animateFlash(int absorb);
   

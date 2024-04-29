@@ -121,6 +121,26 @@
             "file": "textures/game_ui/main_size_fill.png",
             "magfilter": "nearest"
         },
+        "gateframe": {
+            "file": "textures/game_ui/gate_health_single.png",
+            "magfilter": "nearest"
+        },
+        "gateframe2": {
+            "file": "textures/game_ui/gate_health_double.png",
+            "magfilter": "nearest"
+        },
+        "gatefill": {
+            "file": "textures/game_ui/gate_fill.png",
+            "magfilter": "nearest"
+        },
+        "gatefillup": {
+            "file": "textures/game_ui/gate_double_upper_fill.png",
+            "magfilter": "nearest"
+        },
+        "gatefilldown": {
+            "file": "textures/game_ui/gate_double_lower_fill.png",
+            "magfilter": "nearest"
+        },
         "baittoggle": {
             "file": "textures/game_ui/main_bait_icon.png",
             "magfilter": "nearest"
