@@ -31,6 +31,7 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 
 using namespace cugl;
 using namespace cugl::physics2::net;
@@ -90,6 +91,8 @@ using namespace cugl::physics2::net;
 
 #define FIXED_TIMESTEP_S 0.02f
 #define ROOT_NODE_SCALE 1
+
+#define SHAKING_DECAY 100.0f
 
 #pragma mark -
 #pragma mark Constructors
@@ -569,7 +572,7 @@ void GameScene::postUpdate(float dt)
     delta -= (computeActiveSize() / 2);
     Vec2 curr = -delta / _zoom;
     Vec2 pan = curr.lerp(previousPan, 0.9f);
-    _rootnode->applyPan(pan);
+    _rootnode->applyPan(pan + shakeMagnitude * Vec2(rand() / (float)RAND_MAX, rand() / (float)RAND_MAX));
     previousPan = pan;
     //
     //    std::vector<Vec2> upperPosHide;
@@ -603,6 +606,11 @@ void GameScene::postUpdate(float dt)
 
     _minimap->update();
     olddogPos = dogPos;
+
+    shakeMagnitude -= SHAKING_DECAY * dt;
+    if(shakeMagnitude < 0) {
+        shakeMagnitude = 0;
+    }
 }
 
 void GameScene::fixedUpdate()
@@ -626,6 +634,7 @@ void GameScene::fixedUpdate()
         }
         if (auto biteEvent = std::dynamic_pointer_cast<BiteEvent>(e))
         {
+            //shakeMagnitude = std::max(shakeMagnitude, 50.0f);
             overWorld.processBiteEvent(biteEvent);
         }
         if (auto recallEvent = std::dynamic_pointer_cast<RecallEvent>(e))
@@ -634,11 +643,13 @@ void GameScene::fixedUpdate()
         }
         if (auto explodeEvent = std::dynamic_pointer_cast<ExplodeEvent>(e))
         {
+            shakeMagnitude = std::max(shakeMagnitude, 40.0f);
             //            CULog("Explode Event Got");
             overWorld.processExplodeEvent(explodeEvent);
         }
         if (auto shootEvent = std::dynamic_pointer_cast<ShootEvent>(e))
         {
+            shakeMagnitude = std::max(shakeMagnitude, 40.0f);
             //            CULog("Explode Event Got");
             overWorld.processShootEvent(shootEvent);
         }

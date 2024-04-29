@@ -116,6 +116,7 @@ protected:
     int tutorialIndex;
     
     Vec2 previousPan;
+    float shakeMagnitude;
 
     /**
      * Lays out the game geography.
