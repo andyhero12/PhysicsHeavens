@@ -498,7 +498,7 @@
             "magfilter": "nearest"
         },
         "base": {
-            "file": "textures/target.png",
+            "file": "textures/heavens_gate.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },

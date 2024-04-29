@@ -46,7 +46,8 @@ _didConfirm(false),
 _didBack(false),
 _didPressDown(false),
 _didPressUp(false),
-_state(MOUSE)
+_state(MOUSE),
+_gameContrl(nullptr)
 {
 }
 
@@ -558,6 +559,12 @@ void InputController::getButton(const cugl::GameControllerButtonEvent& event, bo
     }else if(event.button == cugl::GameController::Button::B){
         _back = true;
         std::cout << "buttonB" << std::endl;
+    }
+}
+
+void InputController::applyRumble(Uint16 low_freq, Uint16 high_freq, Uint32 duration) {
+    if (_gameContrl) {
+        _gameContrl->applyRumble(low_freq, high_freq, duration);
     }
 }
 

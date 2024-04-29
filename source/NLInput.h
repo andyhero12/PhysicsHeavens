@@ -168,6 +168,8 @@ public:
     bool didPressPause() const {
         return _didPause;
     }
+
+    void applyRumble(Uint16 low_freq, Uint16 high_freq, Uint32 duration);
     /**
      * Creates a new input controller with the default settings
      *
