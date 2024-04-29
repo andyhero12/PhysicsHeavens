@@ -96,22 +96,12 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
                 _choice = Choice::SETTING;
             }
         }
-        });
+    });
+
     _button1->setPosition(650,90);
     _button3->setPosition(600,0);
     _Logo->setPosition(-100,670);
-    });
 
-    _button3->addListener([this](const std::string& name, bool down) {
-        if (down) {
-            if(_input.getState()==InputController::State::CONTROLLER){
-                _isdown = Isdown::isSETTING;
-            }
-            else{
-                _choice = Choice::SETTING;
-            }
-        }
-        });
     _counter = 0;
     switchFreq = 0.2;
     _isdown = Isdown::isNONE;
@@ -168,7 +158,6 @@ void MainMenuScene::setActive(bool value) {
 
 void MainMenuScene::update(float timestep)
 {
-    background->update();
     background->update();
     _input.update();
     timeSinceLastSwitch += timestep;

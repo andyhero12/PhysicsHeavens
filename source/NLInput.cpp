@@ -246,15 +246,6 @@ void InputController::readInput(int value) {
     }
 
 
-    if (keys->keyDown(up)) {
-        _didPressUp = true;
-        _UseKeyboard = true;
-    }
-    else if (keys->keyDown(down)) {
-        _didPressDown = true;
-        _UseKeyboard = true;
-    }
-
     // Shooting
     if(value >= static_cast<int>(Tutorial::BITE)){
         if (keys->keyPressed(shoot)) {
