@@ -842,7 +842,8 @@ void GameScene::addChildForeground()
 
 void GameScene::updateInputController()
 {
-    bool normal = true;
+    
+    
     if (tutorialIndex < tutorialTiles.size())
     {
         std::shared_ptr<Tutorial> tile = tutorialTiles.at(tutorialIndex);
@@ -852,36 +853,38 @@ void GameScene::updateInputController()
         if (atLocation && !tile->didPass())
         {
             node->setVisible(true);
-            if (_input.update(tile->getProgress()))
-            {
-                tile->setPass(true);
-                node->setVisible(false);
-                tutorialIndex++;
-            }
-            normal = false;
         }
+        if (_input.update(tile->getProgress(), atLocation))
+        {
+            tile->setPass(true);
+            node->setVisible(false);
+            tutorialIndex++;
+        }
+        
     }
-    if (normal)
-    {
+    else{
         _input.update();
-        if (_input.didPressExit())
-        {
-            Application::get()->quit();
-        }
-        if (_input.didPressPause())
-        {
-            _pause->togglePause();
-        }
-
-        if (_input.didPressHome())
-        {
-            _pause->exitToMain();
-        }
         // Process the toggled key commands
         if (_input.didPressDebug())
         {
             setDebug(!isDebug());
         }
+    }
+    
+    
+    
+    if (_input.didPressExit())
+    {
+        Application::get()->quit();
+    }
+    if (_input.didPressPause())
+    {
+        _pause->togglePause();
+    }
+
+    if (_input.didPressHome())
+    {
+        _pause->exitToMain();
     }
 }
 

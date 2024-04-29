@@ -17,12 +17,13 @@ class Tutorial{
 public:
    
     enum MODE {
-        MOVEMENT,
-        BITE,
-        CHANGEABILITY,
-        SPECIALS,
-        DEFENDGATE,
-        DESTROYSPAWNER
+        MOVEMENT = 0,
+        BITE = 1,
+        CHANGEABILITY = 2,
+        SPECIALS = 3,
+        DEFENDGATE = 4,
+        DESTROYSPAWNER = 5,
+        DASH = 6
     };
 
     static std::string toString(MODE progress) {
