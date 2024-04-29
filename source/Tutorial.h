@@ -17,22 +17,25 @@ class Tutorial{
 public:
     
     enum MODE {
-        MOVEMENT = 0,
-        BITE = 1,
-        DEFENDGATE = 2,
-        DASH = 3,
-        SPECIALSONE = 4,
-        DESTROYSPAWNER = 5,
-        CHANGEABILITYTWO = 6,
-        SPECIALSTWO = 7,
-        CHANGEABILITYTHREE = 8,
-        SPECIALSTHREE = 9,
-        CHANGEABILITYFOUR = 10,
-        SPECIALSFOUR = 11
+        GREETING = 0,
+        MOVEMENT = 1,
+        BITE = 2,
+        DEFENDGATE = 3,
+        DASH = 4,
+        SPECIALSONE = 5,
+        DESTROYSPAWNER = 6,
+        CHANGEABILITYTWO = 7,
+        SPECIALSTWO = 8,
+        CHANGEABILITYTHREE = 9,
+        SPECIALSTHREE = 10,
+        CHANGEABILITYFOUR = 11,
+        SPECIALSFOUR = 12
     };
 
     static std::string toString(MODE mode) {
         switch (mode) {
+            case GREETING:
+                return "GREETING";
             case MOVEMENT:
                 return "MOVEMENT";
             case BITE:

@@ -329,15 +329,12 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 
     if (level_string == LEVEL_ONE_KEY){
         initTutorialOne();
-        initTutorial();
     }
     else if(level_string == LEVEL_TWO_KEY){
         initTutorialTwo();
-        initTutorial();
     }
     else if(level_string == LEVEL_THREE_KEY){
         initTutorialThree();
-        initTutorial();
     }
     
     return true;
@@ -871,10 +868,14 @@ void GameScene::updateInputController()
         std::shared_ptr<Tutorial> tile = tutorialTiles.at(tutorialIndex);
         bool atLocation = tile->atArea(overWorld.getDog()->getX());
         std::shared_ptr<scene2::SceneNode> node = _tutorialnode->getChildByName(Tutorial::toString(tile->getProgress()));
+        std::shared_ptr<SpriteAnimationNode> spriteNode = std::dynamic_pointer_cast<SpriteAnimationNode>(node);
+
         // just do tile->setVisible(tutorial) to draw stuff
-        if (atLocation && !tile->didPass())
+        if (atLocation && !tile->didPass() && spriteNode)
         {
-            node->setVisible(true);
+            spriteNode->setVisible(true);
+            spriteNode->update();
+            
         }
         if (_input.update(tile->getProgress(), atLocation))
         {
@@ -914,18 +915,22 @@ void GameScene::initTutorialOne(){
     tutorialIndex = 0;
     _tutorialnode = scene2::SceneNode::alloc();
     _uinode->addChild(_tutorialnode);
+    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::GREETING));
+    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::MOVEMENT));
     tutorialTiles.push_back(Tutorial::alloc(14, Tutorial::MODE::BITE));
-    tutorialTiles.push_back(Tutorial::alloc(18, Tutorial::MODE::CHANGEABILITYTWO));
     std::vector<std::string> modes = {"SHOOT"};
     overWorld.getDog()->setAbility(modes);
+    
+    // each one need to write # of frames
+    std::vector<int> frame = {21, 21, 21};
+    initTutorial(frame);
+    
 }
 
 void GameScene::initTutorialTwo(){
     tutorialIndex = 0;
     _tutorialnode = scene2::SceneNode::alloc();
     _uinode->addChild(_tutorialnode);
-    tutorialTiles.push_back(Tutorial::alloc(14, Tutorial::MODE::BITE));
-    tutorialTiles.push_back(Tutorial::alloc(18, Tutorial::MODE::CHANGEABILITYTWO));
     std::vector<std::string> modes = {"SHOOT", "BAIT"};
     overWorld.getDog()->setAbility(modes);
 }
@@ -934,24 +939,24 @@ void GameScene::initTutorialThree(){
     tutorialIndex = 0;
     _tutorialnode = scene2::SceneNode::alloc();
     _uinode->addChild(_tutorialnode);
-    tutorialTiles.push_back(Tutorial::alloc(14, Tutorial::MODE::BITE));
-    tutorialTiles.push_back(Tutorial::alloc(18, Tutorial::MODE::CHANGEABILITYTWO));
     std::vector<std::string> modes = {"SHOOT", "BAIT", "BOMB"};
     overWorld.getDog()->setAbility(modes);
 }
 
-void GameScene::initTutorial()
+void GameScene::initTutorial(std::vector<int> frame)
 {
     Size screen = computeActiveSize();
-    std::shared_ptr<scene2::PolygonNode> node;
+    std::shared_ptr<SpriteAnimationNode> node;
     std::string str;
 
     for (int i = 0; i < tutorialTiles.size(); i++)
     {
         str = Tutorial::toString(tutorialTiles.at(i)->getProgress());
-        node = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>(str));
+//        node = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>(str));
+        node = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>(str), 1, frame.at(i), frame.at(i), 5);
+        
         _tutorialnode->addChildWithName(node, str);
-        node->setScale(2);
+        node->setScale(4);
         node->setAnchor(Vec2::ANCHOR_CENTER);
         node->setPositionX(screen.width / 2);
         node->setPositionY(node->getScaleY() * node->getTexture()->getHeight() / 2);
