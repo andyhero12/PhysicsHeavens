@@ -579,7 +579,13 @@ void GameScene::postUpdate(float dt)
     }
     delta -= (computeActiveSize() / 2);
     Vec2 curr = -delta / _zoom;
-    Vec2 pan = curr.lerp(previousPan, 0.9f);
+    Vec2 pan;
+    if((curr - previousPan).length() < computeActiveSize().height) {
+        pan = curr.lerp(previousPan, 0.9f);
+    }
+    else {
+        pan = curr;
+    }
     _rootnode->applyPan(pan + shakeMagnitude * Vec2(rand() / (float)RAND_MAX, rand() / (float)RAND_MAX));
     previousPan = pan;
     //
