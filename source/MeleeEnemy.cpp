@@ -121,12 +121,12 @@ void MeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
     if (_attackCooldown < 60){
         _attackCooldown++;
     }
-
+    
+    _time += 1;
+    
     if (_counter < updateRate){
         _counter++;
     }
-    
-    _time += 1;
     
     if (!(overWorld._isHost && _counter >= updateRate)){
         return;
@@ -172,6 +172,8 @@ void MeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
             _time = 0;
         }
     }
+    
+    _counter = 0;
 }
 
 
@@ -182,7 +184,7 @@ void MeleeEnemy::handleChase(OverWorld& overWorld) {
     
     setGoal(target_pos, overWorld.getWorld());
     goToGoal();
-    _counter = 0;
+    
     
     movementDirection = dist;
     
