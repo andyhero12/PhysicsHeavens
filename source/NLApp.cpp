@@ -129,7 +129,7 @@ void NetApp::onResume() {
 #pragma mark Application Loop
 
 void NetApp::preUpdate(float timestep){
-//    std::cout << _status << std::endl;
+    //    std::cout << _status << std::endl;
     if (_status == LOAD && !_loading.doneLoading()) {
         _loading.update(0.01f);
     }else if (_status == LOAD) {
@@ -138,6 +138,7 @@ void NetApp::preUpdate(float timestep){
         _mainmenu.init(_assets);
         _menu.init(_assets);
         _level.init(_assets);
+        _singlePlayer.init(_assets);
         _mainmenu.setActive(true);
         _hostgame.init(_assets,_network);
         _joingame.init(_assets,_network);
@@ -166,10 +167,12 @@ void NetApp::preUpdate(float timestep){
     else if(_status == SELECTION){
         updateSelectionScene(timestep);
     }
-    else if(_status == SETTING)
+    else if(_status == SETTING){
         updateSettingScene(timestep);
+    }else if (_status == SINGLEPLAYER){
+        updateSinglePlayerLevelScene(timestep);
     }
-
+}
 void NetApp::postUpdate(float timestep) {
     if (_status == GAME) {
         _gameplay.postUpdate(timestep);
@@ -373,15 +376,17 @@ void NetApp::updateSelectionScene(float timestep)
     switch (_selection.getChoice()) {
     case SelectionScene::Choice::PLAYER1:
         _selection.setActive(false);
-        _level.setActive(true);
-        _status = LEVEL;
-        _level.resetLevel();
+        _singlePlayer.setActive(true);
+        _status = SINGLEPLAYER;
+        _singlePlayer.resetLevel();
         isHosting = true;
+        isSinglePlayer = true;
         break;
     case SelectionScene::Choice::PLAYER2:
         _selection.setActive(false);
         _menu.setActive(true);
         _status = MENU;
+        isSinglePlayer = false;
         break;
     case SelectionScene::Choice::NONE:
         // DO NOTHING
@@ -401,7 +406,10 @@ void NetApp::updateLevelScene(float timestep)
         switch (_level.getLevel()) {
             case LevelScene::Level::L1:
                 _level.setActive(false);
-                if (isHosting){
+                if (isSinglePlayer){
+                    _hostgame.setActive(true);
+                    _status = HOST;
+                }else if (isHosting){
                     _hostgame.setActive(true);
                     _status = HOST;
                 }else{
@@ -411,7 +419,10 @@ void NetApp::updateLevelScene(float timestep)
                 break;
             case LevelScene::Level::L2:
                 _level.setActive(false);
-                if (isHosting){
+                if (isSinglePlayer){
+                    _hostgame.setActive(true);
+                    _status = HOST;
+                }else if (isHosting){
                     _hostgame.setActive(true);
                     _status = HOST;
                 }else{
@@ -421,7 +432,10 @@ void NetApp::updateLevelScene(float timestep)
                 break;
             case LevelScene::Level::L3:
                 _level.setActive(false);
-                if (isHosting){
+                if (isSinglePlayer){
+                    _hostgame.setActive(true);
+                    _status = HOST;
+                }else if (isHosting){
                     _hostgame.setActive(true);
                     _status = HOST;
                 }else{
@@ -437,6 +451,38 @@ void NetApp::updateLevelScene(float timestep)
     }
 }
 
+
+void NetApp::updateSinglePlayerLevelScene(float timestep)
+{
+    _singlePlayer.update(timestep);
+    if(_singlePlayer.getBackclick())
+    {
+        _singlePlayer.setActive(false);
+        _mainmenu.setActive(true);
+        _status = MAINMENU;
+    }else{
+        switch (_singlePlayer.getLevel()) {
+            case LevelScene::Level::L1:
+                _singlePlayer.setActive(false);
+                _hostgame.setActive(true);
+                _status = HOST;
+                break;
+            case LevelScene::Level::L2:
+                _singlePlayer.setActive(false);
+                _hostgame.setActive(true);
+                _status = HOST;
+                break;
+            case LevelScene::Level::L3:
+                _singlePlayer.setActive(false);
+                _hostgame.setActive(true);
+                _status = HOST;
+                break;
+            default :
+                // DO NOTHING
+                break;
+            }
+    }
+}
 void NetApp::updateSettingScene(float timestep){
     if(_setting.getBackclick())
     {
@@ -485,6 +531,8 @@ void NetApp::draw() {
         case SETTING:
             _setting.render(_batch);
             break;
+        case SINGLEPLAYER:
+            _singlePlayer.render(_batch);
         default:
             break;
     }
