@@ -15,31 +15,48 @@
 #include <cugl/cugl.h>
 class Tutorial{
 public:
-   
+    
     enum MODE {
         MOVEMENT = 0,
         BITE = 1,
-        CHANGEABILITY = 2,
-        SPECIALS = 3,
-        DEFENDGATE = 4,
+        DEFENDGATE = 2,
+        DASH = 3,
+        SPECIALSONE = 4,
         DESTROYSPAWNER = 5,
-        DASH = 6
+        CHANGEABILITYTWO = 6,
+        SPECIALSTWO = 7,
+        CHANGEABILITYTHREE = 8,
+        SPECIALSTHREE = 9,
+        CHANGEABILITYFOUR = 10,
+        SPECIALSFOUR = 11
     };
 
-    static std::string toString(MODE progress) {
-        switch (progress) {
+    static std::string toString(MODE mode) {
+        switch (mode) {
             case MOVEMENT:
                 return "MOVEMENT";
             case BITE:
                 return "BITE";
-            case CHANGEABILITY:
-                return "CHANGEABILITY";
-            case SPECIALS:
-                return "SPECIALS";
             case DEFENDGATE:
                 return "DEFENDGATE";
+            case DASH:
+                return "DASH";
+            case SPECIALSONE:
+                return "SPECIALSONE";
             case DESTROYSPAWNER:
-                return "DESTORYSPAWNER";
+                return "DESTROYSPAWNER";
+            case CHANGEABILITYTWO:
+                return "CHANGEABILITYTWO";
+            case SPECIALSTWO:
+                return "SPECIALSTWO";
+            case CHANGEABILITYTHREE:
+                return "CHANGEABILITYTHREE";
+            case SPECIALSTHREE:
+                return "SPECIALSTHREE";
+            case CHANGEABILITYFOUR:
+                return "CHANGEABILITYFOUR";
+            case SPECIALSFOUR:
+                return "SPECIALSFOUR";
             default:
                 return "Unknown Progress";
         }
@@ -50,19 +67,31 @@ public:
             return MOVEMENT;
         } else if (progressString == "BITE") {
             return BITE;
-        } else if (progressString == "CHANGEABILITY") {
-            return CHANGEABILITY;
-        } else if (progressString == "SPECIALS") {
-            return SPECIALS;
-        } else if (progressString == "DEFENDGATE"){
+        } else if (progressString == "DEFENDGATE") {
             return DEFENDGATE;
-        } else if(progressString == "DESTROYSPAWNER"){
+        } else if (progressString == "DASH") {
+            return DASH;
+        } else if (progressString == "SPECIALS ONE") {
+            return SPECIALSONE;
+        } else if (progressString == "DESTROY SPAWNER") {
             return DESTROYSPAWNER;
-        }else {
+        } else if (progressString == "CHANGEABILITY TWO") {
+            return CHANGEABILITYTWO;
+        } else if (progressString == "SPECIALS TWO") {
+            return SPECIALSTWO;
+        } else if (progressString == "CHANGEABILITY THREE") {
+            return CHANGEABILITYTHREE;
+        } else if (progressString == "SPECIALS THREE") {
+            return SPECIALSTHREE;
+        } else if (progressString == "CHANGEABILITY FOUR") {
+            return CHANGEABILITYFOUR;
+        } else if (progressString == "SPECIALS FOUR") {
+            return SPECIALSFOUR;
+        } else {
             throw std::invalid_argument("Invalid progress string");
         }
     }
-    
+
 protected:
     int tileX;
     bool passed;

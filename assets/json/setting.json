@@ -1,7 +1,7 @@
 {
 	"textures": {
-        "Background":{
-            "file":      "textures/Newlevel.png",
+        "setting_background":{
+            "file":      "textures/Setting1.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
@@ -14,7 +14,7 @@
         }
 	},
     "scene2s" : {
-        "level" : {
+        "setting" : {
             "type"      : "Solid",
             "format"    : {
                 "type" : "Anchored"

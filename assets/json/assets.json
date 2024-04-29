@@ -1,6 +1,31 @@
 {
     "textures": {
-        "CHANGEABILITY":{
+        "SPECIALSONE":{
+            "file": "textures/tutorial/swap-skewers.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "CHANGEABILITYTWO":{
+            "file": "textures/tutorial/unleash-ult.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "SPECIALSTWO":{
+            "file": "textures/tutorial/swap-skewers.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "CHANGEABILITYTHREE":{
+            "file": "textures/tutorial/unleash-ult.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "SPECIALSTHREE":{
+            "file": "textures/tutorial/swap-skewers.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "CHANGEABILITYFOUR":{
             "file": "textures/tutorial/unleash-ult.png",
             "minfilter": "linear",
             "magfilter": "nearest"
@@ -11,11 +36,6 @@
             "magfilter": "nearest"
         },
         "BITE":{
-            "file": "textures/tutorial/swap-skewers.png",
-            "minfilter": "linear",
-            "magfilter": "nearest"
-        },
-        "SPECIALS":{
             "file": "textures/tutorial/swap-skewers.png",
             "minfilter": "linear",
             "magfilter": "nearest"
@@ -102,6 +122,11 @@
         },
         "spawner": {
             "file": "textures/spawner.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "spawnerDeath": {
+            "file": "textures/broken_spawner.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },

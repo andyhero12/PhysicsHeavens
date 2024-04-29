@@ -92,13 +92,13 @@ public:
     }
 
     void setVX(float value) override {
-        if(!_knockbackTimer > 0) {
+        if(!(_knockbackTimer > 0)) {
             BoxObstacle::setVX(value);
         }
     }
 
     void setVY(float value) override {
-        if(!_knockbackTimer > 0) {
+        if(!(_knockbackTimer > 0)) {
             BoxObstacle::setVY(value);
         }
     }
@@ -109,7 +109,7 @@ public:
 
 
     void setLinearVelocity(float x, float y) override {
-        if(!_knockbackTimer > 0) {
+        if(!(_knockbackTimer > 0)) {
             BoxObstacle::setLinearVelocity(x, y);
         }
     }
