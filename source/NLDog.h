@@ -76,6 +76,9 @@ private:
     std::shared_ptr<cugl::scene2::SceneNode> frontEffectsNode;
     std::shared_ptr<cugl::scene2::SceneNode> backEffectsNode;
     
+    // pass in this vector
+    std::vector<std::string> modes = {"SHOOT", "BAIT", "BOMB", "RECALL"};
+    
 protected:
     Actions action;
     
@@ -112,7 +115,7 @@ protected:
     std::shared_ptr<AnimationSceneNode> belowPenta;
     std::shared_ptr<UIController> _uiController;
 
-    std::array<std::string,4> modes = {"SHOOT", "BAIT", "BOMB", "RECALL"};
+    
     bool _startDash;
     bool _startBite;
     bool _startShoot;
@@ -281,6 +284,8 @@ public:
         std::shared_ptr<Dog> result = std::make_shared<Dog>();
         return (result->init(pos,size) ? result : nullptr);
     }
+    
+    void setAbility(std::vector<std::string> vec) {modes = vec;}
     
 #pragma mark -
 #pragma mark Accessors

@@ -141,32 +141,32 @@ bool InputController::readInput(Tutorial::MODE progress, bool inRange){
     if(!inRange){
         readInput(static_cast<int>(progress));
     }
-    
-    
-    if(progress == Tutorial::MODE::MOVEMENT){
-        if (keys->keyPressed(KeyCode::ARROW_UP) || keys->keyPressed(KeyCode::ARROW_DOWN) || keys->keyPressed(KeyCode::ARROW_LEFT) || keys->keyPressed(KeyCode::ARROW_RIGHT)){
-            return true;
+    else{
+        if(progress == Tutorial::MODE::MOVEMENT){
+            if (keys->keyPressed(KeyCode::ARROW_UP) || keys->keyPressed(KeyCode::ARROW_DOWN) || keys->keyPressed(KeyCode::ARROW_LEFT) || keys->keyPressed(KeyCode::ARROW_RIGHT)){
+                return true;
+            }
         }
-    }
-    else if (progress == Tutorial::MODE::BITE){
-        if(keys->keyPressed(KeyCode::SPACE)){
-            _didFire = true;
-            _UseKeyboard = true;
-            return true;
+        else if (progress == Tutorial::MODE::BITE){
+            if(keys->keyPressed(KeyCode::SPACE)){
+                _didFire = true;
+                _UseKeyboard = true;
+                return true;
+            }
         }
-    }
-    else if(progress == Tutorial::MODE::CHANGEABILITY){
-        if(keys->keyPressed(KeyCode::F)){
-            _didChangeMode = true;
-            _UseKeyboard = true;
-            return true;
+        else if(progress == Tutorial::MODE::CHANGEABILITY){
+            if(keys->keyPressed(KeyCode::F)){
+                _didChangeMode = true;
+                _UseKeyboard = true;
+                return true;
+            }
         }
-    }
-    else if(progress == Tutorial::SPECIALS){
-        if(keys->keyPressed(KeyCode::G)){
-            _didSpecial = true;
-            _UseKeyboard = true;
-            return true;
+        else if(progress == Tutorial::SPECIALS){
+            if(keys->keyPressed(KeyCode::G)){
+                _didSpecial = true;
+                _UseKeyboard = true;
+                return true;
+            }
         }
     }
 
