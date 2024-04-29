@@ -72,7 +72,7 @@ void SpawnerController::update(MonsterController& monsterController, OverWorld& 
         if (spawner->dead()){
             Vec2 pos = spawner->getPos();
             auto deathNode = SpriteAnimationNode::allocWithSheet(_deathSpawner, 1, 1, 1, 1);
-            float scale = 1 / 64.0f;
+            float scale = 1 / 48.0f;
             deathNode->setAnchor(cugl::Vec2::ANCHOR_CENTER);
             deathNode->setScale(scale);
             deathNode->setPosition(pos);
@@ -128,7 +128,7 @@ bool SpawnerController::init(const std::vector<LevelModel::Spawner>& startLocs, 
         int health = spawner.hp;
         std::shared_ptr<SimpleSpawner> curSpawner = std::make_shared<SimpleSpawner>(spawner.regularDelay,pos,health,spawner.initDelay,spawner.primaryEnemy, spawner.secondaryEnemy, spawner.tertiaryEnemy);
         auto drawNode = SpriteAnimationNode::allocWithSheet(assets->get<cugl::Texture>("spawner"), 1, 4, 4, 6);
-        float scale = 1 / 64.0f;
+        float scale = 1 / 48.0f;
         drawNode->setAnchor(cugl::Vec2::ANCHOR_CENTER);
         drawNode->setScale(scale);
         drawNode->setPosition(pos);
