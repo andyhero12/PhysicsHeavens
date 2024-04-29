@@ -54,7 +54,6 @@ void DecoySet::update(float timestep){
     auto decAnim = _decAnimations.begin();
     while(decAnim != _decAnimations.end()){
         std::shared_ptr<SpriteAnimationNode> curAnim = *decAnim;
-        auto curA = decAnim;
         curAnim->update();
         decAnim++;
         if (curAnim->getFrame() == curAnim->getSpan()-1){
