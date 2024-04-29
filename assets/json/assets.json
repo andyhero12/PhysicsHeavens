@@ -1,32 +1,57 @@
 {
     "textures": {
-        "CHANGEABILITY":{
-            "file": "textures/tutorial/unleash-ult.png",
+        "GREETING":{
+            "file": "textures/tutorial/greeting.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "SPECIALSONE":{
+            "file": "textures/tutorial/greeting.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "CHANGEABILITYTWO":{
+            "file": "textures/tutorial/greeting.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "SPECIALSTWO":{
+            "file": "textures/tutorial/greeting.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "CHANGEABILITYTHREE":{
+            "file": "textures/tutorial/greeting.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "SPECIALSTHREE":{
+            "file": "textures/tutorial/greeting.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "CHANGEABILITYFOUR":{
+            "file": "textures/tutorial/greeting.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
         "MOVEMENT":{
-            "file": "textures/tutorial/swap-skewers.png",
+            "file": "textures/tutorial/move.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
         "BITE":{
-            "file": "textures/tutorial/swap-skewers.png",
-            "minfilter": "linear",
-            "magfilter": "nearest"
-        },
-        "SPECIALS":{
-            "file": "textures/tutorial/swap-skewers.png",
+            "file": "textures/tutorial/bite.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
         "DEFENDGATE":{
-            "file": "textures/tutorial/swap-skewers.png",
+            "file": "textures/tutorial/greeting.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
         "DESTORYSPAWNER":{
-            "file": "textures/tutorial/swap-skewers.png",
+            "file": "textures/tutorial/greeting.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
@@ -102,6 +127,11 @@
         },
         "spawner": {
             "file": "textures/spawner.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "spawnerDeath": {
+            "file": "textures/broken_spawner.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
@@ -468,7 +498,7 @@
             "magfilter": "nearest"
         },
         "base": {
-            "file": "textures/target.png",
+            "file": "textures/heavens_gate.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },

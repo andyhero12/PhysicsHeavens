@@ -23,6 +23,7 @@ private:
     bool justAdded;
     std::shared_ptr<cugl::Texture> _explodeTexture;
     std::unordered_set<std::shared_ptr<SpriteAnimationNode>> _curAnimations;
+    std::unordered_set<std::shared_ptr<SpriteAnimationNode>> _decAnimations;
 public:
     
     std::shared_ptr<cugl::scene2::SceneNode> getDecoySetNode(){

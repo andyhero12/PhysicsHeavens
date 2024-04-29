@@ -168,6 +168,8 @@ public:
     bool didPressPause() const {
         return _didPause;
     }
+
+    void applyRumble(Uint16 low_freq, Uint16 high_freq, Uint32 duration);
     /**
      * Creates a new input controller with the default settings
      *
@@ -198,7 +200,7 @@ public:
 
     bool readInput_joystick(Tutorial::MODE progress, bool inRange);
     
-    void update(int value = 10);
+    void update(int value = 25);
     
     bool update(Tutorial::MODE progress, bool inRange);
     

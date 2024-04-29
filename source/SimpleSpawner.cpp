@@ -30,6 +30,7 @@ SimpleSpawner::SimpleSpawner(int rate, cugl::Vec2 pos, int health, int delay, st
 void SimpleSpawner::update(MonsterController& monsterController, OverWorld& overWorld, float timestep, float difficulty){
     updateTime(timestep * difficulty);
     int r = rand() % 10;
+    sceneNode->update();
     if (canSpawn()){
         reloadSpawner();
         std::string s;
