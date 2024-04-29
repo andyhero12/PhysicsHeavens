@@ -198,7 +198,7 @@ public:
 
     bool readInput_joystick(Tutorial::MODE progress, bool inRange);
     
-    void update(int value = 10);
+    void update(int value = 25);
     
     bool update(Tutorial::MODE progress, bool inRange);
     
