@@ -15,7 +15,7 @@
 
 class AbstractSpawner{
 protected:
-    std::shared_ptr<cugl::scene2::SceneNode> sceneNode;
+    std::shared_ptr<SpriteAnimationNode> sceneNode;
     std::shared_ptr<cugl::scene2::ProgressBar>  _healthBar;
     float _regularDelay;
     float _accumulatedDelay;
@@ -33,7 +33,7 @@ public:
     std::shared_ptr<cugl::scene2::SceneNode> getSpawnerNode(){
         return sceneNode;
     }
-    void setSpawnerNode(std::shared_ptr<cugl::scene2::SceneNode>  inc){
+    void setSpawnerNode(std::shared_ptr<SpriteAnimationNode>  inc){
         sceneNode = inc;
     }
     void setHealthBar(std::shared_ptr<cugl::scene2::ProgressBar> bar){
