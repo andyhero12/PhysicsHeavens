@@ -45,7 +45,8 @@ _back(false),
 _didConfirm(false),
 _didBack(false),
 _didPressDown(false),
-_didPressUp(false)
+_didPressUp(false),
+_state(MOUSE)
 {
 }
 
@@ -154,14 +155,14 @@ bool InputController::readInput(Tutorial::MODE progress, bool inRange){
                 return true;
             }
         }
-        else if(progress == Tutorial::MODE::CHANGEABILITY){
+        else if(progress == Tutorial::MODE::CHANGEABILITYFOUR || progress == Tutorial::MODE::CHANGEABILITYTWO || progress == Tutorial::MODE::CHANGEABILITYTHREE){
             if(keys->keyPressed(KeyCode::F)){
                 _didChangeMode = true;
                 _UseKeyboard = true;
                 return true;
             }
         }
-        else if(progress == Tutorial::SPECIALS){
+        else if(progress == Tutorial::SPECIALSONE || progress == Tutorial::SPECIALSTWO || progress == Tutorial::SPECIALSTHREE || progress == Tutorial::SPECIALSFOUR){
             if(keys->keyPressed(KeyCode::G)){
                 _didSpecial = true;
                 _UseKeyboard = true;
@@ -248,7 +249,7 @@ void InputController::readInput(int value) {
 
 
 
-    if(value >= static_cast<int>(Tutorial::CHANGEABILITY)){
+    if(value >= static_cast<int>(Tutorial::CHANGEABILITYTWO)){
         if (keys->keyPressed(mode)) {
             _didChangeMode = true;
             _UseKeyboard = true;
@@ -256,7 +257,7 @@ void InputController::readInput(int value) {
     }
     
 
-    if(value >= static_cast<int>(Tutorial::SPECIALS)){
+    if(value >= static_cast<int>(Tutorial::SPECIALSONE)){
         if (keys->keyPressed(special)) {
             _didSpecial = true;
             _UseKeyboard = true;
@@ -347,10 +348,10 @@ bool InputController::readInput_joystick(Tutorial::MODE progress, bool inRange) 
     else if (progress == Tutorial::MODE::BITE){
         buttons = cugl::GameController::Button::A;
     }
-    else if(progress == Tutorial::MODE::CHANGEABILITY){
+    else if(progress == Tutorial::MODE::CHANGEABILITYTWO || progress == Tutorial::MODE::CHANGEABILITYTHREE || progress == Tutorial::MODE::CHANGEABILITYFOUR){
         buttons = cugl::GameController::Button::A;
     }
-    else if(progress == Tutorial::SPECIALS){
+    else if(progress == Tutorial::SPECIALSONE || progress == Tutorial::SPECIALSTWO || progress == Tutorial::SPECIALSTHREE || progress == Tutorial::SPECIALSFOUR){
         X_left = cugl::GameController::Axis::LEFT_X;
         Y_left = cugl::GameController::Axis::LEFT_Y;
     }

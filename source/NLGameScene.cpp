@@ -894,7 +894,7 @@ void GameScene::initTutorial()
     _tutorialnode = scene2::SceneNode::alloc();
     _uinode->addChild(_tutorialnode);
     tutorialTiles.push_back(Tutorial::alloc(14, Tutorial::MODE::BITE));
-    tutorialTiles.push_back(Tutorial::alloc(18, Tutorial::MODE::CHANGEABILITY));
+    tutorialTiles.push_back(Tutorial::alloc(18, Tutorial::MODE::CHANGEABILITYTWO));
 
     Size screen = computeActiveSize();
     std::shared_ptr<scene2::PolygonNode> node;
