@@ -141,7 +141,7 @@ bool InputController::readInput(Tutorial::MODE progress, bool inRange){
     
      
     if(!inRange){
-        readInput(static_cast<int>(progress));
+        readInput(static_cast<int>(progress) - 1);
     }
     else{
         if(progress == Tutorial::MODE::MOVEMENT){
@@ -350,7 +350,7 @@ bool InputController::readInput_joystick(Tutorial::MODE progress, bool inRange) 
     cugl::GameController::Button buttons = cugl::GameController::Button::INVALID;
     // define button // trigger based on progress
     if(!inRange){
-        readInput_joystick(static_cast<int>(progress));
+        readInput_joystick(static_cast<int>(progress) - 1);
     }
     else{
         if (_gameContrl) {
