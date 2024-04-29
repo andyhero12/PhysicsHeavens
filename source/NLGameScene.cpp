@@ -902,11 +902,13 @@ void GameScene::initTutorialOne(){
     _tutorialnode = scene2::SceneNode::alloc();
     _uinode->addChild(_tutorialnode);
     tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::GREETING));
-    tutorialTiles.push_back(Tutorial::alloc(14, Tutorial::MODE::MOVEMENT));
+    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::MOVEMENT));
+    tutorialTiles.push_back(Tutorial::alloc(14, Tutorial::MODE::BITE));
     std::vector<std::string> modes = {"SHOOT"};
     overWorld.getDog()->setAbility(modes);
     
-    std::vector<int> frame = {21, 21};
+    // each one need to write # of frames
+    std::vector<int> frame = {21, 21, 21};
     initTutorial(frame);
     
 }

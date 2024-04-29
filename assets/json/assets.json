@@ -41,7 +41,7 @@
             "magfilter": "nearest"
         },
         "BITE":{
-            "file": "textures/tutorial/greeting.png",
+            "file": "textures/tutorial/bite.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
