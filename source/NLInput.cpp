@@ -391,6 +391,7 @@ bool InputController::readInput_joystick(Tutorial::MODE progress, bool inRange) 
                 if (_gameContrl->isButtonPressed(buttons)) {
                     _didChangeMode = true;
                     _UseJoystick = true;
+                    return true;
                 }
             }
             else if(progress == Tutorial::SPECIALSONE || progress == Tutorial::SPECIALSTWO || progress == Tutorial::SPECIALSTHREE || progress == Tutorial::SPECIALSFOUR){
@@ -399,6 +400,7 @@ bool InputController::readInput_joystick(Tutorial::MODE progress, bool inRange) 
                 if (_gameContrl->getAxisPosition(LT)>=0.5||_gameContrl->getAxisPosition(RT)>=0.5) {
                     _didSpecial = true;
                     _UseJoystick = true;
+                    return true;
                 }
             }
             else{
