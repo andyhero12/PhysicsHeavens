@@ -21,7 +21,7 @@ using namespace std;
 #pragma mark Level Layout
 
 /** Regardless of logo, lock the height to this */
-#define SCENE_HEIGHT  720
+#define SCENE_HEIGHT  800
 
 
 #pragma mark -
@@ -52,15 +52,15 @@ bool MenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     
     // Start up the input handler
     _assets = assets;
-    
+    _input.init();
     // Acquire the scene built by the asset loader and resize it the scene
     std::shared_ptr<scene2::SceneNode> scene = _assets->get<scene2::SceneNode>("menu");
     scene->setContentSize(dimen);
     scene->doLayout(); // Repositions the HUD
     _choice = Choice::NONE;
-    _hostbutton = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("menu_host"));
-    _joinbutton = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("menu_join"));
-    _back = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("menu_back"));
+    _buttonset.push_back(_hostbutton = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("menu_host")));
+    _buttonset.push_back(_joinbutton = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("menu_join")));
+    _buttonset.push_back(_back = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("menu_back")));
     // _assets->loadDirectory("json/mainmenuassets.json");
     // std::shared_ptr<scene2::SceneNode> layer = _assets->get<scene2::SceneNode>("Menu");
     // std::cout << dimen.width << "  " << dimen.height << std::endl;
@@ -71,20 +71,34 @@ bool MenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     // _buttonset.push_back(_button3 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("Menu_startmenu_button3")));
     // Program the buttons
     _hostbutton->addListener([this](const std::string& name, bool down) {
-        if (down) {
-            _choice = Choice::HOST;
+        if (down) {  
+            if(_input.getState()==InputController::State::CONTROLLER){
+                _isdown = Isdown::isHOST;
+            }
+            else{
+                _choice = Choice::HOST;
+            }
         }
     });
     _joinbutton->addListener([this](const std::string& name, bool down) {
-        if (down) {
-            _choice = Choice::JOIN;
+        if (down) {  
+            if(_input.getState()==InputController::State::CONTROLLER){
+                _isdown = Isdown::isJOIN;
+            }
+            else{
+                _choice = Choice::JOIN;
+            }
         }
     });
 
     _back->addListener([this](const std::string& name, bool down) {
-        if (down) {
-            //_choice = Choice::JOIN;
-            _backclicked = true;
+        if (down) {  
+            if(_input.getState()==InputController::State::CONTROLLER){
+                _isdown = Isdown::isBACK;
+            }
+            else{
+                _backclicked = true;
+            }
         }
     });
 
@@ -123,16 +137,7 @@ void MenuScene::setActive(bool value) {
             _joinbutton->activate();
             _back->activate();
             _backclicked = false;
-            // _button1->activate();
-            // _button2->activate();
-            // _button3->activate();
         } else {
-            // _button1->deactivate();
-            // _button2->deactivate();
-            // _button3->deactivate();
-            // _button1->setDown(false);
-            // _button2->setDown(false);
-            // _button3->setDown(false);
             _hostbutton->deactivate();
             _joinbutton->deactivate();
             _back->deactivate();
@@ -142,4 +147,41 @@ void MenuScene::setActive(bool value) {
             _back->setDown(false);
         }
     }
+}
+
+void MenuScene::update(float timestep){
+    _input.update();
+    timeSinceLastSwitch += timestep;
+    //std::cout << timeSinceLastSwitch << std::endl;
+    if (timeSinceLastSwitch >= switchFreq) {
+        if (_input._updown != 0) {
+            if (_input._updown == 1 && _counter > 0) {
+                _buttonset.at(_counter)->setDown(false);
+                _counter--;
+                _buttonset.at(_counter)->setDown(true);
+            }
+            else if (_input._updown == -1 && _counter < _buttonset.size() - 1) {
+                _buttonset.at(_counter)->setDown(false);
+                _counter++;
+                _buttonset.at(_counter)->setDown(true);
+            }
+            timeSinceLastSwitch = 0;
+
+        }
+    }
+    //std::cout << _input._confirm << std::endl;
+    if (_isdown == Isdown::isHOST &&_input.didPressConfirm() ){
+        _choice = Choice::HOST;
+    }
+    else if(_isdown == Isdown::isJOIN && _input.didPressConfirm()){
+        _choice = Choice::JOIN;
+    }
+    else if (_isdown == Isdown::isBACK && _input.didPressConfirm()) {
+        _backclicked = true;
+    }
+    else if (_isdown == Isdown::isNONE && _input.didPressConfirm()) {
+    }
+
+
+
 }
