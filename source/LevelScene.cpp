@@ -49,7 +49,7 @@ bool LevelScene::init(const std::shared_ptr<AssetManager> &assets)
     _input.init();
     // IMMEDIATELY load the splash screen assets
     _assets = assets;
-    _assets->loadDirectory("json/level.json");
+    _assets->loadDirectory("json/levelselection.json");
     std::shared_ptr<cugl::scene2::SceneNode> layer = assets->get<scene2::SceneNode>("level");
     layer->setContentSize(dimen);
     layer->doLayout(); // This rearranges the children to fit the screen
