@@ -141,11 +141,11 @@
             "magfilter": "nearest"
         },
         "healthframe": {
-            "file": "textures/game_ui/HEALTH_FRAME.png",
+            "file": "textures/game_ui/main_frame.png",
             "magfilter": "nearest"
         },
         "healthfill": {
-            "file": "textures/game_ui/HEALTH_FILL.png",
+            "file": "textures/game_ui/main_health_fill.png",
             "magfilter": "nearest"
         },
         "sizeframe": {
@@ -153,23 +153,43 @@
             "magfilter": "nearest"
         },
         "sizefill": {
-            "file": "textures/game_ui/SIZE_FILL.png",
+            "file": "textures/game_ui/main_size_fill.png",
+            "magfilter": "nearest"
+        },
+        "gateframe": {
+            "file": "textures/game_ui/gate_health_single.png",
+            "magfilter": "nearest"
+        },
+        "gateframe2": {
+            "file": "textures/game_ui/gate_health_double.png",
+            "magfilter": "nearest"
+        },
+        "gatefill": {
+            "file": "textures/game_ui/gate_fill.png",
+            "magfilter": "nearest"
+        },
+        "gatefillup": {
+            "file": "textures/game_ui/gate_double_upper_fill.png",
+            "magfilter": "nearest"
+        },
+        "gatefilldown": {
+            "file": "textures/game_ui/gate_double_lower_fill.png",
             "magfilter": "nearest"
         },
         "baittoggle": {
-            "file": "textures/game_ui/BAIT_TOGGLE.png",
+            "file": "textures/game_ui/main_bait_icon.png",
             "magfilter": "nearest"
         },
         "bombtoggle": {
-            "file": "textures/game_ui/BOMB_TOGGLE.png",
+            "file": "textures/game_ui/main_bomb_icon.png",
             "magfilter": "nearest"
         },
         "shoottoggle": {
-            "file": "textures/game_ui/SHOOT_TOGGLE.png",
+            "file": "textures/game_ui/main_bark_icon.png",
             "magfilter": "nearest"
         },
         "hometoggle": {
-            "file": "textures/game_ui/SPAWN_TOGGLE.png",
+            "file": "textures/game_ui/main_recall_icon.png",
             "magfilter": "nearest"
         },
         "initialflash":{

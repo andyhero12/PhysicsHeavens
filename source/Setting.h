@@ -61,6 +61,10 @@ protected:
 
     std::shared_ptr<cugl::scene2::SpriteNode> background;
 
+    std::shared_ptr<cugl::scene2::Slider> _slider;
+    std::shared_ptr<cugl::scene2::Label> _label;
+    float _value;
+
     button _buttonselection;
     InputController _input;
 
@@ -110,7 +114,8 @@ public:
     _buttonselection(NONE), 
     level(1),
     firsttime(true),
-    _backClicked(false){
+    _backClicked(false),
+    _value(0.0){
     frameTargets = {
         {1, 4},
         {2, 5},

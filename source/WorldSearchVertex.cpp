@@ -94,5 +94,29 @@ bool WorldSearchVertex::GetSuccessors( AStarSearch<WorldSearchVertex> *astarsear
 
 float WorldSearchVertex::GetCost( WorldSearchVertex &successor )
 {
-    return 0;
+    if(closeToEdge()){
+        return 5;
+    }else {
+        return 1;
+    }
+}
+
+bool WorldSearchVertex::closeToEdge(){
+    //Create list of all possible next tiles
+    std::list<std::pair<int, int>> adj_list;
+
+    // Left, right, top, bottom
+    adj_list.push_back(std::make_pair(0, 1));
+    adj_list.push_back(std::make_pair(0, -1));
+    adj_list.push_back(std::make_pair(1, 0));
+    adj_list.push_back(std::make_pair(-1, 0));
+
+    for (const auto& diff : adj_list) {
+        WorldSearchVertex AdjNode = WorldSearchVertex( x - diff.first, y - diff.second, _world);
+        if(!_world->isPassable(AdjNode.x, AdjNode.y)){
+            return true;
+        }
+    }
+
+    return false;
 }

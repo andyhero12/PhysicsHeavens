@@ -76,10 +76,10 @@ protected:
     //std::shared_ptr<cugl::scene2::SceneNode>  _brand;
     /** The "play" button */
     std::shared_ptr<cugl::scene2::Button>    _button1;
-    std::shared_ptr<cugl::scene2::Button>    _button2;
     std::shared_ptr<cugl::scene2::Button>    _button3;
     std::vector<std::shared_ptr<cugl::scene2::Button>> _buttonset;
     std::shared_ptr<SpriteAnimationNode> background;
+    std::shared_ptr<cugl::scene2::SceneNode>  _Logo;
 
     // MODEL
     /** The progress displayed on the screen */
