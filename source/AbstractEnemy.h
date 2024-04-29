@@ -29,6 +29,11 @@
 
 #define DAMAGED_DURATION 0.5f
 
+#define KNOCKBACK_FORCE 45
+#define LINEAR_DAMPING 15.0f
+#define KNOCKBACK_TIME 0.25f
+#define KNOCKBACK_LIMIT 14
+
 #include "stlastar.h"
 #include "WorldSearchVertex.h"
 
@@ -63,6 +68,7 @@ public:
             setFriction(DEFAULT_FRICTION);
             setRestitution(DEFAULT_RESTITUTION);
             setFixedRotation(true);
+            setLinearDamping(LINEAR_DAMPING);
             
             curAction = EnemyActions::SPAWN;
             _health = m_health;
@@ -76,7 +82,7 @@ public:
             timeSinceLastMajorChange = 0.0f;
 
             _damagedTimer = 0;
-            _knockbacked = false;
+            _knockbackTimer = false;
             
             _inContact = false;
             movementDirection = Vec2(0,0);
@@ -85,8 +91,37 @@ public:
         return false;
     }
 
+    void setVX(float value) override {
+        if(!(_knockbackTimer > 0)) {
+            BoxObstacle::setVX(value);
+        }
+    }
+
+    void setVY(float value) override {
+        if(!(_knockbackTimer > 0)) {
+            BoxObstacle::setVY(value);
+        }
+    }
+
+    void setLinearVelocity(Vec2 value) override {
+        setLinearVelocity(value.x, value.y);
+    }
+
+
+    void setLinearVelocity(float x, float y) override {
+        if(!(_knockbackTimer > 0)) {
+            BoxObstacle::setLinearVelocity(x, y);
+        }
+    }
+
     void update(float delta) override {
         Obstacle::update(delta);
+
+        _knockbackTimer -= delta;
+        if(_knockbackTimer < 0) {
+            _knockbackTimer = 0;
+        }
+
         if(_damagedTimer > 0) {
             _damagedTimer -= delta;
             
@@ -108,7 +143,7 @@ public:
 
     void postUpdate(){
         _prevDirection =_curDirection;
-        if(!_knockbacked){
+        if(_knockbackTimer <= 0){
             Vec2 direction = movementDirection;
             _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
 
@@ -147,6 +182,16 @@ public:
         _health = m_health;
         _healthBar->setProgress((float)_health/_maxHealth);
     }
+    void applyDamage(int dmg, Vec2 direction) {
+        direction.normalize();
+        float velocity = KNOCKBACK_FORCE / getMass();
+        velocity = velocity > KNOCKBACK_LIMIT ? KNOCKBACK_LIMIT : velocity;
+        setLinearVelocity(direction.x * velocity, direction.y * velocity);
+        setHealth(getHealth() - dmg);
+        _knockbackTimer = KNOCKBACK_TIME;
+    }
+
+
     
     
     
@@ -203,7 +248,7 @@ protected:
     int targetIndex;
     int updateRate;
     int _counter;
-    bool _knockbacked;
+    float _knockbackTimer;
     float _damagedTimer;
     int _time;
     // used for wander

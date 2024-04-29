@@ -8,13 +8,14 @@
 //  Author: Walker White, Aidan Hobler
 //  Version: 2/8/22
 //
-#ifndef __NL_MENU_SCENE_H__
-#define __NL_MENU_SCENE_H__
+#ifndef __NL_Selection_SCENE_H__
+#define __NL_Selection_SCENE_H__
 #include <cugl/cugl.h>
 #include <vector>
 #include <chrono>
 #include "GlobalConstants.h"
 #include "NLInput.h"
+#include "SpriteAnimationNode.h"
 
 
 /**
@@ -24,7 +25,7 @@
  * listeners on the scene graph.  We only need getters so that the main
  * application can retrieve the state and communicate it to other scenes.
  */
-class MenuScene : public cugl::Scene2 {
+class SelectionScene : public cugl::Scene2 {
 public:
     /**
      * The menu choice.
@@ -34,48 +35,51 @@ public:
      */
     enum Choice {
         /** User has not yet made a choice */
-        NONE,
+        PLAYER1,
         /** User wants to host a game */
-        HOST,
-        /** User wants to join a game */
-        JOIN,
+        PLAYER2,
 
-        Back
+        NONE
     };
     enum Isdown {
         /** User has not yet made a choice */
-        isHOST,
+        isPLAYER1,
         /** User wants to host a game */
-        isJOIN,
+        isPLAYER2,
         /** User wants to join a game */
-        isNONE,
-
-        isBACK
-    };   
+        isNONE
+    };
 
 protected:
     /** The asset manager for this scene. */
     std::shared_ptr<cugl::AssetManager> _assets;
     /** The menu button for hosting a game */
-    std::shared_ptr<cugl::scene2::Button> _hostbutton;
-    /** The menu button for joining a game */
-    std::shared_ptr<cugl::scene2::Button> _joinbutton;
     /** The player menu choice */
-    std::shared_ptr<cugl::scene2::Button> _back;
     Choice _choice;
     Isdown _isdown;
 
     InputController _input;
-    bool _backclicked;
+    // NO CONTROLLER (ALL IN SEPARATE THREAD)
+    //InputController _input;
+    std::chrono::steady_clock::time_point lastInputTime;
+    // VIEW
+    std::shared_ptr<cugl::scene2::Button>    _button1;
+    std::shared_ptr<cugl::scene2::Button>    _button2;
+    std::vector<std::shared_ptr<cugl::scene2::Button>> _buttonset;
+
+    // MODEL
+    /** The progress displayed on the screen */
+    /** Whether or not the player has pressed play to continue */
+    bool  _completed;
+
+    bool _firstset;
 
     int _counter;
 
     float timeSinceLastSwitch;
 
     float switchFreq;
-
-    std::vector<std::shared_ptr<cugl::scene2::Button>> _buttonset;
-
+    std::shared_ptr<SpriteAnimationNode> background;
     
 public:
 #pragma mark -
@@ -86,7 +90,7 @@ public:
      * This constructor does not allocate any objects or start the game.
      * This allows us to use the object without a heap pointer.
      */
-    MenuScene() : cugl::Scene2(),_isdown(isNONE),_choice(NONE), _counter(0), timeSinceLastSwitch(0.0),switchFreq(0.20),_buttonset() {}
+    SelectionScene() : cugl::Scene2(){}
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.
@@ -94,7 +98,7 @@ public:
      * This method is different from dispose() in that it ALSO shuts off any
      * static resources, like the input controller.
      */
-    ~MenuScene() { dispose(); }
+    ~SelectionScene() { dispose(); }
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.
@@ -136,10 +140,8 @@ public:
      * @return the user's menu choice.
      */
     Choice getChoice() const { return _choice; }
-
-    bool getBackclick(){ return _backclicked;}
-
+    
     virtual void update(float timestep) override;
 };
 
-#endif /* __NL_MENU_SCENE_H__ */
+#endif /* __NL_Selection_SCENE_H__ */

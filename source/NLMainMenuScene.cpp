@@ -65,7 +65,7 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _buttonset.push_back(_button3 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("Menu_startmenu_button3")));
     // Program the buttons
     _button1->addListener([this](const std::string& name, bool down) {
-        if (down) {  
+        if (down) {
             if(_input.getState()==InputController::State::CONTROLLER){
                 _isdown = Isdown::isSINGLE;
             }
@@ -88,12 +88,26 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
 
     _button3->addListener([this](const std::string& name, bool down) {
         if (down) {
-            //_choice = Choice::LEVEL;
+            if(_input.getState()==InputController::State::CONTROLLER){
+                _isdown = Isdown::isSETTING;
+            }
+            else{
+                _choice = Choice::SETTING;
+            }
         }
         });
     _counter = 0;
     switchFreq = 0.2;
     _isdown = Isdown::isNONE;
+    
+    
+    
+    
+    background = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("backgroundx"), 1, 6, 5);
+    background->setScale(SCENE_HEIGHT/background->getTexture()->getHeight());
+    background->setPosition(0.5 * background->getSize());
+    addChild(background);
+
     addChild(layer);
     setActive(false);
     return true;
@@ -141,6 +155,7 @@ void MainMenuScene::setActive(bool value) {
 
 void MainMenuScene::update(float timestep)
 {
+    background->update();
     _input.update();
     timeSinceLastSwitch += timestep;
     //std::cout << timeSinceLastSwitch << std::endl;
