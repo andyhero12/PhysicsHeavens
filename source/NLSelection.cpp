@@ -12,7 +12,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "NLMainMenuScene.h"
+#include "NLSelection.h"
 
 using namespace cugl;
 using namespace std;
@@ -40,7 +40,7 @@ using namespace std;
  *
  * @return true if the controller is initialized properly, false otherwise.
  */
-bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
+bool SelectionScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     // Initialize the scene to a locked width
     Input::activate<GameControllerInput>();
     Size dimen = Application::get()->getDisplaySize();
@@ -56,21 +56,21 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     // Acquire the scene built by the asset loader and resize it the scene
 
     _input.init();
-    _assets->loadDirectory("json/mainmenuassets.json");
-    std::shared_ptr<scene2::SceneNode> layer = _assets->get<scene2::SceneNode>("Menu");
+    _assets->loadDirectory("json/selection.json");
+    std::shared_ptr<scene2::SceneNode> layer = _assets->get<scene2::SceneNode>("Menu_selection");
     layer->setContentSize(dimen);
     layer->doLayout(); // This rearranges the children to fit the screen
-    _buttonset.push_back(_button1 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("Menu_startmenu_button1")));
-    _buttonset.push_back(_button2 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("Menu_startmenu_button2")));
-    _buttonset.push_back(_button3 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("Menu_startmenu_button3")));
+    _buttonset.push_back(_button1 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("Menu_selection_selectionmenu_Button1")));
+    _buttonset.push_back(_button2 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("Menu_selection_selectionmenu_Button2")));
+    //_buttonset.push_back(_button3 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("Menu_startmenu_button3")));
     // Program the buttons
     _button1->addListener([this](const std::string& name, bool down) {
         if (down) {  
             if(_input.getState()==InputController::State::CONTROLLER){
-                _isdown = Isdown::isSINGLE;
+                _isdown = Isdown::isPLAYER1;
             }
             else{
-                _choice = Choice::SINGLE;
+                _choice = Choice::PLAYER1;
             }
             
         }
@@ -78,24 +78,19 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _button2->addListener([this](const std::string& name, bool down) {
         if (down) {
             if(_input.getState()==InputController::State::CONTROLLER){
-                _isdown = Isdown::isCOOP;
+                _isdown = Isdown::isPLAYER2;
             }
             else{
-                _choice = Choice::COOP;
+                _choice = Choice::PLAYER2;
             }
         }
     });
 
-    _button3->addListener([this](const std::string& name, bool down) {
-        if (down) {
-            if(_input.getState()==InputController::State::CONTROLLER){
-                _isdown = Isdown::isSETTING;
-            }
-            else{
-                _choice = Choice::SETTING;
-            }
-        }
-        });
+    // _button3->addListener([this](const std::string& name, bool down) {
+    //     if (down) {
+    //         //_choice = Choice::LEVEL;
+    //     }
+    //     });
     _counter = 0;
     switchFreq = 0.2;
     _isdown = Isdown::isNONE;
@@ -103,7 +98,7 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     
     
     
-    background = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("backgroundx"), 1, 6, 5);
+    background = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("backgroundslection"), 1, 6, 5);
     background->setScale(SCENE_HEIGHT/background->getTexture()->getHeight());
     background->setPosition(0.5 * background->getSize());
     addChild(background);
@@ -116,7 +111,7 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
 /**
  * Disposes of all (non-static) resources allocated to this mode.
  */
-void MainMenuScene::dispose() {
+void SelectionScene::dispose() {
     if (_active) {
         removeAllChildren();
         _active = false;
@@ -133,7 +128,7 @@ void MainMenuScene::dispose() {
  *
  * @param value whether the scene is currently active
  */
-void MainMenuScene::setActive(bool value) {
+void SelectionScene::setActive(bool value) {
     if (isActive() != value) {
         Scene2::setActive(value);
         if (value) {
@@ -141,19 +136,16 @@ void MainMenuScene::setActive(bool value) {
             _isdown = Isdown::isNONE;
             _button1->activate();
             _button2->activate();
-            _button3->activate();
         } else {
             _button1->deactivate();
             _button2->deactivate();
-            _button3->deactivate();
             _button1->setDown(false);
             _button2->setDown(false);
-            _button3->setDown(false);
         }
     }
 }
 
-void MainMenuScene::update(float timestep)
+void SelectionScene::update(float timestep)
 {
     background->update();
     _input.update();
@@ -176,14 +168,11 @@ void MainMenuScene::update(float timestep)
         }
     }
     //std::cout << _input._confirm << std::endl;
-    if (_isdown == Isdown::isSINGLE &&_input.didPressConfirm() ){
-        _choice = Choice::SINGLE;
+    if (_isdown == Isdown::isPLAYER1 &&_input.didPressConfirm() ){
+        _choice = Choice::PLAYER1;
     }
-    else if(_isdown == Isdown::isCOOP && _input.didPressConfirm()){
-        _choice = Choice::COOP;
-    }
-    else if (_isdown == Isdown::isSETTING && _input.didPressConfirm()) {
-        _choice = Choice::SETTING;
+    else if(_isdown == Isdown::isPLAYER2 && _input.didPressConfirm()){
+        _choice = Choice::PLAYER2;
     }
     else if (_isdown == Isdown::isNONE && _input.didPressConfirm()) {
     }

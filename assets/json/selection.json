@@ -1,10 +1,10 @@
 {
   "textures": {
-    "backgroundx":{
-      "file" : "textures/Menu/title-screen.png",
-      "minfilter": "linear",
-      "magfilter": "nearest"
-    },
+      "backgroundslection":{
+        "file" : "textures/Menu/title-screen.png",
+        "minfilter": "linear",
+        "magfilter": "nearest"
+      },
     "menu": {
       "file": "textures/Menu/menu.png"
     },
@@ -25,7 +25,7 @@
     }
   },
   "scene2s": {
-    "Menu": {
+    "Menu_selection": {
         "type": "Node",
         "format": {
             "type": "Anchored"
@@ -47,7 +47,7 @@
             "visible": true
         },
         "children": {
-            "startmenu": {
+            "selectionmenu": {
                 "type": "Node",
                 "format": {
                     "type": "Anchored"
@@ -96,105 +96,7 @@
                             "y_offset": -0.3
                         }
                     },
-                    "button3": {
-                        "type": "Button",
-                        "format": {
-                            "type": "Anchored"
-                        },
-                        "data": {
-                            "anchor": [
-                                0,
-                                1
-                            ],
-                            "size": [
-                                289,
-                                58
-                            ],
-                            "angle": 0,
-                            "position": [
-                                115.21,
-                                128.78
-                            ],
-                            "visible": true,
-                            "upnode": "purplebutton"
-                        },
-                        "children": {
-                            "purplebutton": {
-                                "type": "Image",
-                                "data": {
-                                    "texture": "purplebutton",
-                                    "anchor": [
-                                        0,
-                                        0
-                                    ],
-                                    "size": [
-                                        290.61,
-                                        84.44
-                                    ],
-                                    "angle": 0,
-                                    "position": [
-                                        0,
-                                        -16.45
-                                    ],
-                                    "visible": true
-                                },
-                                "layout": {
-                                    "x_anchor": "left",
-                                    "y_anchor": "bottom",
-                                    "absolute": false,
-                                    "x_offset": 0,
-                                    "y_offset": -0.28
-                                }
-                            },
-                            "Setting": {
-                                "type": "Label",
-                                "data": {
-                                    "anchor": [
-                                        0.5,
-                                        0
-                                    ],
-                                    "size": [
-                                        214,
-                                        39
-                                    ],
-                                    "position": [
-                                        37.87963104248047,
-                                        7.013360977172852
-                                    ],
-                                    "angle": 0,
-                                    "visible": true,
-                                    "font": "04b3038.6204719543457",
-                                    "text": "Setting",
-                                    "foreground": "#ffffffff",
-                                    "background": "#00000000",
-                                    "padding": [
-                                        0,
-                                        0,
-                                        0,
-                                        0
-                                    ],
-                                    "valign": "middle",
-                                    "halign": "center"
-                                },
-                                "children": {},
-                                "layout": {
-                                    "x_anchor": "center",
-                                    "y_anchor": "bottom",
-                                    "absolute": false,
-                                    "x_offset": 0,
-                                    "y_offset": 0.12
-                                }
-                            }
-                        },
-                        "layout": {
-                            "x_anchor": "left",
-                            "y_anchor": "top",
-                            "absolute": false,
-                            "x_offset": 0.22,
-                            "y_offset": -0.73
-                        }
-                    },
-                    "button2": {
+                    "Button2": {
                         "type": "Button",
                         "format": {
                             "type": "Anchored"
@@ -262,7 +164,7 @@
                                     "angle": 0,
                                     "visible": true,
                                     "font": "04b3038.6204719543457",
-                                    "text": "COOP",
+                                    "text": "PLAY2",
                                     "foreground": "#ffffffff",
                                     "background": "#00000000",
                                     "padding": [
@@ -292,7 +194,7 @@
                             "y_offset": -0.6
                         }
                     },
-                    "button1": {
+                    "Button1": {
                         "type": "Button",
                         "format": {
                             "type": "Anchored"
@@ -360,7 +262,7 @@
                                     "angle": 0,
                                     "visible": true,
                                     "font": "04b3038.6204719543457",
-                                    "text": "PLAY",
+                                    "text": "PLAY1",
                                     "foreground": "#ffffffff",
                                     "background": "#00000000",
                                     "padding": [

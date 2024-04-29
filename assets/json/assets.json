@@ -105,6 +105,11 @@
             "minfilter": "linear",
             "magfilter": "nearest"
         },
+        "spawnerDeath": {
+            "file": "textures/broken_spawner.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
         "healthframe": {
             "file": "textures/game_ui/HEALTH_FRAME.png",
             "magfilter": "nearest"

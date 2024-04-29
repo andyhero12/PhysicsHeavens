@@ -70,7 +70,13 @@ void SpawnerController::update(MonsterController& monsterController, OverWorld& 
         std::shared_ptr<AbstractSpawner> spawner = *it;
         
         if (spawner->dead()){
-
+            Vec2 pos = spawner->getPos();
+            auto deathNode = SpriteAnimationNode::allocWithSheet(_deathSpawner, 1, 1, 1, 1);
+            float scale = 1 / 64.0f;
+            deathNode->setAnchor(cugl::Vec2::ANCHOR_CENTER);
+            deathNode->setScale(scale);
+            deathNode->setPosition(pos);
+            baseSpawnerNode->addChild(deathNode);
             it = _spawners.erase(it);
             spawner->getSpawnerNode()->removeFromParent();
             difficulty += 0.1;
@@ -115,18 +121,17 @@ bool SpawnerController::init(const std::vector<LevelModel::Spawner>& startLocs, 
     animSpawnerNode = cugl::scene2::SceneNode::alloc();
     _spawnTexture = assets->get<cugl::Texture>("enemySpawn");
     _deathTexture = assets->get<cugl::Texture>("enemyDeath");
+    _deathSpawner = assets->get<cugl::Texture>("spawnerDeath");
     for (int i =0; i< startLocs.size(); i++){
         LevelModel::Spawner spawner = startLocs.at(i);
         cugl::Vec2 pos = Vec2(spawner.spawnerX, spawner.spawnerY);
         int health = spawner.hp;
         std::shared_ptr<SimpleSpawner> curSpawner = std::make_shared<SimpleSpawner>(spawner.regularDelay,pos,health,spawner.initDelay,spawner.primaryEnemy, spawner.secondaryEnemy, spawner.tertiaryEnemy);
-//        auto drawNode = cugl::scene2::PolygonNode::allocWithTexture(assets->get<cugl::Texture>("spawner"));
-        auto drawNode = SpriteAnimationNode::allocWithSheet(assets->get<cugl::Texture>("spawner"), 1,1,1);
-        float scale = 1 / 48.0f;
-        drawNode->setScale(scale);
-//        drawNode->setContentSize(cugl::Size(1,1));
-        drawNode->setPosition(pos);
+        auto drawNode = SpriteAnimationNode::allocWithSheet(assets->get<cugl::Texture>("spawner"), 1, 4, 4, 6);
+        float scale = 1 / 64.0f;
         drawNode->setAnchor(cugl::Vec2::ANCHOR_CENTER);
+        drawNode->setScale(scale);
+        drawNode->setPosition(pos);
 
         std::shared_ptr<cugl::Texture> barImage = assets->get<cugl::Texture>("progress");
     
@@ -140,11 +145,9 @@ bool SpawnerController::init(const std::vector<LevelModel::Spawner>& startLocs, 
         
         std::shared_ptr<cugl::scene2::ProgressBar> _bar = cugl::scene2::ProgressBar::allocWithCaps(bg, fg, left_cap, right_cap);
         _bar->setProgress(1.0f);
-        _bar->setPosition(0, drawNode->getHeight() * (1 / scale));
+        _bar->setPosition(drawNode->getWidth() * (1 / scale)/2, drawNode->getHeight() * (1 / scale));
         curSpawner->setHealthBar(_bar);
         drawNode->addChild(_bar);
-
-//        animationNodes.push_back(drawNode);
         baseSpawnerNode->addChild(drawNode);
         curSpawner->setSpawnerNode(drawNode);
         _spawners.insert(curSpawner);
