@@ -26,7 +26,7 @@ using namespace cugl;
  *
  * @return true if the controller is initialized properly, false otherwise.
  */
-bool SinglePlayerLevelScene::init(const std::shared_ptr<AssetManager> &assets)
+bool SinglePlayerLevelScene::init(const std::shared_ptr<AssetManager> &assets, std::shared_ptr<cugl::physics2::net::NetEventController> network)
 {
     // Initialize the scene to a locked width
     Size dimen = Application::get()->getDisplaySize();
@@ -38,6 +38,7 @@ bool SinglePlayerLevelScene::init(const std::shared_ptr<AssetManager> &assets)
     }
     //_input.init_withlistener();
     _input.init();
+    _network = network;
     // IMMEDIATELY load the splash screen assets
     _assets = assets;
     _assets->loadDirectory("json/singlePlayerLevelSelect.json");
@@ -48,6 +49,7 @@ bool SinglePlayerLevelScene::init(const std::shared_ptr<AssetManager> &assets)
     _button = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("single_player_level_play"));
     _button->addListener([this](const std::string &name, bool down){
     if(down) { // Check if the button is pressed down
+        startGame();
         switch (level) { // Use the current level stored in _level
             case 1:
                 CULog("Current Level: L1");
@@ -70,14 +72,20 @@ bool SinglePlayerLevelScene::init(const std::shared_ptr<AssetManager> &assets)
         }
     }
 });
+    
+    
+    // Create the server configuration
+    auto json = _assets->get<JsonValue>("server");
+    _config.set(json);
+    
     background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("Background"), 1, 15);
-//    std::cout << "height of level scene "<< background->getTexture()->getHeight()<<std::endl;
     background->setScale(4.3);
     background->setPosition(0.5 * background->getSize());
     addChild(background);
     layer->setColor(Color4(0, 0, 0, 1));
     Application::get()->setClearColor(Color4(192, 192, 192, 255));
     addChild(layer);
+    setActive(false);
     return true;
 }
 
@@ -124,20 +132,23 @@ void SinglePlayerLevelScene::update(float progress)
     updatelevelscene();
     resetgochange();
     adjustFrame(level);
-
-    if (_input.didPressConfirm() && readyToChangeLevel()){
-        _button->setDown(true);
+    if(_network->getStatus() == cugl::physics2::net::NetEventController::Status::CONNECTED){
+        if (firsttime)
+        {
+            _button->activate();
+            _button->setVisible(false);
+            firsttime = false;
+        }
+        if(!_startGameClicked){
+            if (_input.didPressConfirm()){
+                _button->setDown(true);
+            }
+        }else{
+            _button->deactivate();
+        }
     }
-
     if(_input.didPressBack() && readyToChangeLevel()){
         _backClicked = true;
-    }
-
-    if (firsttime)
-    {
-        _button->activate();
-        _button->setVisible(false);
-        firsttime = false;
     }
 }
 
@@ -150,9 +161,11 @@ void SinglePlayerLevelScene::setActive(bool value)
         if (value)
         {
             _level = Level::NONE;
-            _button->activate();
             firsttime = true;
+            _network->disconnect();
+            _network->connectAsHost();
             _backClicked = false;
+            _startGameClicked = false;
         }
         else
         {
@@ -160,6 +173,21 @@ void SinglePlayerLevelScene::setActive(bool value)
             _button->setDown(false);
             firsttime = true;
             _backClicked = false;
+            _startGameClicked = false;
         }
     }
+}
+/**
+ * This method prompts the network controller to start the game.
+ */
+void SinglePlayerLevelScene::startGame(){
+    //TODO: call the network controller to start the game and set the _startGameClicked to true.
+#pragma mark BEGIN SOLUTION
+    _network->startGame();
+    _startGameClicked = true;
+#pragma mark END SOLUTION
+}
+
+void SinglePlayerLevelScene::endGame(){
+    _startGameClicked = false;
 }

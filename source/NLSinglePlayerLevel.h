@@ -25,9 +25,18 @@
  * Once asset loading is completed, it will display a play button.  Clicking
  * this button will inform the application root to switch to the gameplay mode.
  */
+#define PING_TEST_COUNT 5
 class SinglePlayerLevelScene : public LevelScene {
     cugl::Size computeActiveSize() const;
-        
+protected:
+    /** The network connection (as made by this scene) */
+    std::shared_ptr<cugl::physics2::net::NetEventController> _network;
+    
+    /** Whether the startGame button had been pressed. */
+    bool _startGameClicked;
+    
+    /** The network configuration */
+    cugl::net::NetcodeConfig _config;
 public:
 #pragma mark -
 #pragma mark Constructors
@@ -37,7 +46,7 @@ public:
      * This constructor does not allocate any objects or start the game.
      * This allows us to use the object without a heap pointer.
      */
-    SinglePlayerLevelScene() : LevelScene(){}
+    SinglePlayerLevelScene() : LevelScene(), _startGameClicked(false) {}
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.
@@ -63,13 +72,15 @@ public:
      *
      * @return true if the controller is initialized properly, false otherwise.
      */
-    virtual bool init(const std::shared_ptr<cugl::AssetManager>& assets) override;
+    virtual bool init(const std::shared_ptr<cugl::AssetManager>& assets, std::shared_ptr<cugl::physics2::net::NetEventController> network);
     
     
 #pragma mark -
 #pragma mark Progress Monitoring
     virtual void update(float timestep) override;
     virtual void setActive(bool value) override;
+    void startGame();
+    void endGame();
 };
 
 

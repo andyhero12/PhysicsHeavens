@@ -138,7 +138,7 @@ void NetApp::preUpdate(float timestep){
         _mainmenu.init(_assets);
         _menu.init(_assets);
         _level.init(_assets);
-        _singlePlayer.init(_assets);
+        _singlePlayer.init(_assets,_network);
         _mainmenu.setActive(true);
         _hostgame.init(_assets,_network);
         _joingame.init(_assets,_network);
@@ -460,27 +460,35 @@ void NetApp::updateSinglePlayerLevelScene(float timestep)
         _singlePlayer.setActive(false);
         _mainmenu.setActive(true);
         _status = MAINMENU;
-    }else{
+    }
+    else if (_network->getStatus() == NetEventController::Status::HANDSHAKE && _network->getShortUID()) {
         switch (_singlePlayer.getLevel()) {
             case LevelScene::Level::L1:
-                _singlePlayer.setActive(false);
-                _hostgame.setActive(true);
-                _status = HOST;
+                _gameplay.init(_assets, _network, true, LEVEL_ONE_KEY);
                 break;
             case LevelScene::Level::L2:
-                _singlePlayer.setActive(false);
-                _hostgame.setActive(true);
-                _status = HOST;
+                _gameplay.init(_assets, _network, true, LEVEL_TWO_KEY);
                 break;
             case LevelScene::Level::L3:
-                _singlePlayer.setActive(false);
-                _hostgame.setActive(true);
-                _status = HOST;
+                _gameplay.init(_assets, _network, true, LEVEL_THREE_KEY);
                 break;
             default :
-                // DO NOTHING
+                CUAssertLog(false, "bad level");
                 break;
-            }
+        }
+        _network->markReady();
+    }
+    else if (_network->getStatus() == NetEventController::Status::INGAME) {
+        _singlePlayer.setActive(false);
+        _gameplay.setActive(true);
+        _status = GAME;
+    }
+    else if (_network->getStatus() == NetEventController::Status::NETERROR) {
+        _network->disconnect();
+        _singlePlayer.setActive(false);
+        _mainmenu.setActive(true);
+        _gameplay.dispose();
+        _status = MAINMENU;
     }
 }
 void NetApp::updateSettingScene(float timestep){

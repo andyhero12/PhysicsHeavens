@@ -89,6 +89,7 @@ bool LevelScene::init(const std::shared_ptr<AssetManager> &assets)
     layer->setColor(Color4(0, 0, 0, 1));
     Application::get()->setClearColor(Color4(192, 192, 192, 255));
     addChild(layer);
+    setActive(false);
     return true;
 }
 

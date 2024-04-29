@@ -54,14 +54,6 @@ protected:
     
     /** The network configuration */
     cugl::net::NetcodeConfig _config;
-    
-    cugl::Timestamp _pingTimer;
-    
-    Uint64 _totalPing;
-    
-    int _sendCount;
-    
-    int _receiveCount;
 
 public:
 #pragma mark -

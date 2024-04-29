@@ -111,11 +111,6 @@ bool HostScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::sha
     // Create the server configuration
     auto json = _assets->get<JsonValue>("server");
     _config.set(json);
-    
-    _sendCount = 0;
-    _receiveCount = 0;
-    _totalPing = 0;
-
     addChild(scene);
     setActive(false);
     return true;
