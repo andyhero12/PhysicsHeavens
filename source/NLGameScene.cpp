@@ -643,6 +643,7 @@ void GameScene::fixedUpdate()
         if (auto biteEvent = std::dynamic_pointer_cast<BiteEvent>(e))
         {
             //shakeMagnitude = std::max(shakeMagnitude, 50.0f);
+            _input.applyRumble(0, 10000, 50);
             overWorld.processBiteEvent(biteEvent);
         }
         if (auto recallEvent = std::dynamic_pointer_cast<RecallEvent>(e))
@@ -652,12 +653,14 @@ void GameScene::fixedUpdate()
         if (auto explodeEvent = std::dynamic_pointer_cast<ExplodeEvent>(e))
         {
             shakeMagnitude = std::max(shakeMagnitude, 40.0f);
+            _input.applyRumble(0, 30000, 200);
             //            CULog("Explode Event Got");
             overWorld.processExplodeEvent(explodeEvent);
         }
         if (auto shootEvent = std::dynamic_pointer_cast<ShootEvent>(e))
         {
             shakeMagnitude = std::max(shakeMagnitude, 40.0f);
+            _input.applyRumble(30000, 0, 200);
             //            CULog("Explode Event Got");
             overWorld.processShootEvent(shootEvent);
         }
