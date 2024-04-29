@@ -50,6 +50,17 @@ void DecoySet::update(float timestep){
             decoySetNode->removeChild(curAnim);
         }
     }
+    
+    auto decAnim = _decAnimations.begin();
+    while(decAnim != _decAnimations.end()){
+        std::shared_ptr<SpriteAnimationNode> curAnim = *decAnim;
+        auto curA = decAnim;
+        curAnim->update();
+        decAnim++;
+        if (curAnim->getFrame() == curAnim->getSpan()-1){
+            curAnim->setFrame(0);
+        }
+    }
 }
 
 void DecoySet::setTexture(const std::shared_ptr<cugl::Texture> &value){
@@ -62,12 +73,13 @@ void DecoySet::setExplodeTexture(const std::shared_ptr<cugl::Texture>& value){
 
 void DecoySet::addNewDecoy(cugl::Vec2 pos){
     std::shared_ptr<Decoy> newDecoy = std::make_shared<Decoy>(pos);
-    std::shared_ptr<cugl::scene2::SceneNode> decoyNode = cugl::scene2::PolygonNode::allocWithTexture(_texture);
-    decoyNode->setContentSize(DECOY_SIZE);
-    decoyNode->setAnchor(Vec2::ANCHOR_CENTER);
-    decoyNode->setPosition(pos);
-    newDecoy->setSceneNode(decoyNode);
-    decoySetNode->addChild(decoyNode);
+    std::shared_ptr<SpriteAnimationNode> decoyAnim = SpriteAnimationNode::allocWithSheet(_texture, 3, 5, 15, 5);
+    decoyAnim->setScale(DECOY_SIZE/128);
+    decoyAnim->setAnchor(Vec2::ANCHOR_CENTER);
+    decoyAnim->setPosition(pos);
+    _decAnimations.emplace(decoyAnim);
+    newDecoy->setSceneNode(decoyAnim);
+    decoySetNode->addChild(decoyAnim);
     _pendingDecoys.emplace_back(newDecoy);
 }
 void DecoySet::postUpdate(){
