@@ -348,11 +348,13 @@ bool InputController::readInput_joystick(Tutorial::MODE progress, bool inRange) 
     cugl::GameController::Axis Y_left = cugl::GameController::Axis::INVALID;
     // define button // trigger based on progress
     if(!inRange){
-        readInput(static_cast<int>(progress));
+        readInput_joystick(static_cast<int>(progress));
     }
     else{
         if(progress == Tutorial::MODE::MOVEMENT){
-            buttons = cugl::GameController::Button::A;
+            // if(abs(LR) >= 0.2 || abs(UD) >= 0.2){
+            //     return true;
+            // }  
         }
         else if (progress == Tutorial::MODE::BITE){
             buttons = cugl::GameController::Button::A;
@@ -406,6 +408,7 @@ void InputController::readInput_joystick(int value) {
         float LR = _gameContrl->getAxisPosition(X_left);
         float UD = _gameContrl->getAxisPosition(Y_left);
 
+        //For UI
         if (_gameContrl->isButtonPressed(A)) {
             _didConfirm = true;
             _UseJoystick = true;
@@ -415,41 +418,6 @@ void InputController::readInput_joystick(int value) {
             _UseJoystick = true;
         }
 
-        if (_gameContrl->isButtonPressed(A)) {
-            _didFire = true;
-            _UseJoystick = true;
-        }
-
-        if (_gameContrl->getAxisPosition(LT)>=0.5||_gameContrl->getAxisPosition(RT)>=0.5) {
-            _didSpecial = true;
-            _UseJoystick = true;
-        }
-
-        if (_gameContrl->isButtonPressed(B)) {
-            //_didChangeMode = true;
-            _UseJoystick = true;
-        }
-
-        if (_gameContrl->isButtonPressed(Y)) {
-            _didHome = true;
-            _UseJoystick = true;
-        }
-        if (_gameContrl->isButtonPressed(X)) {
-            _didDash = true;
-            _UseJoystick = true;
-        }
-        if (_gameContrl->isButtonPressed(RB)) {
-            _didChangeMode = true;
-            _UseJoystick = true;
-        }
-          if (_gameContrl->isButtonPressed(Back)) {
-            _didHome = true;
-            _UseJoystick = true;
-        }
-        if (_gameContrl->isButtonPressed(Start)) {
-            _didPause = true;
-            _UseJoystick = true;
-        }
         if(_gameContrl->isButtonPressed(up)){
             _updown = 1;
             _UseJoystick = true;
@@ -468,28 +436,74 @@ void InputController::readInput_joystick(int value) {
             _UseJoystick = true;
         }
 
+        //Add for tutorial
+        if(value >= static_cast<int>(Tutorial::BITE)){
+            if (_gameContrl->isButtonPressed(A)) {
+                _didFire = true;
+                _UseJoystick = true;
+            }
+        }
+        if(value >= static_cast<int>(Tutorial::SPECIALSONE)){
+            if (_gameContrl->getAxisPosition(LT)>=0.5||_gameContrl->getAxisPosition(RT)>=0.5) {
+                _didSpecial = true;
+                _UseJoystick = true;
+            }
+        }
 
-        if (abs(LR) >= 0.2 || abs(UD) >= 0.2) {
+        if(value >= static_cast<int>(Tutorial::DASH)){
+            if (_gameContrl->isButtonPressed(X)) {
+                _didDash = true;
+                _UseJoystick = true;
+            }
+        }   
 
-            _Vel = cugl::Vec2(LR, -UD);
+        if(value >= static_cast<int>(Tutorial::CHANGEABILITYTWO)){
+            if (_gameContrl->isButtonPressed(RB)) {
+                _didChangeMode = true;
+                _UseJoystick = true;
+            }
+        }    
+
+        if (_gameContrl->isButtonPressed(B)) {
+            //_didChangeMode = true;
             _UseJoystick = true;
-            if (UD < -0.2) {
-                
-                _updown = 1; //Up
-            }
-            else if (UD > 0.2) {
-                
-                _updown = -1; //down
-            }
-            if (LR < -0.2) {
-                _Leftright = -1; //Left
-            }
-            else if (LR > 0.2) {
-                _Leftright = 1; //Right
-            }
+        }
+
+        if (_gameContrl->isButtonPressed(Y)) {
+            _didHome = true;
+            _UseJoystick = true;
+        }
+      
+        
+        if (_gameContrl->isButtonPressed(Back)) {
+            _didHome = true;
+            _UseJoystick = true;
+        }
+        if (_gameContrl->isButtonPressed(Start)) {
+            _didPause = true;
+            _UseJoystick = true;
+        }
 
 
-    }
+
+        if(value >= static_cast<int>(Tutorial::MOVEMENT)){
+            if (abs(LR) >= 0.2 || abs(UD) >= 0.2) {
+                _Vel = cugl::Vec2(LR, -UD);
+                _UseJoystick = true;
+                if (UD < -0.2) {  
+                    _updown = 1; //Up
+                }
+                else if (UD > 0.2) {
+                    _updown = -1; //down
+                }
+                if (LR < -0.2) {
+                    _Leftright = -1; //Left
+                }
+                else if (LR > 0.2) {
+                    _Leftright = 1; //Right
+                }
+            }
+        }
     }
 }
 
