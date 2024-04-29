@@ -62,8 +62,8 @@ void DecoySet::setExplodeTexture(const std::shared_ptr<cugl::Texture>& value){
 
 void DecoySet::addNewDecoy(cugl::Vec2 pos){
     std::shared_ptr<Decoy> newDecoy = std::make_shared<Decoy>(pos);
-    std::shared_ptr<cugl::scene2::SceneNode> decoyNode = cugl::scene2::PolygonNode::allocWithTexture(_texture);
-    decoyNode->setContentSize(DECOY_SIZE);
+    std::shared_ptr<cugl::scene2::SceneNode> decoyNode = SpriteAnimationNode::allocWithSheet(_texture, 3, 5, 15,1);
+    decoyNode->setScale(DECOY_SIZE/128);
     decoyNode->setAnchor(Vec2::ANCHOR_CENTER);
     decoyNode->setPosition(pos);
     newDecoy->setSceneNode(decoyNode);
