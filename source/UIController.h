@@ -32,7 +32,6 @@ private:
     
     std::shared_ptr<cugl::scene2::PolygonNode> _healthframe;
     std::shared_ptr<SubTextureNode> _healthfill;
-    std::shared_ptr<cugl::scene2::PolygonNode> _sizeframe;
     std::shared_ptr<SubTextureNode> _sizefill;
     std::shared_ptr<cugl::scene2::PolygonNode> _bombtoggle;
     std::shared_ptr<cugl::scene2::PolygonNode> _shoottoggle;

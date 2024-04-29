@@ -16,7 +16,6 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     UInode = node;
     _healthframe = cugl::scene2::PolygonNode::allocWithTexture(assets->get<Texture>("healthframe"));
     _healthfill = SubTextureNode::allocWithTexture(assets->get<Texture>("healthfill"));
-    _sizeframe = cugl::scene2::PolygonNode::allocWithTexture(assets->get<Texture>("sizeframe"));
     _sizefill = SubTextureNode::allocWithTexture(assets->get<Texture>("sizefill"));
     _bombtoggle = cugl::scene2::PolygonNode::allocWithTexture(assets->get<Texture>("bombtoggle"));
     _shoottoggle = cugl::scene2::PolygonNode::allocWithTexture(assets->get<Texture>("shoottoggle"));
@@ -29,7 +28,6 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     // set the scale
     _healthframe->setScale(UI_SCALE);
     _healthfill->setScale(UI_SCALE);
-    _sizeframe->setScale(UI_SCALE);
     _sizefill->setScale(UI_SCALE);
     _bombtoggle->setScale(UI_SCALE);
     _shoottoggle->setScale(UI_SCALE);
@@ -41,7 +39,6 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     // set the position
     _healthframe->setAnchor(Vec2::ANCHOR_CENTER);
     _healthfill->setAnchor(Vec2::ANCHOR_CENTER);
-    _sizeframe->setAnchor(Vec2::ANCHOR_CENTER);
     _sizefill->setAnchor(Vec2::ANCHOR_CENTER);
     _bombtoggle->setAnchor(Vec2::ANCHOR_CENTER);
     _shoottoggle->setAnchor(Vec2::ANCHOR_CENTER);
@@ -63,17 +60,13 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     
     _healthfill->setPosition(healthfillx, healthy);
     
-    float sizex = x + UI_SCALE * _sizeframe->getTexture()->getWidth()/2;
-    float sizey = y + UI_SCALE * _sizeframe->getTexture()->getHeight()/2;
-    
     float sizefillx = x + UI_SCALE * _sizefill->getTexture()->getWidth()/2;
-    float sizefilly = y + UI_SCALE * _sizefill->getTexture()->getHeight()/2;
+    float sizefilly = y + screenSize.height - UI_SCALE * _sizefill->getTexture()->getHeight()/2;
     
-    _sizeframe->setPosition(sizex , sizey);
     _sizefill->setPosition(sizefillx , sizefilly);
     
-    float togglex = x + screenSize.width - UI_SCALE * _baittoggle->getTexture()->getWidth()/2;
-    float toggley = y + screenSize.height - UI_SCALE * _baittoggle->getTexture()->getHeight()/2;
+    float togglex = x + UI_SCALE * _bombtoggle->getTexture()->getWidth()/2;
+    float toggley = y + screenSize.height - UI_SCALE * _bombtoggle->getTexture()->getHeight()/2;
     
     _bombtoggle->setPosition(togglex, toggley);
     _shoottoggle->setPosition(togglex, toggley);
@@ -87,10 +80,9 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     _baittoggle->setVisible(false);
     _hometoggle->setVisible(false);
     _initialFlash->setVisible(false);
-    _toggleFlash->setVisible(true);
+    _toggleFlash->setVisible(false);
     
     node->addChild(_healthframe);
-    node->addChild(_sizeframe);
     node->addChild(_bombtoggle);
     node->addChild(_shoottoggle);
     node->addChild(_baittoggle);
@@ -124,17 +116,17 @@ void UIController::setHealthBarTexture(float percentage){
 void UIController::setSizeBarTexture(float percentage){
     CUAssert(0 <= percentage <= 1);
     // The percentage of the size bar that is empty space, needed to adjust how fast the health bar decreases
-    GLfloat emptyPercent = 3.2/_sizefill->getWidth();
+    GLfloat emptyPercent = 0;
     
     GLfloat minS = 0;
-    GLfloat maxS = 1;
-    GLfloat minT = 1 - (emptyPercent + (1.0 - emptyPercent) * percentage);
+    GLfloat maxS = emptyPercent + (1.0 - emptyPercent) * percentage;
+    GLfloat minT = 0;
     GLfloat maxT = 1;
 
     _sizefill->setSubtexture(minS, maxS, minT, maxT);
     
     float sizefillx = x + UI_SCALE * _sizefill->getTexture()->getWidth()/2;
-    float sizefilly = y + UI_SCALE * _sizefill->getTexture()->getHeight()/2;
+    float sizefilly = y + _screenSize.height - UI_SCALE * _sizefill->getTexture()->getHeight()/2;
 
     _sizefill->setPosition(sizefillx , sizefilly);
 }
@@ -174,22 +166,22 @@ void UIController::setToggle(std::string mode){
 }
 
 void UIController::animateFlash(int absorb){
-    if(absorb > 10){
-        if(!_flashAnimated){
-            _initialFlash->setVisible(true);
-            _initialFlash->update();
-            
-            if(_initialFlash->getFrame() == _initialFlash->getSpan() - 1){
-                _flashAnimated = true;
-            }
-        } else{
-            _toggleFlash->update();
-        }
-        
-    } else{
-        _initialFlash->setVisible(false);
-        _flashAnimated = false;
-        _initialFlash->setFrame(0);
-        _toggleFlash->setFrame(3);
-    }
+//    if(absorb > 10){
+//        if(!_flashAnimated){
+//            _initialFlash->setVisible(true);
+//            _initialFlash->update();
+//            
+//            if(_initialFlash->getFrame() == _initialFlash->getSpan() - 1){
+//                _flashAnimated = true;
+//            }
+//        } else{
+//            _toggleFlash->update();
+//        }
+//        
+//    } else{
+//        _initialFlash->setVisible(false);
+//        _flashAnimated = false;
+//        _initialFlash->setFrame(0);
+//        _toggleFlash->setFrame(3);
+//    }
 }
