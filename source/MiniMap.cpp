@@ -4,7 +4,7 @@
 //
 //  Created by Henry Gao on 4/23/24.
 //
-#define MAPSCALE 10.0f
+#define MAPSCALE 6.0f
 #define OBJECTSCALE 1.5f
 
 #include "MiniMap.h"
@@ -28,7 +28,7 @@ bool Minimap::init(std::shared_ptr<cugl::AssetManager> &assets, cugl::Size scree
     map->setScale(MAPSCALE);
     
     // Static do not change
-    radius = MAPSCALE * map->getTexture()->getHeight() / 2;
+    radius = MAPSCALE * map->getTexture()->getHeight()/2;
     x = screenSize.width - MAPSCALE * map->getTexture()->getWidth()/2;
     y = MAPSCALE * map->getTexture()->getHeight()/2;
     map->setPosition(x,y);

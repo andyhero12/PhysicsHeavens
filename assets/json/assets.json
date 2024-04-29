@@ -61,22 +61,22 @@
             "magfilter": "nearest"
         },
         "minimap": {
-            "file": "textures/minimap/minimap.png",
+            "file": "textures/minimap/map_background.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
         "dogmap": {
-            "file": "textures/minimap/dog.png",
+            "file": "textures/minimap/map_dog.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
         "spawnermap": {
-            "file": "textures/minimap/spawner.png",
+            "file": "textures/minimap/map_spawner.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
         "basemap": {
-            "file": "textures/minimap/base.png",
+            "file": "textures/minimap/map_gate.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
