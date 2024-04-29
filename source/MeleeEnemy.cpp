@@ -193,12 +193,12 @@ void MeleeEnemy::handleChase(OverWorld& overWorld) {
 }
 
 void MeleeEnemy::handleLowHealth(OverWorld& overWorld) {
-    runAnimations->setColor(cugl::Color4::BLACK);
+//    runAnimations->setColor(cugl::Color4::BLACK);
     handleRunaway(overWorld);
 }
 
 void MeleeEnemy::handleAttack(OverWorld& overWorld) {
-    attackAnimations->setColor(Color4::GREEN);
+//    attackAnimations->setColor(Color4::GREEN);
     handleChase(overWorld);
 }
 

@@ -5,18 +5,23 @@
             "minfilter": "linear",
             "magfilter": "nearest"
         },
+        "GROW":{
+            "file": "textures/tutorial/grow.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
         "SPECIALSONE":{
-            "file": "textures/tutorial/greeting.png",
+            "file": "textures/tutorial/trigger.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
         "CHANGEABILITYTWO":{
-            "file": "textures/tutorial/greeting.png",
+            "file": "textures/tutorial/swap.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
         "SPECIALSTWO":{
-            "file": "textures/tutorial/greeting.png",
+            "file": "textures/tutorial/trigger.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
@@ -46,12 +51,12 @@
             "magfilter": "nearest"
         },
         "DEFENDGATE":{
-            "file": "textures/tutorial/greeting.png",
+            "file": "textures/tutorial/gate.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
-        "DESTORYSPAWNER":{
-            "file": "textures/tutorial/greeting.png",
+        "DESTROYSPAWNER":{
+            "file": "textures/tutorial/spawners.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },

@@ -11,9 +11,11 @@ bool Tutorial::init(int tile, MODE m_progress){
     tileX = tile;
     passed = false;
     progress = m_progress;
+    enter = false;
     return true;
 }
 
 bool Tutorial::atArea(int tile){
-    return tileX <= tile || progress == GREETING || progress == MOVEMENT;
+    enter = enter || tileX <= tile || progress == GREETING || progress == MOVEMENT;
+    return enter;
 }

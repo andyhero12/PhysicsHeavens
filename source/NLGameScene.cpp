@@ -873,7 +873,7 @@ void GameScene::addChildForeground()
 void GameScene::updateInputController()
 {
     
-    
+    std::cout <<overWorld.getDog()->getX() << std::endl;
     if (tutorialIndex < tutorialTiles.size())
     {
         std::shared_ptr<Tutorial> tile = tutorialTiles.at(tutorialIndex);
@@ -928,12 +928,19 @@ void GameScene::initTutorialOne(){
     _uinode->addChild(_tutorialnode);
     tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::GREETING));
     tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::MOVEMENT));
-    tutorialTiles.push_back(Tutorial::alloc(14, Tutorial::MODE::BITE));
-    std::vector<std::string> modes = {"SHOOT"};
+    tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::MODE::DEFENDGATE));
+    tutorialTiles.push_back(Tutorial::alloc(30, Tutorial::MODE::BITE));
+    tutorialTiles.push_back(Tutorial::alloc(30, Tutorial::MODE::GROW));
+    tutorialTiles.push_back(Tutorial::alloc(30, Tutorial::MODE::SPECIALSONE));
+    tutorialTiles.push_back(Tutorial::alloc(30, Tutorial::MODE::CHANGEABILITYTWO));
+    tutorialTiles.push_back(Tutorial::alloc(30, Tutorial::MODE::DESTROYSPAWNER));
+    tutorialTiles.push_back(Tutorial::alloc(30, Tutorial::MODE::SPECIALSTWO));
+//
+    std::vector<std::string> modes = {"RECALL", "SHOOT"};
     overWorld.getDog()->setAbility(modes);
     
     // each one need to write # of frames
-    std::vector<int> frame = {21, 21, 21};
+    std::vector<int> frame = {21, 21, 21, 21, 21, 21, 21, 21, 21};
     initTutorial(frame);
     
 }
