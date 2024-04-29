@@ -32,6 +32,7 @@
 #define KNOCKBACK_FORCE 45
 #define LINEAR_DAMPING 15.0f
 #define KNOCKBACK_TIME 0.25f
+#define KNOCKBACK_LIMIT 14
 
 #include "stlastar.h"
 #include "WorldSearchVertex.h"
@@ -184,7 +185,7 @@ public:
     void applyDamage(int dmg, Vec2 direction) {
         direction.normalize();
         float velocity = KNOCKBACK_FORCE / getMass();
-        velocity = velocity > 14 ? 14 : velocity;
+        velocity = velocity > KNOCKBACK_LIMIT ? KNOCKBACK_LIMIT : velocity;
         setLinearVelocity(direction.x * velocity, direction.y * velocity);
         setHealth(getHealth() - dmg);
         _knockbackTimer = KNOCKBACK_TIME;
