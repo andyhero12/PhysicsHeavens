@@ -13561,7 +13561,7 @@
                                           {
                                                  "name": "InitDelay",
                                                  "type": "int",
-                                                 "value": 10
+                                                 "value": 20
                                           },
                                           {
                                                  "name": "PrimaryEnemy",
