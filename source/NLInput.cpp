@@ -344,42 +344,64 @@ void InputController::resetKeys(){
 
 bool InputController::readInput_joystick(Tutorial::MODE progress, bool inRange) {
     cugl::GameController::Button buttons = cugl::GameController::Button::INVALID;
-    cugl::GameController::Axis X_left = cugl::GameController::Axis::INVALID;
-    cugl::GameController::Axis Y_left = cugl::GameController::Axis::INVALID;
     // define button // trigger based on progress
     if(!inRange){
         readInput_joystick(static_cast<int>(progress));
     }
     else{
-        if(progress == Tutorial::MODE::MOVEMENT){
-            // if(abs(LR) >= 0.2 || abs(UD) >= 0.2){
-            //     return true;
-            // }  
-        }
-        else if (progress == Tutorial::MODE::BITE){
-            buttons = cugl::GameController::Button::A;
-        }
-        else if(progress == Tutorial::MODE::CHANGEABILITYTWO || progress == Tutorial::MODE::CHANGEABILITYTHREE || progress == Tutorial::MODE::CHANGEABILITYFOUR){
-            buttons = cugl::GameController::Button::A;
-        }
-        else if(progress == Tutorial::SPECIALSONE || progress == Tutorial::SPECIALSTWO || progress == Tutorial::SPECIALSTHREE || progress == Tutorial::SPECIALSFOUR){
-            X_left = cugl::GameController::Axis::LEFT_X;
-            Y_left = cugl::GameController::Axis::LEFT_Y;
-        }
-        else{
-            buttons = cugl::GameController::Button::A;
-        }
-        
         if (_gameContrl) {
-            if (_gameContrl->isButtonPressed(buttons)) {
-                return true;
+            if(progress == Tutorial::MODE::MOVEMENT){
+                cugl::GameController::Axis X_left = cugl::GameController::Axis::LEFT_X;
+                cugl::GameController::Axis Y_left = cugl::GameController::Axis::LEFT_Y;
+                float LR = _gameContrl->getAxisPosition(X_left);
+                float UD = _gameContrl->getAxisPosition(Y_left);
+                
+                if (abs(LR) >= 0.2 || abs(UD) >= 0.2) {
+                    _Vel = cugl::Vec2(LR, -UD);
+                    _UseJoystick = true;
+                    if (UD < -0.2) {
+                        _updown = 1; //Up
+                    }
+                    else if (UD > 0.2) {
+                        _updown = -1; //down
+                    }
+                    if (LR < -0.2) {
+                        _Leftright = -1; //Left
+                    }
+                    else if (LR > 0.2) {
+                        _Leftright = 1; //Right
+                    }
+                    return true;
+                }
             }
-            
-            float LR = _gameContrl->getAxisPosition(X_left);
-            float UD = _gameContrl->getAxisPosition(Y_left);
-            
-            if (abs(LR) >= 0.2 || abs(UD) >= 0.2) {
-                return true;
+            else if (progress == Tutorial::MODE::BITE){
+                buttons = cugl::GameController::Button::A;
+                if (_gameContrl->isButtonPressed(buttons)) {
+                    _didFire = true;
+                    _UseJoystick = true;
+                    return true;
+                }
+            }
+            else if(progress == Tutorial::MODE::CHANGEABILITYTWO || progress == Tutorial::MODE::CHANGEABILITYTHREE || progress == Tutorial::MODE::CHANGEABILITYFOUR){
+                buttons = cugl::GameController::Button::RIGHT_SHOULDER;
+                if (_gameContrl->isButtonPressed(buttons)) {
+                    _didChangeMode = true;
+                    _UseJoystick = true;
+                }
+            }
+            else if(progress == Tutorial::SPECIALSONE || progress == Tutorial::SPECIALSTWO || progress == Tutorial::SPECIALSTHREE || progress == Tutorial::SPECIALSFOUR){
+                cugl::GameController::Axis LT = cugl::GameController::Axis::TRIGGER_LEFT;
+                cugl::GameController::Axis RT = cugl::GameController::Axis::TRIGGER_RIGHT;
+                if (_gameContrl->getAxisPosition(LT)>=0.5||_gameContrl->getAxisPosition(RT)>=0.5) {
+                    _didSpecial = true;
+                    _UseJoystick = true;
+                }
+            }
+            else{
+                buttons = cugl::GameController::Button::A;
+                if (_gameContrl->isButtonPressed(buttons)) {
+                    return true;
+                }
             }
         }
     }

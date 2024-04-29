@@ -34,6 +34,8 @@ public:
 
     static std::string toString(MODE mode) {
         switch (mode) {
+            case GREETING:
+                return "GREETING";
             case MOVEMENT:
                 return "MOVEMENT";
             case BITE:
