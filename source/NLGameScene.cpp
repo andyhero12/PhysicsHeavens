@@ -326,7 +326,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _uinode->addChild(loseNode);
     _uinode->addChild(winNode);
     _uinode->addChild(_pause);
-    loseNode->setVisible(true);
+    loseNode->setVisible(false);
     winNode->setVisible(false);
     if (level_string == LEVEL_ONE_KEY){
         initTutorialOne();
