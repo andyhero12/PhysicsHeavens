@@ -232,6 +232,9 @@ void NetApp::updateMenuScene(float timestep) {
         case MenuScene::Choice::NONE:
             // DO NOTHING
             break;
+        case MenuScene::Back:
+            CULog("Pressed Back");
+            break;
         }
     }
     
