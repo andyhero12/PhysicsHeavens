@@ -167,7 +167,7 @@ protected:
     
     
     /** Initialize tutorial */
-    void initTutorial();
+    void initTutorial(std::vector<int> frame);
     
     void initTutorialOne();
     void initTutorialTwo();

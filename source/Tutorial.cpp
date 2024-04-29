@@ -15,5 +15,5 @@ bool Tutorial::init(int tile, MODE m_progress){
 }
 
 bool Tutorial::atArea(int tile){
-    return tileX <= tile;
+    return tileX <= tile || progress == GREETING || progress == MOVEMENT;
 }
