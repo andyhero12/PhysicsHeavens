@@ -31,6 +31,7 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 
 using namespace cugl;
 using namespace cugl::physics2::net;
@@ -90,6 +91,8 @@ using namespace cugl::physics2::net;
 
 #define FIXED_TIMESTEP_S 0.02f
 #define ROOT_NODE_SCALE 1
+
+#define SHAKING_DECAY 100.0f
 
 #pragma mark -
 #pragma mark Constructors
@@ -325,9 +328,17 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _uinode->addChild(_minimap);
 
     if (level_string == LEVEL_ONE_KEY){
+        initTutorialOne();
         initTutorial();
     }
-    
+    else if(level_string == LEVEL_TWO_KEY){
+        initTutorialTwo();
+        initTutorial();
+    }
+    else if(level_string == LEVEL_THREE_KEY){
+        initTutorialThree();
+        initTutorial();
+    }
     
     return true;
 }
@@ -569,7 +580,7 @@ void GameScene::postUpdate(float dt)
     delta -= (computeActiveSize() / 2);
     Vec2 curr = -delta / _zoom;
     Vec2 pan = curr.lerp(previousPan, 0.9f);
-    _rootnode->applyPan(pan);
+    _rootnode->applyPan(pan + shakeMagnitude * Vec2(rand() / (float)RAND_MAX, rand() / (float)RAND_MAX));
     previousPan = pan;
     //
     //    std::vector<Vec2> upperPosHide;
@@ -603,6 +614,11 @@ void GameScene::postUpdate(float dt)
 
     _minimap->update();
     olddogPos = dogPos;
+
+    shakeMagnitude -= SHAKING_DECAY * dt;
+    if(shakeMagnitude < 0) {
+        shakeMagnitude = 0;
+    }
 }
 
 void GameScene::fixedUpdate()
@@ -626,6 +642,7 @@ void GameScene::fixedUpdate()
         }
         if (auto biteEvent = std::dynamic_pointer_cast<BiteEvent>(e))
         {
+            //shakeMagnitude = std::max(shakeMagnitude, 50.0f);
             overWorld.processBiteEvent(biteEvent);
         }
         if (auto recallEvent = std::dynamic_pointer_cast<RecallEvent>(e))
@@ -634,11 +651,13 @@ void GameScene::fixedUpdate()
         }
         if (auto explodeEvent = std::dynamic_pointer_cast<ExplodeEvent>(e))
         {
+            shakeMagnitude = std::max(shakeMagnitude, 40.0f);
             //            CULog("Explode Event Got");
             overWorld.processExplodeEvent(explodeEvent);
         }
         if (auto shootEvent = std::dynamic_pointer_cast<ShootEvent>(e))
         {
+            shakeMagnitude = std::max(shakeMagnitude, 40.0f);
             //            CULog("Explode Event Got");
             overWorld.processShootEvent(shootEvent);
         }
@@ -888,14 +907,38 @@ void GameScene::updateInputController()
     }
 }
 
-void GameScene::initTutorial()
-{
+void GameScene::initTutorialOne(){
     tutorialIndex = 0;
     _tutorialnode = scene2::SceneNode::alloc();
     _uinode->addChild(_tutorialnode);
     tutorialTiles.push_back(Tutorial::alloc(14, Tutorial::MODE::BITE));
-    tutorialTiles.push_back(Tutorial::alloc(18, Tutorial::MODE::CHANGEABILITY));
+    tutorialTiles.push_back(Tutorial::alloc(18, Tutorial::MODE::CHANGEABILITYTWO));
+    std::vector<std::string> modes = {"SHOOT"};
+    overWorld.getDog()->setAbility(modes);
+}
 
+void GameScene::initTutorialTwo(){
+    tutorialIndex = 0;
+    _tutorialnode = scene2::SceneNode::alloc();
+    _uinode->addChild(_tutorialnode);
+    tutorialTiles.push_back(Tutorial::alloc(14, Tutorial::MODE::BITE));
+    tutorialTiles.push_back(Tutorial::alloc(18, Tutorial::MODE::CHANGEABILITYTWO));
+    std::vector<std::string> modes = {"SHOOT", "BAIT"};
+    overWorld.getDog()->setAbility(modes);
+}
+
+void GameScene::initTutorialThree(){
+    tutorialIndex = 0;
+    _tutorialnode = scene2::SceneNode::alloc();
+    _uinode->addChild(_tutorialnode);
+    tutorialTiles.push_back(Tutorial::alloc(14, Tutorial::MODE::BITE));
+    tutorialTiles.push_back(Tutorial::alloc(18, Tutorial::MODE::CHANGEABILITYTWO));
+    std::vector<std::string> modes = {"SHOOT", "BAIT", "BOMB"};
+    overWorld.getDog()->setAbility(modes);
+}
+
+void GameScene::initTutorial()
+{
     Size screen = computeActiveSize();
     std::shared_ptr<scene2::PolygonNode> node;
     std::string str;
@@ -912,6 +955,8 @@ void GameScene::initTutorial()
         node->setVisible(false);
     }
 }
+
+
 void GameScene::executeSlidingWindow(Vec2 dogPos)
 {
 

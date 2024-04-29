@@ -65,7 +65,7 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _buttonset.push_back(_button3 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("Menu_startmenu_button3")));
     // Program the buttons
     _button1->addListener([this](const std::string& name, bool down) {
-        if (down) {  
+        if (down) {
             if(_input.getState()==InputController::State::CONTROLLER){
                 _isdown = Isdown::isSINGLE;
             }
