@@ -190,18 +190,17 @@ public:
      * it is typically best to poll input instead of using listeners.  Listeners
      * are more appropriate for menus and buttons (like the loading screen).
      */
-    void readInput();
+    void readInput(int value);
 
-    void readInput_joystick();
+    void readInput_joystick(int value);
     
-    bool readInput(Tutorial::MODE progress);
+    bool readInput(Tutorial::MODE progress, bool inRange);
 
-    bool readInput_joystick(Tutorial::MODE progress);
-
+    bool readInput_joystick(Tutorial::MODE progress, bool inRange);
     
-    void update();
+    void update(int value = 10);
     
-    bool update(Tutorial::MODE progress);
+    bool update(Tutorial::MODE progress, bool inRange);
     
     
     cugl::Vec2 getVelocity() const {

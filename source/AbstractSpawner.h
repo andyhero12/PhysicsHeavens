@@ -11,6 +11,8 @@
 #include "MonsterController.h"
 #include "OverWorld.h"
 
+#define DAMAGED_DURATION 0.5f
+
 class AbstractSpawner{
 protected:
     std::shared_ptr<cugl::scene2::SceneNode> sceneNode;
@@ -24,6 +26,7 @@ protected:
     bool _notCreated;
     float _flameDelay;
     cugl::Vec2 _position;
+    float _damagedTimer;
     
 public:
 
@@ -51,6 +54,7 @@ public:
     , _notCreated(true)
     , _flameDelay(-delay + regularDelay)
     , _delay{delay}
+    , _damagedTimer{0}
     {
     }
     
@@ -84,6 +88,7 @@ public:
     cugl::Vec2 getPos() const {
         return _position; }
     void subHealth(const int val) {
+        _damagedTimer = DAMAGED_DURATION;
         _health -= val;
         _healthBar->setProgress((float)_health/_maxHealth);
         _healthBar->setVisible(_health < _maxHealth);

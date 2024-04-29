@@ -93,15 +93,15 @@ bool InputController::init_withlistener() {
 }
 
 
-void InputController::update(){
+void InputController::update(int value){
     resetKeys();
-    readInput_joystick();
-    readInput();
+    readInput_joystick(value);
+    readInput(value);
 }
 
-bool InputController::update(Tutorial::MODE progress){
+bool InputController::update(Tutorial::MODE progress, bool inRange){
     resetKeys();
-    return readInput(progress) || readInput_joystick(progress);
+    return readInput(progress, inRange) || readInput_joystick(progress, inRange);
 }
 
 void InputController::resetcontroller()
@@ -112,8 +112,36 @@ void InputController::resetcontroller()
     _back = false;
 }
 
-bool InputController::readInput(Tutorial::MODE progress){
+bool InputController::readInput(Tutorial::MODE progress, bool inRange){
     Keyboard* keys = Input::get<Keyboard>();
+    
+    KeyCode exit = KeyCode::ESCAPE;
+    KeyCode pause = KeyCode::P;
+    KeyCode reset = KeyCode::R;
+    
+    // should always exist
+    if (keys->keyPressed(exit)) {
+        _didExit = true;
+        _UseKeyboard = true;
+    }
+    
+    // Pause the game
+    if (keys->keyPressed(pause)) {
+        _didPause = true;
+        _UseKeyboard = true;
+    }
+    
+    if (keys->keyPressed(reset)) {
+        _didBack = true;
+        _didHome = true;
+        _UseKeyboard = true;
+    }
+    
+     
+    if(!inRange){
+        readInput(static_cast<int>(progress));
+    }
+    
     
     if(progress == Tutorial::MODE::MOVEMENT){
         if (keys->keyPressed(KeyCode::ARROW_UP) || keys->keyPressed(KeyCode::ARROW_DOWN) || keys->keyPressed(KeyCode::ARROW_LEFT) || keys->keyPressed(KeyCode::ARROW_RIGHT)){
@@ -141,12 +169,10 @@ bool InputController::readInput(Tutorial::MODE progress){
             return true;
         }
     }
-    KeyCode exit = KeyCode::ESCAPE;
-    if (keys->keyPressed(exit)) {
-        _didExit = true;
-        _UseKeyboard = true;
-    }
+
     return false;
+    
+
 }
 /**
  * Reads the input for this player and converts the result into game logic.
@@ -164,7 +190,7 @@ bool InputController::readInput(Tutorial::MODE progress){
   * it is typically best to poll input instead of using listeners.  Listeners
   * are more appropriate for menus and buttons (like the loading screen).
   */
-void InputController::readInput() {
+void InputController::readInput(int value) {
     // This makes it easier to change the keys later
     KeyCode up = KeyCode::ARROW_UP;
     KeyCode down = KeyCode::ARROW_DOWN;
@@ -181,22 +207,26 @@ void InputController::readInput() {
     Keyboard* keys = Input::get<Keyboard>();
 
 
-    // Movement left/right
-    if (keys->keyDown(left) && !keys->keyDown(right)) {
-        _turning = -1;
-        _UseKeyboard = true;
-    }
-    else if (keys->keyDown(right) && !keys->keyDown(left)) {
-        _turning = 1;
-        _UseKeyboard = true;
-    }
-    if (keys->keyPressed(right)){
-        _UseKeyboard = true;
-        _didPressRight = true;
-    }
-    if (keys->keyPressed(left)){
-        _UseKeyboard = true;
-        _didPressLeft = true;
+    if(value >= static_cast<int>(Tutorial::MOVEMENT)){
+        // Movement left/right
+        if (keys->keyDown(left) && !keys->keyDown(right)) {
+            _turning = -1;
+            _UseKeyboard = true;
+        }
+        else if (keys->keyDown(right) && !keys->keyDown(left)) {
+            _turning = 1;
+            _UseKeyboard = true;
+        }
+        
+        // Movement forward/backward
+        if (keys->keyDown(up) && !keys->keyDown(down)) {
+            _forward = 1;
+            _UseKeyboard = true;
+        }
+        else if (keys->keyDown(down) && !keys->keyDown(up)) {
+            _forward = -1;
+            _UseKeyboard = true;
+        }
     }
 
     if (keys->keyDown(up)) {
@@ -209,35 +239,43 @@ void InputController::readInput() {
     }
 
     // Shooting
-    if (keys->keyPressed(shoot)) {
-        _didFire = true;
-        _UseKeyboard = true;
+    if(value >= static_cast<int>(Tutorial::BITE)){
+        if (keys->keyPressed(shoot)) {
+            _didFire = true;
+            _UseKeyboard = true;
+        }
     }
 
-    // Reset the game
-    if (keys->keyPressed(reset)) {
-        _didBack = true;
-        _didHome = true;
-        _UseKeyboard = true;
+
+
+    if(value >= static_cast<int>(Tutorial::CHANGEABILITY)){
+        if (keys->keyPressed(mode)) {
+            _didChangeMode = true;
+            _UseKeyboard = true;
+        }
     }
     
-    // Pause the game
-    if (keys->keyPressed(pause)) {
-        _didPause = true;
-        _UseKeyboard = true;
-    }
-    // Movement forward/backward
 
-    if (keys->keyPressed(mode)) {
-        _didChangeMode = true;
-        _UseKeyboard = true;
-    }
-
-    if (keys->keyPressed(special)) {
-        _didSpecial = true;
-        _UseKeyboard = true;
+    if(value >= static_cast<int>(Tutorial::SPECIALS)){
+        if (keys->keyPressed(special)) {
+            _didSpecial = true;
+            _UseKeyboard = true;
+        }
     }
     
+    
+    
+    if(value >= static_cast<int>(Tutorial::DASH)){
+        if (keys->keyPressed(dash)) {
+            _didDash = true;
+            _UseKeyboard = true;
+        }
+    }
+    
+    
+    
+    
+    // should always exist
     if (keys->keyPressed(debug)) {
         _didDebug = true;
         _UseKeyboard = true;
@@ -246,17 +284,29 @@ void InputController::readInput() {
         _didExit = true;
         _UseKeyboard = true;
     }
-    if (keys->keyPressed(dash)) {
-        _didDash = true;
+    
+    // Pause the game
+    if (keys->keyPressed(pause)) {
+        _didPause = true;
         _UseKeyboard = true;
     }
-    if (keys->keyDown(up) && !keys->keyDown(down)) {
-        _forward = 1;
+    
+    if (keys->keyPressed(reset)) {
+        _didBack = true;
+        _didHome = true;
         _UseKeyboard = true;
     }
-    else if (keys->keyDown(down) && !keys->keyDown(up)) {
-        _forward = -1;
+    
+  
+    
+    // Used for UI
+    if (keys->keyPressed(right)){
         _UseKeyboard = true;
+        _didPressRight = true;
+    }
+    if (keys->keyPressed(left)){
+        _UseKeyboard = true;
+        _didPressLeft = true;
     }
 
 }
@@ -286,7 +336,7 @@ void InputController::resetKeys(){
     _Vel = cugl::Vec2(0, 0);
 }
 
-bool InputController::readInput_joystick(Tutorial::MODE progress) {
+bool InputController::readInput_joystick(Tutorial::MODE progress, bool inRange) {
     cugl::GameController::Button buttons = cugl::GameController::Button::INVALID;
     cugl::GameController::Axis X_left = cugl::GameController::Axis::INVALID;
     cugl::GameController::Axis Y_left = cugl::GameController::Axis::INVALID;
@@ -320,7 +370,7 @@ bool InputController::readInput_joystick(Tutorial::MODE progress) {
     return false;
 }
 
-void InputController::readInput_joystick() {
+void InputController::readInput_joystick(int value) {
     cugl::GameController::Axis X_left = cugl::GameController::Axis::LEFT_X;
     cugl::GameController::Axis Y_left = cugl::GameController::Axis::LEFT_Y;
     cugl::GameController::Button A = cugl::GameController::Button::A;
