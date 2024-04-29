@@ -166,6 +166,11 @@ protected:
     
     /** Initialize tutorial */
     void initTutorial();
+    
+    void initTutorialOne();
+    void initTutorialTwo();
+    void initTutorialThree();
+    
 
 public:
 #pragma mark -

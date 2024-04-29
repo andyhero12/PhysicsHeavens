@@ -325,9 +325,17 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _uinode->addChild(_minimap);
 
     if (level_string == LEVEL_ONE_KEY){
+        initTutorialOne();
         initTutorial();
     }
-    
+    else if(level_string == LEVEL_TWO_KEY){
+        initTutorialTwo();
+        initTutorial();
+    }
+    else if(level_string == LEVEL_THREE_KEY){
+        initTutorialThree();
+        initTutorial();
+    }
     
     return true;
 }
@@ -888,14 +896,38 @@ void GameScene::updateInputController()
     }
 }
 
-void GameScene::initTutorial()
-{
+void GameScene::initTutorialOne(){
     tutorialIndex = 0;
     _tutorialnode = scene2::SceneNode::alloc();
     _uinode->addChild(_tutorialnode);
     tutorialTiles.push_back(Tutorial::alloc(14, Tutorial::MODE::BITE));
     tutorialTiles.push_back(Tutorial::alloc(18, Tutorial::MODE::CHANGEABILITYTWO));
+    std::vector<std::string> modes = {"SHOOT"};
+    overWorld.getDog()->setAbility(modes);
+}
 
+void GameScene::initTutorialTwo(){
+    tutorialIndex = 0;
+    _tutorialnode = scene2::SceneNode::alloc();
+    _uinode->addChild(_tutorialnode);
+    tutorialTiles.push_back(Tutorial::alloc(14, Tutorial::MODE::BITE));
+    tutorialTiles.push_back(Tutorial::alloc(18, Tutorial::MODE::CHANGEABILITYTWO));
+    std::vector<std::string> modes = {"SHOOT", "BAIT"};
+    overWorld.getDog()->setAbility(modes);
+}
+
+void GameScene::initTutorialThree(){
+    tutorialIndex = 0;
+    _tutorialnode = scene2::SceneNode::alloc();
+    _uinode->addChild(_tutorialnode);
+    tutorialTiles.push_back(Tutorial::alloc(14, Tutorial::MODE::BITE));
+    tutorialTiles.push_back(Tutorial::alloc(18, Tutorial::MODE::CHANGEABILITYTWO));
+    std::vector<std::string> modes = {"SHOOT", "BAIT", "BOMB"};
+    overWorld.getDog()->setAbility(modes);
+}
+
+void GameScene::initTutorial()
+{
     Size screen = computeActiveSize();
     std::shared_ptr<scene2::PolygonNode> node;
     std::string str;
@@ -912,6 +944,8 @@ void GameScene::initTutorial()
         node->setVisible(false);
     }
 }
+
+
 void GameScene::executeSlidingWindow(Vec2 dogPos)
 {
 
