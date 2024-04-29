@@ -527,7 +527,7 @@
           "file": "textures/win_screen.png"
         },
         "lose_screen": {
-          "file": "textures/fail_screen.png"
+          "file": "textures/loss_screen.png"
         }
     },
     "jsons": {

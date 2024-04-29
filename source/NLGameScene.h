@@ -46,6 +46,7 @@
 #include "MiniMap.h"
 #include "Tutorial.h"
 #include "CollisionListener.h"
+#include "SpriteAnimationNode.h"
 
 using namespace cugl::physics2::net;
 using namespace cugl;
@@ -87,8 +88,8 @@ protected:
 
     std::shared_ptr<cugl::physics2::net::NetWorld> _world;
     
-    std::shared_ptr<cugl::scene2::PolygonNode> loseNode;
-    std::shared_ptr<cugl::scene2::PolygonNode> winNode;
+    std::shared_ptr<SpriteAnimationNode> loseNode;
+    std::shared_ptr<SpriteAnimationNode> winNode;
     /** The level model */
     std::shared_ptr<LevelModel> _level;
 

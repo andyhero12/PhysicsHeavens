@@ -283,24 +283,21 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _uinode->setContentSize(dimen);
     _uinode->doLayout();
 
-    loseNode = cugl::scene2::PolygonNode::allocWithTexture(_assets->get<cugl::Texture>("lose_screen"));
-    loseNode->setContentSize(dimen);
-    loseNode->setAnchor(Vec2::ANCHOR_CENTER);
+//    loseNode = cugl::scene2::PolygonNode::allocWithTexture(_assets->get<cugl::Texture>("lose_screen"));
+    loseNode = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("lose_screen"), 4, 5, 18, 3);
+    loseNode->setScale(Vec2(4,4));
+//    loseNode->setContentSize(dimen);
+//    loseNode->setAnchor(Vec2::ANCHOR_CENTER);
     loseNode->setPosition(0.5 * loseNode->getSize());
 
-    winNode = cugl::scene2::PolygonNode::allocWithTexture(_assets->get<cugl::Texture>("win_screen"));
-    winNode->setContentSize(dimen);
-    winNode->setAnchor(Vec2::ANCHOR_CENTER);
+    winNode = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("win_screen"), 1, 1, 1, 1);
+//    winNode->setContentSize(dimen);
+//    winNode->setAnchor(Vec2::ANCHOR_CENTER);
+    winNode->setScale(Vec2(4,4));
     winNode->setPosition(0.5 * winNode->getSize());
-
-    _uinode->addChild(loseNode);
-    _uinode->addChild(winNode);
-    loseNode->setVisible(false);
-    winNode->setVisible(false);
 
     _pause = std::make_shared<PauseScene>();
     _pause->init(_assets, computeActiveSize());
-    _uinode->addChild(_pause);
 
     _pause->setContentSize(dimen);
     _pause->doLayout();
@@ -326,7 +323,11 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     resetDraw();
     _minimap = Minimap::alloc(_assets, computeActiveSize(), overWorld, _spawnerController);
     _uinode->addChild(_minimap);
-
+    _uinode->addChild(loseNode);
+    _uinode->addChild(winNode);
+    _uinode->addChild(_pause);
+    loseNode->setVisible(true);
+    winNode->setVisible(false);
     if (level_string == LEVEL_ONE_KEY){
         initTutorialOne();
         initTutorial();
@@ -625,6 +626,14 @@ void GameScene::fixedUpdate()
 {
     if (loseNode->isVisible() || winNode->isVisible())
     {
+        if (loseNode->isVisible() && loseNode->getFrame() != loseNode->getSpan() - 1){
+            loseNode->update();
+//            loseNode->setFrame(5);
+//            CULog("here frame %d", loseNode->getFrame());
+        }
+        if (winNode->isVisible() && winNode->getFrame() != winNode->getSpan() -1){
+            winNode->update();
+        }
         return;
     }
     // TODO: check for available incoming events from the network controller and call processCrateEvent if it is a CrateEvent.
@@ -682,11 +691,13 @@ void GameScene::fixedUpdate()
         {
             winNode->setVisible(true);
             _pause->setPause(true);
+            _minimap->setVisible(false);
         }
         if (auto loseEvent = std::dynamic_pointer_cast<LoseEvent>(e))
         {
             loseNode->setVisible(true);
             _pause->setPause(true);
+            _minimap->setVisible(false);
         }
     }
 #pragma mark END SOLUTION

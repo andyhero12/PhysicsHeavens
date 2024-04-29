@@ -13,6 +13,7 @@ bool SpriteAnimationNode::initWithSheet(const std::shared_ptr<cugl::Texture>& te
     cugl::scene2::SpriteNode::initWithSheet(texture, rows, cols, size);
     _animFreq = freq;
     _timeSinceLastAnim = 0;
+    setFrame(0);
     return true;
 }
 
