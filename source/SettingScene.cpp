@@ -57,6 +57,9 @@ bool SettingScene::init(const std::shared_ptr<AssetManager> &assets)
     //_bar = std::dynamic_pointer_cast<scene2::ProgressBar>(assets->get<scene2::SceneNode>("level_bar"));
     //_brand = assets->get<scene2::SceneNode>("level_name");
     _button = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("setting_play"));
+    // _slider = std::dynamic_pointer_cast<scene2::Slider>(assets->get<scene2::SceneNode>("setting_action"));
+    // _label  = std::dynamic_pointer_cast<scene2::Label>(assets->get<scene2::SceneNode>("setting_label"));
+    // _value  = _slider->getValue();
     _button->addListener([this](const std::string &name, bool down){
     if(down) { // Check if the button is pressed down
         switch (level) { // Use the current level stored in _level
@@ -81,6 +84,17 @@ bool SettingScene::init(const std::shared_ptr<AssetManager> &assets)
         }
     }
 });
+    // _slider->addListener([this](const std::string& name, float value) {
+    //     if (value != _value) {
+    //         _value = value;
+    //         _label->setText("Slider value is "+cugl::strtool::to_string(_value,1));
+    //     }
+    // });
+
+    
+    // if (_active) {
+    //     _slider->activate();
+    // }
     background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("setting_background"), 1, 9);
     background->setScale(4.3);
     background->setPosition(0.5 * background->getSize());
@@ -103,6 +117,7 @@ void SettingScene::dispose()
     }
     _button = nullptr;
     _assets = nullptr;
+    _slider = nullptr;
 }
 
 #pragma mark -
@@ -178,6 +193,7 @@ void SettingScene::setActive(bool value)
         {
             _buttonselection = button::NONE;
             _button->activate();
+            //_slider->activate();
             firsttime = true;
             _backClicked = false;
         }
@@ -186,6 +202,7 @@ void SettingScene::setActive(bool value)
             background->setFrame(0);
             _button->deactivate();
             _button->setDown(false);
+            //_slider->deactivate();
             firsttime = true;
             _backClicked = false;
             level = 1;

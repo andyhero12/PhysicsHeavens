@@ -12,7 +12,7 @@
             "minfilter": "linear",
             "magfilter": "linear"
         }
-	},
+    },
     "scene2s" : {
         "setting" : {
             "type"      : "Solid",
@@ -49,6 +49,8 @@
                     }
                 }
             }
+            
         }
+        
     }
 }
