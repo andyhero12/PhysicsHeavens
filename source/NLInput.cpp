@@ -141,7 +141,7 @@ bool InputController::readInput(Tutorial::MODE progress, bool inRange){
     
      
     if(!inRange){
-        readInput(static_cast<int>(progress));
+        readInput(static_cast<int>(progress) - 1);
     }
     else{
         if(progress == Tutorial::MODE::MOVEMENT){
@@ -350,7 +350,7 @@ bool InputController::readInput_joystick(Tutorial::MODE progress, bool inRange) 
     cugl::GameController::Button buttons = cugl::GameController::Button::INVALID;
     // define button // trigger based on progress
     if(!inRange){
-        readInput_joystick(static_cast<int>(progress));
+        readInput_joystick(static_cast<int>(progress) - 1);
     }
     else{
         if (_gameContrl) {
@@ -391,6 +391,7 @@ bool InputController::readInput_joystick(Tutorial::MODE progress, bool inRange) 
                 if (_gameContrl->isButtonPressed(buttons)) {
                     _didChangeMode = true;
                     _UseJoystick = true;
+                    return true;
                 }
             }
             else if(progress == Tutorial::SPECIALSONE || progress == Tutorial::SPECIALSTWO || progress == Tutorial::SPECIALSTHREE || progress == Tutorial::SPECIALSFOUR){
@@ -399,6 +400,7 @@ bool InputController::readInput_joystick(Tutorial::MODE progress, bool inRange) 
                 if (_gameContrl->getAxisPosition(LT)>=0.5||_gameContrl->getAxisPosition(RT)>=0.5) {
                     _didSpecial = true;
                     _UseJoystick = true;
+                    return true;
                 }
             }
             else{

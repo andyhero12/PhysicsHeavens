@@ -19,17 +19,18 @@ public:
     enum MODE {
         GREETING = 0,
         MOVEMENT = 1,
-        BITE = 2,
-        DEFENDGATE = 3,
-        DASH = 4,
-        SPECIALSONE = 5,
-        DESTROYSPAWNER = 6,
-        CHANGEABILITYTWO = 7,
-        SPECIALSTWO = 8,
-        CHANGEABILITYTHREE = 9,
-        SPECIALSTHREE = 10,
-        CHANGEABILITYFOUR = 11,
-        SPECIALSFOUR = 12
+        DEFENDGATE = 2,
+        BITE = 3,
+        GROW = 4,
+        DESTROYSPAWNER = 5,
+        DASH = 6,
+        SPECIALSONE = 7,
+        CHANGEABILITYTWO = 8,
+        SPECIALSTWO = 9,
+        CHANGEABILITYTHREE = 10,
+        SPECIALSTHREE = 11,
+        CHANGEABILITYFOUR = 12,
+        SPECIALSFOUR = 13
     };
 
     static std::string toString(MODE mode) {
@@ -42,6 +43,8 @@ public:
                 return "BITE";
             case DEFENDGATE:
                 return "DEFENDGATE";
+            case GROW:
+                return "GROW";
             case DASH:
                 return "DASH";
             case SPECIALSONE:
@@ -64,41 +67,46 @@ public:
                 return "Unknown Progress";
         }
     }
-
     static MODE fromString(const std::string& progressString) {
-        if (progressString == "MOVEMENT") {
+        if (progressString == "GREETING") {
+            return GREETING;
+        } else if (progressString == "MOVEMENT") {
             return MOVEMENT;
         } else if (progressString == "BITE") {
             return BITE;
         } else if (progressString == "DEFENDGATE") {
             return DEFENDGATE;
+        } else if (progressString == "GROW") {
+            return GROW;
         } else if (progressString == "DASH") {
             return DASH;
-        } else if (progressString == "SPECIALS ONE") {
+        } else if (progressString == "SPECIALSONE") {
             return SPECIALSONE;
-        } else if (progressString == "DESTROY SPAWNER") {
+        } else if (progressString == "DESTROYSPAWNER") {
             return DESTROYSPAWNER;
-        } else if (progressString == "CHANGEABILITY TWO") {
+        } else if (progressString == "CHANGEABILITYTWO") {
             return CHANGEABILITYTWO;
-        } else if (progressString == "SPECIALS TWO") {
+        } else if (progressString == "SPECIALSTWO") {
             return SPECIALSTWO;
-        } else if (progressString == "CHANGEABILITY THREE") {
+        } else if (progressString == "CHANGEABILITYTHREE") {
             return CHANGEABILITYTHREE;
-        } else if (progressString == "SPECIALS THREE") {
+        } else if (progressString == "SPECIALSTHREE") {
             return SPECIALSTHREE;
-        } else if (progressString == "CHANGEABILITY FOUR") {
+        } else if (progressString == "CHANGEABILITYFOUR") {
             return CHANGEABILITYFOUR;
-        } else if (progressString == "SPECIALS FOUR") {
+        } else if (progressString == "SPECIALSFOUR") {
             return SPECIALSFOUR;
         } else {
-            throw std::invalid_argument("Invalid progress string");
+            throw std::invalid_argument("Invalid progress string: " + progressString);
         }
     }
+
 
 protected:
     int tileX;
     bool passed;
     MODE progress;
+    bool enter;
     
 public:
     Tutorial(){}

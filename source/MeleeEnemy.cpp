@@ -121,16 +121,16 @@ void MeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
     if (_attackCooldown < 60){
         _attackCooldown++;
     }
-
+    
+    _time += 1;
+    
     if (_counter < updateRate){
         _counter++;
     }
     
-    _time += 1;
-    
-    if (!(overWorld._isHost && _counter >= updateRate)){
-        return;
-    }
+    // if (!(overWorld._isHost && _counter >= updateRate)){
+    //     return;
+    // }
     
     if(_health < _maxHealth/3){
         curAction = AbstractEnemy::EnemyActions::LOWHEALTH;
@@ -172,6 +172,8 @@ void MeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
             _time = 0;
         }
     }
+    
+    _counter = 0;
 }
 
 
@@ -182,7 +184,7 @@ void MeleeEnemy::handleChase(OverWorld& overWorld) {
     
     setGoal(target_pos, overWorld.getWorld());
     goToGoal();
-    _counter = 0;
+    
     
     movementDirection = dist;
     
@@ -193,12 +195,12 @@ void MeleeEnemy::handleChase(OverWorld& overWorld) {
 }
 
 void MeleeEnemy::handleLowHealth(OverWorld& overWorld) {
-    runAnimations->setColor(cugl::Color4::BLACK);
+//    runAnimations->setColor(cugl::Color4::BLACK);
     handleRunaway(overWorld);
 }
 
 void MeleeEnemy::handleAttack(OverWorld& overWorld) {
-    attackAnimations->setColor(Color4::GREEN);
+//    attackAnimations->setColor(Color4::GREEN);
     handleChase(overWorld);
 }
 

@@ -251,6 +251,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     {
         _uinode->addChild(overWorld.getClientDog()->getUINode());
     }
+    
+    _uinode->addChild(overWorld.getBaseSet()->getUINode());
 
     _monsterController.setNetwork(_network);
     _monsterController.setMeleeAnimationData(_constants->get("basicEnemy"), assets);
@@ -331,12 +333,12 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     if (level_string == LEVEL_ONE_KEY){
         initTutorialOne();
     }
-    else if(level_string == LEVEL_TWO_KEY){
-        initTutorialTwo();
-    }
-    else if(level_string == LEVEL_THREE_KEY){
-        initTutorialThree();
-    }
+//    else if(level_string == LEVEL_TWO_KEY){
+//        initTutorialTwo();
+//    }
+//    else if(level_string == LEVEL_THREE_KEY){
+//        initTutorialThree();
+//    }
     
     return true;
 }
@@ -577,7 +579,13 @@ void GameScene::postUpdate(float dt)
     }
     delta -= (computeActiveSize() / 2);
     Vec2 curr = -delta / _zoom;
-    Vec2 pan = curr.lerp(previousPan, 0.9f);
+    Vec2 pan;
+    if((curr - previousPan).length() < computeActiveSize().height) {
+        pan = curr.lerp(previousPan, 0.9f);
+    }
+    else {
+        pan = curr;
+    }
     _rootnode->applyPan(pan + shakeMagnitude * Vec2(rand() / (float)RAND_MAX, rand() / (float)RAND_MAX));
     previousPan = pan;
     //
@@ -873,7 +881,7 @@ void GameScene::addChildForeground()
 void GameScene::updateInputController()
 {
     
-    
+//    std::cout <<overWorld.getDog()->getX() << std::endl;
     if (tutorialIndex < tutorialTiles.size())
     {
         std::shared_ptr<Tutorial> tile = tutorialTiles.at(tutorialIndex);
@@ -926,14 +934,23 @@ void GameScene::initTutorialOne(){
     tutorialIndex = 0;
     _tutorialnode = scene2::SceneNode::alloc();
     _uinode->addChild(_tutorialnode);
+    tutorialTiles = std::vector<std::shared_ptr<Tutorial>>();
+    
     tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::GREETING));
     tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::MOVEMENT));
-    tutorialTiles.push_back(Tutorial::alloc(14, Tutorial::MODE::BITE));
-    std::vector<std::string> modes = {"SHOOT"};
+    tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::MODE::DEFENDGATE));
+    tutorialTiles.push_back(Tutorial::alloc(30, Tutorial::MODE::BITE));
+    tutorialTiles.push_back(Tutorial::alloc(30, Tutorial::MODE::GROW));
+    tutorialTiles.push_back(Tutorial::alloc(30, Tutorial::MODE::SPECIALSONE));
+    tutorialTiles.push_back(Tutorial::alloc(31, Tutorial::MODE::CHANGEABILITYTWO));
+    tutorialTiles.push_back(Tutorial::alloc(31, Tutorial::MODE::DESTROYSPAWNER));
+    tutorialTiles.push_back(Tutorial::alloc(31, Tutorial::MODE::SPECIALSTWO));
+//
+    std::vector<std::string> modes = {"RECALL", "SHOOT"};
     overWorld.getDog()->setAbility(modes);
     
     // each one need to write # of frames
-    std::vector<int> frame = {21, 21, 21};
+    std::vector<int> frame = {21, 21, 21, 21, 21, 21, 21, 21, 21};
     initTutorial(frame);
     
 }

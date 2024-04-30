@@ -82,7 +82,7 @@ bool LevelScene::init(const std::shared_ptr<AssetManager> &assets)
     }
 });
     background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("Background"), 1, 15);
-    std::cout << "height of level scene "<< background->getTexture()->getHeight()<<std::endl;
+//    std::cout << "height of level scene "<< background->getTexture()->getHeight()<<std::endl;
     background->setScale(4.3);
     background->setPosition(0.5 * background->getSize());
     addChild(background);

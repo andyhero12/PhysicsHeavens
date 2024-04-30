@@ -384,8 +384,14 @@ bool OverWorld::initDogModel()
 
 bool OverWorld::initBases()
 {
+    std::shared_ptr<scene2::SceneNode> _uinode = scene2::SceneNode::alloc();
+    _uinode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    
+    std::shared_ptr<GateUIController> _uiController = std::make_shared<GateUIController>();
+    _uiController->init(_uinode, _assets, _activeSize);
+    
     _bases = std::make_shared<BaseSet>();
-    _bases->init(_level->getBasesPos(), _assets);
+    _bases->init(_level->getBasesPos(), _assets, _uiController);
     return true;
 }
 
