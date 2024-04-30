@@ -53,7 +53,13 @@ public:
     
     AbstractEnemy(){}
     // Virtual destructor
-    virtual ~AbstractEnemy() {}
+    virtual ~AbstractEnemy(){
+        topLevelPlaceHolder = nullptr;
+        runAnimations = nullptr;
+        attackAnimations = nullptr;
+        _pathfinder = nullptr;
+        _healthBar = nullptr;
+    }
     
 
     bool init(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex){
@@ -277,8 +283,11 @@ protected:
     int _pathfindTimer = PATHFIND_COOLDOWN;
     
     /** Sets a new goal for this enemy to go to. Returns true if pathfinding to the goal was successful */
-    bool setGoal(Vec2 goal, std::shared_ptr<World> world){
-        
+    bool setGoal(Vec2 goal, const std::weak_ptr<World>& world){
+        if (world.expired()){
+            CULog("World Expired");
+            return false;
+        }
         // If we already pathfound recently, don't path find again
         if(_pathfindTimer < PATHFIND_COOLDOWN){
             return searchSuccess();

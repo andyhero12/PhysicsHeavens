@@ -79,12 +79,14 @@ bool WorldSearchVertex::GetSuccessors( AStarSearch<WorldSearchVertex> *astarsear
     }
     
     WorldSearchVertex NewNode(0, 0, _world);
-    
+    if (_world.expired()){
+        return false;
+    }
     // push each possible move except allowing the search to go backwards
     for (const auto& diff : adj_list) {
         NewNode = WorldSearchVertex( x - diff.first, y - diff.second, _world);
         
-        if(_world->isPassable(NewNode.x, NewNode.y) && !((parent_x == NewNode.x) && (parent_y == NewNode.y))){
+        if(_world.lock()->isPassable(NewNode.x, NewNode.y) && !((parent_x == NewNode.x) && (parent_y == NewNode.y))){
             astarsearch->AddSuccessor( NewNode );
         }
     }
@@ -113,7 +115,7 @@ bool WorldSearchVertex::closeToEdge(){
 
     for (const auto& diff : adj_list) {
         WorldSearchVertex AdjNode = WorldSearchVertex( x - diff.first, y - diff.second, _world);
-        if(!_world->isPassable(AdjNode.x, AdjNode.y)){
+        if(!(_world.lock())->isPassable(AdjNode.x, AdjNode.y)){
             return true;
         }
     }

@@ -89,10 +89,6 @@ public:
 private:
     std::shared_ptr<cugl::AssetManager> _assets;
     
-    std::shared_ptr<cugl::JsonValue> _tileset;
-    
-    std::shared_ptr<cugl::Texture> _defaultTexture;
-    
     int _numLowerDecorLayers;
     int _numUpperDecorLayers;
     
@@ -134,6 +130,7 @@ public:
         return tilesMappingWithTextures;
     }
     void setTileSetAssets(std::shared_ptr<cugl::AssetManager> assets){
+        tilesMappingWithTextures.clear();
         for (auto& kv : tileSetMapping){
             tilesMappingWithTextures.insert({kv.first,TileSet(kv.first, kv.second,assets)});
         }

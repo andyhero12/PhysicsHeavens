@@ -20,7 +20,7 @@ private:
 public:
     
     // the world this node is in
-    std::shared_ptr<World> _world;
+    std::weak_ptr<World> _world;
     
     // x coord of this node
     int x;
@@ -28,8 +28,9 @@ public:
     // y coord of this node
     int y;
     
-    WorldSearchVertex( int px, int py,  std::shared_ptr<World> world) { x=px; y=py; 
-        _world = world; }
+    WorldSearchVertex( int px, int py, const std::weak_ptr<World>& world) { x=px; y=py;
+        _world = world;
+    }
     
     // WARNING: This default consrtuctor is needed by the astarstl class for some reason, this implementation might be incorrect
     WorldSearchVertex(){ x = y = 0; }

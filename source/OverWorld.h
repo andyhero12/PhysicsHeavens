@@ -25,7 +25,7 @@
 #include "World.h"
 #include "NLDashEvent.h"
 #include "NLSizeEvent.h"
-
+#include "NLClientHealthEvent.h"
 class OverWorld
 {
 private:
@@ -71,6 +71,7 @@ public:
     void processRecallEvent(const std::shared_ptr<RecallEvent>& recallEvent);
     void processExplodeEvent(const std::shared_ptr<ExplodeEvent>& explodeEvent);
     void processDashEvent(const std::shared_ptr<DashEvent>& dashEvent);
+    void processClientHealthEvent(const std::shared_ptr<ClientHealthEvent>& clientHealthEvent);
     void recallDogToClosetBase(std::shared_ptr<Dog> _curDog);
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch,cugl::Size totalSize);
     std::shared_ptr<Dog> getDog() const {
@@ -92,7 +93,7 @@ public:
     {
         return _level;
     }
-    std::shared_ptr<World> getWorld()
+    const std::shared_ptr<World>& getWorld()
     {
         return _world;
     }

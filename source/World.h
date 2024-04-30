@@ -62,10 +62,8 @@ public:
         return tileSprite;
     }
     Terrain type;
-    TileInfo(){
-        
-    }
     virtual ~TileInfo(){
+//        CULog("Destructing Tile");
         texture = nullptr;
         tileSprite = nullptr;
     }
@@ -82,7 +80,15 @@ private:
     cugl::Vec2 start;
     
 public:
-    
+    static std::shared_ptr<World> alloc(std::shared_ptr<LevelModel> _level,std::shared_ptr<cugl::AssetManager> assets) {
+        std::shared_ptr<World> result = std::make_shared<World>();
+        return (result->init(_level, assets) ? result : nullptr);
+    }
+    ~World(){
+//        CULog("Destructing World");
+        tile = nullptr;
+        _assets = nullptr;
+    }
     std::vector<std::vector<std::shared_ptr<TileInfo>>> tileWorld;
     std::vector<std::vector<std::shared_ptr<TileInfo>>> boundaryWorld;
     std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>> lowerDecorWorld;
@@ -90,13 +96,7 @@ public:
     
     std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>> tilesAtCoords;
     std::vector<std::shared_ptr<TileInfo>> allTiles;
-    
-    World () {};
-    ~World(){
-        tile = nullptr;
-        _assets = nullptr;
-    };
-    World(std::shared_ptr<LevelModel> _level,std::shared_ptr<cugl::AssetManager> assets);
+    bool init(std::shared_ptr<LevelModel> _level,std::shared_ptr<cugl::AssetManager> assets);
 
     std::shared_ptr<cugl::Texture> getBoxFromTileSet(int position, const std::map<int,TileSet>& tileSets);
     
@@ -123,7 +123,7 @@ public:
     }
     
     // Get whether a tile is passible or not
-    const bool isPassable(int x, int y);
+    bool isPassable(int x, int y);
     
     // Get the number of rows of tiles in the world
     int getRows(){

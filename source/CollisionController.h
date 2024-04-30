@@ -28,7 +28,7 @@
 #include "AttackPolygons.h"
 #include "OverWorld.h"
 #include "MonsterController.h"
-
+#include "NLClientHealthEvent.h"
 /**
  * Namespace of functions implementing simple game physics.
  *
@@ -70,7 +70,8 @@ public:
      *
      * @return true if initialization was successful
      */
-    bool init() {
+    bool init(std::shared_ptr<NetEventController> net) {
+        _network = net;
         return true;
     }
     
@@ -97,7 +98,9 @@ public:
     
     void attackCollisions(OverWorld& overWorld, MonsterController& monsterController, SpawnerController& spawnerController);
     
+    bool clientDogMonsterCollision(std::shared_ptr<Dog> curDog, std::unordered_set<std::shared_ptr<AbstractEnemy>>& curEnemies);
     void dispose();
+    std::shared_ptr<NetEventController> _network;
 };
 
 #endif /* __SL_COLLISION_CONTROLLER_H__ */

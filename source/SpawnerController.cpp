@@ -70,13 +70,7 @@ void SpawnerController::update(MonsterController& monsterController, OverWorld& 
         std::shared_ptr<AbstractSpawner> spawner = *it;
         
         if (spawner->dead()){
-            Vec2 pos = spawner->getPos();
-            auto deathNode = SpriteAnimationNode::allocWithSheet(_deathSpawner, 1, 1, 1, 1);
-            float scale = 1 / 48.0f;
-            deathNode->setAnchor(cugl::Vec2::ANCHOR_CENTER);
-            deathNode->setScale(scale);
-            deathNode->setPosition(pos);
-            baseSpawnerNode->addChild(deathNode);
+            _network->pushOutEvent(SpawnerDeathEvent::allocSpawnerDeathEvent(spawner->getPos()));
             it = _spawners.erase(it);
             spawner->getSpawnerNode()->removeFromParent();
             difficulty += 0.1;
@@ -113,7 +107,29 @@ void SpawnerController::processDeathEvent(const std::shared_ptr<DeathEvent>& dea
     _curAnimations.emplace(deathAnim);
     animSpawnerNode->addChild(deathAnim);
 }
-bool SpawnerController::init(const std::vector<LevelModel::Spawner>& startLocs, std::shared_ptr<cugl::AssetManager> assets) {
+
+void SpawnerController::processSpawnerDeathEvent(const std::shared_ptr<SpawnerDeathEvent>& spawnerDeathEvent){
+    Vec2 pos = spawnerDeathEvent->getPos();
+    if (!_isHost){
+        auto it = _spawners.begin();
+        while (it != _spawners.end()){
+            std::shared_ptr<AbstractSpawner> spawner = *it;
+            
+            if (spawner->getPos() == pos){
+                it = _spawners.erase(it);
+            }else{
+                ++it;
+            }
+        }
+    }
+    auto deathNode = SpriteAnimationNode::allocWithSheet(_deathSpawner, 1, 1, 1, 1);
+    float scale = 1 / 48.0f;
+    deathNode->setAnchor(cugl::Vec2::ANCHOR_CENTER);
+    deathNode->setScale(scale);
+    deathNode->setPosition(pos);
+    baseSpawnerNode->addChild(deathNode);
+}
+bool SpawnerController::init(const std::vector<LevelModel::Spawner>& startLocs, std::shared_ptr<cugl::AssetManager> assets, std::shared_ptr<NetEventController> net) {
     _spawners.clear();
     animationNodes.clear();
     _curAnimations.clear();
@@ -122,6 +138,7 @@ bool SpawnerController::init(const std::vector<LevelModel::Spawner>& startLocs, 
     _spawnTexture = assets->get<cugl::Texture>("enemySpawn");
     _deathTexture = assets->get<cugl::Texture>("enemyDeath");
     _deathSpawner = assets->get<cugl::Texture>("spawnerDeath");
+    _network = net;
     for (int i =0; i< startLocs.size(); i++){
         LevelModel::Spawner spawner = startLocs.at(i);
         cugl::Vec2 pos = Vec2(spawner.spawnerX, spawner.spawnerY);

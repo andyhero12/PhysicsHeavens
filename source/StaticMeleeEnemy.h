@@ -97,7 +97,9 @@ public:
     }
     StaticMeleeEnemy();
     bool init(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex);
-    ~StaticMeleeEnemy(){}
+    virtual ~StaticMeleeEnemy(){
+        
+    }
     
     virtual void preUpdate(float dt, OverWorld& overWorld) override;
     

@@ -105,7 +105,7 @@ public:
     LevelScene() : cugl::Scene2(), 
     _progress(0.0f), 
     frame(0.0f), 
-    curMoveAnim(0), 
+    curMoveAnim(6), 
     moveCooldown(6), 
     level1(true), 
     level2(false), 
