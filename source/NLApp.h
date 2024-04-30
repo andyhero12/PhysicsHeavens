@@ -25,6 +25,7 @@
 #include "NLInput.h"
 #include "NLSelection.h"
 #include "Setting.h"
+#include "NLSinglePlayerLevel.h"
 
 using namespace cugl::physics2::net;
 
@@ -42,7 +43,8 @@ enum Status {
     CLIENT,
     SELECTION,
     SETTING,
-    GAME
+    GAME,
+    SINGLEPLAYER
 };
 
 protected:
@@ -68,10 +70,13 @@ protected:
     HostScene _hostgame;
 
     LevelScene _level;
+    
+    SinglePlayerLevelScene _singlePlayer;
 
     InputController _input;
 
     SelectionScene _selection;
+    
 
     SettingScene _setting;
     
@@ -95,7 +100,7 @@ public:
      * of initialization from the constructor allows main.cpp to perform
      * advanced configuration of the application before it starts.
      */
-    NetApp() : cugl::Application(), _loaded(false), isHosting(false) {}
+    NetApp() : cugl::Application(), _loaded(false), isHosting(false){}
     
     /**
      * Disposes of this application, releasing all resources.
@@ -217,6 +222,8 @@ public:
     void updateMainScene(float timestep);
 
     void updateLevelScene(float timestep);
+    
+    void updateSinglePlayerLevelScene(float timestep);
 
     void updateSelectionScene(float timestep);
 
