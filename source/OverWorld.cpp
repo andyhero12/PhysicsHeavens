@@ -502,6 +502,8 @@ void OverWorld::processSizeEvent(const std::shared_ptr<SizeEvent> &sizeEvent)
         if (incomingHost)
         { // means incoming is from Original host
             _dog->updateDogSize(sizeEvent->getSize());
+        }else{
+            _dogClient->updateDogSize(sizeEvent->getSize());
         }
     }
 }

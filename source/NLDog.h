@@ -351,7 +351,7 @@ public:
     void setHealth(int value);
     
     void setAbsorbValue(int value);
-    
+    void setLocalAbsorb(int value);
     void setMode(int mode);
     
     /**

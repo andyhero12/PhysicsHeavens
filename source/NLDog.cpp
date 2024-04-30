@@ -429,6 +429,11 @@ void Dog::updateDogSize(int absorbValue){
     }else if (absorbValue <= 30){
         updateLocalAnimations(DogSize::LARGE);
     }
+    
+    float dim = ((float) absorbValue / MAX_ABSORB)*1.5 + 1.5;
+    cugl::Size nxtSize(dim,dim);
+    setDimension(nxtSize);
+    baseBlankNode->setScale(dim/64);
 }
 
 void Dog::updateLocalAnimations(DogSize size){
