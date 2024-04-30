@@ -262,7 +262,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _monsterController.init(overWorld, _debugnode);
 
     _spawnerController.setAnimNode(_worldnode);
-    _collisionController.init();
+    _collisionController.init(_network);
 
     _active = true;
     setDebug(false);
@@ -279,6 +279,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _network->attachEventType<ShootEvent>();
     _network->attachEventType<GameResEvent>();
     _network->attachEventType<SpawnerDeathEvent>();
+    _network->attachEventType<ClientHealthEvent>();
 
     // XNA nostalgia
     Application::get()->setClearColor(Color4f::CORNFLOWER);
@@ -708,8 +709,12 @@ void GameScene::fixedUpdate()
         
         if (auto spawnerDeathEvent = std::dynamic_pointer_cast<SpawnerDeathEvent>(e))
         {
-            CULog("Spawner Death Event");
             _spawnerController.processSpawnerDeathEvent(spawnerDeathEvent);
+        }
+        if (auto clientHealthEvent = std::dynamic_pointer_cast<ClientHealthEvent>(e))
+        {
+            CULog("Got Health Event");
+            overWorld.processClientHealthEvent(clientHealthEvent);
         }
     }
 #pragma mark END SOLUTION

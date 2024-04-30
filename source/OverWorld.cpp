@@ -492,6 +492,14 @@ void OverWorld::processDashEvent(const std::shared_ptr<DashEvent> &dashEvent)
         _dogClient->startDash();
     }
 }
+void OverWorld::processClientHealthEvent(const std::shared_ptr<ClientHealthEvent>& clientHealthEvent){
+    bool incomingHost = clientHealthEvent->isHostDog();
+    if (incomingHost){
+        _dog->setHealth(_dog->getHealth() - clientHealthEvent->getHealthLost());
+    }else{
+        _dogClient->setHealth(_dogClient->getHealth() - clientHealthEvent->getHealthLost());
+    }
+}
 void OverWorld::processSizeEvent(const std::shared_ptr<SizeEvent> &sizeEvent)
 {
     bool incomingHost = sizeEvent->isHost();
