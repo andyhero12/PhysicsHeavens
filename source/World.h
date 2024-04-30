@@ -63,7 +63,7 @@ public:
     }
     Terrain type;
     virtual ~TileInfo(){
-        CULog("Destructing Tile");
+//        CULog("Destructing Tile");
         texture = nullptr;
         tileSprite = nullptr;
     }
@@ -85,7 +85,9 @@ public:
         return (result->init(_level, assets) ? result : nullptr);
     }
     ~World(){
-        CULog("Destructing World");
+//        CULog("Destructing World");
+        tile = nullptr;
+        _assets = nullptr;
     }
     std::vector<std::vector<std::shared_ptr<TileInfo>>> tileWorld;
     std::vector<std::vector<std::shared_ptr<TileInfo>>> boundaryWorld;
@@ -121,7 +123,7 @@ public:
     }
     
     // Get whether a tile is passible or not
-    const bool isPassable(int x, int y);
+    bool isPassable(int x, int y);
     
     // Get the number of rows of tiles in the world
     int getRows(){

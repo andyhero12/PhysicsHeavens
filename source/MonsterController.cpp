@@ -125,7 +125,6 @@ void MonsterController::update(float timestep, OverWorld& overWorld){
         return;
     }
     
-    //CULog("Boundary World Size in MonsterController: %zu", overWorld.getWorld()->getBoundaryWorld().size());
     for (std::shared_ptr<AbstractEnemy> curEnemy: _current){
         curEnemy->preUpdate(timestep, overWorld);
         if (std::shared_ptr<SpawnerEnemy> spawnerEnemy = std::dynamic_pointer_cast<SpawnerEnemy>(curEnemy)){

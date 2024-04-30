@@ -192,6 +192,18 @@ void MeleeEnemy::handleChase(OverWorld& overWorld) {
         curAction = AbstractEnemy::EnemyActions::ATTACK;
         _time = 0;
     }
+//    cugl::Vec2 target_pos = getTargetPositionFromIndex(overWorld);
+//    cugl::Vec2 direction = target_pos - getPosition();
+//    if (overWorld._isHost && _counter >= updateRate){
+//      setVX(direction.normalize().x * 0.5);
+//      setVY(direction.normalize().y * 0.5);
+//      setX(getX());
+//      setY(getY());
+//      _counter = 0;
+//      _prevDirection =_curDirection;
+//      _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
+//        movementDirection = direction;
+//    }
 }
 
 void MeleeEnemy::handleLowHealth(OverWorld& overWorld) {

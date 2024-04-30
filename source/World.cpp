@@ -151,7 +151,7 @@ std::shared_ptr<cugl::Texture> World::getBoxFromTileSet(int position, const std:
     return curTile.textureTile->getSubTexture(minS, maxS, minT, maxT);
 }
 
-const bool World::isPassable(int x, int y){
+bool World::isPassable(int x, int y){
     
     // If the coord is outside the bounds of the world, the tile is impassible
     if(x < 0 || y < 0 || x >= getCols() || y >= getRows()){

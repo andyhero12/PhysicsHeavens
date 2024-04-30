@@ -143,7 +143,9 @@ public: // methods
         m_CancelRequest( false )
     {
     }
-
+    ~AStarSearch(){
+        FreeAllNodes();
+    }
     // call at any time to cancel the search and free up all the memory
     void CancelSearch()
     {
@@ -761,7 +763,9 @@ private: // methods
 
     void FreeNode( Node *node )
     {
-
+        if (m_AllocateNodeCount == 0){
+            return;
+        }
         m_AllocateNodeCount --;
 
 #if !USE_FSA_MEMORY
