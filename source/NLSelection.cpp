@@ -56,7 +56,7 @@ bool SelectionScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     // Acquire the scene built by the asset loader and resize it the scene
 
     _input.init();
-    _assets->loadDirectory("json/selection.json");
+    _assets->loadDirectory("json/playerselection.json");
     std::shared_ptr<scene2::SceneNode> layer = _assets->get<scene2::SceneNode>("Menu_selection");
     layer->setContentSize(dimen);
     layer->doLayout(); // This rearranges the children to fit the screen
