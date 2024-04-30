@@ -238,7 +238,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 
     _network->enablePhysics(_world, linkSceneToObsFunc);
 
-    _spawnerController.init(_level->getSpawnersPos(), assets);
+    _spawnerController.init(_level->getSpawnersPos(), assets, _network);
     _spawnerController.setRootNode(_worldnode, _isHost);
     _worldnode->addChild(_monsterSceneNode);
     overWorld.init(assets, _level, computeActiveSize(), _network, isHost, _backgroundWrapper);
@@ -278,6 +278,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _network->attachEventType<DeathEvent>();
     _network->attachEventType<ShootEvent>();
     _network->attachEventType<GameResEvent>();
+    _network->attachEventType<SpawnerDeathEvent>();
 
     // XNA nostalgia
     Application::get()->setClearColor(Color4f::CORNFLOWER);
@@ -703,6 +704,12 @@ void GameScene::fixedUpdate()
             loseNode->setVisible(true);
             _pause->setPause(true);
             _minimap->setVisible(false);
+        }
+        
+        if (auto spawnerDeathEvent = std::dynamic_pointer_cast<SpawnerDeathEvent>(e))
+        {
+            CULog("Spawner Death Event");
+            _spawnerController.processSpawnerDeathEvent(spawnerDeathEvent);
         }
     }
 #pragma mark END SOLUTION

@@ -32,6 +32,7 @@
 #include "NLDeathEvent.h"
 #include "NLWinEvent.h"
 #include "NLLoseEvent.h"
+#include "NLSpawnerDeathEvent.h"
 #include "NLCameraController.h"
 #include "NLLevelModel.h"
 #include "World.h"
@@ -45,7 +46,6 @@
 #include "PauseScene.h"
 #include "MiniMap.h"
 #include "Tutorial.h"
-#include "CollisionListener.h"
 #include "SpriteAnimationNode.h"
 
 using namespace cugl::physics2::net;

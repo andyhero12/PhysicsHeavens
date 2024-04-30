@@ -276,13 +276,13 @@ void CollisionController::resolveBiteAttack(const std::shared_ptr<ActionPolygon>
     for (auto& spawner : spawners){
         Vec2 diff = spawner->getPos() - action->getCenter();
         float ang = diff.getAngle();
-        float result = ((ang > 0 ? ang : (2*M_PI +ang)) * 360 / (2*M_PI)) - 90.0f;
+        float result = ((ang > 0 ? ang : (2*M_PI +ang)) * 360 / (2*M_PI));
         if (result < 0.0f){
             result += 360.0f;
         }
         float dist = diff.length();
         if (withinAngle(action->getAngle()-90.0f, result, 180.0f) && dist <= 3 * action->getScale()){
-            spawner->subHealth(1);
+            spawner->subHealth(4);
         }
     }
 }

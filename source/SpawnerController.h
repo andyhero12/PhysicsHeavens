@@ -17,6 +17,7 @@
 #include "SimpleSpawner.h"
 #include "OverWorld.h"
 #include "NLDeathEvent.h"
+#include "NLSpawnerDeathEvent.h"
 
 
 class SpawnerController{
@@ -38,12 +39,13 @@ public:
     
     void update(MonsterController& monsterController, OverWorld& overWorld, float timestep);
     
-    bool init(const std::vector<LevelModel::Spawner>& startLocs, std::shared_ptr<cugl::AssetManager> assets );
+    bool init(const std::vector<LevelModel::Spawner>& startLocs, std::shared_ptr<cugl::AssetManager> assets, std::shared_ptr<NetEventController> net);
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch, cugl::Size size);
     void setRootNode(const std::shared_ptr<scene2::SceneNode>& _worldNode, bool isHost);
     void setAnimNode(const std::shared_ptr<scene2::SceneNode>& _worldNode);
     bool win(){return _spawners.empty();}
     void processDeathEvent(const std::shared_ptr<DeathEvent>& deathEvent);
+    void processSpawnerDeathEvent(const std::shared_ptr<SpawnerDeathEvent>& spawnerDeathEvent);
     std::shared_ptr<cugl::scene2::SceneNode> getSpawnerNode() const{
         return baseSpawnerNode;
     }
