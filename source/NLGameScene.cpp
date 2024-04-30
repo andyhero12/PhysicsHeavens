@@ -205,8 +205,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     Vec2 offset((dimen.width - SCENE_WIDTH) / 2.0f, (dimen.height - SCENE_HEIGHT) / 2.0f);
     float zoom = dimen.height / CANVAS_TILE_HEIGHT;
 
-    //    _backgroundWrapper = std::make_shared<World>(Vec2(0, 0), _level->getTiles(), _level->getBoundaries(), assets->get<Texture>("tile"));
-    _backgroundWrapper = std::make_shared<World>(_level, _assets);
+    _backgroundWrapper = World::alloc(_level, _assets);
     _worldnode = scene2::SceneNode::alloc();
     _worldnode->setScale(zoom);
     _worldnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
@@ -346,12 +345,12 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 }
 void GameScene::resetDraw()
 {
-    std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>> tileDisplay = _backgroundWrapper->getTileDisplay();
+    const std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>>& tileDisplay = _backgroundWrapper->getTileDisplay();
     for (int i = 0; i < tileDisplay.size(); i++)
     {
         for (int j = 0; j < tileDisplay.at(i).size(); j++)
         {
-            for (std::shared_ptr<TileInfo> &tile : tileDisplay.at(i).at(j))
+            for (const std::shared_ptr<TileInfo> &tile : tileDisplay.at(i).at(j))
             {
                 Vec2 dogPos = _isHost ? overWorld.getDog()->getPosition() : overWorld.getClientDog()->getPosition();
                 Vec2 tilePos = tile->getTileSprite()->getPosition();
@@ -386,7 +385,6 @@ void GameScene::dispose()
         _monsterSceneNode = nullptr;
         _network = nullptr;
         _decorToHide.clear();
-        _backgroundWrapper = nullptr;
         _pause = nullptr;
         _level = nullptr;
         winNode = nullptr;
@@ -400,6 +398,7 @@ void GameScene::dispose()
         _spawnerController.dispose();
         _collisionController.dispose();
         overWorld.dispose();
+        _backgroundWrapper = nullptr;
         Scene2::dispose();
     }
 }
@@ -590,32 +589,6 @@ void GameScene::postUpdate(float dt)
     }
     _rootnode->applyPan(pan + shakeMagnitude * Vec2(rand() / (float)RAND_MAX, rand() / (float)RAND_MAX));
     previousPan = pan;
-    //
-    //    std::vector<Vec2> upperPosHide;
-    //    for (int i = -1; i <= 1; i++)
-    //    {
-    //        for (int j = -1; j <= 1; j++)
-    //        {
-    //
-    //            upperPosHide.push_back(Vec2(int(delta.x + j),int(delta.y + i)));
-    //        }
-    //    }
-    //    for (const std::shared_ptr<TileInfo>& tile : _backgroundWrapper->getVisibleNodes()){
-    //        Vec2 pos = tile->getPosition();
-    //        Vec2 dogPos = _isHost ? overWorld.getDog()->getPosition() : overWorld.getClientDog()->getPosition();
-    //        if (abs(pos.x - dogPos.x) >= 15 || abs(pos.y - dogPos.y) >= 15){
-    //            tile->getTileSprite()->setVisible(false);
-    //        }else{
-    //            tile->getTileSprite()->setVisible(true);
-    //        }
-    //        if (tile->getIsUpperDecor()&& find(upperPosHide.begin(),upperPosHide.end(), tile->getPosition()) != upperPosHide.end() ){
-    //            _decorToHide.push_back(tile->getTileSprite());
-    //        }
-    //    }
-    //    for (int i = 0; i < _decorToHide.size(); i++)
-    //    {
-    //        _decorToHide.at(i)->setColor(Color4f(1, 1, 1, 0.7f));
-    //    }
 
     Vec2 dogPos = _isHost ? overWorld.getDog()->getPosition() : overWorld.getClientDog()->getPosition();
     executeSlidingWindow(dogPos);
