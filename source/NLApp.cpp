@@ -336,6 +336,7 @@ void NetApp::updateGameScene(float timestep) {
         _gameplay.setActive(false);
 //        _hostgame.setActive(false);
         _hostgame.endGame();
+        _singlePlayer.endGame();
 //        _joingame.setActive(false);
         _status = MAINMENU;
     }
