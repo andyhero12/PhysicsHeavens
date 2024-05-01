@@ -9,7 +9,8 @@
 #include "OverWorld.h"
 
 #define WORLD_SIZE 3
-
+#define SHOOT_COST 5
+#define BOMB_COST 15
 #include "NLDog.h"
 
 void OverWorld::reset()
@@ -543,11 +544,17 @@ void OverWorld::processShootEvent(const std::shared_ptr<ShootEvent> &shootEvent)
     bool incomingHost = shootEvent->isHost();
     if (incomingHost)
     {
+        if (incomingHost != _isHost){
+            _dog->subAbsorb(SHOOT_COST);
+        }
         _attackPolygonSet.addShoot(center, ang, _dog->getShootRadius());
         _dog->startShoot();
     }
     else
     {
+        if (incomingHost != _isHost){
+            _dogClient->subAbsorb(SHOOT_COST);
+        }
         _clientAttackPolygonSet.addShoot(center, ang, _dog->getShootRadius());
         _dogClient->startShoot();
     }
@@ -558,11 +565,17 @@ void OverWorld::processExplodeEvent(const std::shared_ptr<ExplodeEvent> &explode
     bool incomingHost = explodeEvent->isHost();
     if (incomingHost)
     {
+        if (incomingHost != _isHost){
+            _dog->subAbsorb(BOMB_COST);
+        }
         _attackPolygonSet.addExplode(center, _dog->getExplosionRadius());
         _dog->startShoot();
     }
     else
     {
+        if (incomingHost != _isHost){
+            _dogClient->subAbsorb(BOMB_COST);
+        }
         _clientAttackPolygonSet.addExplode(center, _dog->getExplosionRadius());
         _dogClient->startShoot();
     }
@@ -601,7 +614,7 @@ void OverWorld::ownedDogUpdate(InputController& _input, cugl::Size, std::shared_
         _curDog->reloadWeapon();
         if (_curDog->getMode() == "SHOOT" && _curDog->getAbsorb() >= 5)
         {
-            _curDog->subAbsorb(5);
+            _curDog->subAbsorb(SHOOT_COST);
             _network->pushOutEvent(ShootEvent::allocShootEvent(_curDog->getShootCenter(), _curDog->getDirInDegrees(), _isHost));
         }
         else if (_curDog->getMode() == "BAIT" && _curDog->getAbsorb() >= 5)
@@ -611,7 +624,7 @@ void OverWorld::ownedDogUpdate(InputController& _input, cugl::Size, std::shared_
         }
         else if (_curDog->getMode() == "BOMB" && _curDog->getAbsorb() >= 5)
         {
-            _curDog->subAbsorb(15);
+            _curDog->subAbsorb(BOMB_COST);
             _network->pushOutEvent(ExplodeEvent::allocExplodeEvent(_curDog->getPosition(), _isHost));
         }else if (_curDog->getMode() == "RECALL"){
             _network->pushOutEvent(RecallEvent::allocRecallEvent(_curDog->getPosition(),_isHost));
