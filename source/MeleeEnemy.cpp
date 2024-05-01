@@ -122,15 +122,13 @@ void MeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
         _attackCooldown++;
     }
     
-    _time += 1;
-    
     if (_counter < updateRate){
         _counter++;
+    } else {
+        _counter = 0;
     }
     
-    // if (!(overWorld._isHost && _counter >= updateRate)){
-    //     return;
-    // }
+    _time++;
     
     if(_health < _maxHealth/3){
         curAction = AbstractEnemy::EnemyActions::LOWHEALTH;
@@ -150,10 +148,10 @@ void MeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
     }
     else if(curAction == EnemyActions::CHASE){
         handleChase(overWorld);
-        if(_time >= FRAMES) {
-            curAction = AbstractEnemy::EnemyActions::WANDER;
-            _time = 0;
-        }
+//        if(_time >= FRAMES) {
+//            curAction = AbstractEnemy::EnemyActions::WANDER;
+//            _time = 0;
+//        }
     }
     else if(curAction == EnemyActions::LOWHEALTH){
         handleLowHealth(overWorld);
@@ -167,13 +165,11 @@ void MeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
     }
     else if(curAction == EnemyActions::ATTACK){
         handleAttack(overWorld);
-        if(_time >= FRAMES){
-            curAction = AbstractEnemy::EnemyActions::STAY;
-            _time = 0;
-        }
+//        if(_time >= FRAMES){
+//            curAction = AbstractEnemy::EnemyActions::STAY;
+//            _time = 0;
+//        }
     }
-    
-    _counter = 0;
 }
 
 
@@ -182,7 +178,10 @@ void MeleeEnemy::handleChase(OverWorld& overWorld) {
     
     cugl::Vec2 dist = target_pos - getPosition();
     
-    setGoal(target_pos, overWorld.getWorld());
+    if(_counter >= updateRate){
+        setGoal(target_pos, overWorld.getWorld());
+    }
+    
     goToGoal();
     
     
@@ -192,27 +191,15 @@ void MeleeEnemy::handleChase(OverWorld& overWorld) {
         curAction = AbstractEnemy::EnemyActions::ATTACK;
         _time = 0;
     }
-//    cugl::Vec2 target_pos = getTargetPositionFromIndex(overWorld);
-//    cugl::Vec2 direction = target_pos - getPosition();
-//    if (overWorld._isHost && _counter >= updateRate){
-//      setVX(direction.normalize().x * 0.5);
-//      setVY(direction.normalize().y * 0.5);
-//      setX(getX());
-//      setY(getY());
-//      _counter = 0;
-//      _prevDirection =_curDirection;
-//      _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
-//        movementDirection = direction;
-//    }
 }
 
 void MeleeEnemy::handleLowHealth(OverWorld& overWorld) {
-//    runAnimations->setColor(cugl::Color4::BLACK);
+    runAnimations->setColor(cugl::Color4::BLACK);
     handleRunaway(overWorld);
 }
 
 void MeleeEnemy::handleAttack(OverWorld& overWorld) {
-//    attackAnimations->setColor(Color4::GREEN);
+    attackAnimations->setColor(Color4::GREEN);
     handleChase(overWorld);
 }
 

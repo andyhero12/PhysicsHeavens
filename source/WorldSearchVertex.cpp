@@ -97,7 +97,8 @@ bool WorldSearchVertex::GetSuccessors( AStarSearch<WorldSearchVertex> *astarsear
 float WorldSearchVertex::GetCost( WorldSearchVertex &successor )
 {
     if(closeToEdge()){
-        return 5;
+        CULog("close to edge");
+        return 100;
     }else {
         return 1;
     }
