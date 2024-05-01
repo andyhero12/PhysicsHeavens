@@ -89,7 +89,7 @@ void CollisionController::attackCollisions(OverWorld& overWorld, MonsterControll
                 resolveBlowup(action,monsterController, spawners); // play boom sound
                 break;
             case (Action::BITE):
-                resolveBiteAttack(action, monsterController, overWorld, spawners);
+                resolveBiteAttack(action, monsterController, overWorld, spawners, true);
                 break;
             default:
                 CULog("Action not used in Collisions\n");
@@ -105,7 +105,7 @@ void CollisionController::attackCollisions(OverWorld& overWorld, MonsterControll
                 resolveBlowup(action,monsterController, spawners); // play boom sound
                 break;
             case (Action::BITE):
-                resolveBiteAttack(action, monsterController, overWorld, spawners);
+                resolveBiteAttack(action, monsterController, overWorld, spawners, false);
                 break;
             default:
                 CULog("Action not used in Collisions\n");
@@ -265,12 +265,13 @@ bool CollisionController::monsterDogCollision(std::shared_ptr<Dog> curDog, std::
     return collision;
 }
 
-void CollisionController::resolveBiteAttack(const std::shared_ptr<ActionPolygon>& action, MonsterController& monsterController, OverWorld& overWorld, std::unordered_set<std::shared_ptr<AbstractSpawner>>& spawners){
+void CollisionController::resolveBiteAttack(const std::shared_ptr<ActionPolygon>& action, MonsterController& monsterController, OverWorld& overWorld, std::unordered_set<std::shared_ptr<AbstractSpawner>>& spawners,bool isHostAttack){
     if (!action->dealDamage())
         return;
     bool collided = false;
     std::unordered_set<std::shared_ptr<AbstractEnemy>>& monsterEnemies = monsterController.getEnemies();
     auto itA = monsterEnemies.begin();
+    int addedAbsorb = 0;
     while ( itA != monsterEnemies.end()){
         const std::shared_ptr<AbstractEnemy>& enemy = *itA;
         auto curA = itA;
@@ -290,10 +291,15 @@ void CollisionController::resolveBiteAttack(const std::shared_ptr<ActionPolygon>
             if(enemy->getHealth() <= 0){
                 monsterController.removeEnemy(enemy);
                 enemy->executeDeath(overWorld);
-                overWorld.getDog()->addAbsorb((*curA)->getAbsorbValue());
+//                overWorld.getDog()->addAbsorb((*curA)->getAbsorbValue());
+                addedAbsorb += (*curA)->getAbsorbValue();
+                
                 monsterEnemies.erase(curA);
             }
         }
+    }
+    if (addedAbsorb != 0){
+        _network->pushOutEvent(SizeEvent::allocSizeEvent(addedAbsorb, isHostAttack));
     }
     if (collided){
         action->resetAttack();

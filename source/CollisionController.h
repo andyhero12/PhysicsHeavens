@@ -29,6 +29,7 @@
 #include "OverWorld.h"
 #include "MonsterController.h"
 #include "NLClientHealthEvent.h"
+#include "NLSizeEvent.h"
 /**
  * Namespace of functions implementing simple game physics.
  *
@@ -82,7 +83,7 @@ public:
     bool healFromBaseCollsion( BaseSet& bset, std::shared_ptr<Dog> ship);
     
     void resolveBiteAttack(const std::shared_ptr<ActionPolygon>& action, MonsterController& monsterController,
-                           OverWorld& overWorld, std::unordered_set<std::shared_ptr<AbstractSpawner>>& spawners);
+                           OverWorld& overWorld, std::unordered_set<std::shared_ptr<AbstractSpawner>>& spawners,bool isHostAttack);
     
     // Post Update Functions
     void intraOverWorldCollisions( OverWorld& overWorld);
