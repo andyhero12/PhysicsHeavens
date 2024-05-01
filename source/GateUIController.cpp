@@ -32,7 +32,7 @@ bool GateUIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const
     y =0;
     
     float gatex = x + screenSize.width - UI_SCALE * _gateframe->getTexture()->getWidth()/2;
-    float gatey = y + screenSize.height - UI_SCALE * _gateframe->getTexture()->getHeight()/2;
+    float gatey = y + screenSize.height - UI_SCALE * (_gateframe->getTexture()->getHeight()/2 + 2);
     
     _gateframe->setPosition(gatex, gatey);
     
@@ -59,7 +59,7 @@ void GateUIController::setGateBarTexture(float percentage){
     _gatefill->setSubtexture(minS, maxS, minT, maxT);
     
     float gatefillx = x + _screenSize.width - UI_SCALE * _gatefill->getTexture()->getWidth()/2;
-    float gatey = y + _screenSize.height - UI_SCALE * _gateframe->getTexture()->getHeight()/2;
-    
+    float gatey = y + _screenSize.height - UI_SCALE * (_gateframe->getTexture()->getHeight()/2 + 2);
+
     _gatefill->setPosition(gatefillx, gatey);
 }
