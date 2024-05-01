@@ -53,11 +53,7 @@ bool LoadingScene::init(const std::shared_ptr<AssetManager>& assets) {
     layer->doLayout(); // This rearranges the children to fit the screen
     
     _bar = std::dynamic_pointer_cast<scene2::ProgressBar>(assets->get<scene2::SceneNode>("load_bar"));
-//    background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("backgroundl"), 1, 18);
-//
-//    background->setScale(6.5);
-//    background->setPosition(0.5 * background->getSize());
-    background = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("backgroundl"), 1, 6, 6, 5);
+    background = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("backgroundl"), 1, 6, 6, 8);
     background->setScale(SCENE_HEIGHT/background->getTexture()->getHeight());
     background->setPosition(0.5 * background->getSize());
     addChild(background);
