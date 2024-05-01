@@ -37,7 +37,8 @@
  */
 class CollisionController {
 private:
-
+    std::shared_ptr<cugl::AssetManager> _assets;
+    std::shared_ptr<std::unordered_set<std::string>> _sounds;
 public:
     /**
      * Creates a new collision controller.
@@ -70,8 +71,10 @@ public:
      *
      * @return true if initialization was successful
      */
-    bool init(std::shared_ptr<NetEventController> net) {
+    bool init(std::shared_ptr<NetEventController> net,  std::shared_ptr<cugl::AssetManager> assets,std::shared_ptr<std::unordered_set<std::string>> sounds) {
         _network = net;
+        _assets = assets;
+        _sounds = sounds;
         return true;
     }
     

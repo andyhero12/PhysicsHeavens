@@ -28,6 +28,15 @@
 #define DEFAULT_RADIUS_COLLIDE  0.13f
 #define BUFFER  0.1f
 
+/** The key for collisions sounds */
+#define COLLISION_SOUND "bump"
+/** The key for the main afterburner sound */
+#define MAIN_FIRE_SOUND "burn"
+/** The key for the right afterburner sound */
+#define RGHT_FIRE_SOUND "right-burn"
+/** The key for the left afterburner sound */
+#define LEFT_FIRE_SOUND "left-burn"
+
 using namespace cugl;
 void CollisionController::intraOverWorldCollisions(OverWorld& overWorld){
     if (healFromBaseCollsion(*overWorld.getBaseSet(), overWorld.getDog())){
@@ -57,6 +66,11 @@ bool withinAngle(float ang1, float ang2, float degrees){
 void CollisionController::overWorldMonsterControllerCollisions(OverWorld& overWorld, MonsterController& monsterController){
     std::unordered_set<std::shared_ptr<AbstractEnemy>>& monsterEnemies = monsterController.getEnemies();
     if (monsterDogCollision(overWorld.getDog(), monsterEnemies)){
+        std::string key = "collision";
+        auto source = _assets->get<Sound>(COLLISION_SOUND);
+        if (!AudioEngine::get()->isActive(key)) {
+            AudioEngine::get()->play(key, source, false, 1);
+        }
 //         CULog("MONSTER DOG COLLISION DETECTED\n");
     }
     if (_network->getNumPlayers() == 2){

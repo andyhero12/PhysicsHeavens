@@ -261,7 +261,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _monsterController.init(overWorld, _debugnode);
 
     _spawnerController.setAnimNode(_worldnode);
-    _collisionController.init(_network);
+    
+    initAudio();
+    _collisionController.init(_network, _assets, sounds);
 
     _active = true;
     setDebug(false);
@@ -341,6 +343,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 //        initTutorialThree();
 //    }
     
+    
     return true;
 }
 void GameScene::resetDraw()
@@ -401,6 +404,7 @@ void GameScene::dispose()
         overWorld.dispose();
         _backgroundWrapper = nullptr;
         Scene2::dispose();
+        sounds = nullptr;
     }
 }
 
@@ -720,26 +724,24 @@ void GameScene::update(float dt)
  */
 void GameScene::beginContact(b2Contact *contact)
 {
-    auto* bodyA = contact->GetFixtureA()->GetBody();
-    auto* bodyB = contact->GetFixtureB()->GetBody();
+//    auto* bodyA = contact->GetFixtureA()->GetBody();
+//    auto* bodyB = contact->GetFixtureB()->GetBody();
 
-    // Check if either body is the correct type and then cast
-    auto* enemyA = dynamic_cast<AbstractEnemy*>(reinterpret_cast<AbstractEnemy*>(bodyA->GetUserData().pointer));
-    auto* enemyB = dynamic_cast<AbstractEnemy*>(reinterpret_cast<AbstractEnemy*>(bodyB->GetUserData().pointer));
-
-
+//    // Check if either body is the correct type and then cast
+//    auto* enemyA = dynamic_cast<AbstractEnemy*>(reinterpret_cast<AbstractEnemy*>(bodyA->GetUserData().pointer));
+//    auto* enemyB = dynamic_cast<AbstractEnemy*>(reinterpret_cast<AbstractEnemy*>(bodyB->GetUserData().pointer));
     
     //
 }
 
 void GameScene::endContact(b2Contact *contact)
 {
-    auto* bodyA = contact->GetFixtureA()->GetBody();
-    auto* bodyB = contact->GetFixtureB()->GetBody();
+//    auto* bodyA = contact->GetFixtureA()->GetBody();
+//    auto* bodyB = contact->GetFixtureB()->GetBody();
 
-    // Check if either body is the correct type and then cast
-    auto* enemyA = dynamic_cast<AbstractEnemy*>(reinterpret_cast<AbstractEnemy*>(bodyA->GetUserData().pointer));
-    auto* enemyB = dynamic_cast<AbstractEnemy*>(reinterpret_cast<AbstractEnemy*>(bodyB->GetUserData().pointer));
+//    // Check if either body is the correct type and then cast
+//    auto* enemyA = dynamic_cast<AbstractEnemy*>(reinterpret_cast<AbstractEnemy*>(bodyA->GetUserData().pointer));
+//    auto* enemyB = dynamic_cast<AbstractEnemy*>(reinterpret_cast<AbstractEnemy*>(bodyB->GetUserData().pointer));
 
 }
 
@@ -968,6 +970,17 @@ void GameScene::initTutorial(std::vector<int> frame)
     }
 }
 
+
+void GameScene::initAudio(){
+    std::shared_ptr<std::unordered_set<std::string>> sounds = std::make_shared<std::unordered_set<std::string>>();
+    
+    AudioEngine::get()->setListener([sounds](const std::string key, bool normalTermination) {
+        if(normalTermination){
+//            std::cout << key << std::endl;
+            sounds->erase(key);
+        }
+    });
+}
 
 void GameScene::executeSlidingWindow(Vec2 dogPos)
 {

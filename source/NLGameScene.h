@@ -118,6 +118,9 @@ protected:
     
     Vec2 previousPan;
     float shakeMagnitude;
+    
+    /** set of all active sounds */
+    std::shared_ptr<std::unordered_set<std::string>> sounds;
 
     /**
      * Lays out the game geography.
@@ -172,6 +175,8 @@ protected:
     void initTutorialOne();
     void initTutorialTwo();
     void initTutorialThree();
+    
+    void initAudio();
     
 
 public:
