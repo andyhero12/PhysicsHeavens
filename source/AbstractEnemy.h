@@ -34,6 +34,8 @@
 #define KNOCKBACK_TIME 0.25f
 #define KNOCKBACK_LIMIT 14
 
+#define MAX_ESCAPE_TIME 25
+
 #include "stlastar.h"
 #include "WorldSearchVertex.h"
 
@@ -253,10 +255,14 @@ protected:
     int _health;
     int targetIndex;
     int updateRate;
+    
+    // timers
     int _counter;
     float _knockbackTimer;
     float _damagedTimer;
     int _time;
+    int _escapeBoundTimer;
+    
     // used for wander
     float _wanderAngle;
     const float wanderStrength = 0.3f;
@@ -439,8 +445,40 @@ protected:
         setHealth(_maxHealth);
         _wanderAngle = 0.0f;
         timeSinceLastMajorChange = 0.0f;
-        curAction = EnemyActions::WANDER;
+        curAction = EnemyActions::LOWHEALTH;
         
+    }
+    
+    Vec2 randomTile(OverWorld& overWorld){
+        // Create a random device
+        std::random_device rd;
+
+        // Seed the generator
+        std::mt19937 gen(rd());
+
+        // Define the range for the x position
+        std::uniform_int_distribution<> xdistr(0, overWorld.getWorld()->getCols());
+
+        // Define the range for the y position
+        std::uniform_int_distribution<> ydistr(0, overWorld.getWorld()->getRows());
+
+        // Generate and output the random integers from different ranges
+        Vec2 randomTile = Vec2(xdistr(gen), ydistr(gen));
+        
+        // If the tile generated is not passible, regenerate the tile
+        while(overWorld.getWorld()->isPassable(randomTile.x, randomTile.y)){
+            randomTile = Vec2(xdistr(gen), ydistr(gen));
+        }
+
+        return randomTile;
+    }
+    
+    bool atDeadEnd(Vec2 direction, OverWorld& overWorld){
+        direction.normalize();
+        float newX = getPosition().x + std::round(direction.x);
+        float newY = getPosition().y + std::round(direction.y);
+        
+        return !overWorld.getWorld()->isPassable(newX, newY);
     }
 
     void handleWander(float dt){

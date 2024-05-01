@@ -148,10 +148,10 @@ void MeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
     }
     else if(curAction == EnemyActions::CHASE){
         handleChase(overWorld);
-//        if(_time >= FRAMES) {
-//            curAction = AbstractEnemy::EnemyActions::WANDER;
-//            _time = 0;
-//        }
+        if(_time >= FRAMES) {
+            curAction = AbstractEnemy::EnemyActions::WANDER;
+            _time = 0;
+        }
     }
     else if(curAction == EnemyActions::LOWHEALTH){
         handleLowHealth(overWorld);
@@ -165,10 +165,10 @@ void MeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
     }
     else if(curAction == EnemyActions::ATTACK){
         handleAttack(overWorld);
-//        if(_time >= FRAMES){
-//            curAction = AbstractEnemy::EnemyActions::STAY;
-//            _time = 0;
-//        }
+        if(_time >= FRAMES){
+            curAction = AbstractEnemy::EnemyActions::STAY;
+            _time = 0;
+        }
     }
 }
 
@@ -183,7 +183,6 @@ void MeleeEnemy::handleChase(OverWorld& overWorld) {
     }
     
     goToGoal();
-    
     
     movementDirection = dist;
     
@@ -207,19 +206,21 @@ void MeleeEnemy::handleStay(OverWorld& overWorld) {}
 
 void MeleeEnemy::handleRunaway(OverWorld& overWorld){
     cugl::Vec2 dogPos = overWorld.getDog()->getPosition();
-       cugl::Vec2 myPos = getPosition();
-       cugl::Vec2 direction = myPos - dogPos;
-       float distance = direction.length();
-
-       if (distance < 4) {
-           direction.normalize();
-           setVX(-direction.x * 0.1f);
-           setVY(-direction.y * 0.1f);
-           movementDirection.x = -direction.x ;
-           movementDirection.y = -direction.y ;
-       }
-       else{
-           movementDirection.x = 0;
-           movementDirection.y = 0 ;
-       }
+    cugl::Vec2 myPos = getPosition();
+    cugl::Vec2 direction = myPos - dogPos;
+    direction.normalize();
+    float distance = myPos.distance(dogPos);
+    
+    
+    if (distance < 10) {
+       
+       setVX(direction.x * 1.5f);
+       setVY(direction.y * 1.5f);
+       movementDirection.x = direction.x ;
+       movementDirection.y = direction.y ;
+    }
+    else{
+       movementDirection.x = 0;
+       movementDirection.y = 0 ;
+    }
 }
