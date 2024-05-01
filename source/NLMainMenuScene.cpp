@@ -75,18 +75,6 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             
         }
     });
-
-    // _button2->addListener([this](const std::string& name, bool down) {
-    //     if (down) {
-    //         if(_input.getState()==InputController::State::CONTROLLER){
-    //             _isdown = Isdown::isCOOP;
-    //         }
-    //         else{
-    //             _choice = Choice::COOP;
-    //         }
-    //     }
-    // });
-
     _button3->addListener([this](const std::string& name, bool down) {
         if (down) {
             if(_input.getState()==InputController::State::CONTROLLER){
@@ -108,7 +96,7 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     switchFreq = 0.2;
     _isdown = Isdown::isNONE;
     
-    background = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("backgroundx"), 1, 6, 5);
+    background = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("backgroundx"), 1, 6, 6, 5);
     background->setScale(SCENE_HEIGHT/background->getTexture()->getHeight());
     background->setPosition(0.5 * background->getSize());
     addChild(background);

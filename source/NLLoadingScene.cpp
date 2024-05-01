@@ -18,8 +18,8 @@
 
 using namespace cugl;
 
-/** This is the ideal size of the logo */
-#define SCENE_SIZE  1024
+/** Regardless of logo, lock the height to this */
+#define SCENE_HEIGHT  800
 
 #pragma mark -
 #pragma mark Constructors
@@ -38,12 +38,7 @@ using namespace cugl;
 bool LoadingScene::init(const std::shared_ptr<AssetManager>& assets) {
     // Initialize the scene to a locked width
     Size dimen = Application::get()->getDisplaySize();
-    // Lock the scene to a reasonable resolution
-    if (dimen.width > dimen.height) {
-        dimen *= SCENE_SIZE/dimen.width;
-    } else {
-        dimen *= SCENE_SIZE/dimen.height;
-    }
+    dimen *= SCENE_HEIGHT/dimen.height;
     if (assets == nullptr) {
         return false;
     } else if (!Scene2::init(dimen)) {
@@ -58,9 +53,12 @@ bool LoadingScene::init(const std::shared_ptr<AssetManager>& assets) {
     layer->doLayout(); // This rearranges the children to fit the screen
     
     _bar = std::dynamic_pointer_cast<scene2::ProgressBar>(assets->get<scene2::SceneNode>("load_bar"));
-    _brand = assets->get<scene2::SceneNode>("load_name");
-    background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("backgroundl"), 1, 18);
-    background->setScale(6.5);
+//    background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("backgroundl"), 1, 18);
+//
+//    background->setScale(6.5);
+//    background->setPosition(0.5 * background->getSize());
+    background = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("backgroundl"), 1, 6, 6, 5);
+    background->setScale(SCENE_HEIGHT/background->getTexture()->getHeight());
     background->setPosition(0.5 * background->getSize());
     addChild(background);
     layer->setColor(Color4(0,0,0,1));
@@ -73,7 +71,6 @@ bool LoadingScene::init(const std::shared_ptr<AssetManager>& assets) {
  * Disposes of all (non-static) resources allocated to this mode.
  */
 void LoadingScene::dispose() {
-    _brand = nullptr;
     _bar->removeFromParent();
     _bar = nullptr;
     _assets = nullptr;
@@ -91,21 +88,12 @@ void LoadingScene::dispose() {
  * @param timestep  The amount of time (in seconds) since the last frame
  */
 void LoadingScene::update(float progress) {
-    if (frame >= 10){
-        background->setFrame((background->getFrame()+ 1) % 18);
-        frame = 0;
-//        std::cout<<"frame"<<std::endl;
-    }
-    else{
-        frame += 1;
-    }
-    
+    background->update();
     if (_progress < 1) {
         _progress = _assets->progress();
         if (_progress >= 1) {
             _progress = 1.0f;
             _bar->setVisible(false);
-            _brand->setVisible(false);
         }
         _bar->setProgress(_progress);
     }
