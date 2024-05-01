@@ -535,9 +535,6 @@
         "button": {
             "file": "textures/button.png"
         },
-        "frame": {
-            "file": "textures/frame.png"
-        },
         "left": {
             "file": "textures/left_arrow.png"
         },

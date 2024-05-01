@@ -285,12 +285,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 
     _uinode->setContentSize(dimen);
     _uinode->doLayout();
-
-//    loseNode = cugl::scene2::PolygonNode::allocWithTexture(_assets->get<cugl::Texture>("lose_screen"));
     loseNode = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("lose_screen"), 4, 5, 18, 3);
-    loseNode->setScale(Vec2(4,4));
-//    loseNode->setContentSize(dimen);
-//    loseNode->setAnchor(Vec2::ANCHOR_CENTER);
+    loseNode->setScale(5*SCENE_WIDTH/loseNode->getTexture()->getWidth());
     loseNode->setPosition(0.5 * loseNode->getSize());
 
     winNode = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("win_screen"), 1, 1, 1, 1);
@@ -329,7 +325,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _uinode->addChild(loseNode);
     _uinode->addChild(winNode);
     _uinode->addChild(_pause);
-    loseNode->setVisible(false);
+    loseNode->setVisible(true);
     winNode->setVisible(false);
     if (level_string == LEVEL_ONE_KEY){
         initTutorialOne();
@@ -375,7 +371,6 @@ void GameScene::dispose()
     {
         removeAllChildren();
         _pause->dispose();
-        //        _input.dispose();]
         tutorialTiles.clear();
         _world->dispose();
         _world = nullptr;
@@ -447,22 +442,6 @@ void GameScene::linkSceneToObs(const std::shared_ptr<physics2::Obstacle> &obj,
         scene2::SceneNode *weak = node.get(); // No need for smart pointer in callback
         obj->setListener([=](physics2::Obstacle *obs)
                          {
-//            if (auto enemy = dynamic_cast<AbstractEnemy*>(obs)){
-//               // check state -> to animations
-//               auto topLevel = enemy->getTopLevelNode();
-//               auto dog = overWorld.getDog();
-//               auto clientDog = overWorld.getClientDog();
-//
-//               cugl::Vec2 dist = dog->getPosition()-enemy->getPosition();
-//               float actualDistance = dist.length();
-//
-//               if(actualDistance < 5){
-//                   enemy->setCurAction(AbsorbEnemy::EnemyActions::ATTACK);
-//               }
-//               else{
-//                   enemy->setCurAction(AbsorbEnemy::EnemyActions::RUN);
-//               }
-//            }
             float leftover = Application::get()->getFixedRemainder() / 1000000.f;
             Vec2 pos = obs->getPosition() + leftover * obs->getLinearVelocity();
             float angle = obs->getAngle() + leftover * obs->getAngularVelocity();
@@ -520,8 +499,11 @@ void GameScene::preUpdate(float dt)
     overWorld.update(_input, computeActiveSize(), dt);
     _spawnerController.update(_monsterController, overWorld, dt);
     _monsterController.update(dt, overWorld);
-    if (overWorld.getDog()->readyToRecall())
+    if (_isHost && overWorld.getDog()->readyToRecall())
     {
+        resetDraw();
+    }
+    if (!_isHost && overWorld.getClientDog()->readyToRecall()){
         resetDraw();
     }
     if (_isHost)
@@ -543,6 +525,10 @@ void GameScene::preUpdate(float dt)
     }
     else
     {
+        _collisionController.clientIntraWorld(overWorld);
+        _collisionController.clienOverMonster(overWorld, _monsterController);
+        _collisionController.clientAttackCollide(overWorld, _monsterController, _spawnerController);
+        
         if (overWorld.getClientDog()->getHealth() == 0 && !loseNode->isVisible())
         {
             //            loseNode->setVisible(true);
@@ -580,7 +566,7 @@ void GameScene::postUpdate(float dt)
         delta = overWorld.getClientDog()->getDogNode()->getWorldPosition();
     }
     delta -= (computeActiveSize() / 2);
-    Vec2 curr = -delta / _zoom;
+    Vec2 curr = - delta / _zoom;
     Vec2 pan;
     if((curr - previousPan).length() < computeActiveSize().height) {
         pan = curr.lerp(previousPan, 0.9f);
@@ -649,8 +635,10 @@ void GameScene::fixedUpdate()
         }
         if (auto shootEvent = std::dynamic_pointer_cast<ShootEvent>(e))
         {
-            shakeMagnitude = std::max(shakeMagnitude, 40.0f);
-            _input.applyRumble(30000, 0, 200);
+            if (shootEvent->isHost() == _isHost){
+                shakeMagnitude = std::max(shakeMagnitude, 40.0f);
+                _input.applyRumble(30000, 0, 200);
+            }
             //            CULog("Explode Event Got");
             overWorld.processShootEvent(shootEvent);
         }
@@ -687,7 +675,7 @@ void GameScene::fixedUpdate()
         }
         if (auto clientHealthEvent = std::dynamic_pointer_cast<ClientHealthEvent>(e))
         {
-            CULog("Got Health Event");
+//            CULog("Got Health Event");
             overWorld.processClientHealthEvent(clientHealthEvent);
         }
     }

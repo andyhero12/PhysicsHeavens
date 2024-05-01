@@ -22,6 +22,7 @@ protected:
     
     Vec2 _pos;
     float _ang;
+    float _scale;
     bool _isHost;
     
 public:
@@ -34,7 +35,7 @@ public:
      */
     std::shared_ptr<NetEvent> newEvent() override;
     
-    static std::shared_ptr<NetEvent> allocBiteEvent(Vec2 pos, float ang, bool m_isHost);
+    static std::shared_ptr<NetEvent> allocBiteEvent(Vec2 pos, float ang, float mScale,  bool m_isHost);
     
     /**
      * Serialize any paramater that the event contains to a vector of bytes.
@@ -58,6 +59,8 @@ public:
     float getAng() { return _ang; }
     
     bool isHost() {return _isHost; }
+    
+    float getScale() { return _scale; }
 };
 
 
