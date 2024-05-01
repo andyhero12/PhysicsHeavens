@@ -209,7 +209,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _backgroundWrapper = World::alloc(_level, _assets);
 
     for(cugl::Rect r : _level->getTransparentRects()) {
-        _transparentRects.emplace_back(cugl::Rect((int)(r.origin.x), (int)(r.origin.y), ceil(r.size.width), ceil(r.size.height)));
+        _transparentRects.emplace_back(cugl::Rect((int)(r.origin.x), ceil(r.origin.y) - ceil(r.size.height), floor(r.size.width), floor(r.size.height)));
     }
 
     _worldnode = scene2::SceneNode::alloc();
@@ -576,6 +576,20 @@ void GameScene::postUpdate(float dt)
         _decorToHide.at(i)->setColor(Color4::WHITE);
     }
     _decorToHide.clear();
+
+    CULog((std::to_string(overWorld.getDog()->getPosition().x) + " " + std::to_string(overWorld.getDog()->getPosition().y)).c_str());
+
+    for (const std::shared_ptr<TileInfo>& t : _backgroundWrapper->getVisibleNodes()){
+        for (Rect r : _transparentRects) {
+            if((r.contains(overWorld.getDog()->getPosition()) || r.contains(overWorld.getClientDog()->getPosition())) && r.contains(t->getPosition())) {
+                if(t->getIsUpperDecor()) {
+                    _decorToHide.emplace_back(t->getTileSprite());
+                    t->getTileSprite()->setColor(Color4f(1, 1, 1, 0.7f));
+                }
+            }
+        }
+    }
+
     Vec2 delta;
 
     if (_isHost)
