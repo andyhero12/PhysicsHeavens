@@ -33,10 +33,13 @@ public:
     }
     
     // WARNING: This default consrtuctor is needed by the astarstl class for some reason, this implementation might be incorrect
-    WorldSearchVertex(){ x = y = 0; }
+    WorldSearchVertex(){ 
+        x = y = 0;
+        _world = std::weak_ptr<World>();
+    }
     
     ~WorldSearchVertex(){
-        
+        _world = std::weak_ptr<World>();
     }
     
     // The heurstic used to determine the distance to the goal
