@@ -378,7 +378,6 @@ void GameScene::dispose()
         _debugnode = nullptr;
         _rootnode = nullptr;
         _monsterSceneNode = nullptr;
-        _network->dispose();
         _network = nullptr;
         _decorToHide.clear();
         _pause = nullptr;

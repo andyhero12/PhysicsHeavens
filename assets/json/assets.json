@@ -462,6 +462,9 @@
             "minfilter": "linear",
             "magfilter": "nearest"
         },
+        "frame": {
+            "file": "textures/frame.png"
+        },
         "street_tiles": {
             "file": "textures/tile/tile.png",
             "magfilter": "nearest"
