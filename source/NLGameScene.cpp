@@ -65,15 +65,6 @@ using namespace cugl::physics2::net;
 /** Opacity of the physics outlines */
 #define DYNAMIC_COLOR Color4::YELLOW
 
-/** The key for collisions sounds */
-#define COLLISION_SOUND "bump"
-/** The key for the main afterburner sound */
-#define MAIN_FIRE_SOUND "burn"
-/** The key for the right afterburner sound */
-#define RGHT_FIRE_SOUND "right-burn"
-/** The key for the left afterburner sound */
-#define LEFT_FIRE_SOUND "left-burn"
-
 /** The key for the font reference */
 #define PRIMARY_FONT "retro"
 
@@ -506,6 +497,7 @@ void GameScene::preUpdate(float dt)
     updateInputController();
     if (loseNode->isVisible() || winNode->isVisible())
     {
+        tutorialTiles.clear();
         return;
     }
     if (_isHost)
@@ -724,15 +716,29 @@ void GameScene::update(float dt)
  */
 void GameScene::beginContact(b2Contact *contact)
 {
-//    auto* bodyA = contact->GetFixtureA()->GetBody();
-//    auto* bodyB = contact->GetFixtureB()->GetBody();
+    auto* bodyA = contact->GetFixtureA()->GetBody();
+    auto* bodyB = contact->GetFixtureB()->GetBody();
 
-//    // Check if either body is the correct type and then cast
-//    auto* enemyA = dynamic_cast<AbstractEnemy*>(reinterpret_cast<AbstractEnemy*>(bodyA->GetUserData().pointer));
-//    auto* enemyB = dynamic_cast<AbstractEnemy*>(reinterpret_cast<AbstractEnemy*>(bodyB->GetUserData().pointer));
+
+    // Enemy Dog collision
+    auto* enemyA = dynamic_cast<AbstractEnemy*>(reinterpret_cast<AbstractEnemy*>(bodyA->GetUserData().pointer));
+    auto* dogB = dynamic_cast<Dog*>(reinterpret_cast<Dog*>(bodyB->GetUserData().pointer));
+
+    auto* enemyB = dynamic_cast<AbstractEnemy*>(reinterpret_cast<AbstractEnemy*>(bodyB->GetUserData().pointer));
+    auto* dogA = dynamic_cast<Dog*>(reinterpret_cast<Dog*>(bodyA->GetUserData().pointer));
+
+    if (((enemyA && dogB) || (enemyB && dogA)) && sounds->size() < 5) {
+        std::string key = "collision";
+        auto source = _assets->get<Sound>(COLLISION_SOUND);
+        if (!AudioEngine::get()->isActive(key)) {
+            AudioEngine::get()->play(key, source, false, 1);
+        }
+    }
+    
     
     //
 }
+
 
 void GameScene::endContact(b2Contact *contact)
 {
@@ -867,18 +873,26 @@ void GameScene::updateInputController()
         std::shared_ptr<scene2::SceneNode> node = _tutorialnode->getChildByName(Tutorial::toString(tile->getProgress()));
         std::shared_ptr<SpriteAnimationNode> spriteNode = std::dynamic_pointer_cast<SpriteAnimationNode>(node);
 
-        // just do tile->setVisible(tutorial) to draw stuff
         if (atLocation && !tile->didPass() && spriteNode)
         {
             spriteNode->setVisible(true);
             spriteNode->update();
-            
+            std::string key = "tutorial";
+            auto source = _assets->get<Sound>(COLLISION_SOUND);
+            if (!AudioEngine::get()->isActive(key)) {
+                AudioEngine::get()->play(key, source, false, 1);
+            }
         }
         if (_input.update(tile->getProgress(), atLocation))
         {
             tile->setPass(true);
             node->setVisible(false);
             tutorialIndex++;
+            std::string key = "tutorial";
+            auto source = _assets->get<Sound>(COLLISION_SOUND);
+            if (AudioEngine::get()->isActive(key)) {
+                AudioEngine::get()->clear(key);
+            }
         }
         
     }
@@ -972,12 +986,10 @@ void GameScene::initTutorial(std::vector<int> frame)
 
 
 void GameScene::initAudio(){
-    std::shared_ptr<std::unordered_set<std::string>> sounds = std::make_shared<std::unordered_set<std::string>>();
-    
-    AudioEngine::get()->setListener([sounds](const std::string key, bool normalTermination) {
+    sounds = std::make_shared<std::unordered_set<std::string>>();
+    AudioEngine::get()->setListener([this](const std::string key, bool normalTermination) {
         if(normalTermination){
-//            std::cout << key << std::endl;
-            sounds->erase(key);
+            this->sounds->erase(key);
         }
     });
 }

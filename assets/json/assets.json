@@ -581,6 +581,126 @@
         "mainmenu": "json/mainmenuassets.json"
     },
     "sounds": {
+        "dogBark":{
+            "type":     "sample",
+            "file":     "sounds/Player/dogBark.wav",
+            "volume":   0.4
+        },
+        "dogBiteSmall":{
+            "type":     "sample",
+            "file":     "sounds/Player/dogBiteSmall.wav",
+            "volume":   0.4
+        },
+        "dogBiteMedium":{
+            "type":     "sample",
+            "file":     "sounds/Player/dogBiteMedium.wav",
+            "volume":   0.4
+        },
+        "dogBiteLarge":{
+            "type":     "sample",
+            "file":     "sounds/Player/dogBiteLarge.wav",
+            "volume":   0.4
+        },
+        "dogDamage":{
+            "type":     "sample",
+            "file":     "sounds/Player/dogDamage.wav",
+            "volume":   0.4
+        },
+        "dogDash":{
+            "type":     "sample",
+            "file":     "sounds/Player/dogDash.wav",
+            "volume":   0.4
+        },
+        "dogDie":{
+            "type":     "sample",
+            "file":     "sounds/Player/dogDie.wav",
+            "volume":   0.4
+        },
+        "dogTeleport":{
+            "type":     "sample",
+            "file":     "sounds/Player/dogTeleport.wav",
+            "volume":   0.4
+        },
+        "dummyGateExplosion":{
+            "type":     "sample",
+            "file":     "sounds/Player/dummyGateExplosion.wav",
+            "volume":   0.4
+        },
+        "dummyGatePlacement":{
+            "type":     "sample",
+            "file":     "sounds/Player/dummyGatePlacement.wav",
+            "volume":   0.4
+        },
+        "absorbEnemyAbsoring":{
+            "type":     "sample",
+            "file":     "sounds/Enemies/absorbEnemyAbsoring.wav",
+            "volume":   0.4
+        },
+        "bombHiss":{
+            "type":     "sample",
+            "file":     "sounds/Enemies/bombHiss.wav",
+            "volume":   0.4
+        },
+        "enemyDeath":{
+            "type":     "sample",
+            "file":     "sounds/Enemies/enemyDeath.wav",
+            "volume":   0.4
+        },
+        "spawnerDeath":{
+            "type":     "sample",
+            "file":     "sounds/Enemies/spawnerDeath.wav",
+            "volume":   0.4
+        },
+        "spawnerHit":{
+            "type":     "sample",
+            "file":     "sounds/Enemies/spawnerHit.wav",
+            "volume":   0.4
+        },
+        "spawning":{
+            "type":     "sample",
+            "file":     "sounds/Enemies/spawning.wav",
+            "volume":   0.4
+        },
+        "BGM":{
+            "type":     "sample",
+            "file":     "sounds/Env/BGM.wav",
+            "volume":   0.4
+        },
+        "buttonPress":{
+            "type":     "sample",
+            "file":     "sounds/Env/buttonPress.wav",
+            "volume":   0.4
+        },
+        "buttonSwap":{
+            "type":     "sample",
+            "file":     "sounds/Env/buttonSwap.wav",
+            "volume":   0.4
+        },
+        "gateTakesDamage":{
+            "type":     "sample",
+            "file":     "sounds/Env/gateTakesDamage.wav",
+            "volume":   0.4
+        },
+        "lossScreen":{
+            "type":     "sample",
+            "file":     "sounds/Env/lossScreen.wav",
+            "volume":   0.4
+        },
+        "sizeBarMax":{
+            "type":     "sample",
+            "file":     "sounds/Env/sizeBarMax.wav",
+            "volume":   0.4
+        },
+        "subway":{
+            "type":     "sample",
+            "file":     "sounds/Env/subway.wav",
+            "volume":   0.4
+        },
+        "victoryScreen":{
+            "type":     "sample",
+            "file":     "sounds/Env/victoryScreen.wav",
+            "volume":   0.4
+        },
         "bump": {
             "type":     "sample",
             "file":     "sounds/bump.wav",
