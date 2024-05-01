@@ -60,7 +60,7 @@
 #define LEVEL_TWO_KEY       "level2"
 
 /** The source for our level file */
-#define LEVEL_THREE_FILE      "json/levels/levelThree.json"
+#define LEVEL_THREE_FILE      "json/levels/tutorialOne.json"
 /** The key for our loaded level */
 #define LEVEL_THREE_KEY       "level3"
 

@@ -32,6 +32,7 @@
 #include <iostream>
 #include <sstream>
 #include <algorithm>
+#include <cmath>
 
 using namespace cugl;
 using namespace cugl::physics2::net;
@@ -206,6 +207,11 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     float zoom = dimen.height / CANVAS_TILE_HEIGHT;
 
     _backgroundWrapper = World::alloc(_level, _assets);
+
+    for(cugl::Rect r : _level->getTransparentRects()) {
+        _transparentRects.emplace_back(cugl::Rect((int)(r.origin.x), (int)(r.origin.y), ceil(r.size.width), ceil(r.size.height)));
+    }
+
     _worldnode = scene2::SceneNode::alloc();
     _worldnode->setScale(zoom);
     _worldnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
@@ -386,6 +392,7 @@ void GameScene::dispose()
         _network->dispose();
         _network = nullptr;
         _decorToHide.clear();
+        _transparentRects.clear();
         _pause = nullptr;
         _level = nullptr;
         winNode = nullptr;
