@@ -11,13 +11,13 @@
 #include <stdio.h>
 
 /** The key for collisions sounds */
-#define COLLISION_SOUND "bump"
+#define COLLISION_SOUND "dogBiteSmall"
 /** The key for the main afterburner sound */
-#define MAIN_FIRE_SOUND "burn"
+#define MAIN_FIRE_SOUND "dogBiteSmall"
 /** The key for the right afterburner sound */
-#define RGHT_FIRE_SOUND "right-burn"
+#define RGHT_FIRE_SOUND "dogBiteSmall"
 /** The key for the left afterburner sound */
-#define LEFT_FIRE_SOUND "left-burn"
+#define LEFT_FIRE_SOUND "dogBiteSmall"
 
 
 
