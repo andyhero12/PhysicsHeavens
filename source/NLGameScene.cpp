@@ -727,12 +727,9 @@ void GameScene::beginContact(b2Contact *contact)
     auto* enemyA = dynamic_cast<AbstractEnemy*>(reinterpret_cast<AbstractEnemy*>(bodyA->GetUserData().pointer));
     auto* enemyB = dynamic_cast<AbstractEnemy*>(reinterpret_cast<AbstractEnemy*>(bodyB->GetUserData().pointer));
 
-    if (enemyA) {
-        enemyA->setInContact(true);
-    }
-    if (enemyB) {
-        enemyB->setInContact(true);
-    }
+
+    
+    //
 }
 
 void GameScene::endContact(b2Contact *contact)
@@ -744,13 +741,6 @@ void GameScene::endContact(b2Contact *contact)
     auto* enemyA = dynamic_cast<AbstractEnemy*>(reinterpret_cast<AbstractEnemy*>(bodyA->GetUserData().pointer));
     auto* enemyB = dynamic_cast<AbstractEnemy*>(reinterpret_cast<AbstractEnemy*>(bodyB->GetUserData().pointer));
 
-    // Set inContact to false if the object is an AbstractEnemy
-    if (enemyA) {
-        enemyA->setInContact(false);
-    }
-    if (enemyB) {
-        enemyB->setInContact(false);
-    }
 }
 
 /**

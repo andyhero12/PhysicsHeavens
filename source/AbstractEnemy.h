@@ -89,8 +89,7 @@ public:
 
             _damagedTimer = 0;
             _knockbackTimer = false;
-            
-            _inContact = false;
+
             movementDirection = Vec2(0,0);
             return true;
         }
@@ -157,9 +156,6 @@ public:
             attackAnimations->animate(_curDirection, curAction == EnemyActions::ATTACK);
         }
     }
-    
-    bool isInContact() const { return _inContact; }
-    void setInContact(bool value) { _inContact = value; }
     
     virtual int getDamage() = 0;
     virtual bool canAttack() const = 0;
@@ -262,8 +258,6 @@ protected:
     const float wanderStrength = 0.3f;
     const float directionChangeInterval = 5.0f;
     float timeSinceLastMajorChange;
-    // update animations; remove jitter
-    bool _inContact;
     Vec2 movementDirection;
     /** The next step along the enemy's path */
     Vec2 _nextStep = Vec2(-1, -1);
