@@ -529,6 +529,10 @@ void GameScene::preUpdate(float dt)
     }
     else
     {
+        _collisionController.clientIntraWorld(overWorld);
+        _collisionController.clienOverMonster(overWorld, _monsterController);
+        _collisionController.clientAttackCollide(overWorld, _monsterController, _spawnerController);
+        
         if (overWorld.getClientDog()->getHealth() == 0 && !loseNode->isVisible())
         {
             //            loseNode->setVisible(true);

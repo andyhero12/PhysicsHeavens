@@ -202,7 +202,7 @@ bool OverWorld::initDogModel()
     mediumDogDash->setAnchor(Vec2::ANCHOR_CENTER);
     mediumDogDash->setContentSize(DOG_SIZE);
 
-    std::shared_ptr<AnimationSceneNode> clientMediumDogDash = AnimationSceneNode::allocWithTextures(textures, 4, 5, 20, 1);
+    std::shared_ptr<AnimationSceneNode> clientMediumDogDash = AnimationSceneNode::allocWithTextures(dashTextures, 4, 5, 20, 1);
     clientMediumDogDash->setAnchor(Vec2::ANCHOR_CENTER);
     clientMediumDogDash->setContentSize(DOG_SIZE);
 
@@ -503,39 +503,27 @@ void OverWorld::processClientHealthEvent(const std::shared_ptr<ClientHealthEvent
 void OverWorld::processSizeEvent(const std::shared_ptr<SizeEvent> &sizeEvent)
 {
     bool incomingHost = sizeEvent->isHost();
-    bool currentHost = _isHost;
     if (incomingHost)
     { // means incoming is from Original host
-//        _dog->updateDogSize(sizeEvent->getSize());
         _dog->addAbsorb(sizeEvent->getSize());
     }else{
         _dogClient->addAbsorb(sizeEvent->getSize());
-//        _dogClient->updateDogSize(sizeEvent->getSize());
     }
-//    CULog("processing Size Event %d %d", incomingHost, currentHost);
-//    if (incomingHost != currentHost)
-//    { // means we received from other person
-//        if (incomingHost)
-//        { // means incoming is from Original host
-//            _dog->updateDogSize(sizeEvent->getSize());
-//        }else{
-//            _dogClient->updateDogSize(sizeEvent->getSize());
-//        }
-//    }
 }
 void OverWorld::processBiteEvent(const std::shared_ptr<BiteEvent> &biteEvent)
 {
     Vec2 center = biteEvent->getPos();
     float ang = biteEvent->getAng();
     bool incomingHost = biteEvent->isHost();
+    float scale = biteEvent->getScale();
     if (incomingHost)
     {
-        _attackPolygonSet.addBite(center, ang, _dog->getBiteRadius(), (float)_dog->getAbsorb() / _dog->getMaxAbsorb());
+        _attackPolygonSet.addBite(center, ang, _dog->getBiteRadius(), scale);
         _dog->startBite();
     }
     else
     {
-        _clientAttackPolygonSet.addBite(center, ang, _dogClient->getBiteRadius(), (float)_dogClient->getAbsorb() / _dogClient->getMaxAbsorb());
+        _clientAttackPolygonSet.addBite(center, ang, _dogClient->getBiteRadius(), scale);
         _dogClient->startBite();
     }
 }
@@ -604,7 +592,8 @@ void OverWorld::ownedDogUpdate(InputController& _input, cugl::Size, std::shared_
     }
     if (_input.didPressFire() && _curDog->canFireWeapon() && _curDog->getAction() != Dog::Actions::DASH)
     {
-        _network->pushOutEvent(BiteEvent::allocBiteEvent(_curDog->getBiteCenter(), _curDog->getDirInDegrees(), _isHost));
+        float scale = float(_curDog->getAbsorb())/ (float) _curDog->getMaxAbsorb();
+        _network->pushOutEvent(BiteEvent::allocBiteEvent(_curDog->getBiteCenter(), _curDog->getDirInDegrees(),scale,  _isHost));
         _curDog->reloadWeapon();
     }
     if (_input.didPressSpecial() && _curDog->canFireWeapon()&& _curDog->getAction() != Dog::Actions::DASH)

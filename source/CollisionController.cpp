@@ -29,11 +29,7 @@
 #define BUFFER  0.1f
 
 using namespace cugl;
-void CollisionController::intraOverWorldCollisions(OverWorld& overWorld){
-    if (healFromBaseCollsion(*overWorld.getBaseSet(), overWorld.getDog())){
-//        CULog("HEAL DETECTED\n");
-    }
-}
+
 
 static inline double angle_1to360(float angle){
     if (angle >= 360.0f){
@@ -53,6 +49,58 @@ bool withinAngle(float ang1, float ang2, float degrees){
         return a <= N && N <= b;
     }
     return a <= N || N <= b;
+}
+
+void CollisionController::clientIntraWorld(OverWorld& overWorld){
+    if (healFromBaseCollsion(*overWorld.getBaseSet(), overWorld.getClientDog())){
+        CULog("Client Heal");
+    }
+}
+
+void CollisionController::clienOverMonster(OverWorld& overWorld, MonsterController& monsterController){
+    
+}
+
+void CollisionController::clientAttackCollide(OverWorld& overWorld, MonsterController& monsterController, SpawnerController& spawnerController){
+    AttackPolygons& attacks = overWorld.getAttackPolygons();
+    std::unordered_set<std::shared_ptr<AbstractSpawner>>& spawners = spawnerController._spawners;
+    std::shared_ptr<Dog> dog = overWorld.getDog();
+    for (const std::shared_ptr<ActionPolygon>& action: attacks.currentAttacks){
+        switch (action->getAction()){
+            case (Action::SHOOT):
+                hugeBlastCollisionClient(action, monsterController, spawners); // Play blast sound
+                break;
+            case (Action::EXPLODE):
+                resolveBlowupClient(action,monsterController, spawners); // play boom sound
+                break;
+            case (Action::BITE):
+                resolveBiteAttackClient(action, monsterController, overWorld, spawners, true);
+                break;
+            default:
+                CULog("Action not used in Collisions\n");
+        };
+    }
+    AttackPolygons& attacksClient = overWorld.getAttackPolygonsClient();
+    for (const std::shared_ptr<ActionPolygon>& action: attacksClient.currentAttacks){
+        switch (action->getAction()){
+            case (Action::SHOOT):
+                hugeBlastCollisionClient(action, monsterController, spawners); // Play blast sound
+                break;
+            case (Action::EXPLODE):
+                resolveBlowupClient(action,monsterController, spawners); // play boom sound
+                break;
+            case (Action::BITE):
+                resolveBiteAttackClient(action, monsterController, overWorld, spawners, false);
+                break;
+            default:
+                CULog("Action not used in Collisions\n");
+        };
+    }
+}
+void CollisionController::intraOverWorldCollisions(OverWorld& overWorld){
+    if (healFromBaseCollsion(*overWorld.getBaseSet(), overWorld.getDog())){
+//        CULog("HEAL DETECTED\n");
+    }
 }
 void CollisionController::overWorldMonsterControllerCollisions(OverWorld& overWorld, MonsterController& monsterController){
     std::unordered_set<std::shared_ptr<AbstractEnemy>>& monsterEnemies = monsterController.getEnemies();
@@ -301,9 +349,6 @@ void CollisionController::resolveBiteAttack(const std::shared_ptr<ActionPolygon>
     if (addedAbsorb != 0){
         _network->pushOutEvent(SizeEvent::allocSizeEvent(addedAbsorb, isHostAttack));
     }
-    if (collided){
-        action->resetAttack();
-    }
 
     for (auto& spawner : spawners){
         Vec2 diff = spawner->getPos() - action->getCenter();
@@ -314,8 +359,12 @@ void CollisionController::resolveBiteAttack(const std::shared_ptr<ActionPolygon>
         }
         float dist = diff.length();
         if (withinAngle(action->getAngle()-90.0f, result, 180.0f) && dist <= 3 * action->getScale()){
+            collided = true;
             spawner->subHealth(4);
         }
+    }
+    if (collided){
+        action->resetAttack();
     }
 }
 bool CollisionController::healFromBaseCollsion( BaseSet& bset, std::shared_ptr<Dog> ship){
@@ -338,6 +387,67 @@ bool CollisionController::healFromBaseCollsion( BaseSet& bset, std::shared_ptr<D
     }
     return false;
 }
+void CollisionController::hugeBlastCollisionClient(const std::shared_ptr<ActionPolygon>& action, MonsterController& monsterController, std::unordered_set<std::shared_ptr<AbstractSpawner>>& spawners){
+    if (!action->dealDamage())
+        return;
+    Poly2 blastRectangle = action->getPolygon();
+    std::unordered_set<std::shared_ptr<AbstractEnemy>>& enemies = monsterController.getEnemies();
+    bool hitSomething = false;
+    for (auto& spawner : spawners){
+        Vec2 diff = spawner->getPos() - action->getCenter();
+        float ang = diff.getAngle();
+        float result = ((ang > 0 ? ang : (2*M_PI +ang)) * 360 / (2*M_PI));
+        if (result < 0.0f){
+            result += 360.0f;
+        }
+        float dist = diff.length();
+        if (withinAngle(action->getAngle()-45.0f, result, 90.0f) && dist <= 5.5f * action->getScale()){
+            hitSomething = true;
+            spawner->subHealth(25);
+        }
+    }
+    if (hitSomething){
+        action->resetAttack();
+    }
+}
+void CollisionController::resolveBlowupClient(const std::shared_ptr<ActionPolygon>& action, MonsterController& monsterController, std::unordered_set<std::shared_ptr<AbstractSpawner>>& spawners){
+    if (!action->dealDamage())
+        return;
+    Poly2 blastCircle = action->getPolygon();
+    auto itS = spawners.begin();
+    while (itS != spawners.end()){
+        const std::shared_ptr<AbstractSpawner>& spawn = *itS;
+        itS++;
+        Vec2 diff = spawn->getPos() - action->getCenter();
+        float dist = diff.length();
+        if (dist <= 2.2f * action->getScale()){
+            spawn->subHealth(999);
+        }
+    }
+}
+
+void CollisionController::resolveBiteAttackClient(const std::shared_ptr<ActionPolygon>& action, MonsterController& monsterController, OverWorld& overWorld, std::unordered_set<std::shared_ptr<AbstractSpawner>>& spawners,bool isHostAttack){
+    if (!action->dealDamage())
+        return;
+    bool collided = false;
+    for (auto& spawner : spawners){
+        Vec2 diff = spawner->getPos() - action->getCenter();
+        float ang = diff.getAngle();
+        float result = ((ang > 0 ? ang : (2*M_PI +ang)) * 360 / (2*M_PI));
+        if (result < 0.0f){
+            result += 360.0f;
+        }
+        float dist = diff.length();
+        if (withinAngle(action->getAngle()-90.0f, result, 180.0f) && dist <= 3 * action->getScale()){
+            collided = true;
+            spawner->subHealth(4);
+        }
+    }
+    if (collided){
+        action->resetAttack();
+    }
+}
+
 void CollisionController::hugeBlastCollision(const std::shared_ptr<ActionPolygon>& action, MonsterController& monsterController, std::unordered_set<std::shared_ptr<AbstractSpawner>>& spawners){
     if (!action->dealDamage())
         return;
@@ -366,16 +476,18 @@ void CollisionController::hugeBlastCollision(const std::shared_ptr<ActionPolygon
     for (auto& spawner : spawners){
         Vec2 diff = spawner->getPos() - action->getCenter();
         float ang = diff.getAngle();
-        float result = ((ang > 0 ? ang : (2*M_PI +ang)) * 360 / (2*M_PI)) - 90.0f;
+        float result = ((ang > 0 ? ang : (2*M_PI +ang)) * 360 / (2*M_PI));
         if (result < 0.0f){
             result += 360.0f;
         }
         float dist = diff.length();
-//        CULog("Distance %f Scale %f", dist, action->getScale());
         if (withinAngle(action->getAngle()-45.0f, result, 90.0f) && dist <= 5.5f * action->getScale()){
             hitSomething = true;
             spawner->subHealth(25);
         }
+    }
+    if (hitSomething){
+        action->resetAttack();
     }
 }
 void CollisionController::resolveBlowup(const std::shared_ptr<ActionPolygon>& action, MonsterController& monsterController, std::unordered_set<std::shared_ptr<AbstractSpawner>>& spawners){
