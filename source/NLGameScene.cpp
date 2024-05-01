@@ -285,12 +285,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 
     _uinode->setContentSize(dimen);
     _uinode->doLayout();
-
-//    loseNode = cugl::scene2::PolygonNode::allocWithTexture(_assets->get<cugl::Texture>("lose_screen"));
     loseNode = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("lose_screen"), 4, 5, 18, 3);
-    loseNode->setScale(Vec2(4,4));
-//    loseNode->setContentSize(dimen);
-//    loseNode->setAnchor(Vec2::ANCHOR_CENTER);
+    loseNode->setScale(5*SCENE_WIDTH/loseNode->getTexture()->getWidth());
     loseNode->setPosition(0.5 * loseNode->getSize());
 
     winNode = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("win_screen"), 1, 1, 1, 1);
@@ -329,7 +325,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _uinode->addChild(loseNode);
     _uinode->addChild(winNode);
     _uinode->addChild(_pause);
-    loseNode->setVisible(false);
+    loseNode->setVisible(true);
     winNode->setVisible(false);
     if (level_string == LEVEL_ONE_KEY){
         initTutorialOne();
