@@ -800,12 +800,8 @@ void GameScene::addChildBackground()
             if (t->texture != nullptr)
             {
                 t->setDebugColor(DYNAMIC_COLOR);
-                _world->initObstacle(t);
+                _world->addObstacle(t);
                 t->setDebugScene(_debugnode);
-                if (_isHost)
-                {
-                    _world->getOwnedObstacles().insert({t, 0});
-                }
             }
         }
     }
