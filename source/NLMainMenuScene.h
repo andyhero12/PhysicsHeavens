@@ -82,8 +82,6 @@ protected:
     std::shared_ptr<cugl::scene2::SceneNode>  _Logo;
 
     // MODEL
-    /** The progress displayed on the screen */
-    float _progress;
     /** Whether or not the player has pressed play to continue */
     bool  _completed;
 

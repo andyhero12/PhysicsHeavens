@@ -86,16 +86,16 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
         }
     });
 
-    _button1->setPosition(650,90);
-    _button3->setPosition(600,0);
-    _Logo->setPosition(-100,670);
+    // _button1->setPosition(650,90);
+    // _button3->setPosition(600,0);
+    // _Logo->setPosition(-100,670);
     
-    layer->setContentSize(dimen);
+    // layer->setContentSize(dimen);
 
-    _counter = 0;
+    _counter = 1;
     switchFreq = 0.2;
     _isdown = Isdown::isNONE;
-    
+
     background = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("backgroundx"), 1, 6, 6, 8);
     background->setScale(SCENE_HEIGHT/background->getTexture()->getHeight());
     background->setPosition(0.5 * background->getSize());
@@ -133,14 +133,11 @@ void MainMenuScene::setActive(bool value) {
             _choice = Choice::NONE;
             _isdown = Isdown::isNONE;
             _button1->activate();
-            //_button2->activate();
             _button3->activate();
         } else {
             _button1->deactivate();
-            //_button2->deactivate();
             _button3->deactivate();
             _button1->setDown(false);
-            //_button2->setDown(false);
             _button3->setDown(false);
         }
     }
