@@ -95,7 +95,7 @@ public: // data
                 f( 0.0f )
             {
             }
-
+            
             bool operator==(const Node& otherNode) const
             {
                 return this->m_UserState.IsSameState(otherNode->m_UserState);

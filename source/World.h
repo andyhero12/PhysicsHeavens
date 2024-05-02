@@ -77,7 +77,6 @@ private:
     // Matrix with information about the overworld
     std::shared_ptr<cugl::Texture> tile;
     std::shared_ptr<cugl::AssetManager> _assets;
-    cugl::Vec2 start;
     
 public:
     static std::shared_ptr<World> alloc(std::shared_ptr<LevelModel> _level,std::shared_ptr<cugl::AssetManager> assets) {
