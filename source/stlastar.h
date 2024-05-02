@@ -143,9 +143,6 @@ public: // methods
         m_CancelRequest( false )
     {
     }
-    ~AStarSearch(){
-        FreeAllNodes();
-    }
     // call at any time to cancel the search and free up all the memory
     void CancelSearch()
     {

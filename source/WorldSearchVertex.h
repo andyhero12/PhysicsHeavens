@@ -11,12 +11,24 @@
 #include <stdio.h>
 #include "stlastar.h"
 #include "World.h"
+#include <array>
 
 class WorldSearchVertex{
 private:
     // Returns whether this node is close to an impassible corner
     bool closeToEdge();
-    
+    static constexpr std::array<std::pair<int, int>, 8> direction_list = {{
+        // Left, right, top, bottom
+        std::make_pair(0, 1),
+        std::make_pair(0, -1),
+        std::make_pair(1, 0),
+        std::make_pair(-1, 0),
+        // Diagonals
+        std::make_pair(-1, -1),
+        std::make_pair(1, 1),
+        std::make_pair(-1, 1),
+        std::make_pair(1, -1)
+    }};
 public:
     
     // the world this node is in

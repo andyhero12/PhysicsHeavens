@@ -10,17 +10,7 @@
 bool WorldSearchVertex::IsSameState( WorldSearchVertex &rhs )
 {
 
-    // same state in a maze search is simply when (x,y) are the same
-    if( (x == rhs.x) &&
-        (y == rhs.y) )
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-
+    return x == rhs.x && y == rhs.y;
 }
 
 size_t WorldSearchVertex::Hash()
@@ -37,14 +27,7 @@ float WorldSearchVertex::GoalDistanceEstimate( WorldSearchVertex &nodeGoal )
 
 bool WorldSearchVertex::IsGoal( WorldSearchVertex &nodeGoal )
 {
-
-    if( (x == nodeGoal.x) &&
-        (y == nodeGoal.y) )
-    {
-        return true;
-    }
-
-    return false;
+    return x == nodeGoal.x && y == nodeGoal.y;
 }
 
 // This generates the successors to the given Node. It uses a helper function called
@@ -53,22 +36,6 @@ bool WorldSearchVertex::IsGoal( WorldSearchVertex &nodeGoal )
 // is specific to the application
 bool WorldSearchVertex::GetSuccessors( AStarSearch<WorldSearchVertex> *astarsearch, WorldSearchVertex *parent_node )
 {
-    
-    //Create list of all possible next tiles
-    std::list<std::pair<int, int>> adj_list;
-    
-    // Left, right, top, bottom
-    adj_list.push_back(std::make_pair(0, 1));
-    adj_list.push_back(std::make_pair(0, -1));
-    adj_list.push_back(std::make_pair(1, 0));
-    adj_list.push_back(std::make_pair(-1, 0));
-    
-    //Diagonals
-    adj_list.push_back(std::make_pair(-1, -1));
-    adj_list.push_back(std::make_pair(1, 1));
-    adj_list.push_back(std::make_pair(-1, 1));
-    adj_list.push_back(std::make_pair(1, -1));
-    
     int parent_x = -1;
     int parent_y = -1;
 
@@ -77,20 +44,15 @@ bool WorldSearchVertex::GetSuccessors( AStarSearch<WorldSearchVertex> *astarsear
         parent_x = parent_node->x;
         parent_y = parent_node->y;
     }
-    
+    const std::shared_ptr<World> curWorld = _world.lock();
     WorldSearchVertex NewNode(0, 0, _world);
-    if (_world.expired()){
-        return false;
-    }
     // push each possible move except allowing the search to go backwards
-    for (const auto& diff : adj_list) {
+    for (auto& diff : direction_list) {
         NewNode = WorldSearchVertex( x - diff.first, y - diff.second, _world);
-        
-        if(_world.lock()->isPassable(NewNode.x, NewNode.y) && !((parent_x == NewNode.x) && (parent_y == NewNode.y))){
+        if(curWorld->isPassable(NewNode.x, NewNode.y) && !((parent_x == NewNode.x) && (parent_y == NewNode.y))){
             astarsearch->AddSuccessor( NewNode );
         }
     }
-    
     return true;
 }
 
@@ -105,20 +67,6 @@ float WorldSearchVertex::GetCost( WorldSearchVertex &successor )
 
 bool WorldSearchVertex::closeToEdge(){
     //Create list of all possible next tiles
-    std::list<std::pair<int, int>> adj_list;
-
-    // Left, right, top, bottom
-    adj_list.push_back(std::make_pair(0, 1));
-    adj_list.push_back(std::make_pair(0, -1));
-    adj_list.push_back(std::make_pair(1, 0));
-    adj_list.push_back(std::make_pair(-1, 0));
-
-    for (const auto& diff : adj_list) {
-        WorldSearchVertex AdjNode = WorldSearchVertex( x - diff.first, y - diff.second, _world);
-        if(!(_world.lock())->isPassable(AdjNode.x, AdjNode.y)){
-            return true;
-        }
-    }
-
-    return false;
+    const std::shared_ptr<World> curWorld = _world.lock();
+    return curWorld->isPassable(x,y+1) && curWorld->isPassable(x,y-1) && curWorld->isPassable(x+1,y) && curWorld->isPassable(x-1,y);
 }
