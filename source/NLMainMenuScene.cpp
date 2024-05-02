@@ -56,13 +56,13 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     // Acquire the scene built by the asset loader and resize it the scene
 
     _input.init();
-    _assets->loadDirectory("json/mainmenuassets.json");
-    std::shared_ptr<scene2::SceneNode> layer = _assets->get<scene2::SceneNode>("Menu");
+    _assets->loadDirectory("json/MainMenu.json");
+    std::shared_ptr<scene2::SceneNode> layer = _assets->get<scene2::SceneNode>("lab");
     layer->setContentSize(dimen);
     layer->doLayout(); // This rearranges the children to fit the screen
-    _buttonset.push_back(_button1 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("Menu_startmenu_button1")));
-    _buttonset.push_back(_button3 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("Menu_startmenu_button3")));
-    _Logo = assets->get<scene2::SceneNode>("Menu_startmenu_Logo");
+    _buttonset.push_back(_button1 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("lab_button1")));
+    _buttonset.push_back(_button3 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("lab_button2")));
+    //_Logo = assets->get<scene2::SceneNode>("Menu_startmenu_Logo");
     // Program the buttons
     _button1->addListener([this](const std::string& name, bool down) {
         if (down) {
@@ -95,8 +95,8 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _counter = 1;
     switchFreq = 0.2;
     _isdown = Isdown::isNONE;
-
-    background = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("backgroundx"), 1, 6, 6, 8);
+    _button1->setDown(true);
+    background = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("background_main"), 1, 6, 6, 8);
     background->setScale(SCENE_HEIGHT/background->getTexture()->getHeight());
     background->setPosition(0.5 * background->getSize());
     addChild(background);
