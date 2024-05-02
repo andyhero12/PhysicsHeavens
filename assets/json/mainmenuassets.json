@@ -9,7 +9,7 @@
       "file": "textures/Menu/menu.png"
     },
     "redbuttonx": {
-      "file": "textures/Menu/playbutton.png"
+      "file": "textures/Menu/redbutton.png"
     },
     "purplebuttonx": {
       "file": "textures/Menu/settingbutton.png"
@@ -171,8 +171,8 @@
                             ],
                             "angle": 0,
                             "position": [
-                                152.21,
-                                307.78
+                                1152.21,
+                                1307.78
                             ],
                             "visible": true,
                             "upnode": "redbutton"
