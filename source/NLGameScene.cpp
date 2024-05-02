@@ -107,6 +107,9 @@ GameScene::GameScene() : cugl::Scene2(),
                          _isHost(false),
                          olddogPos(Vec2(0, 0)),
                          _network(nullptr),
+                         winNode(nullptr),
+                         loseNode(nullptr),
+                         repeatWinNode(nullptr),
                          tutorialIndex(0)
 
 {
@@ -285,16 +288,16 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 
     _uinode->setContentSize(dimen);
     _uinode->doLayout();
-    loseNode = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("lose_screen"), 4, 5, 18, 3);
+    loseNode = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("lose_screen"), 4, 5, 18, 4);
     loseNode->setScale(5*SCENE_WIDTH/loseNode->getTexture()->getWidth());
     loseNode->setPosition(0.5 * loseNode->getSize());
 
-    winNode = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("win_screen"), 1, 1, 1, 1);
-//    winNode->setContentSize(dimen);
-//    winNode->setAnchor(Vec2::ANCHOR_CENTER);
-    winNode->setScale(Vec2(4,4));
+    winNode = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("win_screen"), 3, 5, 13, 4);
+    winNode->setScale(3*SCENE_HEIGHT/winNode->getTexture()->getHeight());
     winNode->setPosition(0.5 * winNode->getSize());
-
+    repeatWinNode = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("repeat_win"), 1, 4, 4, 8);
+    repeatWinNode->setScale(SCENE_HEIGHT/repeatWinNode->getTexture()->getHeight());
+    repeatWinNode->setPosition(0.5 * repeatWinNode->getSize());
     _pause = std::make_shared<PauseScene>();
     _pause->init(_assets, computeActiveSize());
 
@@ -324,9 +327,11 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _uinode->addChild(_minimap);
     _uinode->addChild(loseNode);
     _uinode->addChild(winNode);
+    _uinode->addChild(repeatWinNode);
     _uinode->addChild(_pause);
     loseNode->setVisible(false);
     winNode->setVisible(false);
+    repeatWinNode->setVisible(false);
     if (level_string == LEVEL_ONE_KEY){
         initTutorialOne();
     }
@@ -384,6 +389,7 @@ void GameScene::dispose()
         _level = nullptr;
         winNode = nullptr;
         loseNode = nullptr;
+        repeatWinNode = nullptr;
         _uinode = nullptr;
         _debug = false;
         _constants = nullptr;
@@ -478,7 +484,7 @@ void GameScene::addInitObstacle(const std::shared_ptr<physics2::Obstacle> &obj,
 void GameScene::preUpdate(float dt)
 {
     updateInputController();
-    if (loseNode->isVisible() || winNode->isVisible())
+    if (loseNode->isVisible() || winNode->isVisible() || repeatWinNode->isVisible())
     {
         return;
     }
@@ -539,7 +545,7 @@ void GameScene::preUpdate(float dt)
 void GameScene::postUpdate(float dt)
 {
     // Nothing to do now
-    if (loseNode->isVisible() || winNode->isVisible())
+    if (loseNode->isVisible() || winNode->isVisible()|| repeatWinNode->isVisible())
     {
         return;
     }
@@ -590,15 +596,22 @@ void GameScene::postUpdate(float dt)
 
 void GameScene::fixedUpdate()
 {
-    if (loseNode->isVisible() || winNode->isVisible())
+    if (loseNode->isVisible() || winNode->isVisible() || repeatWinNode->isVisible())
     {
         if (loseNode->isVisible() && loseNode->getFrame() != loseNode->getSpan() - 1){
             loseNode->update();
 //            loseNode->setFrame(5);
 //            CULog("here frame %d", loseNode->getFrame());
         }
+        if (winNode->isVisible() && winNode->getFrame() == winNode->getSpan() -1){
+            repeatWinNode->setVisible(true);
+            winNode->setVisible(false);
+        }
         if (winNode->isVisible() && winNode->getFrame() != winNode->getSpan() -1){
             winNode->update();
+        }
+        if (repeatWinNode->isVisible()){
+            repeatWinNode->update();
         }
         return;
     }
@@ -784,7 +797,7 @@ void GameScene::addChildBackground()
     {
         for (int i = originalRows - 1; i > -1; i--)
         {
-            std::shared_ptr<TileInfo> t = currentBackground.at(i).at(j);
+            const std::shared_ptr<TileInfo>& t = currentBackground.at(i).at(j);
             if (t->texture != nullptr)
             {
                 _worldnode->addChild(t->getTileSprite());
@@ -796,7 +809,7 @@ void GameScene::addChildBackground()
     {
         for (int j = 0; j < originalCols; j++)
         {
-            std::shared_ptr<TileInfo> t = currentBoundaries.at(i).at(j);
+            const std::shared_ptr<TileInfo>& t = currentBoundaries.at(i).at(j);
             if (t->texture != nullptr)
             {
                 t->setDebugColor(DYNAMIC_COLOR);
@@ -812,7 +825,7 @@ void GameScene::addChildBackground()
         {
             for (int j = 0; j < originalCols; j++)
             {
-                std::shared_ptr<TileInfo> t = lowerDecorWorld.at(n).at(i).at(j);
+                const std::shared_ptr<TileInfo>& t = lowerDecorWorld.at(n).at(i).at(j);
                 if (t->texture != nullptr)
                 {
                     _worldnode->addChild(t->getTileSprite());
@@ -837,7 +850,7 @@ void GameScene::addChildForeground()
         {
             for (int j = 0; j < originalCols; j++)
             {
-                std::shared_ptr<TileInfo> t = upperDecorWorld.at(n).at(i).at(j);
+                const std::shared_ptr<TileInfo>& t = upperDecorWorld.at(n).at(i).at(j);
                 if (t->texture != nullptr)
                 {
                     _worldnode->addChild(t->getTileSprite());
@@ -853,10 +866,10 @@ void GameScene::updateInputController()
 //    std::cout <<overWorld.getDog()->getX() << std::endl;
     if (tutorialIndex < tutorialTiles.size())
     {
-        std::shared_ptr<Tutorial> tile = tutorialTiles.at(tutorialIndex);
+        const std::shared_ptr<Tutorial>& tile = tutorialTiles.at(tutorialIndex);
         bool atLocation = tile->atArea(overWorld.getDog()->getX());
-        std::shared_ptr<scene2::SceneNode> node = _tutorialnode->getChildByName(Tutorial::toString(tile->getProgress()));
-        std::shared_ptr<SpriteAnimationNode> spriteNode = std::dynamic_pointer_cast<SpriteAnimationNode>(node);
+        const std::shared_ptr<scene2::SceneNode>& node = _tutorialnode->getChildByName(Tutorial::toString(tile->getProgress()));
+        const std::shared_ptr<SpriteAnimationNode>& spriteNode = std::dynamic_pointer_cast<SpriteAnimationNode>(node);
 
         // just do tile->setVisible(tutorial) to draw stuff
         if (atLocation && !tile->didPass() && spriteNode)

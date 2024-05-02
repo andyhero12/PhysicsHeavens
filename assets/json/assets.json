@@ -553,6 +553,9 @@
              "file": "textures/effects/death_poof.png",
              "magfilter": "nearest"
          },
+         "repeat_win": {
+           "file": "textures/repeat_win.png"
+         },
         "win_screen": {
           "file": "textures/win_screen.png"
         },
