@@ -408,9 +408,6 @@ void GameScene::dispose()
         Scene2::dispose();
         sounds = nullptr;
         
-        AudioEngine::get()->clearEffects();
-        AudioEngine::get()->clear();
-        
     }
 }
 

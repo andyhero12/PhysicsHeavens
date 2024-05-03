@@ -26,6 +26,7 @@
 #include "NLSelection.h"
 #include "Setting.h"
 #include "NLSinglePlayerLevel.h"
+#include "AudioController.h"
 
 using namespace cugl::physics2::net;
 
@@ -72,12 +73,9 @@ protected:
     LevelScene _level;
     
     SinglePlayerLevelScene _singlePlayer;
-
-    InputController _input;
-
+    
     SelectionScene _selection;
     
-
     SettingScene _setting;
     
     /** Whether or not we have finished loading all assets */

@@ -13,7 +13,7 @@
 // Dogs can only make one sound at a time
 
 
-// Sound Definitions
+// Sound Effects
 #define DOG_BARK "dogBark"
 #define DOG_BITE_SMALL "dogBiteSmall"
 #define DOG_BITE_MEDIUM "dogBiteMedium"
@@ -37,7 +37,6 @@
 #define SPAWNER_HIT "spawnerHit"
 #define SPAWNING "spawning"
 
-#define BGM "BGM" // background music
 #define BUTTON_PRESS "buttonPress"
 #define BUTTON_SWAP "buttonSwap"
 #define GATE_TAKES_DAMAGE "gateTakesDamage"
@@ -47,11 +46,12 @@
 
 
 // added
-#define LOSS_SCREEN "lossScreen"
-#define VICTORY_SCREEN "victoryScreen"
 #define TUTORIAL "tutorial"
 
 
-
+// music
+#define BGM "BGM" // background music
+#define LOSS_SCREEN "lossScreen"
+#define VICTORY_SCREEN "victoryScreen"
 
 #endif /* Constants_hpp */
