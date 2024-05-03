@@ -190,14 +190,14 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 
     // Start up the input handler
     _level = assets->get<LevelModel>(level_string);
-    _level->setTileSetAssets(assets);
-    _constants = assets->get<JsonValue>("constants");
     if (_level == nullptr)
     {
         // Might need to change later if too many assets Copy Tiled Demo?
         CULog("Fail!");
         return false;
     }
+    _level->setTileSetAssets(assets);
+    _constants = assets->get<JsonValue>("constants");
     _assets = assets;
     _input.init();
 

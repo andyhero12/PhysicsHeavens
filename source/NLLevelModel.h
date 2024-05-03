@@ -122,7 +122,6 @@ protected:
     void loadLayer(const std::shared_ptr<JsonValue>& json);
     
 public:
-    
     const std::map<int,std::string>& getTileSetMapping(){
         return tileSetMapping;
     }

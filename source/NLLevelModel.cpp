@@ -14,7 +14,15 @@
 /**
 * Creates a new, empty level.
 */
-LevelModel::LevelModel(void) : Asset()
+LevelModel::LevelModel(void)
+: Asset()
+,_numLowerDecorLayers{0}
+,_numUpperDecorLayers{0}
+,_levelHeight{0}
+,_levelWidth{0}
+,_tileHeight{0}
+,_tileWidth{0}
+,_playerPos{0,0}
 {
 }
 
@@ -56,16 +64,7 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
         CUAssertLog(false, "Failed to load level file");
         return false;
     }
-    
-    _numLowerDecorLayers =0 ;
-    _numUpperDecorLayers=0 ;
-    _levelHeight=0 ;
-    _levelWidth=0 ;
-    _tileHeight=0 ;
-    _tileWidth=0 ;
-    _playerPos=0 ;
-    tileSetMapping.clear();
-    tilesMappingWithTextures.clear();
+
     _levelHeight = json->get("height")->asFloat();
     _levelWidth = json->get("width")->asFloat();
     _tileHeight = json->get("tileheight")->asFloat();
@@ -89,12 +88,6 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
         loadLayer(layer);
     }
     return true;
-}
-void LevelModel::setTileSetAssets(std::shared_ptr<cugl::AssetManager> assets){
-    tilesMappingWithTextures.clear();
-    for (auto& kv : tileSetMapping){
-        tilesMappingWithTextures.insert({kv.first,TileSet(kv.first, kv.second,assets)});
-    }
 }
 /**
  Generic Function to Load a certain Layer
@@ -246,7 +239,12 @@ bool LevelModel::loadDecorations(const std::shared_ptr<JsonValue>& json){
     return true;
 }
 
-
+void LevelModel::setTileSetAssets(std::shared_ptr<cugl::AssetManager> assets){
+    tilesMappingWithTextures.clear();
+    for (auto& kv : tileSetMapping){
+        tilesMappingWithTextures.insert({kv.first,TileSet(kv.first, kv.second,assets)});
+    }
+}
 bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue>& json){
     float playerX = json->get("objects")->get(0)->get("x")->asFloat();
     float playerY = json->get("objects")->get(0)->get("y")->asFloat();
