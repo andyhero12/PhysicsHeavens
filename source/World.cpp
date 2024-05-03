@@ -31,9 +31,8 @@ bool World::init(std::shared_ptr<LevelModel> _level, std::shared_ptr<cugl::Asset
         for (int j =0 ;j < originalCols; j++){
             std::shared_ptr<Texture> subTexture = getBoxFromTileSet((map.at(i).at(j)),tileSetTextures);
             Rect temp = Rect(Vec2(j,i), tileSize); // VERY IMPORTANT DO NOT CHANGE Rotation Occurs Here
-            tileWorld.at(i).at(j) = TileInfo::alloc(temp.origin, tileSize, Terrain::PASSABLE, getBoxFromTileSet((map.at(i).at(j)),tileSetTextures));
+            tileWorld.at(i).at(j) = TileInfo::alloc(temp.origin, tileSize, Terrain::PASSABLE, subTexture);
             if (subTexture != nullptr){
-                allTiles.push_back(tileWorld.at(i).at(j));
                 tilesAtCoords.at(i).at(j).push_back(tileWorld.at(i).at(j));
             }
         }
@@ -47,9 +46,9 @@ bool World::init(std::shared_ptr<LevelModel> _level, std::shared_ptr<cugl::Asset
             std::shared_ptr<Texture> subTexture = getBoxFromTileSet((passable.at(i).at(j)),tileSetTextures);
             Rect temp = Rect(Vec2(j,i), tileSize); // VERY IMPORTANT DO NOT CHANGE Rotation Occurs Here
             if (subTexture == nullptr){
-                boundaryWorld.at(i).at(j) = TileInfo::alloc(temp.origin, tileSize, Terrain::PASSABLE, getBoxFromTileSet((passable.at(i).at(j)),tileSetTextures));
+                boundaryWorld.at(i).at(j) = TileInfo::alloc(temp.origin, tileSize, Terrain::PASSABLE, subTexture);
             }else{
-                boundaryWorld.at(i).at(j) = TileInfo::alloc(temp.origin, tileSize, Terrain::IMPASSIBLE, getBoxFromTileSet((passable.at(i).at(j)),tileSetTextures));
+                boundaryWorld.at(i).at(j) = TileInfo::alloc(temp.origin, tileSize, Terrain::IMPASSIBLE, subTexture);
             }
         }
     }
@@ -61,9 +60,8 @@ bool World::init(std::shared_ptr<LevelModel> _level, std::shared_ptr<cugl::Asset
             for (int j =0 ;j < originalCols; j++){
                 std::shared_ptr<Texture> subTexture = getBoxFromTileSet((lowerDecorations.at(n).at(i).at(j)),tileSetTextures);
                 Rect temp = Rect(Vec2(j,i), tileSize); // VERY IMPORTANT DO NOT CHANGE Rotation Occurs Here
-                lowerDecorWorld.at(n).at(i).at(j) = TileInfo::alloc(temp.origin, tileSize, Terrain::IMPASSIBLE, getBoxFromTileSet((lowerDecorations.at(n).at(i).at(j)),tileSetTextures));
+                lowerDecorWorld.at(n).at(i).at(j) = TileInfo::alloc(temp.origin, tileSize, Terrain::IMPASSIBLE, subTexture);
                 if (subTexture != nullptr){
-                    allTiles.push_back(lowerDecorWorld.at(n).at(i).at(j));
                     tilesAtCoords.at(i).at(j).push_back(lowerDecorWorld.at(n).at(i).at(j));
                 }
             }
@@ -78,9 +76,8 @@ bool World::init(std::shared_ptr<LevelModel> _level, std::shared_ptr<cugl::Asset
             for (int j =0 ;j < originalCols; j++){
                 std::shared_ptr<Texture> subTexture = getBoxFromTileSet((upperDecorations.at(n).at(i).at(j)),tileSetTextures);
                 Rect temp = Rect(Vec2(j,i), tileSize);
-                upperDecorWorld.at(n).at(i).at(j) = TileInfo::alloc(temp.origin, tileSize, Terrain::IMPASSIBLE, getBoxFromTileSet((upperDecorations.at(n).at(i).at(j)),tileSetTextures));
+                upperDecorWorld.at(n).at(i).at(j) = TileInfo::alloc(temp.origin, tileSize, Terrain::IMPASSIBLE, subTexture);
                 if (subTexture != nullptr){
-                    allTiles.push_back(upperDecorWorld.at(n).at(i).at(j));
                     tilesAtCoords.at(i).at(j).push_back(upperDecorWorld.at(n).at(i).at(j));
                     upperDecorWorld.at(n).at(i).at(j)->setUpperTrue();
                 }
@@ -90,7 +87,7 @@ bool World::init(std::shared_ptr<LevelModel> _level, std::shared_ptr<cugl::Asset
     return true;
 }
 
-bool TileInfo::init(const cugl::Vec2& pos, const cugl::Size& size,Terrain m_type, std::shared_ptr<cugl::Texture> m_texture)
+bool TileInfo::init(const cugl::Vec2& pos, const cugl::Size& size,Terrain m_type, const std::shared_ptr<cugl::Texture>& m_texture)
 {
     if (BoxObstacle::init(pos,size)){
         isUpper = false;

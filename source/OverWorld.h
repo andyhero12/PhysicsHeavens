@@ -93,9 +93,9 @@ public:
     {
         return _level;
     }
-    std::weak_ptr<World> getWorld()
+    World* getWorld()
     {
-        return _world;
+        return _world.get();
     }
 
     int getTotalTargets() const

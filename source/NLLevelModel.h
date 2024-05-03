@@ -129,12 +129,7 @@ public:
     const std::map<int,TileSet>& getTileSetWithTextures(){
         return tilesMappingWithTextures;
     }
-    void setTileSetAssets(std::shared_ptr<cugl::AssetManager> assets){
-        tilesMappingWithTextures.clear();
-        for (auto& kv : tileSetMapping){
-            tilesMappingWithTextures.insert({kv.first,TileSet(kv.first, kv.second,assets)});
-        }
-    }
+    void setTileSetAssets(std::shared_ptr<cugl::AssetManager> assets);
     int getLevelHeight(){return _levelHeight;};
     
     int getLevelWidth(){return _levelWidth;};

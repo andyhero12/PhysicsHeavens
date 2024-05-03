@@ -154,7 +154,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 {
     return init(assets, rect, Vec2(0, DEFAULT_GRAVITY), network, isHost, level);
 }
-
 /**
  * Initializes the controller contents, and starts the game
  *

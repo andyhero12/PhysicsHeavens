@@ -41,31 +41,35 @@ public:
      *
      * @return  A newly allocated DudeModel at the given position with the given scale
      */
-    static std::shared_ptr<TileInfo> alloc(const cugl::Vec2& pos, const cugl::Size& size,Terrain m_type, std::shared_ptr<cugl::Texture> m_texture) {
+    static std::shared_ptr<TileInfo> alloc(const cugl::Vec2& pos, const cugl::Size& size,Terrain m_type,const std::shared_ptr<cugl::Texture>& m_texture) {
         std::shared_ptr<TileInfo> result = std::make_shared<TileInfo>();
         return (result->init(pos, size, m_type, m_texture) ? result : nullptr);
     }
-#pragma mark Constructors
-    
-    virtual bool init(const cugl::Vec2& pos, const cugl::Size& size,Terrain m_type, std::shared_ptr<cugl::Texture> m_texture);
+    virtual bool init(const cugl::Vec2& pos, const cugl::Size& size,Terrain m_type, const std::shared_ptr<cugl::Texture>& m_texture);
     std::shared_ptr<cugl::Texture> texture;
     std::shared_ptr<scene2::PolygonNode> tileSprite;
     bool isUpper;
-    
+    Terrain type;
     void setUpperTrue(){
         isUpper = true;
     }
-    bool getIsUpperDecor(){
+    bool getIsUpperDecor() const{
         return isUpper;
     }
     const std::shared_ptr<scene2::PolygonNode>& getTileSprite(){
         return tileSprite;
     }
-    Terrain type;
+    TileInfo(){
+        texture = nullptr;
+        tileSprite = nullptr;
+        isUpper = false;
+        type = Terrain::IMPASSIBLE;
+    }
     virtual ~TileInfo(){
 //        CULog("Destructing Tile");
         texture = nullptr;
         tileSprite = nullptr;
+        
     }
 private:
 };
@@ -75,7 +79,6 @@ public:
         
 private:
     // Matrix with information about the overworld
-    std::shared_ptr<cugl::Texture> tile;
     std::shared_ptr<cugl::AssetManager> _assets;
     
 public:
@@ -85,7 +88,6 @@ public:
     }
     ~World(){
 //        CULog("Destructing World");
-        tile = nullptr;
         _assets = nullptr;
     }
     std::vector<std::vector<std::shared_ptr<TileInfo>>> tileWorld;
@@ -94,15 +96,9 @@ public:
     std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>> upperDecorWorld;
     
     std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>> tilesAtCoords;
-    std::vector<std::shared_ptr<TileInfo>> allTiles;
     bool init(std::shared_ptr<LevelModel> _level,std::shared_ptr<cugl::AssetManager> assets);
 
     std::shared_ptr<cugl::Texture> getBoxFromTileSet(int position, const std::map<int,TileSet>& tileSets);
-    
-    
-    const std::vector<std::shared_ptr<TileInfo>>& getVisibleNodes(){
-        return allTiles;
-    }
     const std::vector<std::vector<std::shared_ptr<TileInfo>>>& getTileWorld(){
         return tileWorld;
     }
