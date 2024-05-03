@@ -98,7 +98,7 @@ protected:
     std::shared_ptr<World> _backgroundWrapper;
     
     std::vector<cugl::Rect> _transparentRects;
-    std::vector<std::shared_ptr<scene2::SceneNode>> _decorToHide;
+    std::set<std::shared_ptr<scene2::SceneNode>> _decorToHide;
     
     std::shared_ptr<Minimap> _minimap;
     
