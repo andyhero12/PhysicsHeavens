@@ -10,6 +10,8 @@
 
 #include <stdio.h>
 
+// Dogs can only make one sound at a time
+
 
 // Sound Definitions
 #define DOG_BARK "dogBark"
