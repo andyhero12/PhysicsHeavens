@@ -34,6 +34,7 @@
 
 #include <vector>
 #include <SDL_stdinc.h>
+#include <cstring>
 
 namespace cugl {
     /**
