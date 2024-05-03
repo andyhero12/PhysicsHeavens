@@ -176,6 +176,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     {
         return false;
     }
+    
+    _audioController = AudioController::alloc(assets);
 
     _isHost = isHost;
 
@@ -244,7 +246,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _spawnerController.init(_level->getSpawnersPos(), assets, _network);
     _spawnerController.setRootNode(_worldnode, _isHost);
     _worldnode->addChild(_monsterSceneNode);
-    overWorld.init(assets, _level, computeActiveSize(), _network, isHost, _backgroundWrapper);
+    overWorld.init(assets, _level, computeActiveSize(), _network, isHost, _backgroundWrapper, _audioController);
     overWorld.setRootNode(_worldnode, _debugnode, _world);
     if (isHost)
     {
@@ -266,8 +268,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 
     _spawnerController.setAnimNode(_worldnode);
     
-    initAudio();
-    _collisionController.init(_network, _assets, sounds);
+    _collisionController.init(_network, _assets);
 
     _active = true;
     setDebug(false);
@@ -406,8 +407,7 @@ void GameScene::dispose()
         overWorld.dispose();
         _backgroundWrapper = nullptr;
         Scene2::dispose();
-        sounds = nullptr;
-        
+
     }
 }
 
@@ -717,8 +717,7 @@ void GameScene::fixedUpdate()
             _minimap->setVisible(false);
             /** stop all sound and play win screen sound*/
             AudioEngine::get()->clear();
-            auto source = _assets->get<Sound>(VICTORY_SCREEN);
-            AudioEngine::get()->play("win", source, true, source->getVolume(), true);
+            _audioController->playMusic(VICTORY_SCREEN, VICTORY_SCREEN);
         }
         if (auto loseEvent = std::dynamic_pointer_cast<LoseEvent>(e))
         {
@@ -727,14 +726,13 @@ void GameScene::fixedUpdate()
             _minimap->setVisible(false);
             /** stops all sound and play lose screen sound*/
             AudioEngine::get()->clear();
-            auto source = _assets->get<Sound>(LOSS_SCREEN);
-            AudioEngine::get()->play("lose", source, true, source->getVolume(), true);
+            _audioController->playMusic(LOSS_SCREEN, LOSS_SCREEN);
         }
         
         if (auto spawnerDeathEvent = std::dynamic_pointer_cast<SpawnerDeathEvent>(e))
         {
             _spawnerController.processSpawnerDeathEvent(spawnerDeathEvent);
-            playSound("spawnerDeath", SPAWNER_DEATH);
+            _audioController->playSFX("spawnerDeath", SPAWNER_DEATH);
         }
         if (auto clientHealthEvent = std::dynamic_pointer_cast<ClientHealthEvent>(e))
         {
@@ -1047,16 +1045,6 @@ void GameScene::initTutorial(std::vector<int> frame)
 }
 
 
-void GameScene::initAudio(){
-    sounds = std::make_shared<std::unordered_set<std::string>>();
-    AudioEngine::get()->setListener([this](const std::string key, bool normalTermination) {
-        if(normalTermination && sounds != nullptr){
-            this->sounds->erase(key);
-        }
-        std::cout << key << " stopped playing sound " <<std::endl;
-    });
-}
-
 void GameScene::executeSlidingWindow(Vec2 dogPos)
 {
 
@@ -1153,8 +1141,4 @@ void GameScene::executeSlidingWindow(Vec2 dogPos)
             }
         }
     }
-}
-void GameScene::playSound(std::string key, std::string sound){
-    auto source = _assets->get<Sound>(sound);
-    AudioEngine::get()->play(key, source, false, source->getVolume(), true);
 }

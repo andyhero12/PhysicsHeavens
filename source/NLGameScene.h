@@ -47,6 +47,7 @@
 #include "MiniMap.h"
 #include "Tutorial.h"
 #include "SpriteAnimationNode.h"
+#include "AudioController.h"
 
 using namespace cugl::physics2::net;
 using namespace cugl;
@@ -103,6 +104,8 @@ protected:
     
     std::shared_ptr<Minimap> _minimap;
     
+    std::shared_ptr<AudioController> _audioController;
+    
     /** Host is by default the left cannon */
     bool _isHost;
 
@@ -120,10 +123,6 @@ protected:
     
     Vec2 previousPan;
     float shakeMagnitude;
-    
-    /** set of all active sounds */
-    std::shared_ptr<std::unordered_set<std::string>> sounds;
-
     /**
      * Lays out the game geography.
      *
@@ -177,9 +176,6 @@ protected:
     void initTutorialOne();
     void initTutorialTwo();
     void initTutorialThree();
-    
-    void initAudio();
-    
 
 public:
 #pragma mark -
@@ -337,7 +333,6 @@ public:
     void addChildForeground();
     void executeSlidingWindow(Vec2 dest);
     void resetDraw();
-    void playSound(std::string key, std::string sound);
 };
 
 #endif /* __NL_GAME_SCENE_H__ */

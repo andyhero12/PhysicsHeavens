@@ -27,6 +27,7 @@
 #include "NLSizeEvent.h"
 #include "NLClientHealthEvent.h"
 #include "Constants.h"
+#include "AudioController.h"
 class OverWorld
 {
 private:
@@ -42,6 +43,7 @@ private:
     AttackPolygons _attackPolygonSet;
     AttackPolygons _clientAttackPolygonSet;
     std::shared_ptr<World> _world;
+    std::shared_ptr<AudioController> _audioController;
     
     int dogSeq;
 
@@ -55,7 +57,7 @@ public:
     }
 
     void reset();
-    bool init(const std::shared_ptr<cugl::AssetManager> &assets, const std::shared_ptr<LevelModel> &_level, cugl::Size activeSize, std::shared_ptr<cugl::physics2::net::NetEventController> network, bool isHost, std::shared_ptr<World> world);
+    bool init(const std::shared_ptr<cugl::AssetManager> &assets, const std::shared_ptr<LevelModel> &_level, cugl::Size activeSize, std::shared_ptr<cugl::physics2::net::NetEventController> network, bool isHost, std::shared_ptr<World> world, std::shared_ptr<AudioController> audioController);
     bool initDogModel();
     bool initBases();
     bool initDecoys();

@@ -17,6 +17,10 @@ class AudioController
 protected:
     std::shared_ptr<cugl::AssetManager> _assets;
     // set of all sfx & music
+    
+    /** set of all active sounds */
+    std::shared_ptr<std::unordered_set<std::string>> sounds;
+
 public:
     /**
      * Creates a new Audio controller with the default settings
@@ -39,10 +43,13 @@ public:
     bool init(std::shared_ptr<cugl::AssetManager> assets);
 
     void playSFX(std::string key, std::string sound);
+    
     void dispose(){
         cugl::AudioEngine::get()->clearEffects();
         cugl::AudioEngine::get()->clear();
+        sounds = nullptr;
     }
+    
     void playMusic(std::string key, std::string sound);
 };
 

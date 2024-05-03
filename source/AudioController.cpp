@@ -7,11 +7,28 @@
 
 #include "AudioController.h"
 
+AudioController::AudioController() {
+    _assets = nullptr;
+    sounds = nullptr;
+};
+
+
 bool AudioController::init(std::shared_ptr<cugl::AssetManager> assets){
-    if(assets==nullptr){
+    if(assets == nullptr){
         return false;
     }
     _assets = assets;
+    
+    sounds = std::make_shared<std::unordered_set<std::string>>();
+    
+    cugl::AudioEngine::get()->setListener([this](const std::string key, bool normalTermination) {
+        if(normalTermination && sounds != nullptr){
+            this->sounds->erase(key);
+        }
+        std::cout << key << " stopped playing sound " <<std::endl;
+    });
+    
+    
     return true;
 }
 

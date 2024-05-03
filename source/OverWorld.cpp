@@ -427,7 +427,7 @@ bool OverWorld::initWorld()
     return true;
 }
 
-bool OverWorld::init(const std::shared_ptr<cugl::AssetManager> &assets, const std::shared_ptr<LevelModel> &level, cugl::Size activeSize, std::shared_ptr<cugl::physics2::net::NetEventController> network, bool isHost, std::shared_ptr<World> world)
+bool OverWorld::init(const std::shared_ptr<cugl::AssetManager> &assets, const std::shared_ptr<LevelModel> &level, cugl::Size activeSize, std::shared_ptr<cugl::physics2::net::NetEventController> network, bool isHost, std::shared_ptr<World> world, std::shared_ptr<AudioController> audioController)
 {
     _assets = assets;
     _level = level;
@@ -444,6 +444,7 @@ bool OverWorld::init(const std::shared_ptr<cugl::AssetManager> &assets, const st
     initBases();
     initDecoys();
     initPolygons();
+    _audioController = audioController;
     return true;
 }
 
@@ -726,6 +727,5 @@ void OverWorld::dispose(){
 
 void OverWorld::playSound(std::string key, std::string sound){
     dogSeq += 1;
-    auto source = _assets->get<Sound>(sound);
-    AudioEngine::get()->play(key, source, false, source->getVolume());
+    _audioController->playSFX(key, sound);
 }
