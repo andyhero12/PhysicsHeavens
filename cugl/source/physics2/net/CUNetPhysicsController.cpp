@@ -137,7 +137,7 @@ void NetPhysicsController::dispose() {
 ObstacleScene NetPhysicsController::addSharedObstacle(Uint32 factoryID,
                                                       std::shared_ptr<std::vector<std::byte>> bytes) {
     CUAssertLog(factoryID < _obstacleFacts.size(), "Unknown object Factory %u", factoryID);
-    auto pair = _obstacleFacts[factoryID]->createObstacle(*bytes);
+    auto pair = _obstacleFacts.at(factoryID)->createObstacle(*bytes);
     pair.first->setShared(true);
     Uint64 objId = _world->placeObstacle(pair.first);
     if (_isHost){

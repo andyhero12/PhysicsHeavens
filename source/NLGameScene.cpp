@@ -430,17 +430,17 @@ void GameScene::dispose()
 void GameScene::populate()
 {
     _world = physics2::net::NetWorld::alloc(Rect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT), Vec2(0, DEFAULT_GRAVITY));
-    _world->activateCollisionCallbacks(true);
-    _world->onBeginContact = [this](b2Contact* contact) {
-        this->beginContact(contact);
-    };
-    _world->onEndContact = [this](b2Contact* contact) {
-        this->endContact(contact);
-    };
-    _world->beforeSolve = [this](b2Contact *contact, const b2Manifold *oldManifold)
-    {
-        beforeSolve(contact, oldManifold);
-    };
+//    _world->activateCollisionCallbacks(true);
+//    _world->onBeginContact = [this](b2Contact* contact) {
+//        this->beginContact(contact);
+//    };
+//    _world->onEndContact = [this](b2Contact* contact) {
+//        this->endContact(contact);
+//    };
+//    _world->beforeSolve = [this](b2Contact *contact, const b2Manifold *oldManifold)
+//    {
+//        beforeSolve(contact, oldManifold);
+//    };
 
 #pragma mark : Background
 }
@@ -859,6 +859,7 @@ void GameScene::addChildBackground()
                 
                 std::shared_ptr<cugl::physics2::BoxObstacle> boundary = cugl::physics2::BoxObstacle::alloc(t->getPos(),cugl::Size(0.9,0.9));
                 boundary->clearSharingDirtyBits();
+                boundary->setShared(false);
                 boundary->setBodyType(b2_staticBody);
                 boundary->setDensity(10.0f);
                 boundary->setFriction(0.4f);
