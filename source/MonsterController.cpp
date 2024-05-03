@@ -28,7 +28,8 @@ void toLowerCase(std::string& s) {
 }
 
 bool MonsterController::init(OverWorld& overWorld,
-     std::shared_ptr<cugl::scene2::SceneNode> debugNode){
+     std::shared_ptr<cugl::scene2::SceneNode> debugNode, std::shared_ptr<AudioController> audioController){
+    _audioController = audioController;
     _current.clear();
     _pending.clear();
     _absorbEnem.clear();
@@ -277,6 +278,7 @@ void MonsterController::removeEnemy(std::shared_ptr<AbstractEnemy> enemy){
     if (auto absorb  = std::dynamic_pointer_cast<AbsorbEnemy>(enemy)){
         _absorbEnem.erase(absorb);
     }
+    _audioController->playSFX(ENEMY_DEATH, ENEMY_DEATH);
 }
 
 void MonsterController::dispose(){
@@ -297,5 +299,5 @@ void MonsterController::dispose(){
     absorbAnimationData._attackTextures.clear();
     bombAnimationData._textures.clear();
     bombAnimationData._attackTextures.clear();
-    
+    _audioController = nullptr;
 }

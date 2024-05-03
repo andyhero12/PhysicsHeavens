@@ -337,7 +337,7 @@ bool OverWorld::initDogModel()
     
     // MAGIC NUMBER ALERT!!
     Vec2 dogPos = _level->getPlayerPos();
-    _dog = Dog::alloc(dogPos, DOG_SIZE);
+    _dog = Dog::alloc(dogPos, DOG_SIZE, _audioController);
     _dog->setDebugColor(DYNAMIC_COLOR);
 
     _dog->setSmallAnimation(smallDogIdle, smallDogRun, smallDogBite, smallDogShoot, smallDogDash);
@@ -360,7 +360,7 @@ bool OverWorld::initDogModel()
     _dog->setUIController(_uiController);
 
     Vec2 dogClientPos = _level->getPlayerPos() + Vec2(2, 0);
-    _dogClient = Dog::alloc(dogClientPos, DOG_SIZE);
+    _dogClient = Dog::alloc(dogClientPos, DOG_SIZE, _audioController);
     _dogClient->setDebugColor(DYNAMIC_COLOR);
 
     _dogClient->setSmallAnimation(clientSmallDogIdle, clientSmallDogRun, clientSmallDogBite, clientSmallDogShoot, clientSmallDogDash);

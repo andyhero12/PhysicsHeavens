@@ -28,11 +28,14 @@
 #define DOG_DIE "dogDie" // need to add
 
 
+
+#define ENEMY_DEATH "enemyDeath"
 // need to add
+
+
 #define ABSORB_ENEMY_ABSORBING "absorbEnemyAbsoring"
 #define BOMB_HISS "bombHiss"
 
-#define ENEMY_DEATH "enemyDeath"
 #define SPAWNER_DEATH "spawnerDeath"
 #define SPAWNER_HIT "spawnerHit"
 #define SPAWNING "spawning"
