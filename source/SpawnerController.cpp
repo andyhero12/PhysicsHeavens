@@ -70,7 +70,9 @@ void SpawnerController::update(MonsterController& monsterController, OverWorld& 
         std::shared_ptr<AbstractSpawner> spawner = *it;
         
         if (spawner->dead()){
-            _network->pushOutEvent(SpawnerDeathEvent::allocSpawnerDeathEvent(spawner->getPos()));
+            if (_isHost){
+                _network->pushOutEvent(SpawnerDeathEvent::allocSpawnerDeathEvent(spawner->getPos()));
+            }
             it = _spawners.erase(it);
             spawner->getSpawnerNode()->removeFromParent();
             difficulty += 0.1;
@@ -110,18 +112,6 @@ void SpawnerController::processDeathEvent(const std::shared_ptr<DeathEvent>& dea
 
 void SpawnerController::processSpawnerDeathEvent(const std::shared_ptr<SpawnerDeathEvent>& spawnerDeathEvent){
     Vec2 pos = spawnerDeathEvent->getPos();
-    if (!_isHost){
-        auto it = _spawners.begin();
-        while (it != _spawners.end()){
-            std::shared_ptr<AbstractSpawner> spawner = *it;
-            
-            if (spawner->getPos() == pos){
-                it = _spawners.erase(it);
-            }else{
-                ++it;
-            }
-        }
-    }
     auto deathNode = SpriteAnimationNode::allocWithSheet(_deathSpawner, 1, 1, 1, 1);
     float scale = 1 / 48.0f;
     deathNode->setAnchor(cugl::Vec2::ANCHOR_CENTER);

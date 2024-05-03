@@ -321,7 +321,11 @@ void NetEventController::updateNet() {
         checkConnection();
 
         if (_status == Status::INGAME && _physEnabled) {
+<<<<<<< HEAD
             //_physController->packPhysSync(NetPhysicsController::SyncType::FULL_SYNC);
+=======
+//            _physController->packPhysSync(NetPhysicsController::SyncType::FULL_SYNC);
+>>>>>>> aff43d5524a858a3b01b86b6af01acf1db837a1a
             _physController->packPhysObj();
             _physController->updateSimulation();
             for (auto it = _physController->getOutEvents().begin(); it != _physController->getOutEvents().end(); it++) {

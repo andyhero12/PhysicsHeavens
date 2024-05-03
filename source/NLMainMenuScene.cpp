@@ -56,13 +56,13 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     // Acquire the scene built by the asset loader and resize it the scene
 
     _input.init();
-    _assets->loadDirectory("json/mainmenuassets.json");
-    std::shared_ptr<scene2::SceneNode> layer = _assets->get<scene2::SceneNode>("Menu");
+    _assets->loadDirectory("json/MainMenu.json");
+    std::shared_ptr<scene2::SceneNode> layer = _assets->get<scene2::SceneNode>("lab");
     layer->setContentSize(dimen);
     layer->doLayout(); // This rearranges the children to fit the screen
-    _buttonset.push_back(_button1 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("Menu_startmenu_button1")));
-    _buttonset.push_back(_button3 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("Menu_startmenu_button3")));
-    _Logo = assets->get<scene2::SceneNode>("Menu_startmenu_Logo");
+    _buttonset.push_back(_button1 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("lab_button1")));
+    _buttonset.push_back(_button3 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("lab_button2")));
+    //_Logo = assets->get<scene2::SceneNode>("Menu_startmenu_Logo");
     // Program the buttons
     _button1->addListener([this](const std::string& name, bool down) {
         if (down) {
@@ -75,18 +75,6 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             
         }
     });
-
-    // _button2->addListener([this](const std::string& name, bool down) {
-    //     if (down) {
-    //         if(_input.getState()==InputController::State::CONTROLLER){
-    //             _isdown = Isdown::isCOOP;
-    //         }
-    //         else{
-    //             _choice = Choice::COOP;
-    //         }
-    //     }
-    // });
-
     _button3->addListener([this](const std::string& name, bool down) {
         if (down) {
             if(_input.getState()==InputController::State::CONTROLLER){
@@ -98,21 +86,13 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
         }
     });
 
-    _button1->setPosition(650,90);
-    _button3->setPosition(600,0);
-    _Logo->setPosition(-100,670);
-    
-    layer->setContentSize(dimen);
-
-    _counter = 0;
+    _counter = 1;
     switchFreq = 0.2;
     _isdown = Isdown::isNONE;
-    
-    background = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("backgroundx"), 1, 6, 5);
+    background = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("background_main"), 1, 6, 6, 8);
     background->setScale(SCENE_HEIGHT/background->getTexture()->getHeight());
     background->setPosition(0.5 * background->getSize());
     addChild(background);
-
     addChild(layer);
     setActive(false);
     return true;
@@ -145,14 +125,12 @@ void MainMenuScene::setActive(bool value) {
             _choice = Choice::NONE;
             _isdown = Isdown::isNONE;
             _button1->activate();
-            //_button2->activate();
             _button3->activate();
+            _firstset = true;
         } else {
             _button1->deactivate();
-            //_button2->deactivate();
             _button3->deactivate();
             _button1->setDown(false);
-            //_button2->setDown(false);
             _button3->setDown(false);
         }
     }
@@ -162,6 +140,10 @@ void MainMenuScene::update(float timestep)
 {
     background->update();
     _input.update();
+    if(_firstset&&_input.getState()==InputController::State::CONTROLLER){
+        _button1->setDown(true);
+        _firstset = false;
+    }
     timeSinceLastSwitch += timestep;
     //std::cout << timeSinceLastSwitch << std::endl;
     if (timeSinceLastSwitch >= switchFreq) {

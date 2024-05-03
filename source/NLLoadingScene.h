@@ -15,7 +15,7 @@
 #ifndef __NL_LOADING_SCENE_H__
 #define __NL_LOADING_SCENE_H__
 #include <cugl/cugl.h>
-
+#include "SpriteAnimationNode.h"
 
 /**
  * This class is a simple loading screen for asychronous asset loading.
@@ -41,7 +41,7 @@ protected:
     /** The engine name */
     std::shared_ptr<cugl::scene2::SceneNode>  _brand;
 
-    std::shared_ptr<cugl::scene2::SpriteNode> background;
+    std::shared_ptr<SpriteAnimationNode> background;
 
     // MODEL
     /** The progress displayed on the screen */

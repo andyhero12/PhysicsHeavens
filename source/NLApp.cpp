@@ -344,13 +344,11 @@ void NetApp::updateGameScene(float timestep) {
     _gameplay.preUpdate(timestep);
     if(_gameplay.getStatus() == PauseScene::EXIT){
         _gameplay.dispose();
-//        _network->disconnect(); // Get rid of This?
+        _network->disconnect(); // Get rid of This?
         _mainmenu.setActive(true);
         _gameplay.setActive(false);
-//        _hostgame.setActive(false);
         _hostgame.endGame();
         _singlePlayer.endGame();
-//        _joingame.setActive(false);
         _status = MAINMENU;
     }
 }
@@ -387,22 +385,29 @@ void NetApp::updateMainScene(float timestep)
 void NetApp::updateSelectionScene(float timestep)
 {
     _selection.update(timestep);
-    switch (_selection.getChoice()) {
-    case SelectionScene::Choice::PLAYER1:
+    if(_selection.getBackclick()){
         _selection.setActive(false);
-        _singlePlayer.setActive(true);
-        _status = SINGLEPLAYER;
-        _singlePlayer.resetLevel();
-        isHosting = true;
-        break;
-    case SelectionScene::Choice::PLAYER2:
-        _selection.setActive(false);
-        _menu.setActive(true);
-        _status = MENU;
-        break;
-    case SelectionScene::Choice::NONE:
-        // DO NOTHING
-        break;
+        _mainmenu.setActive(true);
+        _status = MAINMENU;
+    }
+    else{
+        switch (_selection.getChoice()) {
+        case SelectionScene::Choice::PLAYER1:
+            _selection.setActive(false);
+            _singlePlayer.setActive(true);
+            _status = SINGLEPLAYER;
+            _singlePlayer.resetLevel();
+            isHosting = true;
+            break;
+        case SelectionScene::Choice::PLAYER2:
+            _selection.setActive(false);
+            _menu.setActive(true);
+            _status = MENU;
+            break;
+        case SelectionScene::Choice::NONE:
+            // DO NOTHING
+            break;
+        }
     }
 }
 
@@ -412,8 +417,8 @@ void NetApp::updateLevelScene(float timestep)
     if(_level.getBackclick())
     {
         _level.setActive(false);
-        _mainmenu.setActive(true);
-        _status = MAINMENU;
+        _selection.setActive(true);
+        _status = SELECTION;
     }else{
         switch (_level.getLevel()) {
             case LevelScene::Level::L1:
@@ -461,8 +466,8 @@ void NetApp::updateSinglePlayerLevelScene(float timestep)
     if(_singlePlayer.getBackclick())
     {
         _singlePlayer.setActive(false);
-        _mainmenu.setActive(true);
-        _status = MAINMENU;
+        _selection.setActive(true);
+        _status = SELECTION;
     }
     else if (_network->getStatus() == NetEventController::Status::HANDSHAKE && _network->getShortUID()) {
         switch (_singlePlayer.getLevel()) {
