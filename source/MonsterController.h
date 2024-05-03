@@ -28,7 +28,6 @@ struct AnimationDataStruct{
 };
 class MonsterController{
 private:
-    std::shared_ptr<AudioController> _audioController;
     
     std::shared_ptr<StaticMeleeFactory> _staticMeleeFactory;
     Uint32 _staticMeleeFactID;
@@ -73,7 +72,7 @@ public:
         
     }
     bool init(OverWorld& overWorld,
-              std::shared_ptr<cugl::scene2::SceneNode> _debugNode, std::shared_ptr<AudioController> audioController);
+              std::shared_ptr<cugl::scene2::SceneNode> _debugNode);
     
     bool isEmpty(){
         return _current.size() == 0 && _pending.size() == 0;

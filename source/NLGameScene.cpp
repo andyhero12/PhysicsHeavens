@@ -265,7 +265,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _monsterController.setSpawnerAnimationData(_constants->get("spawnerEnemy"), assets);
     _monsterController.setBombAnimationData(_constants->get("bomb"), assets);
     _monsterController.setAbsorbAnimationData(_constants->get("absorbEnemy"), assets);
-    _monsterController.init(overWorld, _debugnode, _audioController);
+    _monsterController.init(overWorld, _debugnode);
 
     _spawnerController.setAnimNode(_worldnode);
     
