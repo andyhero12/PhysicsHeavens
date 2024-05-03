@@ -507,10 +507,21 @@ void OverWorld::processDecoyEvent(const std::shared_ptr<DecoyEvent>& decoyEvent)
 }
 void OverWorld::processClientHealthEvent(const std::shared_ptr<ClientHealthEvent>& clientHealthEvent){
     bool incomingHost = clientHealthEvent->isHostDog();
+    int health = 0;
     if (incomingHost){
-        _dog->setHealth(_dog->getHealth() - clientHealthEvent->getHealthLost());
+        health = _dog->getHealth() - clientHealthEvent->getHealthLost();
+        _dog->setHealth(health);
     }else{
-        _dogClient->setHealth(_dogClient->getHealth() - clientHealthEvent->getHealthLost());
+        health = _dogClient->getHealth() - clientHealthEvent->getHealthLost();
+        _dogClient->setHealth(health);
+    }
+    if (incomingHost == _isHost){
+        if(health <= 0){
+            playSound("death" + std::to_string(dogSeq), DOG_DIE);
+        }
+        else{
+            playSound("heal" + std::to_string(dogSeq), DOG_DAMAGE);
+        }
     }
 }
 void OverWorld::processSizeEvent(const std::shared_ptr<SizeEvent> &sizeEvent)
