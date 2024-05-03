@@ -71,7 +71,7 @@ public:
         
         if (result){
             _counter = 0;
-            updateRate = 15;
+            updateRate = 5;
             clearSharingDirtyBits();
             setShared(true);
             setDensity(DEFAULT_DENSITY);
@@ -291,7 +291,8 @@ protected:
     /** Timers */
     
     /** Sets a new goal for this enemy to go to. This will rerun pathfinding every time it is called. USING THIS IS NOT RECOMMENDED, USE setGoal() INSTEADl */
-    bool rawSetGoal(Vec2 goal, const std::weak_ptr<World>& world){
+    bool rawSetGoal(Vec2 goal, const World* world){
+
         // Garbage collect the nodes used for the previous path if they exist
         if(_pathfinder->GetSolutionEnd() && _pathfinder->SearchStep() == AStarSearch<WorldSearchVertex>::SEARCH_STATE_SUCCEEDED){
     //            CULog("Garbage Collecting Path...");
@@ -341,11 +342,11 @@ protected:
     }
     
     /** Sets a new goal for this enemy to go to. Returns true if pathfinding to the goal was successful */
-    bool setGoal(Vec2 goal, const std::weak_ptr<World>& world){
-        if (world.expired()){
-            CULog("World Expired");
-            return false;
-        }
+    bool setGoal(Vec2 goal, const World* world){
+//        if (world.expired()){
+//            CULog("World Expired");
+//            return false;
+//        }
         
         WorldSearchVertex* prevGoalVertex =_pathfinder->GetSolutionEnd();
         trueGoal = goal;

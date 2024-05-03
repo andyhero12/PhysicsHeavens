@@ -90,6 +90,7 @@ protected:
     
     std::shared_ptr<SpriteAnimationNode> loseNode;
     std::shared_ptr<SpriteAnimationNode> winNode;
+    std::shared_ptr<SpriteAnimationNode> repeatWinNode;
     /** The level model */
     std::shared_ptr<LevelModel> _level;
 
@@ -97,7 +98,8 @@ protected:
 
     std::shared_ptr<World> _backgroundWrapper;
     
-    std::vector<std::shared_ptr<scene2::SceneNode>> _decorToHide;
+    std::vector<cugl::Rect> _transparentRects;
+    std::set<std::shared_ptr<scene2::SceneNode>> _decorToHide;
     
     std::shared_ptr<Minimap> _minimap;
     

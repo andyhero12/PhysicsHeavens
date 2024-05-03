@@ -79,6 +79,8 @@ protected:
     float timeSinceLastSwitch;
 
     float switchFreq;
+
+    bool _backClicked;
     std::shared_ptr<SpriteAnimationNode> background;
     
 public:
@@ -90,7 +92,7 @@ public:
      * This constructor does not allocate any objects or start the game.
      * This allows us to use the object without a heap pointer.
      */
-    SelectionScene() : cugl::Scene2(){}
+    SelectionScene() : cugl::Scene2(), _firstset(true),_backClicked(false){}
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.
@@ -142,6 +144,10 @@ public:
     Choice getChoice() const { return _choice; }
     
     virtual void update(float timestep) override;
+
+    bool getBackclick(){
+        return _backClicked;
+    }
 };
 
 #endif /* __NL_Selection_SCENE_H__ */

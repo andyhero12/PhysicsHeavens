@@ -15,12 +15,12 @@
 class WorldSearchVertex{
 private:
     // Returns whether this node is close to an impassible corner
-    bool closeToEdge();
+    bool closeToEdge() const;
     
 public:
     
     // the world this node is in
-    std::weak_ptr<World> _world;
+    const World* _world;
     
     // x coord of this node
     int x;
@@ -28,19 +28,22 @@ public:
     // y coord of this node
     int y;
     
-    WorldSearchVertex( int px, int py, const std::weak_ptr<World>& world) { x=px; y=py;
+    WorldSearchVertex( int px, int py,const World* world) { x=px; y=py;
         _world = world;
     }
     
     // WARNING: This default consrtuctor is needed by the astarstl class for some reason, this implementation might be incorrect
-    WorldSearchVertex(){ x = y = 0; }
+    WorldSearchVertex(){
+        x = y = 0;
+        _world = nullptr;
+    }
     
     ~WorldSearchVertex(){
-        
+        _world = nullptr;
     }
     
     // The heurstic used to determine the distance to the goal
-    float GoalDistanceEstimate( WorldSearchVertex &nodeGoal );
+    float GoalDistanceEstimate( WorldSearchVertex &nodeGoal ) const;
     
     // Whether this node is the goal
     bool IsGoal( WorldSearchVertex &nodeGoal );
@@ -49,7 +52,7 @@ public:
     bool GetSuccessors( AStarSearch<WorldSearchVertex> *astarsearch, WorldSearchVertex *parent_node );
     
     //The cost of moving to a successor
-    float GetCost( WorldSearchVertex &successor );
+    float GetCost( WorldSearchVertex &successor ) const;
     
     // Whether rhs is the current node
     bool IsSameState( WorldSearchVertex &rhs );

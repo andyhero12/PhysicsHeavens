@@ -93,9 +93,9 @@ public:
     {
         return _level;
     }
-    const std::shared_ptr<World>& getWorld()
+    World* getWorld()
     {
-        return _world;
+        return _world.get();
     }
 
     int getTotalTargets() const
