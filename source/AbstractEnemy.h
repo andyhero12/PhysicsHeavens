@@ -25,8 +25,8 @@
 
 
 /** Set these to 0 to disable */
-#define CLOSE_DISTANCE 0
-#define STRAY_DISTANCE 2
+#define CLOSE_DISTANCE 4
+#define STRAY_DISTANCE 1.2
 #define SAME_GOAL_DISTANCE 1
 
 #define DAMAGED_DURATION 0.5f
@@ -374,7 +374,7 @@ protected:
         // If there is no goal or we are already at the goal, do nothing
         if(atGoal() || _nextStep.x < 0){
             if(atGoal()){
-                CULog("At goal already, do notihing");
+                CULog("At goal already, do nothing");
             } else {
                 CULog("No goal instantiated, do nothing");
             }
@@ -387,8 +387,7 @@ protected:
         if(getPosition().distance(goalTile) <= CLOSE_DISTANCE){
             CULog("Close enough, going directly to the goal");
             direction = goalTile - getPosition();
-        }
-        else {
+        } else {
             
             // If we strayed too far from the pathfinding path, restart pathfinding
             Vec2 nextTile = Vec2(_nextStep.x + 0.5, _nextStep.y + 0.5);
