@@ -22,6 +22,15 @@
 class SpawnerEnemyFactory : public ObstacleFactory
 {
 public:
+    
+    SpawnerEnemyFactory(){
+        _data = nullptr;
+        _assets = nullptr;
+    };
+    virtual ~SpawnerEnemyFactory(){
+        _data = nullptr;
+        _assets = nullptr;
+    }
     struct AnimationStruct{
         std::vector<std::shared_ptr<cugl::Texture>> _walkTextures;
         std::vector<std::shared_ptr<cugl::Texture>> _attackTextures;

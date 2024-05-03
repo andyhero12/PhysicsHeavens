@@ -54,6 +54,7 @@ public:
     AbstractEnemy(){}
     // Virtual destructor
     virtual ~AbstractEnemy(){
+        
         topLevelPlaceHolder = nullptr;
         runAnimations = nullptr;
         attackAnimations = nullptr;

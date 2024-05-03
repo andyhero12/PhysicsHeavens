@@ -86,7 +86,7 @@ protected:
     AnimationSceneNode::Directions prevDirection;
     cugl::Vec2 dir;
     cugl::Vec2 _ang;
-    std::shared_ptr<cugl::scene2::OrderedNode> baseBlankNode;
+    std::shared_ptr<cugl::scene2::SceneNode> baseBlankNode;
     
     std::shared_ptr<AnimationSceneNode> idleAnimation;
     std::shared_ptr<AnimationSceneNode> runAnimation;

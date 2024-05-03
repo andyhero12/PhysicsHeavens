@@ -86,6 +86,9 @@ public:
     
     void update();
     
+    virtual ~SpriteAnimationNode(){
+        
+    }
 };
 
 #endif /* SpriteAnimationNode_hpp */

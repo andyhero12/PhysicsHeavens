@@ -1,4 +1,5 @@
 //
+//
 //  MonsterController.cpp
 //  Heavan
 //
@@ -33,7 +34,7 @@ bool MonsterController::init(OverWorld& overWorld,
     _current.clear();
     _pending.clear();
     _absorbEnem.clear();
-    _debugNode = debugNode;
+    _debugNode = nullptr;
 
     for (const LevelModel::PreSpawned& cluster : overWorld.getLevelModel()->preSpawnLocs()){
         float cx = cluster.x;
@@ -217,7 +218,7 @@ void MonsterController::spawnBasicEnemy(cugl::Vec2 pos, OverWorld& overWorld, fl
     hp = powerHealth(power, hp);
     auto params = _meleeFactory->serializeParams(pos, mySize, hp, chosenTarget);
     auto pair = _network->getPhysController()->addSharedObstacle(_meleeFactID, params);
-    pair.first->setDebugScene(_debugNode);
+//    pair.first->setDebugScene(_debugNode);
     if (auto static_enemy = std::dynamic_pointer_cast<AbstractEnemy>(pair.first)){
         _pending.emplace(static_enemy);
     }
@@ -234,7 +235,7 @@ void MonsterController::spawnSpawnerEnemy(cugl::Vec2 pos, OverWorld& overWorld, 
     hp = powerHealth(power, hp);
     auto params = _meleeFactory->serializeParams(pos, mySize, hp, chosenTarget);
     auto pair = _network->getPhysController()->addSharedObstacle(_spawnerEnemyFactID, params);
-    pair.first->setDebugScene(_debugNode);
+//    pair.first->setDebugScene(_debugNode);
     if (auto static_enemy = std::dynamic_pointer_cast<AbstractEnemy>(pair.first)){
         _pending.emplace(static_enemy);
     }
@@ -250,7 +251,7 @@ void MonsterController::spawnStaticBasicEnemy(cugl::Vec2 pos, OverWorld& overWor
     hp = powerHealth(power, hp);
     auto params = _staticMeleeFactory->serializeParams(pos, mySize, hp, 0);
     auto pair = _network->getPhysController()->addSharedObstacle(_staticMeleeFactID, params);
-    pair.first->setDebugScene(_debugNode);
+//    pair.first->setDebugScene(_debugNode);
     if (auto static_enemy = std::dynamic_pointer_cast<AbstractEnemy>(pair.first)){
         _pending.emplace(static_enemy);
     }
@@ -266,7 +267,7 @@ void MonsterController::spawnBombEnemy(cugl::Vec2 pos, OverWorld& overWorld, flo
     hp = powerHealth(power, hp);
     auto params = _bombEnemyFactory->serializeParams(pos, mySize, hp, 0);
     auto pair = _network->getPhysController()->addSharedObstacle(_bombEnemyFactID, params);
-    pair.first->setDebugScene(_debugNode);
+//    pair.first->setDebugScene(_debugNode);
     if (auto static_enemy = std::dynamic_pointer_cast<AbstractEnemy>(pair.first)){
         _pending.emplace(static_enemy);
     }

@@ -457,7 +457,7 @@ bool OverWorld::setRootNode(const std::shared_ptr<scene2::SceneNode> &_worldNode
 
     // Add Dog to Obstacle World
     _worldNet->initObstacle(_dog);
-    _dog->setDebugScene(_debugNode);
+//    _dog->setDebugScene(_debugNode);
     if (_isHost)
     {
         _worldNet->getOwnedObstacles().insert({_dog, 0});
@@ -471,7 +471,7 @@ bool OverWorld::setRootNode(const std::shared_ptr<scene2::SceneNode> &_worldNode
     if (_network->getNumPlayers() == 2)
     {
         _worldNet->initObstacle(_dogClient);
-        _dogClient->setDebugScene(_debugNode);
+//        _dogClient->setDebugScene(_debugNode);
         _worldNode->addChild(_dogClient->getDogNode());
         if (!_isHost)
         {

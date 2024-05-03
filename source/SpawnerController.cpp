@@ -182,4 +182,8 @@ void SpawnerController::dispose(){
     baseSpawnerNode = nullptr;
     animSpawnerNode = nullptr;
     _network = nullptr;
+    _deathTexture = nullptr;
+    _spawnTexture = nullptr;
+    _deathSpawner = nullptr;
+    _curAnimations.clear();
 }
