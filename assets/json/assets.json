@@ -80,6 +80,16 @@
             "minfilter": "linear",
             "magfilter": "nearest"
         },
+        "spawnermaparrow": {
+            "file": "textures/minimap/spawner_arrow.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "basemaparrow": {
+            "file": "textures/minimap/gate_arrow.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
         "leftShoot": {
             "file": "textures/dog/effects/bark_shoot_left.png",
             "minfilter": "linear",
