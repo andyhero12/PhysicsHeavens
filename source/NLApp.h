@@ -44,6 +44,7 @@ enum Status {
     SELECTION,
     SETTING,
     GAME,
+    REBIND,
     SINGLEPLAYER
 };
 

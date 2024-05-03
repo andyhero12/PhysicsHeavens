@@ -53,37 +53,38 @@ bool SettingScene::init(const std::shared_ptr<AssetManager> &assets)
     std::shared_ptr<cugl::scene2::SceneNode> layer = assets->get<scene2::SceneNode>("setting");
     layer->setContentSize(dimen);
     layer->doLayout(); // This rearranges the children to fit the screen
-
-    //_bar = std::dynamic_pointer_cast<scene2::ProgressBar>(assets->get<scene2::SceneNode>("level_bar"));
-    //_brand = assets->get<scene2::SceneNode>("level_name");
     _button = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("setting_play"));
     // _slider = std::dynamic_pointer_cast<scene2::Slider>(assets->get<scene2::SceneNode>("setting_action"));
     // _label  = std::dynamic_pointer_cast<scene2::Label>(assets->get<scene2::SceneNode>("setting_label"));
     // _value  = _slider->getValue();
     _button->addListener([this](const std::string &name, bool down){
-    if(down) { // Check if the button is pressed down
-        switch (level) { // Use the current level stored in _level
-            case 1:
-                CULog("Current Level: L1");
-                _buttonselection = button::b1; // Move to next level
-                break;
-            case 2:
-                CULog("Current Level: L2");
-                _buttonselection = button::b2;
-                break;
-            case 3:
-                CULog("Current Level: L3");
-                _buttonselection = button::b3; // Assuming there's a level 4
-                break;
-            case 4:
-                CULog("Current Level: L4");
-                break;
-            default:
-                CULog("Unknown Level");
-                break;
+        if(down) { // Check if the button is pressed down
+            switch (level) { // Use the current level stored in _level
+                case 1:
+                    CULog("Current Level: L1");
+                    _buttonselection = button::b1;
+                    _button->setDown(false); // Move to next level
+                    break;
+                case 2:
+                    CULog("Current Level: L2");
+                    _buttonselection = button::b2;
+                    _button->setDown(false);
+                    break;
+                case 3:
+                    CULog("Current Level: L3");
+                    _buttonselection = button::b3; 
+                    _button->setDown(false);
+                    break;
+                case 4:
+                    _buttonselection = button::b4;
+                    CULog("Current Level: L4");
+                    break;
+                default:
+                    CULog("Unknown Level");
+                    break;
+            }
         }
-    }
-});
+    });
     // _slider->addListener([this](const std::string& name, float value) {
     //     if (value != _value) {
     //         _value = value;
