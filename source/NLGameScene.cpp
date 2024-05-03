@@ -32,6 +32,7 @@
 #include <iostream>
 #include <sstream>
 #include <algorithm>
+#include <cmath>
 
 using namespace cugl;
 using namespace cugl::physics2::net;
@@ -209,6 +210,15 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     float zoom = dimen.height / CANVAS_TILE_HEIGHT;
 
     _backgroundWrapper = World::alloc(_level, _assets);
+
+    for(cugl::Rect r : _level->getTransparentRects()) {
+        int top = ceil(r.origin.y);
+        int bottom = floor(r.origin.y - r.size.height);
+        int left = floor(r.origin.x);
+        int right = ceil(r.origin.x + r.size.width);
+        _transparentRects.emplace_back(cugl::Rect(left, bottom, right - left - 1, top - bottom - 1));
+    }
+
     _worldnode = scene2::SceneNode::alloc();
     _worldnode->setScale(zoom);
     _worldnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
@@ -385,6 +395,7 @@ void GameScene::dispose()
         _monsterSceneNode = nullptr;
         _network = nullptr;
         _decorToHide.clear();
+        _transparentRects.clear();
         _pause = nullptr;
         _level = nullptr;
         winNode = nullptr;
@@ -554,12 +565,46 @@ void GameScene::postUpdate(float dt)
 
     _rootnode->resetPane();
 
-    // reverting hidden tiles
-    for (int i = 0; i < _decorToHide.size(); i++)
-    {
-        _decorToHide.at(i)->setColor(Color4::WHITE);
+
+    //_decorToHide.clear();
+
+    //CULog((std::to_string(overWorld.getDog()->getPosition().x) + " " + std::to_string(overWorld.getDog()->getPosition().y)).c_str());
+
+    for (const std::shared_ptr<TileInfo>& t : _backgroundWrapper->getVisibleNodes()){
+        for (Rect r : _transparentRects) {
+            if((r.doesIntersect(overWorld.getDog()->getPosition(), 1) || r.doesIntersect(overWorld.getClientDog()->getPosition(), 1)) && r.contains(t->getPosition())) {
+                if(t->getIsUpperDecor()) {
+                    _decorToHide.insert(t->getTileSprite());
+                    //t->getTileSprite()->setColor(Color4f(1, 1, 1, 0.6f).lerp(t->getTileSprite()->getColor(), 0.98f));
+                }
+            }
+        }
     }
-    _decorToHide.clear();
+
+    for (auto it = _decorToHide.begin(); it != _decorToHide.end(); ) {
+        auto t = *it;
+        bool in = false;
+        for (Rect r : _transparentRects) {
+            in |= (r.doesIntersect(overWorld.getDog()->getPosition(), 1) || r.doesIntersect(overWorld.getClientDog()->getPosition(), 1)) && r.contains(t->getPosition());
+        }
+
+        auto c = t->getColor();
+        auto white = Color4f::WHITE;
+        if(in) {
+            t->setColor(Color4f(1, 1, 1, 0.6f).lerp(c, 0.97f));
+        }
+        else {
+            c.a += 2;
+            t->setColor(c);
+            if(t->getColor().a > 253) {
+                t->setColor(Color4::WHITE);
+                _decorToHide.erase(it++);
+                continue;
+            }
+        }
+        ++it;
+    }
+
     Vec2 delta;
 
     if (_isHost)
