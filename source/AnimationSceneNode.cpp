@@ -29,9 +29,7 @@ _on(true)
 
 
 void AnimationSceneNode::dispose(){
-    for (auto& sprite : _animationSprites) {
-        sprite->dispose();
-    }
+    _animationSprites.clear();
 }
 
 /**

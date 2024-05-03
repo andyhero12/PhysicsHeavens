@@ -35,9 +35,9 @@ bool BaseSet::init(const std::vector<cugl::Vec3>& basePoses, std::shared_ptr<cug
     _uiController = uiController;
     
     for (const cugl::Vec3& base : basePoses){
-        auto baseObj = std::make_shared<Base>(base.z, cugl::Vec2(base.x,base.y), uiController);
-        _bases.emplace_back(baseObj);
         auto drawNode = SpriteAnimationNode::allocWithSheet(assets->get<cugl::Texture>("gate"), 3,5, 5);
+        auto baseObj = std::make_shared<Base>(base.z, cugl::Vec2(base.x,base.y), uiController, drawNode);
+        _bases.emplace_back(baseObj);
 //        drawNode->setContentSize(cugl::Size(4,4));
         drawNode->setScale(cugl::Size(1,1)/48);
         drawNode->setPosition(baseObj->getPos());
