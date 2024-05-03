@@ -10,15 +10,9 @@
 
 #include <stdio.h>
 
-/** The key for collisions sounds */
-#define COLLISION_SOUND "dogBiteSmall"
-/** The key for the main afterburner sound */
-#define MAIN_FIRE_SOUND "dogBiteSmall"
-/** The key for the right afterburner sound */
-#define RGHT_FIRE_SOUND "dogBiteSmall"
-/** The key for the left afterburner sound */
-#define LEFT_FIRE_SOUND "dogBiteSmall"
-
+/** The key for sounds */
+#define COLLISION_SOUND "dogDamage"
+#define TUTORIAL "tutorial"
 
 
 

@@ -396,6 +396,8 @@ void GameScene::dispose()
         _backgroundWrapper = nullptr;
         Scene2::dispose();
         sounds = nullptr;
+        
+        AudioEngine::get()->clearEffects();
     }
 }
 
@@ -727,10 +729,20 @@ void GameScene::beginContact(b2Contact *contact)
     auto* enemyB = dynamic_cast<AbstractEnemy*>(reinterpret_cast<AbstractEnemy*>(bodyB->GetUserData().pointer));
     auto* dogA = dynamic_cast<Dog*>(reinterpret_cast<Dog*>(bodyA->GetUserData().pointer));
 
-    if (((enemyA && dogB) || (enemyB && dogA)) && sounds->size() < 5) {
+    if ((enemyA && dogB) || (enemyB && dogA)) {
+        std::cout << "hit" << std::endl;
+        if(dogA){
+            std::cout << dogA->getX() << "    "<< dogA->getY() << std::endl;
+            std::cout << enemyA->getX() << "    "<< enemyA->getY() << std::endl;
+        }
+        else{
+            std::cout << dogB->getX() << "    "<< dogB->getY() << std::endl;
+            std::cout << enemyB->getX() << "    "<< enemyB->getY() << std::endl;
+        }
         std::string key = "collision";
         auto source = _assets->get<Sound>(COLLISION_SOUND);
         if (!AudioEngine::get()->isActive(key)) {
+            std::cout << "playing sound " <<std::endl;
             AudioEngine::get()->play(key, source, false, 1);
         }
     }
@@ -878,7 +890,7 @@ void GameScene::updateInputController()
             spriteNode->setVisible(true);
             spriteNode->update();
             std::string key = "tutorial";
-            auto source = _assets->get<Sound>(COLLISION_SOUND);
+            auto source = _assets->get<Sound>(TUTORIAL);
             if (!AudioEngine::get()->isActive(key)) {
                 AudioEngine::get()->play(key, source, false, 1);
             }
@@ -988,7 +1000,7 @@ void GameScene::initTutorial(std::vector<int> frame)
 void GameScene::initAudio(){
     sounds = std::make_shared<std::unordered_set<std::string>>();
     AudioEngine::get()->setListener([this](const std::string key, bool normalTermination) {
-        if(normalTermination){
+        if(normalTermination && sounds != nullptr){
             this->sounds->erase(key);
         }
     });

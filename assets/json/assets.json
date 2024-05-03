@@ -701,25 +701,10 @@
             "file": "sounds/Env/victoryScreen.wav",
             "volume": 0.4
         },
-        "bump": {
+        "tutorial": {
             "type": "sample",
-            "file": "sounds/bump.wav",
+            "file": "sounds/tutorial.wav",
             "volume": 0.4
-        },
-        "burn": {
-            "type": "sample",
-            "file": "sounds/afterburner.wav",
-            "volume": 0.5
-        },
-        "right-burn": {
-            "type": "sample",
-            "file": "sounds/sideburner-right.wav",
-            "volume": 0.5
-        },
-        "left-burn": {
-            "type": "sample",
-            "file": "sounds/sideburner-left.wav",
-            "volume": 0.5
         }
     },
     "fonts": {
