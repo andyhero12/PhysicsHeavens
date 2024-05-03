@@ -129,6 +129,7 @@ void MenuScene::setActive(bool value) {
             _back->activate();
             _backclicked = false;
             _firstset = true;
+            _counter = 0;
         } else {
             _hostbutton->deactivate();
             _joinbutton->deactivate();
