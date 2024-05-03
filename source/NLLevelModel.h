@@ -115,6 +115,7 @@ private:
     // ordered for lower bound
     std::map<int,std::string> tileSetMapping;
     std::map<int,TileSet> tilesMappingWithTextures;
+    std::vector<cugl::Rect> _transparentRects;
 protected:
     
 #pragma mark Internal Helper
@@ -167,6 +168,9 @@ public:
     const std::vector<std::vector<std::vector<int>>>& getUpperDecorations(){
         return _upperDecorLayers;
     };
+    const std::vector<cugl::Rect>& getTransparentRects() {
+        return _transparentRects;
+    };
 #pragma mark Static Constructors
     /**
      * Creates a new game level with no source file.
@@ -218,6 +222,7 @@ public:
     bool loadUpperDecorLayer(const std::shared_ptr<JsonValue>& json, int index);
     bool loadPlayer(const std::shared_ptr<JsonValue>& json);
     bool loadSpanwerLocations(const std::shared_ptr<JsonValue>& json);
+    bool loadTransparentLocs(const std::shared_ptr<JsonValue>& json);
     /**
      * Loads this game level from the source file
      *
