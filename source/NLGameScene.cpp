@@ -45,7 +45,7 @@ using namespace cugl::physics2::net;
 #define SCENE_HEIGHT 800
 
 #define CANVAS_TILE_HEIGHT 8
-
+#define TILE_NAME   "TILE"
 /** Width of the game world in Box2d units */
 #define DEFAULT_WIDTH 100.0f
 /** Height of the game world in Box2d units */
@@ -387,7 +387,6 @@ void GameScene::dispose()
         removeAllChildren();
         _pause->dispose();
         tutorialTiles.clear();
-        _world->dispose();
         _world = nullptr;
         _worldnode = nullptr;
         _debugnode = nullptr;
@@ -849,20 +848,31 @@ void GameScene::addChildBackground()
             }
         }
     }
-//    const std::vector<std::vector<std::shared_ptr<TileInfo>>> &currentBoundaries = _backgroundWrapper->getBoundaryWorld();
-//    for (int i = 0; i < originalRows; i++)
-//    {
-//        for (int j = 0; j < originalCols; j++)
-//        {
-//            const std::shared_ptr<TileInfo>& t = currentBoundaries.at(i).at(j);
-//            if (t->texture != nullptr)
-//            {
-//                t->setDebugColor(DYNAMIC_COLOR);
-//                _world->addObstacle(t);
-//                t->setDebugScene(_debugnode);
-//            }
-//        }
-//    }
+    
+    const std::vector<std::vector<std::shared_ptr<TileInfo>>> &currentBoundaries = _backgroundWrapper->getBoundaryWorld();
+    for (int i = 0; i < originalRows; i++)
+    {
+        for (int j = 0; j < originalCols; j++)
+        {
+            const std::shared_ptr<TileInfo>& t = currentBoundaries.at(i).at(j);
+            if (t->texture != nullptr)
+            {
+                
+                std::shared_ptr<cugl::physics2::BoxObstacle> boundary = cugl::physics2::BoxObstacle::alloc(t->getPos(),cugl::Size(1,1));
+                boundary->clearSharingDirtyBits();
+                boundary->setBodyType(b2_staticBody);
+                boundary->setDensity(10.0f);
+                boundary->setFriction(0.4f);
+                boundary->setRestitution(0.1);
+//                boundary->setDebugColor(DYNAMIC_COLOR); // Don't add these back
+//                boundary->setDebugScene(_debugnode);
+                _world->initObstacle(boundary);
+                if(_isHost){
+                    _world->getOwnedObstacles().insert({boundary,0});
+                }
+            }
+        }
+    }
     const std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>> &lowerDecorWorld = _backgroundWrapper->getLowerDecorWorld();
     for (int n = 0; n < lowerDecorWorld.size(); n++)
     {
