@@ -93,7 +93,7 @@ public:
     {
         return _level;
     }
-    const std::shared_ptr<World>& getWorld()
+    std::weak_ptr<World> getWorld()
     {
         return _world;
     }

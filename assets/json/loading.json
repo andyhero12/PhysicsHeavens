@@ -1,7 +1,7 @@
 {
 	"textures": {
         "backgroundl":{
-            "file":      "textures/level-complete.png",
+            "file":      "textures/Menu/title-screen.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
@@ -12,20 +12,6 @@
             "minfilter": "linear",
             "magfilter": "linear"
 		},
-        "name": {
-            "file":      "textures/TITLE.PNG",
-            "wrapS":     "clamp",
-            "wrapT":     "clamp",
-            "minfilter": "linear",
-            "magfilter": "linear"
-        },
-        "play": {
-            "file":      "textures/cugl-play.png",
-            "wrapS":     "clamp",
-            "wrapT":     "clamp",
-            "minfilter": "linear",
-            "magfilter": "linear"
-        },
         "progress": {
             "file":      "textures/progress.png",
             "wrapS":     "clamp",

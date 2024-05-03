@@ -382,13 +382,11 @@ void NetApp::updateGameScene(float timestep)
     if (_gameplay.getStatus() == PauseScene::EXIT)
     {
         _gameplay.dispose();
-        //        _network->disconnect(); // Get rid of This?
+        _network->disconnect(); // Get rid of This?
         _mainmenu.setActive(true);
         _gameplay.setActive(false);
-        //        _hostgame.setActive(false);
         _hostgame.endGame();
         _singlePlayer.endGame();
-        //        _joingame.setActive(false);
         _status = MAINMENU;
     }
 }

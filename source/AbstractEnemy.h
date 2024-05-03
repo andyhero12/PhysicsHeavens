@@ -67,7 +67,7 @@ public:
         
         if (result){
             _counter = 0;
-            updateRate = 15;
+            updateRate = 5;
             clearSharingDirtyBits();
             setShared(true);
             setDensity(DEFAULT_DENSITY);
@@ -433,7 +433,7 @@ protected:
         setHealth(_maxHealth);
         _wanderAngle = 0.0f;
         timeSinceLastMajorChange = 0.0f;
-        curAction = EnemyActions::WANDER;
+        curAction = EnemyActions::CHASE;
         
     }
 

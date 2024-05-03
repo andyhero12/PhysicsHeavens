@@ -90,6 +90,7 @@ protected:
     
     std::shared_ptr<SpriteAnimationNode> loseNode;
     std::shared_ptr<SpriteAnimationNode> winNode;
+    std::shared_ptr<SpriteAnimationNode> repeatWinNode;
     /** The level model */
     std::shared_ptr<LevelModel> _level;
 

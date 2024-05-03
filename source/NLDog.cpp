@@ -97,7 +97,7 @@ bool Dog::init(const Vec2 pos, const Size size) {
         _startBite = false;
         _startShoot = false;
         _startRecall = false;
-        _sendSize = false;
+//        _sendSize = false;
         _dashCounter = 0;
         _dashRate = DASH_RATE;
         _mode = 0;
@@ -476,7 +476,7 @@ void Dog::updateLocalAnimations(DogSize size){
 }
 
 void Dog::resetCurrentAnimations(DogSize size){
-    _sendSize = true;
+//    _sendSize = true;
     updateLocalAnimations(size);
 }
 

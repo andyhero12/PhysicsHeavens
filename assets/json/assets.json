@@ -462,6 +462,9 @@
             "minfilter": "linear",
             "magfilter": "nearest"
         },
+        "frame": {
+            "file": "textures/frame.png"
+        },
         "street_tiles": {
             "file": "textures/tile/tile.png",
             "magfilter": "nearest"
@@ -535,9 +538,6 @@
         "button": {
             "file": "textures/button.png"
         },
-        "frame": {
-            "file": "textures/frame.png"
-        },
         "left": {
             "file": "textures/left_arrow.png"
         },
@@ -552,6 +552,9 @@
         "enemyDeath": {
             "file": "textures/effects/death_poof.png",
             "magfilter": "nearest"
+        },
+        "repeat_win": {
+            "file": "textures/repeat_win.png"
         },
         "win_screen": {
             "file": "textures/win_screen.png"
