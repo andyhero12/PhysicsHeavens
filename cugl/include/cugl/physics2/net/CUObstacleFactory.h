@@ -101,6 +101,10 @@ public:
         return std::make_pair(std::make_shared<physics2::Obstacle>(), std::make_shared<scene2::SceneNode>());
     }
     
+    virtual ~ObstacleFactory(){
+        
+    }
+    
 };
         }
     }

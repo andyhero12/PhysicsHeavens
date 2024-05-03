@@ -22,6 +22,14 @@
 class MeleeFactory : public ObstacleFactory
 {
 public:
+    MeleeFactory(){
+        _data = nullptr;
+        _assets = nullptr;
+    };
+    virtual ~MeleeFactory(){
+        _data = nullptr;
+        _assets = nullptr;
+    };
     struct AnimationStruct{
         std::vector<std::shared_ptr<cugl::Texture>> _walkTextures;
         std::vector<std::shared_ptr<cugl::Texture>> _attackTextures;
