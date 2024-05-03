@@ -137,9 +137,8 @@ protected:
     float _shootRadius;
     AnimationSceneNode::Directions _curDirection;
     float _damagedTimer;
-    
     DogSize _size;
-    
+    float _healTimer;
     
 public:
 #pragma mark Constructors
