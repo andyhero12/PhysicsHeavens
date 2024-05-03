@@ -26,6 +26,7 @@
 #include "NLDashEvent.h"
 #include "NLSizeEvent.h"
 #include "NLClientHealthEvent.h"
+#include "Constants.h"
 class OverWorld
 {
 private:
@@ -111,5 +112,7 @@ public:
         return _clientAttackPolygonSet;
     }
     void dispose();
+    
+    void playSound(std::string key, std::string sound);
 };
 #endif /* OverWorld_hpp */

@@ -619,6 +619,11 @@
             "file": "sounds/Player/dogDie.wav",
             "volume": 0.4
         },
+        "dogBomb": {
+            "type": "sample",
+            "file": "sounds/Player/dogBomb.wav",
+            "volume": 0.4
+        },
         "dogTeleport": {
             "type": "sample",
             "file": "sounds/Player/dogTeleport.wav",

@@ -115,6 +115,7 @@ bool Dog::init(const Vec2 pos, const Size size) {
         prevDirection =AnimationSceneNode::Directions::EAST;
         _curDirection = AnimationSceneNode::Directions::EAST;
         _damagedTimer = 0;
+        
         return true;
     }
     
@@ -273,7 +274,7 @@ void Dog::moveOnInputSetAction(InputController& _input){
     
 }
 void Dog::setDogSize(DogSize size){
-    
+    _size = size;
     if(idleAnimation != nullptr){
         idleAnimation->animate(AnimationSceneNode::Directions::SOUTH, false);
         runAnimation->animate(AnimationSceneNode::Directions::SOUTH, false);

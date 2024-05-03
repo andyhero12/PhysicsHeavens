@@ -398,6 +398,8 @@ void GameScene::dispose()
         sounds = nullptr;
         
         AudioEngine::get()->clearEffects();
+        AudioEngine::get()->clear();
+        
     }
 }
 
@@ -418,12 +420,12 @@ void GameScene::populate()
 {
     _world = physics2::net::NetWorld::alloc(Rect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT), Vec2(0, DEFAULT_GRAVITY));
     _world->activateCollisionCallbacks(true);
-    _world->onBeginContact = [this](b2Contact* contact) {
-        this->beginContact(contact);
-    };
-    _world->onEndContact = [this](b2Contact* contact) {
-        this->endContact(contact);
-    };
+//    _world->onBeginContact = [this](b2Contact* contact) {
+//        this->beginContact(contact);
+//    };
+//    _world->onEndContact = [this](b2Contact* contact) {
+//        this->endContact(contact);
+//    };
     _world->beforeSolve = [this](b2Contact *contact, const b2Manifold *oldManifold)
     {
         beforeSolve(contact, oldManifold);
@@ -718,35 +720,35 @@ void GameScene::update(float dt)
  */
 void GameScene::beginContact(b2Contact *contact)
 {
-    auto* bodyA = contact->GetFixtureA()->GetBody();
-    auto* bodyB = contact->GetFixtureB()->GetBody();
-
-
-    // Enemy Dog collision
-    auto* enemyA = dynamic_cast<AbstractEnemy*>(reinterpret_cast<AbstractEnemy*>(bodyA->GetUserData().pointer));
-    auto* dogB = dynamic_cast<Dog*>(reinterpret_cast<Dog*>(bodyB->GetUserData().pointer));
-
-    auto* enemyB = dynamic_cast<AbstractEnemy*>(reinterpret_cast<AbstractEnemy*>(bodyB->GetUserData().pointer));
-    auto* dogA = dynamic_cast<Dog*>(reinterpret_cast<Dog*>(bodyA->GetUserData().pointer));
-
-    if ((enemyA && dogB) || (enemyB && dogA)) {
-        std::cout << "hit" << std::endl;
-        if(dogA){
-            std::cout << dogA->getX() << "    "<< dogA->getY() << std::endl;
-            std::cout << enemyA->getX() << "    "<< enemyA->getY() << std::endl;
-        }
-        else{
-            std::cout << dogB->getX() << "    "<< dogB->getY() << std::endl;
-            std::cout << enemyB->getX() << "    "<< enemyB->getY() << std::endl;
-        }
-        std::string key = "collision";
-        auto source = _assets->get<Sound>(COLLISION_SOUND);
-        if (!AudioEngine::get()->isActive(key)) {
-            std::cout << "playing sound " <<std::endl;
-            AudioEngine::get()->play(key, source, false, 1);
-        }
-    }
-    
+//    auto* bodyA = contact->GetFixtureA()->GetBody();
+//    auto* bodyB = contact->GetFixtureB()->GetBody();
+//
+//
+//    // Enemy Dog collision
+//    auto* enemyA = dynamic_cast<AbstractEnemy*>(reinterpret_cast<AbstractEnemy*>(bodyA->GetUserData().pointer));
+//    auto* dogB = dynamic_cast<Dog*>(reinterpret_cast<Dog*>(bodyB->GetUserData().pointer));
+//
+//    auto* enemyB = dynamic_cast<AbstractEnemy*>(reinterpret_cast<AbstractEnemy*>(bodyB->GetUserData().pointer));
+//    auto* dogA = dynamic_cast<Dog*>(reinterpret_cast<Dog*>(bodyA->GetUserData().pointer));
+//
+//    if ((enemyA && dogB) || (enemyB && dogA)) {
+//        std::cout << "hit" << std::endl;
+//        if(dogA){
+//            std::cout << dogA->getX() << "    "<< dogA->getY() << std::endl;
+//            std::cout << enemyA->getX() << "    "<< enemyA->getY() << std::endl;
+//        }
+//        else{
+//            std::cout << dogB->getX() << "    "<< dogB->getY() << std::endl;
+//            std::cout << enemyB->getX() << "    "<< enemyB->getY() << std::endl;
+//        }
+//        std::string key = "collision";
+//        auto source = _assets->get<Sound>(DOG_DAMAGE);
+//        if (!AudioEngine::get()->isActive(key)) {
+//            std::cout << "playing sound " <<std::endl;
+//            AudioEngine::get()->play(key, source, false, 1);
+//        }
+//    }
+//    
     
     //
 }
@@ -885,7 +887,8 @@ void GameScene::updateInputController()
         {
             spriteNode->setVisible(true);
             spriteNode->update();
-            std::string key = "tutorial";
+            /** add sound*/
+            std::string key = TUTORIAL;
             auto source = _assets->get<Sound>(TUTORIAL);
             if (!AudioEngine::get()->isActive(key)) {
                 AudioEngine::get()->play(key, source, false, 1);
@@ -896,8 +899,8 @@ void GameScene::updateInputController()
             tile->setPass(true);
             node->setVisible(false);
             tutorialIndex++;
-            std::string key = "tutorial";
-            auto source = _assets->get<Sound>(COLLISION_SOUND);
+            /** remove sound*/
+            std::string key = TUTORIAL;
             if (AudioEngine::get()->isActive(key)) {
                 AudioEngine::get()->clear(key);
             }
@@ -999,6 +1002,7 @@ void GameScene::initAudio(){
         if(normalTermination && sounds != nullptr){
             this->sounds->erase(key);
         }
+        std::cout << key << " stopped playing sound " <<std::endl;
     });
 }
 

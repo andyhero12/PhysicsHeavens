@@ -517,15 +517,40 @@ void OverWorld::processBiteEvent(const std::shared_ptr<BiteEvent> &biteEvent)
     float ang = biteEvent->getAng();
     bool incomingHost = biteEvent->isHost();
     float scale = biteEvent->getScale();
+    std::string sound;
+    std::shared_ptr<Dog> playerDog;
+  
     if (incomingHost)
     {
+        playerDog = _dog;
         _attackPolygonSet.addBite(center, ang, _dog->getBiteRadius(), scale);
-        _dog->startBite();
+
     }
     else
     {
+        playerDog = _dogClient;
         _clientAttackPolygonSet.addBite(center, ang, _dogClient->getBiteRadius(), scale);
-        _dogClient->startBite();
+    }
+    
+    
+    playerDog->startBite();
+    
+    if (incomingHost == _isHost){
+        switch (playerDog->getSize()) {
+            case Dog::DogSize::SMALL:
+                sound = DOG_BITE_SMALL;
+                break;
+            case Dog::DogSize::MEDIUM:
+                sound = DOG_BITE_MEDIUM;
+                break;
+            case Dog::DogSize::LARGE:
+                sound = DOG_BITE_LARGE;
+                break;
+            default:
+                CUAssert(false);
+                break;
+        }
+        playSound("dogSound", sound);
     }
 }
 void OverWorld::processRecallEvent(const std::shared_ptr<RecallEvent>& recallEvent){
@@ -534,6 +559,10 @@ void OverWorld::processRecallEvent(const std::shared_ptr<RecallEvent>& recallEve
         _dog->startRecall();
     }else{
         _dogClient->startRecall();
+    }
+    
+    if (incomingHost == _isHost){
+        playSound("dogSound", DOG_TELEPORT);
     }
 }
 
@@ -558,6 +587,9 @@ void OverWorld::processShootEvent(const std::shared_ptr<ShootEvent> &shootEvent)
         _clientAttackPolygonSet.addShoot(center, ang, _dog->getShootRadius());
         _dogClient->startShoot();
     }
+    if (incomingHost == _isHost){
+        playSound("dogSound", DOG_BARK);
+    }
 }
 void OverWorld::processExplodeEvent(const std::shared_ptr<ExplodeEvent> &explodeEvent)
 {
@@ -578,6 +610,9 @@ void OverWorld::processExplodeEvent(const std::shared_ptr<ExplodeEvent> &explode
         }
         _clientAttackPolygonSet.addExplode(center, _dog->getExplosionRadius());
         _dogClient->startShoot();
+    }
+    if (incomingHost == _isHost){
+        playSound("dogSound", DOG_BOMB);
     }
 }
 void OverWorld::recallDogToClosetBase(std::shared_ptr<Dog> _curDog){
@@ -635,16 +670,20 @@ void OverWorld::ownedDogUpdate(InputController& _input, cugl::Size, std::shared_
 }
 void OverWorld::dogUpdate(InputController &_input, cugl::Size totalSize)
 {
+    std::shared_ptr<Dog> playerDog;
+    std::shared_ptr<Dog> otherDog;
     if (_isHost)
     {
-        _dogClient->updateClientAnimations();
-        ownedDogUpdate(_input, totalSize, _dog);
+        playerDog = _dogClient;
+        otherDog = _dog;
     }
     else
     {
-        _dog->updateClientAnimations();
-        ownedDogUpdate(_input, totalSize, _dogClient);
+        playerDog = _dog;
+        otherDog = _dogClient;
     }
+    playerDog->updateClientAnimations();
+    ownedDogUpdate(_input, totalSize, otherDog);
 }
 
 void OverWorld::update(InputController &_input, cugl::Size totalSize, float timestep)
@@ -672,4 +711,9 @@ void OverWorld::dispose(){
     _attackPolygonSet.dispose();
     _clientAttackPolygonSet.dispose();
     _world = nullptr;
+}
+
+void OverWorld::playSound(std::string key, std::string sound){
+    auto source = _assets->get<Sound>(sound);
+    AudioEngine::get()->play(key, source, false, 1, true);
 }

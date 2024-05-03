@@ -127,6 +127,8 @@ void MainMenuScene::dispose() {
  * @param value whether the scene is currently active
  */
 void MainMenuScene::setActive(bool value) {
+    AudioEngine::get()->clear();
+    // NEW SOUNDS
     if (isActive() != value) {
         Scene2::setActive(value);
         if (value) {
