@@ -42,6 +42,8 @@ private:
     AttackPolygons _attackPolygonSet;
     AttackPolygons _clientAttackPolygonSet;
     std::shared_ptr<World> _world;
+    
+    int dogSeq;
 
 public:
     bool _isHost;

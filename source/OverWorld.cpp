@@ -437,6 +437,8 @@ bool OverWorld::init(const std::shared_ptr<cugl::AssetManager> &assets, const st
     _constants = assets->get<cugl::JsonValue>("constants");
     _world = world;
 
+    dogSeq = 0;
+    
     initWorld();
     initDogModel();
     initBases();
@@ -494,12 +496,12 @@ void OverWorld::processDashEvent(const std::shared_ptr<DashEvent> &dashEvent)
         _dogClient->startDash();
     }
     if (incomingHost == _isHost){
-        playSound("dogDash", DOG_DASH);
+        playSound("dogDash" + std::to_string(dogSeq), DOG_DASH);
     }
 }
 void OverWorld::processDecoyEvent(const std::shared_ptr<DecoyEvent>& decoyEvent){
     getDecoys()->addNewDecoy(Vec2(decoyEvent->getPos().x, decoyEvent->getPos().y));
-    playSound("dogGate", DUMMY_GATE_PLACEMENT);
+    playSound("dogGate"+ std::to_string(dogSeq), DUMMY_GATE_PLACEMENT);
 
 }
 void OverWorld::processClientHealthEvent(const std::shared_ptr<ClientHealthEvent>& clientHealthEvent){
@@ -559,7 +561,7 @@ void OverWorld::processBiteEvent(const std::shared_ptr<BiteEvent> &biteEvent)
                 CUAssert(false);
                 break;
         }
-        playSound("dogBite", sound);
+        playSound("dogBite"+ std::to_string(dogSeq), sound);
     }
 }
 void OverWorld::processRecallEvent(const std::shared_ptr<RecallEvent>& recallEvent){
@@ -571,7 +573,7 @@ void OverWorld::processRecallEvent(const std::shared_ptr<RecallEvent>& recallEve
     }
     
     if (incomingHost == _isHost){
-        playSound("dogTeleport", DOG_TELEPORT);
+        playSound("dogTeleport"+ std::to_string(dogSeq), DOG_TELEPORT);
     }
 }
 
@@ -597,7 +599,7 @@ void OverWorld::processShootEvent(const std::shared_ptr<ShootEvent> &shootEvent)
         _dogClient->startShoot();
     }
     if (incomingHost == _isHost){
-        playSound("dogBark", DOG_BARK);
+        playSound("dogBark"+ std::to_string(dogSeq), DOG_BARK);
     }
 }
 void OverWorld::processExplodeEvent(const std::shared_ptr<ExplodeEvent> &explodeEvent)
@@ -621,7 +623,7 @@ void OverWorld::processExplodeEvent(const std::shared_ptr<ExplodeEvent> &explode
         _dogClient->startShoot();
     }
     if (incomingHost == _isHost){
-        playSound("dogBomb", DOG_BOMB);
+        playSound("dogBomb"+ std::to_string(dogSeq), DOG_BOMB);
     }
 }
 void OverWorld::recallDogToClosetBase(std::shared_ptr<Dog> _curDog){
@@ -723,6 +725,7 @@ void OverWorld::dispose(){
 }
 
 void OverWorld::playSound(std::string key, std::string sound){
+    dogSeq += 1;
     auto source = _assets->get<Sound>(sound);
     AudioEngine::get()->play(key, source, false, source->getVolume());
 }
