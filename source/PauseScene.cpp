@@ -79,6 +79,8 @@ void PauseScene::togglePause() {
 }
 
 void PauseScene::dispose(){
+    resumeButton->removeFromParent();
+    exitButton->removeFromParent();
     resumeButton->deactivate();
     exitButton->deactivate();
     resumeButton = nullptr;

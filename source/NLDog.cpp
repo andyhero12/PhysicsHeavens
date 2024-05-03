@@ -129,6 +129,12 @@ bool Dog::init(const Vec2 pos, const Size size) {
  * disposed, a rocket may not be used until it is initialized again.
  */
 void Dog::dispose() {
+    idleAnimation = nullptr;
+    runAnimation  = nullptr;
+    biteAnimation = nullptr;
+    shootAnimation = nullptr;
+    dashAnimation  = nullptr;
+    
     runAnimationMedium = nullptr;
     biteAnimationMedium = nullptr;
     idleAnimationMedium = nullptr;
@@ -146,6 +152,13 @@ void Dog::dispose() {
     idleAnimationLarge = nullptr;
     shootAnimationLarge = nullptr;
     dashAnimationLarge = nullptr;
+    
+    frontEffectsNode = nullptr;
+    backEffectsNode = nullptr;
+    baseBlankNode = nullptr;
+    recallAnimation = nullptr;
+    belowPenta = nullptr;
+    _uiController = nullptr;
 }
 
 

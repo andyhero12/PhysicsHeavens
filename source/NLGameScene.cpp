@@ -225,9 +225,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 
     _monsterSceneNode = scene2::SceneNode::alloc();
 
-    _debugnode = scene2::SceneNode::alloc();
-    _debugnode->setScale(zoom);
-    _debugnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    _debugnode = nullptr;
+//    _debugnode->setScale(zoom);
+//    _debugnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
 
     _uinode = scene2::SceneNode::alloc();
 
@@ -238,7 +238,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 
     addChild(_rootnode);
     _rootnode->addChild(_worldnode);
-    _rootnode->addChild(_debugnode);
+//    _rootnode->addChild(_debugnode);
 
     addChild(_uinode);
 
@@ -250,6 +250,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 
     _network->enablePhysics(_world, linkSceneToObsFunc);
 
+    addChildBackground();
     _spawnerController.init(_level->getSpawnersPos(), assets, _network);
     _spawnerController.setRootNode(_worldnode, _isHost);
     _worldnode->addChild(_monsterSceneNode);
@@ -277,7 +278,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _collisionController.init(_network);
 
     _active = true;
-    setDebug(false);
+//    setDebug(false);
 
     _network->attachEventType<DecoyEvent>();
     _network->attachEventType<BiteEvent>();
@@ -384,12 +385,10 @@ void GameScene::dispose()
 {
     if (_active)
     {
-        removeAllChildren();
         _pause->dispose();
         tutorialTiles.clear();
         _world = nullptr;
         _worldnode = nullptr;
-        _debugnode = nullptr;
         _rootnode = nullptr;
         _monsterSceneNode = nullptr;
         _network = nullptr;
@@ -410,6 +409,7 @@ void GameScene::dispose()
         _collisionController.dispose();
         overWorld.dispose();
         _backgroundWrapper = nullptr;
+        _debugnode = nullptr;
         Scene2::dispose();
     }
 }
@@ -443,7 +443,6 @@ void GameScene::populate()
     };
 
 #pragma mark : Background
-    addChildBackground();
 }
 void GameScene::linkSceneToObs(const std::shared_ptr<physics2::Obstacle> &obj,
                                const std::shared_ptr<scene2::SceneNode> &node)
@@ -480,7 +479,7 @@ void GameScene::addInitObstacle(const std::shared_ptr<physics2::Obstacle> &obj,
                                 const std::shared_ptr<scene2::SceneNode> &node)
 {
     _world->initObstacle(obj);
-    obj->setDebugScene(_debugnode);
+//    obj->setDebugScene(_debugnode);
     if (_isHost)
     {
         _world->getOwnedObstacles().insert({obj, 0});
@@ -858,7 +857,7 @@ void GameScene::addChildBackground()
             if (t->texture != nullptr)
             {
                 
-                std::shared_ptr<cugl::physics2::BoxObstacle> boundary = cugl::physics2::BoxObstacle::alloc(t->getPos(),cugl::Size(1,1));
+                std::shared_ptr<cugl::physics2::BoxObstacle> boundary = cugl::physics2::BoxObstacle::alloc(t->getPos(),cugl::Size(0.9,0.9));
                 boundary->clearSharingDirtyBits();
                 boundary->setBodyType(b2_staticBody);
                 boundary->setDensity(10.0f);
@@ -944,10 +943,10 @@ void GameScene::updateInputController()
     else{
         _input.update();
         // Process the toggled key commands
-        if (_input.didPressDebug())
-        {
-            setDebug(!isDebug());
-        }
+//        if (_input.didPressDebug())
+//        {
+//            setDebug(!isDebug());
+//        }
     }
     
     
