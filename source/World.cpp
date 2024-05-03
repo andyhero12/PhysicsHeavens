@@ -115,6 +115,10 @@ std::shared_ptr<cugl::Texture> World::getBoxFromTileSet(int position, const std:
         return nullptr;
     }
     auto it = tileSets.upper_bound(position);
+    if (it == tileSets.begin()){
+        CUAssert(false);
+        CULog("SOMEHOW WE FIRST");
+    }
     auto neededIterator = std::prev(it);
     const TileSet& curTile = neededIterator->second;
 //    CULog("%s", curTile.tileJson->toString().data());
