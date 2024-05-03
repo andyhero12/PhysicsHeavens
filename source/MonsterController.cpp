@@ -279,7 +279,6 @@ void MonsterController::removeEnemy(std::shared_ptr<AbstractEnemy> enemy){
     if (auto absorb  = std::dynamic_pointer_cast<AbsorbEnemy>(enemy)){
         _absorbEnem.erase(absorb);
     }
-    _audioController->playSFX(ENEMY_DEATH, ENEMY_DEATH);
 }
 
 void MonsterController::dispose(){

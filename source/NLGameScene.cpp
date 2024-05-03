@@ -244,7 +244,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _network->enablePhysics(_world, linkSceneToObsFunc);
 
     addChildBackground();
-    _spawnerController.init(_level->getSpawnersPos(), assets, _network);
+    _spawnerController.init(_level->getSpawnersPos(), assets, _network, _audioController);
     _spawnerController.setRootNode(_worldnode, _isHost);
     _worldnode->addChild(_monsterSceneNode);
     overWorld.init(assets, _level, computeActiveSize(), _network, isHost, _backgroundWrapper, _audioController);
@@ -407,6 +407,7 @@ void GameScene::dispose()
         _debugnode = nullptr;
         Scene2::dispose();
 
+        _audioController = nullptr;
     }
 }
 
@@ -707,6 +708,17 @@ void GameScene::fixedUpdate()
         if (auto deathEvent = std::dynamic_pointer_cast<DeathEvent>(e))
         {
             _spawnerController.processDeathEvent(deathEvent);
+            std::shared_ptr<Dog> dog;
+            if (_isHost){
+                dog = overWorld.getDog();
+            }else{
+                dog = overWorld.getClientDog();
+            }
+            Vec2 dist = dog->getPosition() - deathEvent->getPos();
+            float actualDistance = dist.length();
+            if(actualDistance < 5){
+                _audioController->playSFX(ENEMY_DEATH, ENEMY_DEATH);
+            }
         }
         if (auto winEvent = std::dynamic_pointer_cast<WinEvent>(e))
         {

@@ -23,11 +23,8 @@
 #define DOG_TELEPORT "dogTeleport"
 #define DUMMY_GATE_EXPLOSION "dummyGateExplosion"
 #define DUMMY_GATE_PLACEMENT "dummyGatePlacement"
-
-#define DOG_DAMAGE "dogDamage" // need to add
-#define DOG_DIE "dogDie" // need to add
-
-
+#define DOG_DAMAGE "dogDamage"
+#define DOG_DIE "dogDie"
 
 #define ENEMY_DEATH "enemyDeath"
 // need to add
@@ -53,7 +50,7 @@
 
 
 // music
-#define BGM "BGM" // background music
+#define BGM "BGM" // background music need to add
 #define LOSS_SCREEN "lossScreen"
 #define VICTORY_SCREEN "victoryScreen"
 

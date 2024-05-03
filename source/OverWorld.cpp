@@ -337,7 +337,7 @@ bool OverWorld::initDogModel()
     
     // MAGIC NUMBER ALERT!!
     Vec2 dogPos = _level->getPlayerPos();
-    _dog = Dog::alloc(dogPos, DOG_SIZE, _audioController);
+    _dog = Dog::alloc(dogPos, DOG_SIZE);
     _dog->setDebugColor(DYNAMIC_COLOR);
 
     _dog->setSmallAnimation(smallDogIdle, smallDogRun, smallDogBite, smallDogShoot, smallDogDash);
@@ -360,7 +360,7 @@ bool OverWorld::initDogModel()
     _dog->setUIController(_uiController);
 
     Vec2 dogClientPos = _level->getPlayerPos() + Vec2(2, 0);
-    _dogClient = Dog::alloc(dogClientPos, DOG_SIZE, _audioController);
+    _dogClient = Dog::alloc(dogClientPos, DOG_SIZE);
     _dogClient->setDebugColor(DYNAMIC_COLOR);
 
     _dogClient->setSmallAnimation(clientSmallDogIdle, clientSmallDogRun, clientSmallDogBite, clientSmallDogShoot, clientSmallDogDash);
@@ -429,6 +429,7 @@ bool OverWorld::initWorld()
 
 bool OverWorld::init(const std::shared_ptr<cugl::AssetManager> &assets, const std::shared_ptr<LevelModel> &level, cugl::Size activeSize, std::shared_ptr<cugl::physics2::net::NetEventController> network, bool isHost, std::shared_ptr<World> world, std::shared_ptr<AudioController> audioController)
 {
+    _audioController = audioController;
     _assets = assets;
     _level = level;
     _network = network;
@@ -444,7 +445,6 @@ bool OverWorld::init(const std::shared_ptr<cugl::AssetManager> &assets, const st
     initBases();
     initDecoys();
     initPolygons();
-    _audioController = audioController;
     return true;
 }
 

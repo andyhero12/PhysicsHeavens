@@ -82,16 +82,6 @@ using namespace cugl;
  *
  * @return  true if the obstacle is initialized properly, false otherwise.
  */
-bool Dog::init(const Vec2 pos, const Size size, std::shared_ptr<AudioController> audioController)
-{
-    if (init(pos, size))
-    {
-        _audioController = audioController;
-        return true;
-    }
-    return false;
-}
-
 bool Dog::init(const Vec2 pos, const Size size)
 {
     if (physics2::BoxObstacle::init(pos, size))
@@ -127,8 +117,6 @@ bool Dog::init(const Vec2 pos, const Size size)
         prevDirection = AnimationSceneNode::Directions::EAST;
         _curDirection = AnimationSceneNode::Directions::EAST;
         _damagedTimer = 0;
-
-        _audioController = nullptr;
         return true;
     }
 
@@ -173,8 +161,6 @@ void Dog::dispose()
     recallAnimation = nullptr;
     belowPenta = nullptr;
     _uiController = nullptr;
-
-    _audioController = nullptr;
 }
 
 #pragma mark -
@@ -587,17 +573,7 @@ void Dog::setHealth(int value)
     if (value < _health)
     {
         _damagedTimer = DAMAGED_DURATION;
-    }
-
-    if (value <= 0)
-    {
-        // play dead
-    }
-    else if (_health > value)
-    {
-        // taking damage
-    }
-    _health = std::max(0, value);
+    };
     _uiController->setHealthBarTexture(float(_health) / _maxHealth);
 }
 

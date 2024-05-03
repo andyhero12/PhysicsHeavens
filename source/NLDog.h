@@ -40,7 +40,6 @@
 #include "AnimationSceneNode.h"
 #include "UIController.h"
 #include <array>
-#include "AudioController.h"
 
 /** The thrust factor to convert player input into thrust */
 #define DEFAULT_THRUST 2.0f
@@ -141,7 +140,6 @@ protected:
     
     DogSize _size;
     
-    std::shared_ptr<AudioController> _audioController;
     
 public:
 #pragma mark Constructors
@@ -214,8 +212,6 @@ public:
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
     virtual bool init(const cugl::Vec2 pos, const cugl::Size size) override;
-    
-    virtual bool init(const cugl::Vec2 pos, const cugl::Size size, std::shared_ptr<AudioController> audioController);
     
     Actions getAction(){
         return action;
@@ -295,9 +291,9 @@ public:
      *
      * @return a newly allocated rocket with the given position
      */
-    static std::shared_ptr<Dog> alloc(const cugl::Vec2& pos, const cugl::Size& size, std::shared_ptr<AudioController> audioController ) {
+    static std::shared_ptr<Dog> alloc(const cugl::Vec2& pos, const cugl::Size& size) {
         std::shared_ptr<Dog> result = std::make_shared<Dog>();
-        return (result->init(pos,size, audioController) ? result : nullptr);
+        return (result->init(pos,size) ? result : nullptr);
     }
     
     void setAbility(std::vector<std::string> vec) {modes = vec;}
