@@ -23,14 +23,20 @@ private:
     int _healVal;
     cugl::Vec2 _position;
     std::shared_ptr<GateUIController> _gateUIController;
+    std::shared_ptr<SpriteAnimationNode> _drawNode;
+    float _damagedTimer;
     
 public:
-    Base(int health, cugl::Vec2 pos, std::shared_ptr<GateUIController> uiController);
+    Base(int health, cugl::Vec2 pos, std::shared_ptr<GateUIController> uiController, std::shared_ptr<SpriteAnimationNode> drawNode);
     void update();
     void reduceHealth(int val);
     
     bool lost(){
         return _health <= 0;
+    }
+
+    std::shared_ptr<SpriteAnimationNode> getDrawNode() {
+        return _drawNode;
     }
     
     const cugl::Vec2& getPos() const {
