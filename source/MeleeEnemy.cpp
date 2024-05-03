@@ -186,7 +186,7 @@ void MeleeEnemy::handleChase(OverWorld& overWorld) {
 //    
 //    cugl::Vec2 dist = target_pos - getPosition();
 //    
-//    setGoal(target_pos, overWorld.getWorld());
+//    setGoal(target_pos, overWorld.getWorld().get());
 //    goToGoal();
 //    
 //    

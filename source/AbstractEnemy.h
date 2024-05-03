@@ -283,11 +283,7 @@ protected:
     int _pathfindTimer = PATHFIND_COOLDOWN;
     
     /** Sets a new goal for this enemy to go to. Returns true if pathfinding to the goal was successful */
-    bool setGoal(Vec2 goal, const std::weak_ptr<World>& world){
-        if (world.expired()){
-            CULog("World Expired");
-            return false;
-        }
+    bool setGoal(Vec2 goal, const World* world){
         // If we already pathfound recently, don't path find again
         if(_pathfindTimer < PATHFIND_COOLDOWN){
             return searchSuccess();

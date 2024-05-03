@@ -110,7 +110,7 @@ public:
         return tilesAtCoords;
     }
     
-    const std::vector<std::vector<std::shared_ptr<TileInfo>>>& getBoundaryWorld(){
+    const std::vector<std::vector<std::shared_ptr<TileInfo>>>& getBoundaryWorld() const {
         return boundaryWorld;
     }
     
@@ -122,15 +122,15 @@ public:
     }
     
     // Get whether a tile is passible or not
-    bool isPassable(int x, int y);
+    bool isPassable(int x, int y) const;
     
     // Get the number of rows of tiles in the world
-    int getRows(){
+    int getRows() const{
         return(int) boundaryWorld.size();
     }
     
     // Get the number of columns of tiles in the world
-    int getCols(){
+    int getCols() const{
         return (int) boundaryWorld[0].size();
     }
 };
