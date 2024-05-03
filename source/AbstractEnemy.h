@@ -24,8 +24,10 @@
 #define PATHFIND_COOLDOWN 20
 
 
-#define CLOSE_DISTANCE 2
-#define STRAY_DISTANCE 3
+/** Set these to 0 to disable */
+#define CLOSE_DISTANCE 0
+#define STRAY_DISTANCE 2
+#define SAME_GOAL_DISTANCE 1
 
 #define DAMAGED_DURATION 0.5f
 
@@ -255,6 +257,7 @@ protected:
     int _health;
     int targetIndex;
     int updateRate;
+    Vec2 trueGoal = Vec2(-1, -1);
     
     // timers
     int _counter;
@@ -286,19 +289,9 @@ protected:
     std::shared_ptr<cugl::scene2::ProgressBar>  _healthBar;
     
     /** Timers */
-    int _pathfindTimer = PATHFIND_COOLDOWN;
     
-    /** Sets a new goal for this enemy to go to. Returns true if pathfinding to the goal was successful */
-    bool setGoal(Vec2 goal, const std::weak_ptr<World>& world){
-        if (world.expired()){
-            CULog("World Expired");
-            return false;
-        }
-        // If we already pathfound recently, don't path find again
-        if(_pathfindTimer < PATHFIND_COOLDOWN){
-            return searchSuccess();
-        }
-        
+    /** Sets a new goal for this enemy to go to. This will rerun pathfinding every time it is called. USING THIS IS NOT RECOMMENDED, USE setGoal() INSTEADl */
+    bool rawSetGoal(Vec2 goal, const std::weak_ptr<World>& world){
         // Garbage collect the nodes used for the previous path if they exist
         if(_pathfinder->GetSolutionEnd() && _pathfinder->SearchStep() == AStarSearch<WorldSearchVertex>::SEARCH_STATE_SUCCEEDED){
     //            CULog("Garbage Collecting Path...");
@@ -345,6 +338,29 @@ protected:
         }
         
         return false;
+    }
+    
+    /** Sets a new goal for this enemy to go to. Returns true if pathfinding to the goal was successful */
+    bool setGoal(Vec2 goal, const std::weak_ptr<World>& world){
+        if (world.expired()){
+            CULog("World Expired");
+            return false;
+        }
+        
+        WorldSearchVertex* prevGoalVertex =_pathfinder->GetSolutionEnd();
+        trueGoal = goal;
+
+        
+        // If the newly set goal is very close to the old goal, just keep the old goal
+        if(prevGoalVertex && trueGoal.x >= 0){
+            Vec2 prevGoal = Vec2(prevGoalVertex->x + 0.5, prevGoalVertex->y + 0.5);
+            if(prevGoal.distance(trueGoal) < SAME_GOAL_DISTANCE){
+                CULog("Goal too close, don't pathfind again");
+                return true;
+            }
+        }
+        
+        return rawSetGoal(goal, world);
     };
 
 
@@ -355,14 +371,20 @@ protected:
         cugl::Vec2 direction;
         
         // If there is no goal or we are already at the goal, do nothing
-        if(!goalNode || atGoal() || _nextStep.x == -1){
+        if(atGoal() || _nextStep.x < 0){
+            if(atGoal()){
+                CULog("At goal already, do notihing");
+            } else {
+                CULog("No goal instantiated, do nothing");
+            }
             return;
         }
         
-        Vec2 goalTile = Vec2(goalNode->x + 0.5, goalNode->y + 0.5);
+        Vec2 goalTile = Vec2(trueGoal.x + 0.5, trueGoal.y + 0.5);
         
         // If we are very close to the goal, go directly to it instead of using pathfinding
-        if(getPosition().distance(goalTile) < CLOSE_DISTANCE){
+        if(getPosition().distance(goalTile) <= CLOSE_DISTANCE){
+            CULog("Close enough, going directly to the goal");
             direction = goalTile - getPosition();
         }
         else {
@@ -371,23 +393,25 @@ protected:
             Vec2 nextTile = Vec2(_nextStep.x + 0.5, _nextStep.y + 0.5);
             if(getPosition().distance(nextTile) > STRAY_DISTANCE){
                 CULog("Recalculating Path...");
-                setGoal(Vec2(goalNode->x, goalNode->y), goalNode->_world);
+                rawSetGoal(Vec2(trueGoal.x, trueGoal.y), goalNode->_world);
             }
             
             // If we already reached the next tile, get the next node along the path and set it as the next tile
             if(atTile(_nextStep)){
-                
+                CULog("Reached Tile (%f, %f)", _nextStep.x, _nextStep.y);
                 WorldSearchVertex* nextNode = _pathfinder->GetSolutionNext();
                 
                 if(nextNode){
                     _nextStep = Vec2((int) nextNode->x, (int) nextNode->y);
                 } else{
-                    return;
+                    rawSetGoal(trueGoal, goalNode->_world);
+                    CULog("Can't find next tile, recalculating");
                 }
-            
+                
+                nextTile = Vec2(_nextStep.x + 0.5, _nextStep.y + 0.5);
             }
             
-            direction = _nextStep - getPosition();
+            direction = nextTile - getPosition();
         }
         
         //Move towards the next tile
@@ -409,11 +433,7 @@ protected:
 
     bool atGoal(){
         // Get the goal
-        WorldSearchVertex* goalNode = _pathfinder->GetSolutionEnd();
-        
-        Vec2 goal = Vec2(goalNode->x, goalNode->y);
-        
-        return atTile(goal);
+        return trueGoal.x < 0 || atTile(trueGoal);
     };
 
     bool atTile(Vec2 tile){
@@ -445,7 +465,7 @@ protected:
         setHealth(_maxHealth);
         _wanderAngle = 0.0f;
         timeSinceLastMajorChange = 0.0f;
-        curAction = EnemyActions::LOWHEALTH;
+        curAction = EnemyActions::CHASE;
         
     }
     

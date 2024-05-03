@@ -86,7 +86,7 @@ bool WorldSearchVertex::GetSuccessors( AStarSearch<WorldSearchVertex> *astarsear
     for (const auto& diff : adj_list) {
         NewNode = WorldSearchVertex( x - diff.first, y - diff.second, _world);
         
-        if(_world.lock()->isPassable(NewNode.x, NewNode.y) && !((parent_x == NewNode.x) && (parent_y == NewNode.y))){
+        if(_world.lock()->isPassable(NewNode.x, NewNode.y) && !((parent_x == NewNode.x) && (parent_y == NewNode.y) && !NewNode.closeToEdge())){
             astarsearch->AddSuccessor( NewNode );
         }
     }
@@ -97,8 +97,7 @@ bool WorldSearchVertex::GetSuccessors( AStarSearch<WorldSearchVertex> *astarsear
 float WorldSearchVertex::GetCost( WorldSearchVertex &successor )
 {
     if(closeToEdge()){
-        CULog("close to edge");
-        return 100;
+        return 1000;
     }else {
         return 1;
     }
@@ -115,8 +114,7 @@ bool WorldSearchVertex::closeToEdge(){
     adj_list.push_back(std::make_pair(-1, 0));
 
     for (const auto& diff : adj_list) {
-        WorldSearchVertex AdjNode = WorldSearchVertex( x - diff.first, y - diff.second, _world);
-        if(!(_world.lock())->isPassable(AdjNode.x, AdjNode.y)){
+        if(!(_world.lock())->isPassable(x - diff.first, y - diff.second)){
             return true;
         }
     }

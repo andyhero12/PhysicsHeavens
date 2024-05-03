@@ -124,8 +124,6 @@ void MeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
     
     if (_counter < updateRate){
         _counter++;
-    } else {
-        _counter = 0;
     }
     
     _time++;
@@ -148,10 +146,10 @@ void MeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
     }
     else if(curAction == EnemyActions::CHASE){
         handleChase(overWorld);
-        if(_time >= FRAMES) {
-            curAction = AbstractEnemy::EnemyActions::WANDER;
-            _time = 0;
-        }
+//        if(_time >= FRAMES) {
+//            curAction = AbstractEnemy::EnemyActions::WANDER;
+//            _time = 0;
+//        }
     }
     else if(curAction == EnemyActions::LOWHEALTH){
         handleLowHealth(overWorld);
@@ -180,16 +178,17 @@ void MeleeEnemy::handleChase(OverWorld& overWorld) {
     
     if(_counter >= updateRate){
         setGoal(target_pos, overWorld.getWorld());
+        _counter = 0;
     }
     
     goToGoal();
     
     movementDirection = dist;
     
-    if( dist.length() < 4 && curAction == AbstractEnemy::EnemyActions::CHASE){
-        curAction = AbstractEnemy::EnemyActions::ATTACK;
-        _time = 0;
-    }
+//    if( dist.length() < 4 && curAction == AbstractEnemy::EnemyActions::CHASE){
+//        curAction = AbstractEnemy::EnemyActions::ATTACK;
+//        _time = 0;
+//    }
 }
 
 void MeleeEnemy::handleLowHealth(OverWorld& overWorld) {
@@ -213,7 +212,6 @@ void MeleeEnemy::handleRunaway(OverWorld& overWorld){
     
     
     if (distance < 10) {
-       
        setVX(direction.x * 1.5f);
        setVY(direction.y * 1.5f);
        movementDirection.x = direction.x ;
