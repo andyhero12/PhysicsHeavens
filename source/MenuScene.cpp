@@ -61,15 +61,6 @@ bool MenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _buttonset.push_back(_hostbutton = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("menu_host")));
     _buttonset.push_back(_joinbutton = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("menu_join")));
     _buttonset.push_back(_back = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("menu_back")));
-    // _assets->loadDirectory("json/mainmenuassets.json");
-    // std::shared_ptr<scene2::SceneNode> layer = _assets->get<scene2::SceneNode>("Menu");
-    // std::cout << dimen.width << "  " << dimen.height << std::endl;
-    // layer->setContentSize(dimen);
-    // layer->doLayout(); // This rearranges the children to fit the screen
-    // _buttonset.push_back(_button1 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("Menu_startmenu_button1")));
-    // _buttonset.push_back(_button2 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("Menu_startmenu_button2")));
-    // _buttonset.push_back(_button3 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("Menu_startmenu_button3")));
-    // Program the buttons
     _hostbutton->addListener([this](const std::string& name, bool down) {
         if (down) {  
             if(_input.getState()==InputController::State::CONTROLLER){
@@ -137,6 +128,7 @@ void MenuScene::setActive(bool value) {
             _joinbutton->activate();
             _back->activate();
             _backclicked = false;
+            _firstset = true;
         } else {
             _hostbutton->deactivate();
             _joinbutton->deactivate();
@@ -151,6 +143,10 @@ void MenuScene::setActive(bool value) {
 
 void MenuScene::update(float timestep){
     _input.update();
+    if(_firstset&&_input.getState()==InputController::State::CONTROLLER){
+        _hostbutton->setDown(true);
+        _firstset = false;
+    }
     timeSinceLastSwitch += timestep;
     //std::cout << timeSinceLastSwitch << std::endl;
     if (timeSinceLastSwitch >= switchFreq) {
