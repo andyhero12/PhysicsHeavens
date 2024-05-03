@@ -572,7 +572,7 @@ void GameScene::postUpdate(float dt)
 
     for (const std::shared_ptr<TileInfo>& t : _backgroundWrapper->getVisibleNodes()){
         for (Rect r : _transparentRects) {
-            if((r.doesIntersect(overWorld.getDog()->getPosition(), 1) || r.doesIntersect(overWorld.getClientDog()->getPosition(), 1)) && r.contains(t->getPosition())) {
+            if((r.doesIntersect(overWorld.getDog()->getPosition(), 1) || r.doesIntersect(overWorld.getClientDog()->getPosition(), 1)) && r.contains(t->getPos())) {
                 if(t->getIsUpperDecor()) {
                     _decorToHide.insert(t->getTileSprite());
                     //t->getTileSprite()->setColor(Color4f(1, 1, 1, 0.6f).lerp(t->getTileSprite()->getColor(), 0.98f));

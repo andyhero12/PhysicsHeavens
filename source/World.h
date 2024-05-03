@@ -47,11 +47,16 @@ public:
     }
 #pragma mark Constructors
     
-    virtual bool init(const cugl::Vec2& pos, const cugl::Size& size,Terrain m_type, std::shared_ptr<cugl::Texture> m_texture);
+    bool init(const cugl::Vec2& pos, const cugl::Size& size,Terrain m_type, std::shared_ptr<cugl::Texture> m_texture);
     std::shared_ptr<cugl::Texture> texture;
     std::shared_ptr<scene2::PolygonNode> tileSprite;
     bool isUpper;
+    Vec2 pos;
     
+    
+    Vec2 getPos() const {
+        return pos;
+    }
     void setUpperTrue(){
         isUpper = true;
     }
@@ -62,6 +67,14 @@ public:
         return tileSprite;
     }
     Terrain type;
+    
+    TileInfo(){
+        isUpper = false;
+        texture = nullptr;
+        tileSprite = nullptr;
+        pos = Vec2(0,0);
+        type = Terrain::IMPASSIBLE;
+    }
 private:
 };
 
