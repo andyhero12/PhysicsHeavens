@@ -67,6 +67,7 @@ public:
     void postUpdate();
     void ownedDogUpdate(InputController& _input, cugl::Size, std::shared_ptr<Dog> _curDog);
     void processShootEvent(const std::shared_ptr<ShootEvent>& shootEvent);
+    void processDecoyEvent(const std::shared_ptr<DecoyEvent>& decoyEvent);
     void processSizeEvent(const std::shared_ptr<SizeEvent>& sizeEvent);
     void processBiteEvent(const std::shared_ptr<BiteEvent>& biteEvent);
     void processRecallEvent(const std::shared_ptr<RecallEvent>& recallEvent);

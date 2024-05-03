@@ -626,7 +626,7 @@ void GameScene::fixedUpdate()
         if (auto decoyEvent = std::dynamic_pointer_cast<DecoyEvent>(e))
         {
             //            CULog("Decoy Event Got");
-            overWorld.getDecoys()->addNewDecoy(Vec2(decoyEvent->getPos().x, decoyEvent->getPos().y));
+            overWorld.processDecoyEvent(decoyEvent);
         }
         if (auto biteEvent = std::dynamic_pointer_cast<BiteEvent>(e))
         {
@@ -673,17 +673,26 @@ void GameScene::fixedUpdate()
             winNode->setVisible(true);
             _pause->setPause(true);
             _minimap->setVisible(false);
+            /** stop all sound and play win screen sound*/
+            AudioEngine::get()->clear();
+            auto source = _assets->get<Sound>(VICTORY_SCREEN);
+            AudioEngine::get()->play("win", source, true, source->getVolume(), true);
         }
         if (auto loseEvent = std::dynamic_pointer_cast<LoseEvent>(e))
         {
             loseNode->setVisible(true);
             _pause->setPause(true);
             _minimap->setVisible(false);
+            /** stops all sound and play lose screen sound*/
+            AudioEngine::get()->clear();
+            auto source = _assets->get<Sound>(LOSS_SCREEN);
+            AudioEngine::get()->play("lose", source, true, source->getVolume(), true);
         }
         
         if (auto spawnerDeathEvent = std::dynamic_pointer_cast<SpawnerDeathEvent>(e))
         {
             _spawnerController.processSpawnerDeathEvent(spawnerDeathEvent);
+            playSound("spawnerDeath", SPAWNER_DEATH);
         }
         if (auto clientHealthEvent = std::dynamic_pointer_cast<ClientHealthEvent>(e))
         {
@@ -1102,4 +1111,8 @@ void GameScene::executeSlidingWindow(Vec2 dogPos)
             }
         }
     }
+}
+void GameScene::playSound(std::string key, std::string sound){
+    auto source = _assets->get<Sound>(sound);
+    AudioEngine::get()->play(key, source, false, source->getVolume(), true);
 }

@@ -336,6 +336,7 @@ public:
     void addChildForeground();
     void executeSlidingWindow(Vec2 dest);
     void resetDraw();
+    void playSound(std::string key, std::string sound);
 };
 
 #endif /* __NL_GAME_SCENE_H__ */

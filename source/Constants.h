@@ -16,29 +16,36 @@
 #define DOG_BITE_SMALL "dogBiteSmall"
 #define DOG_BITE_MEDIUM "dogBiteMedium"
 #define DOG_BITE_LARGE "dogBiteLarge"
-
-#define DOG_DAMAGE "dogDamage"
 #define DOG_DASH "dogDash"
-#define DOG_DIE "dogDie"
 #define DOG_BOMB "dogBomb"
 #define DOG_TELEPORT "dogTeleport"
-
-
 #define DUMMY_GATE_EXPLOSION "dummyGateExplosion"
 #define DUMMY_GATE_PLACEMENT "dummyGatePlacement"
+
+#define DOG_DAMAGE "dogDamage" // need to add
+#define DOG_DIE "dogDie" // need to add
+
+
+// need to add
 #define ABSORB_ENEMY_ABSORBING "absorbEnemyAbsoring"
 #define BOMB_HISS "bombHiss"
+
 #define ENEMY_DEATH "enemyDeath"
 #define SPAWNER_DEATH "spawnerDeath"
 #define SPAWNER_HIT "spawnerHit"
 #define SPAWNING "spawning"
-#define BGM "BGM"
+
+#define BGM "BGM" // background music
 #define BUTTON_PRESS "buttonPress"
 #define BUTTON_SWAP "buttonSwap"
 #define GATE_TAKES_DAMAGE "gateTakesDamage"
-#define LOSS_SCREEN "lossScreen"
 #define SIZE_BAR_MAX "sizeBarMax"
 #define SUBWAY "subway"
+
+
+
+// added
+#define LOSS_SCREEN "lossScreen"
 #define VICTORY_SCREEN "victoryScreen"
 #define TUTORIAL "tutorial"
 

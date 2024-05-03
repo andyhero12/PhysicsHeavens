@@ -400,6 +400,7 @@ bool OverWorld::initDecoys()
 {
     _decoys = std::make_shared<DecoySet>();
     _decoys->init();
+    _decoys->setAsset(_assets);
     _decoys->setTexture(_assets->get<cugl::Texture>("base"));
     _decoys->setExplodeTexture(_assets->get<cugl::Texture>("explodingGate"));
     return true;
@@ -492,6 +493,14 @@ void OverWorld::processDashEvent(const std::shared_ptr<DashEvent> &dashEvent)
     {
         _dogClient->startDash();
     }
+    if (incomingHost == _isHost){
+        playSound("dogSound", DOG_DASH);
+    }
+}
+void OverWorld::processDecoyEvent(const std::shared_ptr<DecoyEvent>& decoyEvent){
+    getDecoys()->addNewDecoy(Vec2(decoyEvent->getPos().x, decoyEvent->getPos().y));
+    playSound("dogSound", DUMMY_GATE_PLACEMENT);
+
 }
 void OverWorld::processClientHealthEvent(const std::shared_ptr<ClientHealthEvent>& clientHealthEvent){
     bool incomingHost = clientHealthEvent->isHostDog();
@@ -715,5 +724,5 @@ void OverWorld::dispose(){
 
 void OverWorld::playSound(std::string key, std::string sound){
     auto source = _assets->get<Sound>(sound);
-    AudioEngine::get()->play(key, source, false, 1, true);
+    AudioEngine::get()->play(key, source, false, source->getVolume(), true);
 }
