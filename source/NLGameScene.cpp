@@ -804,20 +804,20 @@ void GameScene::addChildBackground()
             }
         }
     }
-    const std::vector<std::vector<std::shared_ptr<TileInfo>>> &currentBoundaries = _backgroundWrapper->getBoundaryWorld();
-    for (int i = 0; i < originalRows; i++)
-    {
-        for (int j = 0; j < originalCols; j++)
-        {
-            const std::shared_ptr<TileInfo>& t = currentBoundaries.at(i).at(j);
-            if (t->texture != nullptr)
-            {
-                t->setDebugColor(DYNAMIC_COLOR);
-                _world->addObstacle(t);
-                t->setDebugScene(_debugnode);
-            }
-        }
-    }
+//    const std::vector<std::vector<std::shared_ptr<TileInfo>>> &currentBoundaries = _backgroundWrapper->getBoundaryWorld();
+//    for (int i = 0; i < originalRows; i++)
+//    {
+//        for (int j = 0; j < originalCols; j++)
+//        {
+//            const std::shared_ptr<TileInfo>& t = currentBoundaries.at(i).at(j);
+//            if (t->texture != nullptr)
+//            {
+//                t->setDebugColor(DYNAMIC_COLOR);
+//                _world->addObstacle(t);
+//                t->setDebugScene(_debugnode);
+//            }
+//        }
+//    }
     const std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>> &lowerDecorWorld = _backgroundWrapper->getLowerDecorWorld();
     for (int n = 0; n < lowerDecorWorld.size(); n++)
     {

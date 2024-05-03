@@ -92,26 +92,27 @@ bool World::init(std::shared_ptr<LevelModel> _level, std::shared_ptr<cugl::Asset
 
 bool TileInfo::init(const cugl::Vec2& pos, const cugl::Size& size,Terrain m_type, std::shared_ptr<cugl::Texture> m_texture)
 {
-    if (BoxObstacle::init(pos,size)){
+//    if (BoxObstacle::init(pos,size)){
         isUpper = false;
-        setShared(false);
-        clearSharingDirtyBits();
-        setBodyType(b2_staticBody);
-        setDensity(10.0f);
-        setFriction(0.4f);
-        setRestitution(0.1);
+//        setShared(false);
+//        clearSharingDirtyBits();
+//        setBodyType(b2_staticBody);
+//        setDensity(10.0f);
+//        setFriction(0.4f);
+//        setRestitution(0.1);
         type = m_type;
         texture = m_texture;
         if (texture){
             tileSprite = scene2::PolygonNode::allocWithTexture(texture);
             tileSprite->setContentSize(Vec2(1, 1));
-            tileSprite->setPosition(getPosition());
+            tileSprite->setPosition(pos);
+//            tileSprite->setPosition(getPosition());
         }else{
             tileSprite = nullptr;
         }
         return true;
-    }
-    return false;
+//    }
+//    return false;
 }
 std::shared_ptr<cugl::Texture> World::getBoxFromTileSet(int position, const std::map<int,TileSet>& tileSets){
     if (position == 0){

@@ -21,7 +21,7 @@ enum Terrain {
 };
 
 // Information for a tile, add to this later since idk what this will include
-class TileInfo : public cugl::physics2::BoxObstacle{
+class TileInfo{
 public:
 #pragma mark Static Constructors
     
@@ -62,11 +62,6 @@ public:
         return tileSprite;
     }
     Terrain type;
-    virtual ~TileInfo(){
-//        CULog("Destructing Tile");
-        texture = nullptr;
-        tileSprite = nullptr;
-    }
 private:
 };
 
