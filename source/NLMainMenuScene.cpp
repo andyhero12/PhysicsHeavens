@@ -86,16 +86,6 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
         }
     });
 
-    // _button1->setPosition(650,90);
-    // _button3->setPosition(600,0);
-    // _Logo->setPosition(-100,670);
-    // _button1->setPosition(650,90);
-    // _button3->setPosition(600,0);
-    // _Logo->setPosition(-100,670);
-    
-    // layer->setContentSize(dimen);
-    // layer->setContentSize(dimen);
-
     _counter = 1;
     switchFreq = 0.2;
     _isdown = Isdown::isNONE;
