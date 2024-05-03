@@ -30,7 +30,7 @@ size_t WorldSearchVertex::Hash()
     return h1 ^ (h2 << 1);
 }
 
-float WorldSearchVertex::GoalDistanceEstimate( WorldSearchVertex &nodeGoal )
+float WorldSearchVertex::GoalDistanceEstimate( WorldSearchVertex &nodeGoal ) const
 {
     return abs(x - nodeGoal.x) + abs(y - nodeGoal.y);
 }
@@ -79,14 +79,11 @@ bool WorldSearchVertex::GetSuccessors( AStarSearch<WorldSearchVertex> *astarsear
     }
     
     WorldSearchVertex NewNode(0, 0, _world);
-    if (_world.expired()){
-        return false;
-    }
     // push each possible move except allowing the search to go backwards
     for (const auto& diff : adj_list) {
         NewNode = WorldSearchVertex( x - diff.first, y - diff.second, _world);
         
-        if(_world.lock()->isPassable(NewNode.x, NewNode.y) && !((parent_x == NewNode.x) && (parent_y == NewNode.y))){
+        if(_world->isPassable(NewNode.x, NewNode.y) && !((parent_x == NewNode.x) && (parent_y == NewNode.y))){
             astarsearch->AddSuccessor( NewNode );
         }
     }
@@ -94,7 +91,7 @@ bool WorldSearchVertex::GetSuccessors( AStarSearch<WorldSearchVertex> *astarsear
     return true;
 }
 
-float WorldSearchVertex::GetCost( WorldSearchVertex &successor )
+float WorldSearchVertex::GetCost( WorldSearchVertex &successor ) const
 {
     if(closeToEdge()){
         return 5;
@@ -103,7 +100,7 @@ float WorldSearchVertex::GetCost( WorldSearchVertex &successor )
     }
 }
 
-bool WorldSearchVertex::closeToEdge(){
+bool WorldSearchVertex::closeToEdge() const {
     //Create list of all possible next tiles
     std::list<std::pair<int, int>> adj_list;
 
@@ -115,7 +112,7 @@ bool WorldSearchVertex::closeToEdge(){
 
     for (const auto& diff : adj_list) {
         WorldSearchVertex AdjNode = WorldSearchVertex( x - diff.first, y - diff.second, _world);
-        if(!(_world.lock())->isPassable(AdjNode.x, AdjNode.y)){
+        if(!(_world->isPassable(AdjNode.x, AdjNode.y))){
             return true;
         }
     }

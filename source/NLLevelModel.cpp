@@ -110,6 +110,8 @@ void LevelModel::loadLayer(const std::shared_ptr<JsonValue>& json){
         loadPreSpawnedClusters(json);
     }else if (type == "DynamicDecor"){
         CULog("Not loading Dynamic Decor ATM");
+    }else if (type == "TransparentLocs") {
+        loadTransparentLocs(json);
     }else{
         CULog("TYPE NOT FOUND %s\n", type.data());
     }
@@ -285,6 +287,19 @@ bool LevelModel::loadSpanwerLocations(const std::shared_ptr<JsonValue>& json){
         }
         Spawner spawner = { spawnerX / _tileWidth, (_levelHeight * _tileHeight - spawnerY) / _tileWidth, hp, initDelay, regularDelay, primaryEnemy, secondaryEnemy, tertiaryEnemy };
         _spawnersPos.emplace_back(spawner);
+    }
+    return true;
+}
+
+bool LevelModel::loadTransparentLocs(const std::shared_ptr<JsonValue>& json){
+    auto rects = json->get("objects");
+    for (int i = 0 ; i< rects->size() ;i++){
+        float x = json->get("objects")->get(i)->get("x")->asFloat();
+        float y = json->get("objects")->get(i)->get("y")->asFloat();
+        float w = json->get("objects")->get(i)->get("width")->asFloat();
+        float h = json->get("objects")->get(i)->get("height")->asFloat();
+        cugl::Rect rect = cugl::Rect(x / _tileWidth, (_levelHeight * _tileHeight - y) / _tileWidth, w / _tileWidth, h / _tileWidth);
+        _transparentRects.emplace_back(rect);
     }
     return true;
 }

@@ -79,7 +79,6 @@ protected:
     std::shared_ptr<cugl::scene2::Button>    _button3;
     std::vector<std::shared_ptr<cugl::scene2::Button>> _buttonset;
     std::shared_ptr<SpriteAnimationNode> background;
-    std::shared_ptr<cugl::scene2::SceneNode>  _Logo;
 
     // MODEL
     /** Whether or not the player has pressed play to continue */
@@ -104,7 +103,7 @@ public:
      * This constructor does not allocate any objects or start the game.
      * This allows us to use the object without a heap pointer.
      */
-    MainMenuScene() : cugl::Scene2() {}
+    MainMenuScene() : cugl::Scene2(), _firstset(true),_counter(0),timeSinceLastSwitch(0.0) {}
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.

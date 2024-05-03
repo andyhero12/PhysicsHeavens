@@ -86,21 +86,13 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
         }
     });
 
-    // _button1->setPosition(650,90);
-    // _button3->setPosition(600,0);
-    // _Logo->setPosition(-100,670);
-    
-    // layer->setContentSize(dimen);
-
     _counter = 1;
     switchFreq = 0.2;
     _isdown = Isdown::isNONE;
-    _button1->setDown(true);
     background = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("background_main"), 1, 6, 6, 8);
     background->setScale(SCENE_HEIGHT/background->getTexture()->getHeight());
     background->setPosition(0.5 * background->getSize());
     addChild(background);
-
     addChild(layer);
     setActive(false);
     return true;
@@ -136,6 +128,7 @@ void MainMenuScene::setActive(bool value) {
             _isdown = Isdown::isNONE;
             _button1->activate();
             _button3->activate();
+            _firstset = true;
         } else {
             _button1->deactivate();
             _button3->deactivate();
@@ -149,6 +142,10 @@ void MainMenuScene::update(float timestep)
 {
     background->update();
     _input.update();
+    if(_firstset&&_input.getState()==InputController::State::CONTROLLER){
+        _button1->setDown(true);
+        _firstset = false;
+    }
     timeSinceLastSwitch += timestep;
     //std::cout << timeSinceLastSwitch << std::endl;
     if (timeSinceLastSwitch >= switchFreq) {
