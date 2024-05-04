@@ -516,6 +516,9 @@ void GameScene::preUpdate(float dt)
     overWorld.update(_input, computeActiveSize(), dt);
     _spawnerController.update(_monsterController, overWorld, dt);
     _monsterController.update(dt, overWorld);
+    if (!_isHost){
+        clientMonsterUpdate(dt);
+    }
     if (_isHost && overWorld.getDog()->readyToRecall())
     {
         resetDraw();
@@ -1149,12 +1152,21 @@ void GameScene::clientProcessMonsterHealth(std::shared_ptr<MonsterHealthEvent> m
     
     std::shared_ptr<cugl::physics2::Obstacle> it = _world->getObstacle(monsterHealthEvent->getObstacleID());
     if (it == nullptr){
-        CULog("lagged event?");
+//        CULog("lagged event?");
         return;
     }
     if (std::shared_ptr<AbstractEnemy> enemy = std::dynamic_pointer_cast<AbstractEnemy>(it)){
-        CULog("Actual Enemy");
+//        CULog("Actual Enemy");
         enemy->setHealth(enemy->getHealth() - monsterHealthEvent->getHealthDiff());
     }
     
+}
+
+
+void GameScene::clientMonsterUpdate(float dt){
+    for (std::shared_ptr<cugl::physics2::Obstacle> obs : _world->getObstacles()){
+        if (std::shared_ptr<AbstractEnemy> enemy  = std::dynamic_pointer_cast<AbstractEnemy>(obs)){
+            enemy->clientAnimationUpdate(overWorld, dt);
+        }
+    }
 }

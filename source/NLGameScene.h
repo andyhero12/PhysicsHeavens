@@ -334,7 +334,7 @@ public:
     void addChildForeground();
     void executeSlidingWindow(Vec2 dest);
     void resetDraw();
-    
+    void clientMonsterUpdate(float dt);
     
     void clientProcessMonsterHealth(std::shared_ptr<MonsterHealthEvent> monsterHealthEvent);
 };

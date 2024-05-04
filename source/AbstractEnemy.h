@@ -123,7 +123,7 @@ public:
 
     void update(float delta) override {
         Obstacle::update(delta);
-
+        
         _knockbackTimer -= delta;
         if(_knockbackTimer < 0) {
             _knockbackTimer = 0;
@@ -159,6 +159,21 @@ public:
         }
     }
     
+    void clientAnimationUpdate(OverWorld& overWorld, float dt){
+        if (timeSinceLastMajorChange < 1.0){
+            timeSinceLastMajorChange += dt;
+        }
+        runAnimations->animate(_curDirection, true);
+        if (timeSinceLastMajorChange < 1.0){
+            return;
+        }
+        timeSinceLastMajorChange = 0.0;
+        Vec2 vel = getLinearVelocity();
+        _prevDirection =_curDirection;
+        _curDirection = AnimationSceneNode::convertRadiansToDirections(vel.getAngle());
+        runAnimations->animate(_curDirection, true);
+//        attackAnimations->animate(_curDirection, curAction == EnemyActions::ATTACK);
+    }
     bool isInContact() const { return _inContact; }
     void setInContact(bool value) { _inContact = value; }
     
