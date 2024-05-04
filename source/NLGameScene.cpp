@@ -306,10 +306,10 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     loseNode->setScale(5*SCENE_WIDTH/loseNode->getTexture()->getWidth());
     loseNode->setPosition(0.5 * loseNode->getSize());
 
-    winNode = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("win_screen"), 3, 5, 13, 4);
-    winNode->setScale(3*SCENE_HEIGHT/winNode->getTexture()->getHeight());
+    winNode = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("win_screen"), 1, 11, 11, 4);
+    winNode->setScale(SCENE_HEIGHT/winNode->getTexture()->getHeight());
     winNode->setPosition(0.5 * winNode->getSize());
-    repeatWinNode = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("repeat_win"), 1, 4, 4, 8);
+    repeatWinNode = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("repeat_win"), 1, 7, 7, 8);
     repeatWinNode->setScale(SCENE_HEIGHT/repeatWinNode->getTexture()->getHeight());
     repeatWinNode->setPosition(0.5 * repeatWinNode->getSize());
     _pause = std::make_shared<PauseScene>();
@@ -344,7 +344,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _uinode->addChild(repeatWinNode);
     _uinode->addChild(_pause);
     loseNode->setVisible(false);
-    winNode->setVisible(false);
+    winNode->setVisible(true);
     repeatWinNode->setVisible(false);
     if (level_string == LEVEL_ONE_KEY){
         initTutorialOne();
