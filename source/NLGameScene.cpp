@@ -225,9 +225,10 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 
     _monsterSceneNode = scene2::SceneNode::alloc();
 
-    _debugnode = nullptr;
-//    _debugnode->setScale(zoom);
-//    _debugnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+//    _debugnode = nullptr;
+    _debugnode = scene2::SceneNode::alloc();
+    _debugnode->setScale(zoom);
+    _debugnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
 
     _uinode = scene2::SceneNode::alloc();
 
@@ -238,7 +239,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 
     addChild(_rootnode);
     _rootnode->addChild(_worldnode);
-//    _rootnode->addChild(_debugnode);
+    _rootnode->addChild(_debugnode);
 
     addChild(_uinode);
 
@@ -278,7 +279,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _collisionController.init(_network);
 
     _active = true;
-//    setDebug(false);
+    setDebug(false);
 
     _network->attachEventType<MonsterHealthEvent>();
     _network->attachEventType<BaseHealthEvent>();
@@ -481,7 +482,7 @@ void GameScene::addInitObstacle(const std::shared_ptr<physics2::Obstacle> &obj,
                                 const std::shared_ptr<scene2::SceneNode> &node)
 {
     _world->initObstacle(obj);
-//    obj->setDebugScene(_debugnode);
+    obj->setDebugScene(_debugnode);
     if (_isHost)
     {
         _world->getOwnedObstacles().insert({obj, 0});
@@ -876,8 +877,8 @@ void GameScene::addChildBackground()
                 boundary->setDensity(10.0f);
                 boundary->setFriction(0.4f);
                 boundary->setRestitution(0.1);
-//                boundary->setDebugColor(DYNAMIC_COLOR); // Don't add these back
-//                boundary->setDebugScene(_debugnode);
+                boundary->setDebugColor(DYNAMIC_COLOR); // Don't add these back
+                boundary->setDebugScene(_debugnode);
                 _world->initObstacle(boundary);
                 if(_isHost){
                     _world->getOwnedObstacles().insert({boundary,0});
@@ -956,10 +957,10 @@ void GameScene::updateInputController()
     else{
         _input.update();
         // Process the toggled key commands
-//        if (_input.didPressDebug())
-//        {
-//            setDebug(!isDebug());
-//        }
+        if (_input.didPressDebug())
+        {
+            setDebug(!isDebug());
+        }
     }
     
     
