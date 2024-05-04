@@ -101,10 +101,19 @@ void SpawnerController::update(MonsterController& monsterController, OverWorld& 
 }
 
 void SpawnerController::processDeathEvent(const std::shared_ptr<DeathEvent>& deathEvent){
-    std::shared_ptr<SpriteAnimationNode> deathAnim = SpriteAnimationNode::allocWithSheet(_deathTexture, 2, 5, 10, 6);
-    deathAnim->setAnchor(Vec2::ANCHOR_CENTER);
-//    spawnAnim->setScale(power * cugl::Size(1,1)/32.0);
-    deathAnim->setScale(deathEvent->getSize()/32.0);
+    std::shared_ptr<SpriteAnimationNode> deathAnim;
+    if(deathEvent->isBomb()) {
+        deathAnim = SpriteAnimationNode::allocWithSheet(_explodeTexture, 4, 5, 20, 1);
+        deathAnim->setFrame(2);
+        deathAnim->setAnchor(Vec2::ANCHOR_CENTER);
+        deathAnim->setScale(deathEvent->getSize()/64.0);
+    }
+    else {
+        deathAnim = SpriteAnimationNode::allocWithSheet(_deathTexture, 2, 5, 10, 6);
+        deathAnim->setAnchor(Vec2::ANCHOR_CENTER);
+        //spawnAnim->setScale(power * cugl::Size(1,1)/32.0);
+        deathAnim->setScale(deathEvent->getSize()/32.0);
+    }
     deathAnim->setPosition(deathEvent->getPos());
     _curAnimations.emplace(deathAnim);
     animSpawnerNode->addChild(deathAnim);
@@ -128,6 +137,7 @@ bool SpawnerController::init(const std::vector<LevelModel::Spawner>& startLocs, 
     _spawnTexture = assets->get<cugl::Texture>("enemySpawn");
     _deathTexture = assets->get<cugl::Texture>("enemyDeath");
     _deathSpawner = assets->get<cugl::Texture>("spawnerDeath");
+    _explodeTexture = assets->get<cugl::Texture>("explodingGate");
     _network = net;
     for (int i =0; i< startLocs.size(); i++){
         LevelModel::Spawner spawner = startLocs.at(i);
