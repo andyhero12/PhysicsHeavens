@@ -29,7 +29,7 @@ void toLowerCase(std::string& s) {
 }
 
 bool MonsterController::init(OverWorld& overWorld,
-     std::shared_ptr<cugl::scene2::SceneNode> debugNode){
+                             std::shared_ptr<cugl::scene2::SceneNode> debugNode){
     _current.clear();
     _pending.clear();
     _absorbEnem.clear();
@@ -138,7 +138,7 @@ void MonsterController::update(float timestep, OverWorld& overWorld){
 }
 void MonsterController::setMeleeAnimationData(std::shared_ptr<cugl::JsonValue> data,
                            std::shared_ptr<cugl::AssetManager> _assets){
-    _staticMeleeFactory = StaticMeleeFactory::alloc(data, _assets);
+    _staticMeleeFactory = StaticMeleeFactory::alloc(data, _assets, _audioController);
     _staticMeleeFactID = _network->getPhysController()->attachFactory(_staticMeleeFactory);
     _meleeFactory = MeleeFactory::alloc(data, _assets);
     _meleeFactID = _network->getPhysController()->attachFactory(_meleeFactory);
@@ -146,18 +146,18 @@ void MonsterController::setMeleeAnimationData(std::shared_ptr<cugl::JsonValue> d
 
 void MonsterController::setSpawnerAnimationData(std::shared_ptr<cugl::JsonValue> data,
                            std::shared_ptr<cugl::AssetManager> _assets){
-    _spawnerEnemyFactory = SpawnerEnemyFactory::alloc(data, _assets);
+    _spawnerEnemyFactory = SpawnerEnemyFactory::alloc(data, _assets, _audioController);
     _spawnerEnemyFactID = _network->getPhysController()->attachFactory(_spawnerEnemyFactory);
 }
 
 void MonsterController::setBombAnimationData(std::shared_ptr<cugl::JsonValue> data,
                         std::shared_ptr<cugl::AssetManager> _assets){
-    _bombEnemyFactory = BombFactory::alloc(data, _assets);
+    _bombEnemyFactory = BombFactory::alloc(data, _assets, _audioController);
     _bombEnemyFactID = _network->getPhysController()->attachFactory(_bombEnemyFactory);
 }
 void MonsterController::setAbsorbAnimationData(std::shared_ptr<cugl::JsonValue> data,
                         std::shared_ptr<cugl::AssetManager> _assets){
-    _absorbEnemyFactory = AbsorbFactory::alloc(data, _assets);
+    _absorbEnemyFactory = AbsorbFactory::alloc(data, _assets, _audioController);
     _absorbEnemyFactID = _network->getPhysController()->attachFactory(_absorbEnemyFactory);
 }
 

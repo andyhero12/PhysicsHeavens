@@ -11,6 +11,9 @@
 #include <random>
 #include "OverWorld.h"
 #include "AnimationSceneNode.h"
+#include "AudioController.h"
+#include "Constants.h"
+
 #define MAGIC_NUMBER_ENEMY_ANIMATION_FREQUENECY 4
 // Default physics values
 /** The density of this rocket */
@@ -97,6 +100,10 @@ public:
         return false;
     }
 
+    void setAudioController(std::shared_ptr<AudioController> m_audioController){
+        _audioController = m_audioController;
+    }
+    
     void setVX(float value) override {
         if(!(_knockbackTimer > 0)) {
             BoxObstacle::setVX(value);
@@ -277,6 +284,7 @@ protected:
     /** Timers */
     int _pathfindTimer = PATHFIND_COOLDOWN;
     
+    std::shared_ptr<AudioController> _audioController;
     /** Sets a new goal for this enemy to go to. Returns true if pathfinding to the goal was successful */
     bool setGoal(Vec2 goal, const World* world){
         // If we already pathfound recently, don't path find again

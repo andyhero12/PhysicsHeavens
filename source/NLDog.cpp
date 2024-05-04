@@ -462,15 +462,18 @@ void Dog::update(float delta)
         float brightness = 255 * (0.8f + ratio * 0.2f);
         baseBlankNode->setColor(cugl::Color4(brightness, brightness * ratio, brightness * ratio));
     }
-    if(_healTimer > 0) {
+    if (_healTimer > 0)
+    {
         _healTimer -= delta;
     }
-    if(_healTimer < 0) {
+    if (_healTimer < 0)
+    {
         _healTimer = 0;
-        //tints may be expensive, so separating out this special case may be worthwhile
+        // tints may be expensive, so separating out this special case may be worthwhile
         baseBlankNode->setColor(cugl::Color4(255, 255, 255));
     }
-    if(_healTimer > 0) {
+    if (_healTimer > 0)
+    {
         float ratio = (HEALED_DURATION - _healTimer) / HEALED_DURATION;
         float brightness = 255 * (0.55f + ratio * 0.45f);
         baseBlankNode->setColor(cugl::Color4(brightness, 255, brightness));
@@ -590,17 +593,23 @@ void Dog::setHealth(int value)
         _damagedTimer = DAMAGED_DURATION;
         _healTimer = 0;
     }
-    else {
+    else
+    {
         _healTimer = HEALED_DURATION;
         _damagedTimer = 0;
-    }
-    _health = std::max(0,value);
-    _uiController->setHealthBarTexture(float(_health)/_maxHealth);
+    };
+    _uiController->setHealthBarTexture(float(_health) / _maxHealth);
 }
 
-void Dog::addAbsorb(int value)
+bool Dog::addAbsorb(int value)
 {
-    setAbsorbValue(std::fmin(MAX_ABSORB, getAbsorb() + value));
+    int currentSize = getAbsorb();
+    int newSize = getAbsorb() + value;
+    setAbsorbValue(std::fmin(MAX_ABSORB, newSize));
+    if(MAX_ABSORB > currentSize && newSize > MAX_ABSORB){
+        return true;
+    }
+    return false;
 }
 
 void Dog::subAbsorb(int value)

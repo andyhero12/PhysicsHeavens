@@ -27,20 +27,22 @@
 #define DOG_DIE "dogDie"
 
 #define ENEMY_DEATH "enemyDeath"
+#define SPAWNER_DEATH "spawnerDeath"
+#define BOMB_HISS "bombHiss"
+#define SIZE_BAR_MAX "sizeBarMax"
+
 // need to add
 
-
 #define ABSORB_ENEMY_ABSORBING "absorbEnemyAbsoring"
-#define BOMB_HISS "bombHiss"
 
-#define SPAWNER_DEATH "spawnerDeath"
 #define SPAWNER_HIT "spawnerHit"
 #define SPAWNING "spawning"
+#define GATE_TAKES_DAMAGE "gateTakesDamage"
+
+
 
 #define BUTTON_PRESS "buttonPress"
 #define BUTTON_SWAP "buttonSwap"
-#define GATE_TAKES_DAMAGE "gateTakesDamage"
-#define SIZE_BAR_MAX "sizeBarMax"
 #define SUBWAY "subway"
 
 

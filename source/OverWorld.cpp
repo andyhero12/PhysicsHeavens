@@ -527,11 +527,15 @@ void OverWorld::processClientHealthEvent(const std::shared_ptr<ClientHealthEvent
 void OverWorld::processSizeEvent(const std::shared_ptr<SizeEvent> &sizeEvent)
 {
     bool incomingHost = sizeEvent->isHost();
+    bool maxSize = false;
     if (incomingHost)
     { // means incoming is from Original host
-        _dog->addAbsorb(sizeEvent->getSize());
+        maxSize = _dog->addAbsorb(sizeEvent->getSize());
     }else{
-        _dogClient->addAbsorb(sizeEvent->getSize());
+        maxSize = _dogClient->addAbsorb(sizeEvent->getSize());
+    }
+    if (incomingHost == _isHost && maxSize){
+        playSound("death" + std::to_string(dogSeq), SIZE_BAR_MAX);
     }
 }
 void OverWorld::processBiteEvent(const std::shared_ptr<BiteEvent> &biteEvent)

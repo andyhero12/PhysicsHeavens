@@ -262,15 +262,17 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _uinode->addChild(overWorld.getBaseSet()->getUINode());
 
     _monsterController.setNetwork(_network);
+    _monsterController.setAudioController(_audioController);
     _monsterController.setMeleeAnimationData(_constants->get("basicEnemy"), assets);
     _monsterController.setSpawnerAnimationData(_constants->get("spawnerEnemy"), assets);
     _monsterController.setBombAnimationData(_constants->get("bomb"), assets);
     _monsterController.setAbsorbAnimationData(_constants->get("absorbEnemy"), assets);
     _monsterController.init(overWorld, _debugnode);
-
+    
+    
     _spawnerController.setAnimNode(_worldnode);
 
-    _collisionController.init(_network, _assets);
+    _collisionController.init(_network, _assets, _audioController);
 
     _active = true;
     //    setDebug(false);

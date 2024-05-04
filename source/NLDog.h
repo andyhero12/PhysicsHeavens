@@ -324,7 +324,10 @@ public:
     std::shared_ptr<scene2::SceneNode> getUINode(){
         return _uiController->getUINode();
     }
-    void addAbsorb(int value);
+    /**
+     returns true if max size
+     */
+    bool addAbsorb(int value);
     void subAbsorb(int value);
     const int getAbsorb() const{ 
         return _absorbValue;

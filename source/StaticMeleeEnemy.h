@@ -43,22 +43,24 @@ public:
     LWSerializer _serializer;
     /** Deserializer for supporting parameters */
     LWDeserializer _deserializer;
+    std::shared_ptr<AudioController> _audioController;
 
     /**
      * Allocates a new instance of the factory using the given AssetManager.
      */
-    static std::shared_ptr<StaticMeleeFactory> alloc(std::shared_ptr<cugl::JsonValue> data, std::shared_ptr<AssetManager> &assets)
+    static std::shared_ptr<StaticMeleeFactory> alloc(std::shared_ptr<cugl::JsonValue> data, std::shared_ptr<AssetManager> &assets, std::shared_ptr<AudioController> m_audioController)
     {
         auto f = std::make_shared<StaticMeleeFactory>();
-        f->init(data, assets);
+        f->init(data, assets, m_audioController);
         return f;
     };
 
     /**
      * Initializes empty factories using the given AssetManager.
      */
-    void init(std::shared_ptr<cugl::JsonValue> data, std::shared_ptr<AssetManager> &assets)
+    void init(std::shared_ptr<cugl::JsonValue> data, std::shared_ptr<AssetManager> &assets, std::shared_ptr<AudioController> m_audioController)
     {
+        _audioController = m_audioController;
         _data = data;
         _assets = assets;
         int _framecols = data->getFloat("sprite cols", 0);

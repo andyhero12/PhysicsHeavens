@@ -41,6 +41,8 @@ class CollisionController
 {
 private:
     std::shared_ptr<cugl::AssetManager> _assets;
+    std::shared_ptr<AudioController> _audioController;
+    
 
 public:
     /**
@@ -74,8 +76,9 @@ public:
      *
      * @return true if initialization was successful
      */
-    bool init(std::shared_ptr<NetEventController> net, std::shared_ptr<cugl::AssetManager> assets)
+    bool init(std::shared_ptr<NetEventController> net, std::shared_ptr<cugl::AssetManager> assets, std::shared_ptr<AudioController> m_audioController )
     {
+        _audioController = m_audioController;
         _network = net;
         _assets = assets;
         return true;
