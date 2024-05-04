@@ -723,6 +723,10 @@ void GameScene::fixedUpdate()
         if (auto deathEvent = std::dynamic_pointer_cast<DeathEvent>(e))
         {
             _spawnerController.processDeathEvent(deathEvent);
+            if(deathEvent->isBomb()) {
+                _collisionController.enemyExplodedCollision(deathEvent->getPos(), 2 * deathEvent->getSize().width, overWorld.getDog(), _monsterController, true);
+                _collisionController.enemyExplodedCollision(deathEvent->getPos(), 2 * deathEvent->getSize().width, overWorld.getClientDog(), _monsterController, false);
+            }
         }
         if (auto winEvent = std::dynamic_pointer_cast<WinEvent>(e))
         {
