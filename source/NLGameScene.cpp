@@ -225,9 +225,10 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 
     _monsterSceneNode = scene2::SceneNode::alloc();
 
-    _debugnode = nullptr;
-//    _debugnode->setScale(zoom);
-//    _debugnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+//    _debugnode = nullptr;
+    _debugnode = scene2::SceneNode::alloc();
+    _debugnode->setScale(zoom);
+    _debugnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
 
     _uinode = scene2::SceneNode::alloc();
 
@@ -238,7 +239,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 
     addChild(_rootnode);
     _rootnode->addChild(_worldnode);
-//    _rootnode->addChild(_debugnode);
+    _rootnode->addChild(_debugnode);
 
     addChild(_uinode);
 
@@ -278,8 +279,10 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _collisionController.init(_network);
 
     _active = true;
-//    setDebug(false);
+    setDebug(false);
 
+    _network->attachEventType<MonsterHealthEvent>();
+    _network->attachEventType<BaseHealthEvent>();
     _network->attachEventType<DecoyEvent>();
     _network->attachEventType<BiteEvent>();
     _network->attachEventType<WinEvent>();
@@ -479,7 +482,7 @@ void GameScene::addInitObstacle(const std::shared_ptr<physics2::Obstacle> &obj,
                                 const std::shared_ptr<scene2::SceneNode> &node)
 {
     _world->initObstacle(obj);
-//    obj->setDebugScene(_debugnode);
+    obj->setDebugScene(_debugnode);
     if (_isHost)
     {
         _world->getOwnedObstacles().insert({obj, 0});
@@ -513,6 +516,9 @@ void GameScene::preUpdate(float dt)
     overWorld.update(_input, computeActiveSize(), dt);
     _spawnerController.update(_monsterController, overWorld, dt);
     _monsterController.update(dt, overWorld);
+    if (!_isHost){
+        clientMonsterUpdate(dt);
+    }
     if (_isHost && overWorld.getDog()->readyToRecall())
     {
         resetDraw();
@@ -666,6 +672,16 @@ void GameScene::fixedUpdate()
     while (_network->isInAvailable())
     {
         auto e = _network->popInEvent();
+        if (auto monsterHealthEvent = std::dynamic_pointer_cast<MonsterHealthEvent>(e))
+        {
+            if (!_isHost){ // These are client health Update
+                clientProcessMonsterHealth(monsterHealthEvent);
+            }
+        }
+        if (auto baseHealthEvent = std::dynamic_pointer_cast<BaseHealthEvent>(e))
+        {
+            overWorld.processBaseHealthEvent(baseHealthEvent);
+        }
         if (auto decoyEvent = std::dynamic_pointer_cast<DecoyEvent>(e))
         {
             //            CULog("Decoy Event Got");
@@ -709,7 +725,12 @@ void GameScene::fixedUpdate()
         }
         if (auto deathEvent = std::dynamic_pointer_cast<DeathEvent>(e))
         {
-            _spawnerController.processDeathEvent(deathEvent);
+            if(!deathEvent->isGate())
+                _spawnerController.processDeathEvent(deathEvent);
+            if(deathEvent->isBomb()) {
+                _collisionController.enemyExplodedCollision(deathEvent->getPos(), 2 * deathEvent->getSize().width, overWorld.getDog(), _monsterController, true);
+                _collisionController.enemyExplodedCollision(deathEvent->getPos(), 2 * deathEvent->getSize().width, overWorld.getClientDog(), _monsterController, false);
+            }
         }
         if (auto winEvent = std::dynamic_pointer_cast<WinEvent>(e))
         {
@@ -864,8 +885,8 @@ void GameScene::addChildBackground()
                 boundary->setDensity(10.0f);
                 boundary->setFriction(0.4f);
                 boundary->setRestitution(0.1);
-//                boundary->setDebugColor(DYNAMIC_COLOR); // Don't add these back
-//                boundary->setDebugScene(_debugnode);
+                boundary->setDebugColor(DYNAMIC_COLOR); // Don't add these back
+                boundary->setDebugScene(_debugnode);
                 _world->initObstacle(boundary);
                 if(_isHost){
                     _world->getOwnedObstacles().insert({boundary,0});
@@ -944,10 +965,10 @@ void GameScene::updateInputController()
     else{
         _input.update();
         // Process the toggled key commands
-//        if (_input.didPressDebug())
-//        {
-//            setDebug(!isDebug());
-//        }
+        if (_input.didPressDebug())
+        {
+            setDebug(!isDebug());
+        }
     }
     
     
@@ -1124,6 +1145,29 @@ void GameScene::executeSlidingWindow(Vec2 dogPos)
                     tile->getTileSprite()->setVisible(false);
                 }
             }
+        }
+    }
+}
+
+void GameScene::clientProcessMonsterHealth(std::shared_ptr<MonsterHealthEvent> monsterHealthEvent){
+    
+    std::shared_ptr<cugl::physics2::Obstacle> it = _world->getObstacle(monsterHealthEvent->getObstacleID());
+    if (it == nullptr){
+//        CULog("lagged event?");
+        return;
+    }
+    if (std::shared_ptr<AbstractEnemy> enemy = std::dynamic_pointer_cast<AbstractEnemy>(it)){
+//        CULog("Actual Enemy");
+        enemy->setHealth(enemy->getHealth() - monsterHealthEvent->getHealthDiff());
+    }
+    
+}
+
+
+void GameScene::clientMonsterUpdate(float dt){
+    for (std::shared_ptr<cugl::physics2::Obstacle> obs : _world->getObstacles()){
+        if (std::shared_ptr<AbstractEnemy> enemy  = std::dynamic_pointer_cast<AbstractEnemy>(obs)){
+            enemy->clientAnimationUpdate(overWorld, dt);
         }
     }
 }

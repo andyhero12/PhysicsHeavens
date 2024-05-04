@@ -1,0 +1,102 @@
+{
+  "textures": {
+    "background_rebind": {
+      "file": "textures/rebind_control.png"
+    },
+    "backbutton": {
+      "file": "textures/Menu/play.png"
+    }
+  },
+  "fonts": {
+    "04b3038.6204719543457": {
+        "file": "fonts/gyparody-hv.ttf",
+        "size": 38.6204719543457
+    }
+},
+  "widgets": {},
+  "scene2s": {
+    "Rebind": {
+        "type": "Node",
+        "format": {
+            "type": "Anchored"
+        },
+        "data": {
+            "anchor": [
+                0,
+                0
+            ],
+            "size": [
+                1280,
+                800
+            ],
+            "angle": 0,
+            "position": [
+                0,
+                0
+            ],
+            "visible": true
+        },
+        "children": {
+            "button1": {
+                "type": "Button",
+                "format": {
+                    "type": "Anchored"
+                },
+                "data": {
+                    "anchor": [
+                        1,
+                        0
+                    ],
+                    "size": [
+                        242,
+                        93
+                    ],
+                    "angle": 0,
+                    "position": [
+                        894,
+                        183
+                    ],
+                    "visible": true,
+                    "upnode": "playbutton"
+                },
+                "children": {
+                    "purplebutton": {
+                        "type": "Image",
+                        "data": {
+                            "texture": "playbutton",
+                            "anchor": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                290.61,
+                                84.44
+                            ],
+                            "angle": 0,
+                            "position": [
+                                0,
+                                -16.45
+                            ],
+                            "visible": true
+                        },
+                        "layout": {
+                            "x_anchor": "left",
+                            "y_anchor": "bottom",
+                            "absolute": false,
+                            "x_offset": 0,
+                            "y_offset": -0.28
+                        }
+                    }
+                },
+                "layout": {
+                    "x_anchor": "right",
+                    "y_anchor": "bottom",
+                    "absolute": false,
+                    "x_offset": -0.06,
+                    "y_offset": 0.17
+                }
+            }
+        }
+    }
+  }
+}

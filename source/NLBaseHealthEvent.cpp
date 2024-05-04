@@ -1,5 +1,5 @@
 //
-//  NLDeathEvent.cpp
+//  NLBaseHealthEvent.cpp
 //  Networked Physics Lab
 //
 //  This class represents an event of creating an extra-large crate
@@ -7,7 +7,7 @@
 //  Created by Andrew Cheng.
 //
 
-#include "NLDeathEvent.h"
+#include "NLBaseHealthEvent.h"
 
 /**
  * This method is used by the NetEventController to create a new event of using a
@@ -16,19 +16,16 @@
  * Not that this method is not static, it differs from the static alloc() method
  * and all methods must implement this method.
  */
-std::shared_ptr<NetEvent> DeathEvent::newEvent(){
-    return std::make_shared<DeathEvent>();
+std::shared_ptr<NetEvent> BaseHealthEvent::newEvent(){
+    return std::make_shared<BaseHealthEvent>();
 }
 
-std::shared_ptr<NetEvent> DeathEvent::allocDeathEvent(Vec2 pos, bool isHost, Size mSize, bool isBomb, bool isGate){
+std::shared_ptr<NetEvent> BaseHealthEvent::allocBaseHealthEvent(Vec2 pos, int dam){
     //TODO: make a new shared copy of the event and set its _pos to pos.
 #pragma mark BEGIN SOLUTION
-    auto event = std::make_shared<DeathEvent>();
+    auto event = std::make_shared<BaseHealthEvent>();
     event->_pos = pos;
-    event->_isHost = isHost;
-    event->_size = mSize;
-    event->_isBomb = isBomb;
-    event->_isGate = isGate;
+    event->_damage = dam;
     return event;
 #pragma mark END SOLUTION
 }
@@ -36,17 +33,13 @@ std::shared_ptr<NetEvent> DeathEvent::allocDeathEvent(Vec2 pos, bool isHost, Siz
 /**
  * Serialize any paramater that the event contains to a vector of bytes.
  */
-std::vector<std::byte> DeathEvent::serialize(){
+std::vector<std::byte> BaseHealthEvent::serialize(){
     //TODO: serialize _pos
 #pragma mark BEGIN SOLUTION
     _serializer.reset();
     _serializer.writeFloat(_pos.x);
     _serializer.writeFloat(_pos.y);
-    _serializer.writeFloat(_size.width);
-    _serializer.writeFloat(_size.height);
-    _serializer.writeBool(_isHost);
-    _serializer.writeBool(_isBomb);
-    _serializer.writeBool(_isGate);
+    _serializer.writeSint32(_damage);
     return _serializer.serialize();
 #pragma mark END SOLUTION
 }
@@ -59,7 +52,7 @@ std::vector<std::byte> DeathEvent::serialize(){
  * should be able to recreate a serialized event entirely, setting all the
  * useful parameters of this class.
  */
-void DeathEvent::deserialize(const std::vector<std::byte>& data){
+void BaseHealthEvent::deserialize(const std::vector<std::byte>& data){
     //TODO: deserialize data and set _pos
     //NOTE: You might be tempted to write Vec2(_deserializer.readFloat(),_deserializer.readFloat()), however, C++ doesn't specify the order in which function arguments are evaluated, so you might end up with <y,x> instead of <x,y>.
     
@@ -69,12 +62,6 @@ void DeathEvent::deserialize(const std::vector<std::byte>& data){
     float x = _deserializer.readFloat();
     float y = _deserializer.readFloat();
     _pos = Vec2(x,y);
-    
-    float w = _deserializer.readFloat();
-    float h = _deserializer.readFloat();
-    _size = Size(w, h);
-    _isHost = _deserializer.readBool();
-    _isBomb = _deserializer.readBool();
-    _isGate = _deserializer.readBool();
+    _damage = _deserializer.readSint32();
 #pragma mark END SOLUTION
 }

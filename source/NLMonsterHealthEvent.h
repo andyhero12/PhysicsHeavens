@@ -1,5 +1,5 @@
 //
-//  NLDeathEvent.h
+//  NLMonsterHealthEvent.h
 //  Networked Physics Lab
 //
 //  This class represents an event of creating an extra-large crate
@@ -7,24 +7,22 @@
 //  Created by Barry Lyu  on 12/15/23.
 //
 
-#ifndef NLDeathEvent_h
-#define NLDeathEvent_h
+#ifndef NLMonsterHealthEvent_h
+#define NLMonsterHealthEvent_h
 
 #include <cugl/cugl.h>
 using namespace cugl::physics2::net;
 using namespace cugl;
 
-class DeathEvent : public NetEvent {
+class MonsterHealthEvent : public NetEvent {
     
 protected:
     LWSerializer _serializer;
     LWDeserializer _deserializer;
     
-    Vec2 _pos;
-    Size _size;
-    bool _isHost;
-    bool _isBomb;
-    bool _isGate;
+    int _healthDiff;
+    Uint64 _obstacleId;
+    
 public:
     /**
      * This method is used by the NetEventController to create a new event of using a
@@ -35,7 +33,7 @@ public:
      */
     std::shared_ptr<NetEvent> newEvent() override;
     
-    static std::shared_ptr<NetEvent> allocDeathEvent(Vec2 pos, bool isHost, Size size, bool isBomb, bool isGate);
+    static std::shared_ptr<NetEvent> allocMonsterHealthEvent(int m_damage, Uint64 m_obstacleId);
     
     /**
      * Serialize any paramater that the event contains to a vector of bytes.
@@ -52,17 +50,10 @@ public:
      */
     void deserialize(const std::vector<std::byte>& data) override;
     
-    /** Gets the position of the event. */
-    Vec2 getPos() { return _pos; }
+    int getHealthDiff() {return _healthDiff;}
     
-    bool isHost() {return _isHost; }
-    
-    Size getSize() { return _size; }
-
-    bool isBomb() { return _isBomb; }
-
-    bool isGate() { return _isGate; }
+    Uint64 getObstacleID() {return _obstacleId; }
 };
 
 
-#endif /* NLDeathEvent_h */
+#endif /* NLMonsterHealthEvent_h */

@@ -104,11 +104,11 @@ void CollisionController::intraOverWorldCollisions(OverWorld& overWorld){
 }
 void CollisionController::overWorldMonsterControllerCollisions(OverWorld& overWorld, MonsterController& monsterController){
     std::unordered_set<std::shared_ptr<AbstractEnemy>>& monsterEnemies = monsterController.getEnemies();
-    if (monsterDogCollision(overWorld.getDog(), monsterEnemies)){
+    if (monsterDogCollision(overWorld.getDog(), monsterController, monsterEnemies)){
 //         CULog("MONSTER DOG COLLISION DETECTED\n");
     }
     if (_network->getNumPlayers() == 2){
-        if (clientDogMonsterCollision(overWorld.getClientDog(), monsterEnemies)){
+        if (clientDogMonsterCollision(overWorld.getClientDog(), monsterController, monsterEnemies)){
         }
     }
     if (monsterDecoyCollision(overWorld.getDecoys(), monsterEnemies)){
@@ -180,15 +180,14 @@ bool CollisionController::monsterBaseCollsion(OverWorld& overWorld, std::shared_
             if (distance < impactDistance) {
                 hitSomething = true;
                 collision = true;
-                monsterController.removeEnemy(enemy);
+                monsterController.removeEnemy(enemy, true);
                 enemy->executeDeath(overWorld);
                 curEnemies.erase(curA);
             }
         }
         auto curP = itP++;
         if (hitSomething){
-            CULog("Base Health %d", (*curP)->getHealth());
-            (*curP)->reduceHealth(5);
+            _network->pushOutEvent(BaseHealthEvent::allocBaseHealthEvent(base->getPos(), 10));
         }
     }
     return collision;
@@ -266,7 +265,7 @@ bool CollisionController::monsterDecoyExplosionCollision(std::shared_ptr<DecoySe
     return collide;
 }
 
-bool CollisionController::clientDogMonsterCollision(std::shared_ptr<Dog> curDog, std::unordered_set<std::shared_ptr<AbstractEnemy>>& curEnemies){
+bool CollisionController::clientDogMonsterCollision(std::shared_ptr<Dog> curDog, MonsterController& monsterController, std::unordered_set<std::shared_ptr<AbstractEnemy>>& curEnemies){
     float dogRadius = fmax(curDog->getWidth(), curDog->getHeight())/2;
     bool collision = false;
     auto it = curEnemies.begin();
@@ -276,20 +275,28 @@ bool CollisionController::clientDogMonsterCollision(std::shared_ptr<Dog> curDog,
         Vec2 norm = curDog->getPosition() - enemy->getPosition();
         float distance = norm.length();
         float impactDistance = dogRadius + enemyRadius + BUFFER;
-        it++;
         if (distance < impactDistance) {
             if (enemy->canAttack()){
-                collision = true;
-                enemy->resetAttack();
-                _network->pushOutEvent(ClientHealthEvent::allocClientHealthEvent(enemy->getDamage(),false));
+                if (std::dynamic_pointer_cast<BombEnemy>(enemy)) {
+                    monsterController.removeEnemy(enemy);
+                    collision = true;
+                    it = curEnemies.erase(it); // Correctly update the iterator here
+                    continue;
+                }
+                else {
+                    collision = true;
+                    enemy->resetAttack();
+                    _network->pushOutEvent(ClientHealthEvent::allocClientHealthEvent(enemy->getDamage(),false));
+                }
 //                curDog->setHealth(curDog->getHealth()-enemy->getDamage());
             }else{
             }
         }
+        ++it;
     }
     return collision;
 }
-bool CollisionController::monsterDogCollision(std::shared_ptr<Dog> curDog, std::unordered_set<std::shared_ptr<AbstractEnemy>>& curEnemies){
+bool CollisionController::monsterDogCollision(std::shared_ptr<Dog> curDog, MonsterController& monsterController, std::unordered_set<std::shared_ptr<AbstractEnemy>>& curEnemies){
     float dogRadius = fmax(curDog->getWidth(), curDog->getHeight())/2;
     bool collision = false;
     auto it = curEnemies.begin();
@@ -299,16 +306,24 @@ bool CollisionController::monsterDogCollision(std::shared_ptr<Dog> curDog, std::
         Vec2 norm = curDog->getPosition() - enemy->getPosition();
         float distance = norm.length();
         float impactDistance = dogRadius + enemyRadius + BUFFER;
-        it++;
         if (distance < impactDistance) {
             if (enemy->canAttack()){
-                collision = true;
-                enemy->resetAttack();
-                _network->pushOutEvent(ClientHealthEvent::allocClientHealthEvent(enemy->getDamage(),true));
+                if (std::dynamic_pointer_cast<BombEnemy>(enemy)) {
+                    monsterController.removeEnemy(enemy);
+                    collision = true;
+                    it = curEnemies.erase(it);
+                    continue;
+                }
+                else {
+                    collision = true;
+                    enemy->resetAttack();
+                    _network->pushOutEvent(ClientHealthEvent::allocClientHealthEvent(enemy->getDamage(),true));
+                }
 //                curDog->setHealth(curDog->getHealth()-enemy->getDamage());
             }else{
             }
         }
+        ++it;
     }
     return collision;
 }
@@ -334,6 +349,12 @@ void CollisionController::resolveBiteAttack(const std::shared_ptr<ActionPolygon>
         float dist = diff.length();
         if (withinAngle(action->getAngle()-90.0f, result, 180.0f) && dist <= 3 * action->getScale()){
             int damage = (int)(action->getScale() * action->getScale() * 3);
+            Uint64 objNum = _network->getPhysController()->getPhysicsWorld()->getObstacleId(enemy);
+            if (objNum == -1){
+                CULog("Somehow object doesn't exist");
+            }else{
+                _network->pushOutEvent(MonsterHealthEvent::allocMonsterHealthEvent(damage, objNum));
+            }
             enemy->applyDamage(damage, diff);
             collided = true;
             if(enemy->getHealth() <= 0){
@@ -403,7 +424,7 @@ void CollisionController::hugeBlastCollisionClient(const std::shared_ptr<ActionP
         float dist = diff.length();
         if (withinAngle(action->getAngle()-45.0f, result, 90.0f) && dist <= 5.5f * action->getScale()){
             hitSomething = true;
-            spawner->subHealth(25);
+            spawner->subHealth(60);
         }
     }
     if (hitSomething){
@@ -420,7 +441,7 @@ void CollisionController::resolveBlowupClient(const std::shared_ptr<ActionPolygo
         itS++;
         Vec2 diff = spawn->getPos() - action->getCenter();
         float dist = diff.length();
-        if (dist <= 2.2f * action->getScale()){
+        if (dist <= 3.4f * action->getScale()){
             spawn->subHealth(999);
         }
     }
@@ -483,7 +504,7 @@ void CollisionController::hugeBlastCollision(const std::shared_ptr<ActionPolygon
         float dist = diff.length();
         if (withinAngle(action->getAngle()-45.0f, result, 90.0f) && dist <= 5.5f * action->getScale()){
             hitSomething = true;
-            spawner->subHealth(25);
+            spawner->subHealth(60);
         }
     }
     if (hitSomething){
@@ -501,7 +522,7 @@ void CollisionController::resolveBlowup(const std::shared_ptr<ActionPolygon>& ac
         auto curA = itA++;
         Vec2 diff = enemy->getPosition() - action->getCenter();
         float dist = diff.length();
-        if (dist <= 2.2f * action->getScale()){
+        if (dist <= 3.4f * action->getScale()){
             monsterController.removeEnemy(enemy);
             monsterEnemies.erase(curA);
         }
@@ -513,7 +534,7 @@ void CollisionController::resolveBlowup(const std::shared_ptr<ActionPolygon>& ac
         itS++;
         Vec2 diff = spawn->getPos() - action->getCenter();
         float dist = diff.length();
-        if (dist <= 2.2f * action->getScale()){
+        if (dist <= 3.4f * action->getScale()){
             spawn->subHealth(999);
         }
     }
@@ -555,6 +576,39 @@ bool CollisionController::absorbEnemMonsterCollision(MonsterController& monsterC
     }
     return collision;
 }
+
+bool CollisionController::enemyExplodedCollision(Vec2 pos, float radius, std::shared_ptr<Dog> curDog, MonsterController& monsterController, bool isHost){
+    bool collide = false;
+    std::unordered_set<std::shared_ptr<AbstractEnemy>>& curEnemies = monsterController.getEnemies();
+    
+    auto itMon = curEnemies.begin();
+    while(itMon != curEnemies.end()){
+        const std::shared_ptr<AbstractEnemy>& enemy = *itMon;
+        auto curMon = itMon;
+        itMon++;
+        Vec2 norm = pos - enemy->getPosition();
+        float enemyRadius = fmin(enemy->getWidth(), enemy->getHeight())/2;
+        float distance = norm.length();
+        float impactDistance = radius + enemyRadius;
+        if (distance < impactDistance){ // need noise
+            collide = true;
+            monsterController.removeEnemy(enemy);
+            curEnemies.erase(curMon);
+        }
+    }
+
+    Vec2 norm = pos - curDog->getPosition();
+    float dogRadius = fmax(curDog->getWidth(), curDog->getHeight())/2;
+    float distance = norm.length();
+    float impactDistance = radius + dogRadius;
+    if (distance < impactDistance){ // need noise
+        collide = true;
+        _network->pushOutEvent(ClientHealthEvent::allocClientHealthEvent(8,isHost));
+    }
+
+    return collide;
+}
+
 void CollisionController::dispose(){
     
     _network = nullptr;

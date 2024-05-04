@@ -10,7 +10,7 @@
 
 #define WORLD_SIZE 3
 #define SHOOT_COST 5
-#define BOMB_COST 15
+#define BOMB_COST 10
 #include "NLDog.h"
 
 void OverWorld::reset()
@@ -453,7 +453,7 @@ bool OverWorld::setRootNode(const std::shared_ptr<scene2::SceneNode> &_worldNode
 
     // Add Dog to Obstacle World
     _worldNet->initObstacle(_dog);
-//    _dog->setDebugScene(_debugNode);
+    _dog->setDebugScene(_debugNode);
     if (_isHost)
     {
         _worldNet->getOwnedObstacles().insert({_dog, 0});
@@ -467,7 +467,7 @@ bool OverWorld::setRootNode(const std::shared_ptr<scene2::SceneNode> &_worldNode
     if (_network->getNumPlayers() == 2)
     {
         _worldNet->initObstacle(_dogClient);
-//        _dogClient->setDebugScene(_debugNode);
+        _dogClient->setDebugScene(_debugNode);
         _worldNode->addChild(_dogClient->getDogNode());
         if (!_isHost)
         {
@@ -578,6 +578,14 @@ void OverWorld::processExplodeEvent(const std::shared_ptr<ExplodeEvent> &explode
         }
         _clientAttackPolygonSet.addExplode(center, _dog->getExplosionRadius());
         _dogClient->startShoot();
+    }
+}
+
+void OverWorld::processBaseHealthEvent(const std::shared_ptr<BaseHealthEvent>& basEvent){
+    for (std::shared_ptr<Base> base : getBaseSet()->_bases){
+        if (base->getPos() == basEvent->getPos()){
+            base->reduceHealth(basEvent->getDamage());
+        }
     }
 }
 void OverWorld::recallDogToClosetBase(std::shared_ptr<Dog> _curDog){

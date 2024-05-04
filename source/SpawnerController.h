@@ -62,6 +62,7 @@ private:
     bool _isHost;
     
     std::shared_ptr<cugl::Texture> _deathTexture;
+    std::shared_ptr<cugl::Texture> _explodeTexture;
     std::shared_ptr<cugl::Texture> _spawnTexture;
     std::shared_ptr<cugl::Texture> _deathSpawner;
     std::unordered_set<std::shared_ptr<SpriteAnimationNode>> _curAnimations;

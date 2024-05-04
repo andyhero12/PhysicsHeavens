@@ -169,7 +169,7 @@ void AttackPolygons::addExplode(Vec2 center, float explosionRad){
     frontAttackPolygonNode->addChild(curPtr->getActionNode());
     Vec2 offset = Vec2(0,0);
     curPtr->getActionNode()->setAnchor(Vec2::ANCHOR_CENTER);
-    curPtr->getActionNode()->setScale(0.8);
+    curPtr->getActionNode()->setScale(1.0f);
     curPtr->getActionNode()->setPosition(offset * OFFSET_SCALE);
     currentAttacks.insert(curPtr);
 }

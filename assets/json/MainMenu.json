@@ -4,10 +4,10 @@
       "file": "textures/Menu/title-screen.png"
     },
     "playbutton": {
-      "file": "textures/Menu/playbutton.png"
+      "file": "textures/Menu/play.png"
     },
     "settingbutton": {
-        "file": "textures/Menu/settingbutton.png"
+        "file": "textures/Menu/setting.png"
       },
     "heavens_devils_logo": {
       "file": "textures/Menu/Title.png"
@@ -54,8 +54,8 @@
                         0
                     ],
                     "size": [
-                        289,
-                        58
+                        242,
+                        93
                     ],
                     "angle": 0,
                     "position": [
@@ -98,7 +98,7 @@
                     "x_anchor": "right",
                     "y_anchor": "bottom",
                     "absolute": false,
-                    "x_offset": -0.02,
+                    "x_offset": -0.06,
                     "y_offset": 0.17
                 }
             },
@@ -113,8 +113,8 @@
                         0
                     ],
                     "size": [
-                        289,
-                        58
+                        242,
+                        93
                     ],
                     "angle": 0,
                     "position": [
@@ -157,7 +157,7 @@
                     "x_anchor": "right",
                     "y_anchor": "bottom",
                     "absolute": false,
-                    "x_offset": -0.02,
+                    "x_offset": -0.06,
                     "y_offset": 0.05
                 }
             },
@@ -170,8 +170,8 @@
                         1
                     ],
                     "size": [
-                        456,
-                        360.2
+                        570,
+                        413
                     ],
                     "angle": 0,
                     "position": [
@@ -184,8 +184,8 @@
                     "x_anchor": "left",
                     "y_anchor": "top",
                     "absolute": false,
-                    "x_offset": 0.06,
-                    "y_offset": -0.03
+                    "x_offset": 0.05,
+                    "y_offset": 0
                 }
             }
         }

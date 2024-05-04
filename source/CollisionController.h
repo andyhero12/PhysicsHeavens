@@ -28,7 +28,9 @@
 #include "AttackPolygons.h"
 #include "OverWorld.h"
 #include "MonsterController.h"
+#include "NLBaseHealthEvent.h"
 #include "NLClientHealthEvent.h"
+#include "NLMonsterHealthEvent.h"
 #include "NLSizeEvent.h"
 /**
  * Namespace of functions implementing simple game physics.
@@ -94,7 +96,7 @@ public:
     
     void overWorldMonsterControllerCollisions(OverWorld& overWorld, MonsterController& monsterController);
     
-    bool monsterDogCollision(std::shared_ptr<Dog> curDog, std::unordered_set<std::shared_ptr<AbstractEnemy>>& curEnemies);
+    bool monsterDogCollision(std::shared_ptr<Dog> curDog, MonsterController& monsterController, std::unordered_set<std::shared_ptr<AbstractEnemy>>& curEnemies);
     bool monsterDecoyCollision(std::shared_ptr<DecoySet> decoySet, std::unordered_set<std::shared_ptr<AbstractEnemy>>& curEnemies);
     bool monsterDecoyExplosionCollision(std::shared_ptr<DecoySet> decoySet, MonsterController& monsterController);
     bool monsterBaseCollsion(OverWorld& overWorld, std::shared_ptr<BaseSet> curBases, MonsterController& monsterController);
@@ -107,7 +109,8 @@ public:
     
     void attackCollisions(OverWorld& overWorld, MonsterController& monsterController, SpawnerController& spawnerController);
     
-    bool clientDogMonsterCollision(std::shared_ptr<Dog> curDog, std::unordered_set<std::shared_ptr<AbstractEnemy>>& curEnemies);
+    bool clientDogMonsterCollision(std::shared_ptr<Dog> curDog, MonsterController& monsterController, std::unordered_set<std::shared_ptr<AbstractEnemy>>& curEnemies);
+    bool enemyExplodedCollision(Vec2 pos, float radius, std::shared_ptr<Dog> curDog, MonsterController& monsterController, bool isHost);
     void dispose();
     std::shared_ptr<NetEventController> _network;
 };

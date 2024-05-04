@@ -135,6 +135,7 @@ void SelectionScene::setActive(bool value) {
             _button2->activate();
             _firstset = true;
             _backClicked = false;
+            _counter = 0;
         } else {
             _button1->deactivate();
             _button2->deactivate();
