@@ -32,6 +32,7 @@
 #include <iostream>
 #include <sstream>
 #include <algorithm>
+#include <cmath>
 
 using namespace cugl;
 using namespace cugl::physics2::net;
@@ -44,7 +45,7 @@ using namespace cugl::physics2::net;
 #define SCENE_HEIGHT 800
 
 #define CANVAS_TILE_HEIGHT 8
-
+#define TILE_NAME   "TILE"
 /** Width of the game world in Box2d units */
 #define DEFAULT_WIDTH 100.0f
 /** Height of the game world in Box2d units */
@@ -209,12 +210,22 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     float zoom = dimen.height / CANVAS_TILE_HEIGHT;
 
     _backgroundWrapper = World::alloc(_level, _assets);
+
+    for(cugl::Rect r : _level->getTransparentRects()) {
+        int top = ceil(r.origin.y);
+        int bottom = floor(r.origin.y - r.size.height);
+        int left = floor(r.origin.x);
+        int right = ceil(r.origin.x + r.size.width);
+        _transparentRects.emplace_back(cugl::Rect(left, bottom, right - left - 1, top - bottom - 1));
+    }
+
     _worldnode = scene2::SceneNode::alloc();
     _worldnode->setScale(zoom);
     _worldnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
 
     _monsterSceneNode = scene2::SceneNode::alloc();
 
+//    _debugnode = nullptr;
     _debugnode = scene2::SceneNode::alloc();
     _debugnode->setScale(zoom);
     _debugnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
@@ -240,6 +251,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 
     _network->enablePhysics(_world, linkSceneToObsFunc);
 
+    addChildBackground();
     _spawnerController.init(_level->getSpawnersPos(), assets, _network);
     _spawnerController.setRootNode(_worldnode, _isHost);
     _worldnode->addChild(_monsterSceneNode);
@@ -269,6 +281,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _active = true;
     setDebug(false);
 
+    _network->attachEventType<MonsterHealthEvent>();
+    _network->attachEventType<BaseHealthEvent>();
     _network->attachEventType<DecoyEvent>();
     _network->attachEventType<BiteEvent>();
     _network->attachEventType<WinEvent>();
@@ -374,17 +388,15 @@ void GameScene::dispose()
 {
     if (_active)
     {
-        removeAllChildren();
         _pause->dispose();
         tutorialTiles.clear();
-        _world->dispose();
         _world = nullptr;
         _worldnode = nullptr;
-        _debugnode = nullptr;
         _rootnode = nullptr;
         _monsterSceneNode = nullptr;
         _network = nullptr;
         _decorToHide.clear();
+        _transparentRects.clear();
         _pause = nullptr;
         _level = nullptr;
         winNode = nullptr;
@@ -400,6 +412,7 @@ void GameScene::dispose()
         _collisionController.dispose();
         overWorld.dispose();
         _backgroundWrapper = nullptr;
+        _debugnode = nullptr;
         Scene2::dispose();
     }
 }
@@ -420,20 +433,19 @@ void GameScene::dispose()
 void GameScene::populate()
 {
     _world = physics2::net::NetWorld::alloc(Rect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT), Vec2(0, DEFAULT_GRAVITY));
-    _world->activateCollisionCallbacks(true);
-    _world->onBeginContact = [this](b2Contact* contact) {
-        this->beginContact(contact);
-    };
-    _world->onEndContact = [this](b2Contact* contact) {
-        this->endContact(contact);
-    };
-    _world->beforeSolve = [this](b2Contact *contact, const b2Manifold *oldManifold)
-    {
-        beforeSolve(contact, oldManifold);
-    };
+//    _world->activateCollisionCallbacks(true);
+//    _world->onBeginContact = [this](b2Contact* contact) {
+//        this->beginContact(contact);
+//    };
+//    _world->onEndContact = [this](b2Contact* contact) {
+//        this->endContact(contact);
+//    };
+//    _world->beforeSolve = [this](b2Contact *contact, const b2Manifold *oldManifold)
+//    {
+//        beforeSolve(contact, oldManifold);
+//    };
 
 #pragma mark : Background
-    addChildBackground();
 }
 void GameScene::linkSceneToObs(const std::shared_ptr<physics2::Obstacle> &obj,
                                const std::shared_ptr<scene2::SceneNode> &node)
@@ -554,12 +566,46 @@ void GameScene::postUpdate(float dt)
 
     _rootnode->resetPane();
 
-    // reverting hidden tiles
-    for (int i = 0; i < _decorToHide.size(); i++)
-    {
-        _decorToHide.at(i)->setColor(Color4::WHITE);
+
+    //_decorToHide.clear();
+
+    //CULog((std::to_string(overWorld.getDog()->getPosition().x) + " " + std::to_string(overWorld.getDog()->getPosition().y)).c_str());
+
+    for (const std::shared_ptr<TileInfo>& t : _backgroundWrapper->getVisibleNodes()){
+        for (Rect r : _transparentRects) {
+            if((r.doesIntersect(overWorld.getDog()->getPosition(), 1) || r.doesIntersect(overWorld.getClientDog()->getPosition(), 1)) && r.contains(t->getPos())) {
+                if(t->getIsUpperDecor()) {
+                    _decorToHide.insert(t->getTileSprite());
+                    //t->getTileSprite()->setColor(Color4f(1, 1, 1, 0.6f).lerp(t->getTileSprite()->getColor(), 0.98f));
+                }
+            }
+        }
     }
-    _decorToHide.clear();
+
+    for (auto it = _decorToHide.begin(); it != _decorToHide.end(); ) {
+        auto t = *it;
+        bool in = false;
+        for (Rect r : _transparentRects) {
+            in |= (r.doesIntersect(overWorld.getDog()->getPosition(), 1) || r.doesIntersect(overWorld.getClientDog()->getPosition(), 1)) && r.contains(t->getPosition());
+        }
+
+        auto c = t->getColor();
+        auto white = Color4f::WHITE;
+        if(in) {
+            t->setColor(Color4f(1, 1, 1, 0.6f).lerp(c, 0.97f));
+        }
+        else {
+            c.a += 2;
+            t->setColor(c);
+            if(t->getColor().a > 253) {
+                t->setColor(Color4::WHITE);
+                _decorToHide.erase(it++);
+                continue;
+            }
+        }
+        ++it;
+    }
+
     Vec2 delta;
 
     if (_isHost)
@@ -623,6 +669,16 @@ void GameScene::fixedUpdate()
     while (_network->isInAvailable())
     {
         auto e = _network->popInEvent();
+        if (auto monsterHealthEvent = std::dynamic_pointer_cast<MonsterHealthEvent>(e))
+        {
+            if (!_isHost){ // These are client health Update
+                clientProcessMonsterHealth(monsterHealthEvent);
+            }
+        }
+        if (auto baseHealthEvent = std::dynamic_pointer_cast<BaseHealthEvent>(e))
+        {
+            overWorld.processBaseHealthEvent(baseHealthEvent);
+        }
         if (auto decoyEvent = std::dynamic_pointer_cast<DecoyEvent>(e))
         {
             //            CULog("Decoy Event Got");
@@ -804,6 +860,7 @@ void GameScene::addChildBackground()
             }
         }
     }
+    
     const std::vector<std::vector<std::shared_ptr<TileInfo>>> &currentBoundaries = _backgroundWrapper->getBoundaryWorld();
     for (int i = 0; i < originalRows; i++)
     {
@@ -812,9 +869,20 @@ void GameScene::addChildBackground()
             const std::shared_ptr<TileInfo>& t = currentBoundaries.at(i).at(j);
             if (t->texture != nullptr)
             {
-                t->setDebugColor(DYNAMIC_COLOR);
-                _world->addObstacle(t);
-                t->setDebugScene(_debugnode);
+                
+                std::shared_ptr<cugl::physics2::BoxObstacle> boundary = cugl::physics2::BoxObstacle::alloc(t->getPos(),cugl::Size(0.9,0.9));
+                boundary->clearSharingDirtyBits();
+                boundary->setShared(false);
+                boundary->setBodyType(b2_staticBody);
+                boundary->setDensity(10.0f);
+                boundary->setFriction(0.4f);
+                boundary->setRestitution(0.1);
+                boundary->setDebugColor(DYNAMIC_COLOR); // Don't add these back
+                boundary->setDebugScene(_debugnode);
+                _world->initObstacle(boundary);
+                if(_isHost){
+                    _world->getOwnedObstacles().insert({boundary,0});
+                }
             }
         }
     }
@@ -1071,4 +1139,18 @@ void GameScene::executeSlidingWindow(Vec2 dogPos)
             }
         }
     }
+}
+
+void GameScene::clientProcessMonsterHealth(std::shared_ptr<MonsterHealthEvent> monsterHealthEvent){
+    
+    std::shared_ptr<cugl::physics2::Obstacle> it = _world->getObstacle(monsterHealthEvent->getObstacleID());
+    if (it == nullptr){
+        CULog("lagged event?");
+        return;
+    }
+    if (std::shared_ptr<AbstractEnemy> enemy = std::dynamic_pointer_cast<AbstractEnemy>(it)){
+        CULog("Actual Enemy");
+        enemy->setHealth(enemy->getHealth() - monsterHealthEvent->getHealthDiff());
+    }
+    
 }

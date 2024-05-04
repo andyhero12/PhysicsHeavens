@@ -580,6 +580,14 @@ void OverWorld::processExplodeEvent(const std::shared_ptr<ExplodeEvent> &explode
         _dogClient->startShoot();
     }
 }
+
+void OverWorld::processBaseHealthEvent(const std::shared_ptr<BaseHealthEvent>& basEvent){
+    for (std::shared_ptr<Base> base : getBaseSet()->_bases){
+        if (base->getPos() == basEvent->getPos()){
+            base->reduceHealth(basEvent->getDamage());
+        }
+    }
+}
 void OverWorld::recallDogToClosetBase(std::shared_ptr<Dog> _curDog){
     float shortestDist = 1000000.0f;
     Vec2 location;

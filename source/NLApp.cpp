@@ -254,6 +254,7 @@ void NetApp::updateMenuScene(float timestep) {
 void NetApp::updateHostScene(float timestep) {
     _hostgame.update(timestep);
     if(_hostgame.getBackClicked()){
+        _network->disconnect();
         _status = LEVEL;
         _hostgame.setActive(false);
         _level.setActive(true);
@@ -304,6 +305,7 @@ void NetApp::updateClientScene(float timestep) {
     _joingame.update(timestep);
     if(_joingame.getBackClicked()){
         _status = LEVEL;
+        _network->disconnect();
         _joingame.setActive(false);
         _level.setActive(true);
     }
@@ -465,6 +467,7 @@ void NetApp::updateSinglePlayerLevelScene(float timestep)
     _singlePlayer.update(timestep);
     if(_singlePlayer.getBackclick())
     {
+        _network->disconnect();
         _singlePlayer.setActive(false);
         _selection.setActive(true);
         _status = SELECTION;

@@ -54,6 +54,7 @@ public:
     AbstractEnemy(){}
     // Virtual destructor
     virtual ~AbstractEnemy(){
+        
         topLevelPlaceHolder = nullptr;
         runAnimations = nullptr;
         attackAnimations = nullptr;
@@ -185,7 +186,11 @@ public:
         if(m_health < _health) {
             _damagedTimer = DAMAGED_DURATION;
         }
-        _health = m_health;
+        _health = fmax(0.0,m_health);
+        if (_health > _maxHealth){
+            _health = _maxHealth;
+        }
+        
         _healthBar->setProgress((float)_health/_maxHealth);
     }
     void applyDamage(int dmg, Vec2 direction) {
@@ -283,11 +288,7 @@ protected:
     int _pathfindTimer = PATHFIND_COOLDOWN;
     
     /** Sets a new goal for this enemy to go to. Returns true if pathfinding to the goal was successful */
-    bool setGoal(Vec2 goal, const std::weak_ptr<World>& world){
-        if (world.expired()){
-            CULog("World Expired");
-            return false;
-        }
+    bool setGoal(Vec2 goal, const World* world){
         // If we already pathfound recently, don't path find again
         if(_pathfindTimer < PATHFIND_COOLDOWN){
             return searchSuccess();

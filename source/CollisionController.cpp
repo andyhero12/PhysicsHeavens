@@ -187,8 +187,7 @@ bool CollisionController::monsterBaseCollsion(OverWorld& overWorld, std::shared_
         }
         auto curP = itP++;
         if (hitSomething){
-            CULog("Base Health %d", (*curP)->getHealth());
-            (*curP)->reduceHealth(5);
+            _network->pushOutEvent(BaseHealthEvent::allocBaseHealthEvent(base->getPos(), 10));
         }
     }
     return collision;
@@ -334,6 +333,12 @@ void CollisionController::resolveBiteAttack(const std::shared_ptr<ActionPolygon>
         float dist = diff.length();
         if (withinAngle(action->getAngle()-90.0f, result, 180.0f) && dist <= 3 * action->getScale()){
             int damage = (int)(action->getScale() * action->getScale() * 3);
+            Uint64 objNum = _network->getPhysController()->getPhysicsWorld()->getObstacleId(enemy);
+            if (objNum == -1){
+                CULog("Somehow object doesn't exist");
+            }else{
+                _network->pushOutEvent(MonsterHealthEvent::allocMonsterHealthEvent(damage, objNum));
+            }
             enemy->applyDamage(damage, diff);
             collided = true;
             if(enemy->getHealth() <= 0){
@@ -403,7 +408,7 @@ void CollisionController::hugeBlastCollisionClient(const std::shared_ptr<ActionP
         float dist = diff.length();
         if (withinAngle(action->getAngle()-45.0f, result, 90.0f) && dist <= 5.5f * action->getScale()){
             hitSomething = true;
-            spawner->subHealth(25);
+            spawner->subHealth(75);
         }
     }
     if (hitSomething){

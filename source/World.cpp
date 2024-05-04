@@ -90,28 +90,20 @@ bool World::init(std::shared_ptr<LevelModel> _level, std::shared_ptr<cugl::Asset
     return true;
 }
 
-bool TileInfo::init(const cugl::Vec2& pos, const cugl::Size& size,Terrain m_type, std::shared_ptr<cugl::Texture> m_texture)
+bool TileInfo::init(const cugl::Vec2& m_pos, const cugl::Size& size,Terrain m_type, std::shared_ptr<cugl::Texture> m_texture)
 {
-    if (BoxObstacle::init(pos,size)){
-        isUpper = false;
-        setShared(false);
-        clearSharingDirtyBits();
-        setBodyType(b2_staticBody);
-        setDensity(10.0f);
-        setFriction(0.4f);
-        setRestitution(0.1);
-        type = m_type;
-        texture = m_texture;
-        if (texture){
-            tileSprite = scene2::PolygonNode::allocWithTexture(texture);
-            tileSprite->setContentSize(Vec2(1, 1));
-            tileSprite->setPosition(getPosition());
-        }else{
-            tileSprite = nullptr;
-        }
-        return true;
+    isUpper = false;
+    type = m_type;
+    texture = m_texture;
+    pos = m_pos;
+    if (texture){
+        tileSprite = scene2::PolygonNode::allocWithTexture(texture);
+        tileSprite->setContentSize(Vec2(1, 1));
+        tileSprite->setPosition(pos);
+    }else{
+        tileSprite = nullptr;
     }
-    return false;
+    return true;
 }
 std::shared_ptr<cugl::Texture> World::getBoxFromTileSet(int position, const std::map<int,TileSet>& tileSets){
     if (position == 0){
@@ -151,7 +143,7 @@ std::shared_ptr<cugl::Texture> World::getBoxFromTileSet(int position, const std:
     return curTile.textureTile->getSubTexture(minS, maxS, minT, maxT);
 }
 
-bool World::isPassable(int x, int y){
+bool World::isPassable(int x, int y) const {
     
     // If the coord is outside the bounds of the world, the tile is impassible
     if(x < 0 || y < 0 || x >= getCols() || y >= getRows()){

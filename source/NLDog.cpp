@@ -55,6 +55,7 @@ using namespace cugl;
 #define DEFAULT_RESTITUTION 0
 
 #define DAMAGED_DURATION 0.4f
+#define HEALED_DURATION 0.8f
 
 #define FIRE_RATE 25
 #define HEAL_RATE 50
@@ -115,6 +116,7 @@ bool Dog::init(const Vec2 pos, const Size size) {
         prevDirection =AnimationSceneNode::Directions::EAST;
         _curDirection = AnimationSceneNode::Directions::EAST;
         _damagedTimer = 0;
+        _healTimer = 0;
         return true;
     }
     
@@ -129,6 +131,12 @@ bool Dog::init(const Vec2 pos, const Size size) {
  * disposed, a rocket may not be used until it is initialized again.
  */
 void Dog::dispose() {
+    idleAnimation = nullptr;
+    runAnimation  = nullptr;
+    biteAnimation = nullptr;
+    shootAnimation = nullptr;
+    dashAnimation  = nullptr;
+    
     runAnimationMedium = nullptr;
     biteAnimationMedium = nullptr;
     idleAnimationMedium = nullptr;
@@ -146,6 +154,13 @@ void Dog::dispose() {
     idleAnimationLarge = nullptr;
     shootAnimationLarge = nullptr;
     dashAnimationLarge = nullptr;
+    
+    frontEffectsNode = nullptr;
+    backEffectsNode = nullptr;
+    baseBlankNode = nullptr;
+    recallAnimation = nullptr;
+    belowPenta = nullptr;
+    _uiController = nullptr;
 }
 
 
@@ -383,6 +398,19 @@ void Dog::update(float delta) {
         float brightness = 255 * (0.8f + ratio * 0.2f);
         baseBlankNode->setColor(cugl::Color4(brightness, brightness * ratio, brightness * ratio));
     }
+    if(_healTimer > 0) {
+        _healTimer -= delta;
+    }
+    if(_healTimer < 0) {
+        _healTimer = 0;
+        //tints may be expensive, so separating out this special case may be worthwhile
+        baseBlankNode->setColor(cugl::Color4(255, 255, 255));
+    }
+    if(_healTimer > 0) {
+        float ratio = (HEALED_DURATION - _healTimer) / HEALED_DURATION;
+        float brightness = 255 * (0.55f + ratio * 0.45f);
+        baseBlankNode->setColor(cugl::Color4(brightness, 255, brightness));
+    }
 }
 
 void Dog::setRecallAnimation(std::shared_ptr<AnimationSceneNode> recall){
@@ -483,6 +511,11 @@ void Dog::resetCurrentAnimations(DogSize size){
 void Dog::setHealth(int value){
     if(value < _health) {
         _damagedTimer = DAMAGED_DURATION;
+        _healTimer = 0;
+    }
+    else {
+        _healTimer = HEALED_DURATION;
+        _damagedTimer = 0;
     }
     _health = std::max(0,value);
     _uiController->setHealthBarTexture(float(_health)/_maxHealth);

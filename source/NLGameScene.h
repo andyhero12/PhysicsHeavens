@@ -33,6 +33,8 @@
 #include "NLWinEvent.h"
 #include "NLLoseEvent.h"
 #include "NLSpawnerDeathEvent.h"
+#include "NLBaseHealthEvent.h"
+#include "NLMonsterHealthEvent.h"
 #include "NLCameraController.h"
 #include "NLLevelModel.h"
 #include "World.h"
@@ -98,7 +100,8 @@ protected:
 
     std::shared_ptr<World> _backgroundWrapper;
     
-    std::vector<std::shared_ptr<scene2::SceneNode>> _decorToHide;
+    std::vector<cugl::Rect> _transparentRects;
+    std::set<std::shared_ptr<scene2::SceneNode>> _decorToHide;
     
     std::shared_ptr<Minimap> _minimap;
     
@@ -331,6 +334,9 @@ public:
     void addChildForeground();
     void executeSlidingWindow(Vec2 dest);
     void resetDraw();
+    
+    
+    void clientProcessMonsterHealth(std::shared_ptr<MonsterHealthEvent> monsterHealthEvent);
 };
 
 #endif /* __NL_GAME_SCENE_H__ */

@@ -21,7 +21,7 @@ enum Terrain {
 };
 
 // Information for a tile, add to this later since idk what this will include
-class TileInfo : public cugl::physics2::BoxObstacle{
+class TileInfo{
 public:
 #pragma mark Static Constructors
     
@@ -47,11 +47,16 @@ public:
     }
 #pragma mark Constructors
     
-    virtual bool init(const cugl::Vec2& pos, const cugl::Size& size,Terrain m_type, std::shared_ptr<cugl::Texture> m_texture);
+    bool init(const cugl::Vec2& pos, const cugl::Size& size,Terrain m_type, std::shared_ptr<cugl::Texture> m_texture);
     std::shared_ptr<cugl::Texture> texture;
     std::shared_ptr<scene2::PolygonNode> tileSprite;
     bool isUpper;
+    Vec2 pos;
     
+    
+    Vec2 getPos() const {
+        return pos;
+    }
     void setUpperTrue(){
         isUpper = true;
     }
@@ -62,10 +67,13 @@ public:
         return tileSprite;
     }
     Terrain type;
-    virtual ~TileInfo(){
-//        CULog("Destructing Tile");
+    
+    TileInfo(){
+        isUpper = false;
         texture = nullptr;
         tileSprite = nullptr;
+        pos = Vec2(0,0);
+        type = Terrain::IMPASSIBLE;
     }
 private:
 };
@@ -110,7 +118,7 @@ public:
         return tilesAtCoords;
     }
     
-    const std::vector<std::vector<std::shared_ptr<TileInfo>>>& getBoundaryWorld(){
+    const std::vector<std::vector<std::shared_ptr<TileInfo>>>& getBoundaryWorld() const {
         return boundaryWorld;
     }
     
@@ -122,15 +130,15 @@ public:
     }
     
     // Get whether a tile is passible or not
-    bool isPassable(int x, int y);
+    bool isPassable(int x, int y) const;
     
     // Get the number of rows of tiles in the world
-    int getRows(){
+    int getRows() const{
         return(int) boundaryWorld.size();
     }
     
     // Get the number of columns of tiles in the world
-    int getCols(){
+    int getCols() const{
         return (int) boundaryWorld[0].size();
     }
 };
