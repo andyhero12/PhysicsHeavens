@@ -39,7 +39,7 @@ void Base::update(){
 
 void Base::reduceHealth(int val){
     _health = _health - val;
-    CULog("%f", static_cast<double>(_health)/_maxHealth);
+//    CULog("%f", static_cast<double>(_health)/_maxHealth);
     _gateUIController->setGateBarTexture(static_cast<double>(_health)/_maxHealth);
     _damagedTimer = DAMAGED_DURATION;
 }
