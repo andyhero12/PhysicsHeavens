@@ -12,8 +12,8 @@
 //  Author: Walker White
 //  Version: 1/10/17
 //
-#ifndef __NL_Setting_SCENE_H__
-#define __NL_Setting_SCENE_H__
+#ifndef __NL_REBIND_SCENE_H__
+#define __NL_REBIND_SCENE_H__
 #include <cugl/cugl.h>
 #include "GlobalConstants.h"
 #include "NLInput.h"
@@ -31,62 +31,24 @@
  * Once asset loading is completed, it will display a play button.  Clicking
  * this button will inform the application root to switch to the gameplay mode.
  */
-class SettingScene : public cugl::Scene2 {
-public:
-    enum button {
-            /** User has not yet made a choice */
-            b1,
-            /** User wants to host a game */
-            b2,
-            /** User wants to join a game */
-            b3, 
-
-            b4,
-
-            NONE
-        };
+class RebindScene : public cugl::Scene2 {
 protected:
     /** The asset manager for loading. */
     std::shared_ptr<cugl::AssetManager> _assets;
     
     // NO CONTROLLER (ALL IN SEPARATE THREAD)
-    
-    // VIEW
-    /** The animated progress bar */
-    std::shared_ptr<cugl::scene2::ProgressBar>  _bar;
-    /** The engine name */
-    std::shared_ptr<cugl::scene2::SceneNode>  _brand;
+
     /** The "play" button */
     std::shared_ptr<cugl::scene2::Button>    _button;
 
     std::shared_ptr<cugl::scene2::SpriteNode> background;
 
-    std::shared_ptr<cugl::scene2::Slider> _slider;
-    std::shared_ptr<cugl::scene2::Label> _label;
-    float _value;
-
-    button _buttonselection;
     InputController _input;
-
-    std::map<int, int> frameTargets;
     // MODEL
-    /** The progress displayed on the screen */
-    float _progress;
-    /** Whether or not the player has pressed play to continue */
-    bool  _completed;
-    
-    int frame;
 
-    int curMoveAnim;
-
-    int moveCooldown;
-
-    int level;
-
-    bool _goright;
-    bool _goleft;
-    bool firsttime;
     bool _backClicked;
+
+    bool firsttime;
     /**
      * Returns the active screen size of this scene.
      *
@@ -104,35 +66,18 @@ public:
      * This constructor does not allocate any objects or start the game.
      * This allows us to use the object without a heap pointer.
      */
-    SettingScene() : cugl::Scene2(), 
-    _progress(0.0f), 
-    frame(0.0f), 
-    curMoveAnim(0), 
-    moveCooldown(10), 
-    _goleft(false), 
-    _goright(false), 
-    _buttonselection(NONE), 
-    level(1),
+    RebindScene() : cugl::Scene2(), 
     firsttime(true),
-    _backClicked(false),
-    _value(0.0){
-    frameTargets = {
-        {1, 4},
-        {2, 5},
-        {3, 6},
-        {4, 7}
-        // Add new levels and frames as needed
-    };
-
-    }
-    
+    _backClicked(false)
+    {};
+   
     /**
      * Disposes of all (non-static) resources allocated to this mode.
      *
      * This method is different from dispose() in that it ALSO shuts off any
      * static resources, like the input controller.
      */
-    ~SettingScene() { dispose(); }
+    ~RebindScene() { dispose(); }
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.
@@ -150,7 +95,7 @@ public:
      *
      * @return true if the controller is initialized properly, false otherwise.
      */
-    bool init(const std::shared_ptr<cugl::AssetManager>& assets);
+    virtual bool init(const std::shared_ptr<cugl::AssetManager>& assets);
     
     
 #pragma mark -
@@ -173,55 +118,12 @@ public:
 
     virtual void setActive(bool value) override;
 
-    button getLevel() const { return _buttonselection;}
-
-    bool readToAnim(){
-        return curMoveAnim >= moveCooldown;
-    }
-    
-    bool readyToChangeLevel(){
-        return (finAnimLevel1() || finAnimLevel2() || finAnimLevel3()||finAnimLevel4())&&readToAnim();
-    }
-    bool finAnimLevel1(){
-        return level == 1 && background->getFrame() == 4;
-    }
-    bool finAnimLevel2(){
-        return level == 2 && background->getFrame() == 5;
-    }
-    bool finAnimLevel3(){
-        return level == 3 && background->getFrame() == 6;
-    }
-    bool finAnimLevel4(){
-        return level == 4 && background->getFrame() == 7;
-    }
-    void resetAnimCD(){
-        curMoveAnim = 0;
-    }
-    void resetLevel(){
-        _buttonselection = button::NONE;
-    }
-    void resetgochange(){
-        _goleft = false;
-        _goright = false;
-    }
-    
-    void updatelevelscene(){
-       if (_goright && level < 4) {
-        level += 1;
-        } else if (_goleft && level > 1) {
-            level -= 1;
-        }
-
-    }
-
-    void adjustFrame(int level);
-
     bool getBackclick(){
         return _backClicked;
     }
-
     
 };
 
+#endif /* Rebind.h */
 
-#endif /* __NL_LOADING_SCENE_H__ */
+

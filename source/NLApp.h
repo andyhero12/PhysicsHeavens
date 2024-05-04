@@ -26,6 +26,7 @@
 #include "NLSelection.h"
 #include "Setting.h"
 #include "NLSinglePlayerLevel.h"
+#include "Rebind.h"
 
 using namespace cugl::physics2::net;
 
@@ -44,6 +45,7 @@ enum Status {
     SELECTION,
     SETTING,
     GAME,
+    REBIND,
     SINGLEPLAYER
 };
 
@@ -76,9 +78,10 @@ protected:
     InputController _input;
 
     SelectionScene _selection;
-    
 
     SettingScene _setting;
+
+    RebindScene _rebind;
     
     /** Whether or not we have finished loading all assets */
     bool _loaded;
@@ -228,6 +231,8 @@ public:
     void updateSelectionScene(float timestep);
 
     void updateSettingScene(float timestep);
+
+    void updateRebindscene(float timestep);
 
     /**
      * The method called to draw the application to the screen.
