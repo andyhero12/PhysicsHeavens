@@ -29,6 +29,7 @@
 #include "OverWorld.h"
 #include "MonsterController.h"
 #include "NLClientHealthEvent.h"
+#include "NLMonsterHealthEvent.h"
 #include "NLSizeEvent.h"
 /**
  * Namespace of functions implementing simple game physics.

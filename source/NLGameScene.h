@@ -33,6 +33,7 @@
 #include "NLWinEvent.h"
 #include "NLLoseEvent.h"
 #include "NLSpawnerDeathEvent.h"
+#include "NLMonsterHealthEvent.h"
 #include "NLCameraController.h"
 #include "NLLevelModel.h"
 #include "World.h"
@@ -332,6 +333,9 @@ public:
     void addChildForeground();
     void executeSlidingWindow(Vec2 dest);
     void resetDraw();
+    
+    
+    void clientProcessMonsterHealth(std::shared_ptr<MonsterHealthEvent> monsterHealthEvent);
 };
 
 #endif /* __NL_GAME_SCENE_H__ */

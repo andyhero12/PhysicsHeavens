@@ -186,7 +186,11 @@ public:
         if(m_health < _health) {
             _damagedTimer = DAMAGED_DURATION;
         }
-        _health = m_health;
+        _health = fmax(0.0,m_health);
+        if (_health > _maxHealth){
+            _health = _maxHealth;
+        }
+        
         _healthBar->setProgress((float)_health/_maxHealth);
     }
     void applyDamage(int dmg, Vec2 direction) {

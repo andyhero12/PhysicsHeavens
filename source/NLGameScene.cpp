@@ -280,6 +280,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _active = true;
 //    setDebug(false);
 
+    _network->attachEventType<MonsterHealthEvent>();
     _network->attachEventType<DecoyEvent>();
     _network->attachEventType<BiteEvent>();
     _network->attachEventType<WinEvent>();
@@ -666,6 +667,12 @@ void GameScene::fixedUpdate()
     while (_network->isInAvailable())
     {
         auto e = _network->popInEvent();
+        if (auto monsterHealthEvent = std::dynamic_pointer_cast<MonsterHealthEvent>(e))
+        {
+            if (!_isHost){ // These are client health Update
+                clientProcessMonsterHealth(monsterHealthEvent);
+            }
+        }
         if (auto decoyEvent = std::dynamic_pointer_cast<DecoyEvent>(e))
         {
             //            CULog("Decoy Event Got");
@@ -1126,4 +1133,18 @@ void GameScene::executeSlidingWindow(Vec2 dogPos)
             }
         }
     }
+}
+
+void GameScene::clientProcessMonsterHealth(std::shared_ptr<MonsterHealthEvent> monsterHealthEvent){
+    
+    std::shared_ptr<cugl::physics2::Obstacle> it = _world->getObstacle(monsterHealthEvent->getObstacleID());
+    if (it == nullptr){
+        CULog("lagged event?");
+        return;
+    }
+    if (std::shared_ptr<AbstractEnemy> enemy = std::dynamic_pointer_cast<AbstractEnemy>(it)){
+        CULog("Actual Enemy");
+        enemy->setHealth(enemy->getHealth() - monsterHealthEvent->getHealthDiff());
+    }
+    
 }
