@@ -33,6 +33,7 @@
 #include "NLWinEvent.h"
 #include "NLLoseEvent.h"
 #include "NLSpawnerDeathEvent.h"
+#include "NLBaseHealthEvent.h"
 #include "NLMonsterHealthEvent.h"
 #include "NLCameraController.h"
 #include "NLLevelModel.h"

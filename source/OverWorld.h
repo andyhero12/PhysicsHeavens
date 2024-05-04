@@ -21,6 +21,7 @@
 #include "NLRecallEvent.h"
 #include "NLBiteEvent.h"
 #include "NLExplodeEvent.h"
+#include "NLBaseHealthEvent.h"
 #include "NLShootEvent.h"
 #include "World.h"
 #include "NLDashEvent.h"
@@ -71,6 +72,7 @@ public:
     void processRecallEvent(const std::shared_ptr<RecallEvent>& recallEvent);
     void processExplodeEvent(const std::shared_ptr<ExplodeEvent>& explodeEvent);
     void processDashEvent(const std::shared_ptr<DashEvent>& dashEvent);
+    void processBaseHealthEvent(const std::shared_ptr<BaseHealthEvent>& basEvent);
     void processClientHealthEvent(const std::shared_ptr<ClientHealthEvent>& clientHealthEvent);
     void recallDogToClosetBase(std::shared_ptr<Dog> _curDog);
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch,cugl::Size totalSize);

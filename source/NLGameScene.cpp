@@ -281,6 +281,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 //    setDebug(false);
 
     _network->attachEventType<MonsterHealthEvent>();
+    _network->attachEventType<BaseHealthEvent>();
     _network->attachEventType<DecoyEvent>();
     _network->attachEventType<BiteEvent>();
     _network->attachEventType<WinEvent>();
@@ -672,6 +673,10 @@ void GameScene::fixedUpdate()
             if (!_isHost){ // These are client health Update
                 clientProcessMonsterHealth(monsterHealthEvent);
             }
+        }
+        if (auto baseHealthEvent = std::dynamic_pointer_cast<BaseHealthEvent>(e))
+        {
+            overWorld.processBaseHealthEvent(baseHealthEvent);
         }
         if (auto decoyEvent = std::dynamic_pointer_cast<DecoyEvent>(e))
         {

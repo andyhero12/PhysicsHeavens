@@ -187,8 +187,7 @@ bool CollisionController::monsterBaseCollsion(OverWorld& overWorld, std::shared_
         }
         auto curP = itP++;
         if (hitSomething){
-            CULog("Base Health %d", (*curP)->getHealth());
-            (*curP)->reduceHealth(5);
+            _network->pushOutEvent(BaseHealthEvent::allocBaseHealthEvent(base->getPos(), 10));
         }
     }
     return collision;
