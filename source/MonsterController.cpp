@@ -34,7 +34,7 @@ bool MonsterController::init(OverWorld& overWorld,
     _pending.clear();
     _absorbEnem.clear();
     _debugNode = nullptr;
-
+    int ind = 0;
     for (const LevelModel::PreSpawned& cluster : overWorld.getLevelModel()->preSpawnLocs()){
         float cx = cluster.x;
         float cy = cluster.y;
@@ -56,11 +56,14 @@ bool MonsterController::init(OverWorld& overWorld,
 
         std::string enemyType = cluster.enemy;
 
-        for(int i = 0; i < cluster.count; i++) {
+        for(int i = 0; i < 1; i++) {
 //         Check that the Position is a Valid Spot
             Vec2 pos = Vec2(cx + generateRandomInclusiveHighLow(-200, 200) / 100.0f, cy + generateRandomInclusiveHighLow(-200, 200) / 100.0f);
-            
-            spawnEnemyFromString(enemyType, pos, overWorld, power);
+//            
+            if (ind == 2){
+                spawnEnemyFromString("basic", pos, overWorld, power);
+            }
+            ind++;
         }
     }
     return true;
@@ -206,11 +209,12 @@ void MonsterController::spawnAbsorbEnemy(cugl::Vec2 pos, OverWorld& overWorld, f
 }
 
 void MonsterController::spawnBasicEnemy(cugl::Vec2 pos, OverWorld& overWorld, float power){
+    power = 1;
     if (!overWorld._isHost){
         return;
     }
     int numTargets =  overWorld.getTotalTargets();
-    int chosenTarget = generateRandomInclusiveHighLow(0, numTargets-1);
+    int chosenTarget = 1;
     Size mySize(1,1);
     int hp = 10;
     powerSize(power, mySize);

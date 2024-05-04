@@ -25,9 +25,9 @@
 
 
 /** Set these to 0 to disable */
-#define CLOSE_DISTANCE 4
-#define STRAY_DISTANCE 1.2
-#define SAME_GOAL_DISTANCE 1
+#define CLOSE_DISTANCE 0
+#define STRAY_DISTANCE 1000000
+#define SAME_GOAL_DISTANCE 2
 
 #define DAMAGED_DURATION 0.5f
 
@@ -350,17 +350,19 @@ protected:
 //        }
         
         WorldSearchVertex* prevGoalVertex =_pathfinder->GetSolutionEnd();
-        trueGoal = goal;
+        trueGoal = Vec2(static_cast<int>(goal.x), static_cast<int>(goal.y));
 
         
         // If the newly set goal is very close to the old goal, just keep the old goal
         if(prevGoalVertex && trueGoal.x >= 0){
-            Vec2 prevGoal = Vec2(prevGoalVertex->x + 0.5, prevGoalVertex->y + 0.5);
+            Vec2 prevGoal = Vec2(prevGoalVertex->x, prevGoalVertex->y);
             if(prevGoal.distance(trueGoal) < SAME_GOAL_DISTANCE){
-                CULog("Goal too close, don't pathfind again");
+                //CULog("Goal too close, don't pathfind again");
                 return true;
             }
         }
+        
+        CULogError("GOAL CHANGED! REDOING PATHFINDING");
         
         return rawSetGoal(goal, world);
     };
@@ -382,7 +384,8 @@ protected:
             return;
         }
         
-        Vec2 goalTile = Vec2(trueGoal.x + 0.5, trueGoal.y + 0.5);
+        Vec2 goalTile = Vec2(trueGoal.x, trueGoal.y);
+        CULog("True Goal is at (%f, %f)", trueGoal.x, trueGoal.y);
         
         // If we are very close to the goal, go directly to it instead of using pathfinding
         if(getPosition().distance(goalTile) <= CLOSE_DISTANCE){
@@ -391,10 +394,10 @@ protected:
         } else {
             
             // If we strayed too far from the pathfinding path, restart pathfinding
-            Vec2 nextTile = Vec2(_nextStep.x + 0.5, _nextStep.y + 0.5);
+            Vec2 nextTile = Vec2(_nextStep.x, _nextStep.y);
             if(getPosition().distance(nextTile) > STRAY_DISTANCE){
                 CULog("Recalculating Path...");
-                rawSetGoal(Vec2(trueGoal.x, trueGoal.y), goalNode->_world);
+                //rawSetGoal(Vec2(trueGoal.x, trueGoal.y), goalNode->_world);
             }
             
             // If we already reached the next tile, get the next node along the path and set it as the next tile
@@ -409,15 +412,21 @@ protected:
                     CULog("Can't find next tile, recalculating");
                 }
                 
-                nextTile = Vec2(_nextStep.x + 0.5, _nextStep.y + 0.5);
+                nextTile = Vec2(_nextStep.x, _nextStep.y);
+            } else {
+                CULog("Didn't reach Tile (%f, %f), trying again", _nextStep.x, _nextStep.y);
+                if(!goalNode->_world->isPassable(_nextStep.x, _nextStep.y)){
+                    CULogError("ERROR TILE NOT ACTUALLY PASSABLE!!!");
+                }
+               ;
             }
             
             direction = nextTile - getPosition();
         }
         
         //Move towards the next tile
-        setVX(direction.normalize().x * 0.75);
-        setVY(direction.normalize().y * 0.75);
+        setVX(direction.normalize().x * 1.5);
+        setVY(direction.normalize().y * 1.5);
         setX(getX());
         setY(getY());
         _prevDirection =_curDirection;
@@ -440,10 +449,10 @@ protected:
     bool atTile(Vec2 tile){
         
         // Get the center of the tile
-        Vec2 tileCenter = Vec2(tile.x + 0.5, tile.y + 0.5);
+        Vec2 tileCenter = Vec2(tile.x, tile.y);
         
         // Check if the enemy position is close to the center
-        if(getPosition().distance(tileCenter) < 0.05 ){
+        if(getPosition().distance(tileCenter) < 0.03 ){
             return true;
         };
         

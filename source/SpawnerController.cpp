@@ -129,6 +129,7 @@ bool SpawnerController::init(const std::vector<LevelModel::Spawner>& startLocs, 
     _deathTexture = assets->get<cugl::Texture>("enemyDeath");
     _deathSpawner = assets->get<cugl::Texture>("spawnerDeath");
     _network = net;
+    return true;
     for (int i =0; i< startLocs.size(); i++){
         LevelModel::Spawner spawner = startLocs.at(i);
         cugl::Vec2 pos = Vec2(spawner.spawnerX, spawner.spawnerY);

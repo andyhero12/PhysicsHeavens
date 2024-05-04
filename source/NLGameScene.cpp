@@ -47,9 +47,9 @@ using namespace cugl::physics2::net;
 #define CANVAS_TILE_HEIGHT 8
 #define TILE_NAME   "TILE"
 /** Width of the game world in Box2d units */
-#define DEFAULT_WIDTH 100.0f
+#define DEFAULT_WIDTH 300.0f
 /** Height of the game world in Box2d units */
-#define DEFAULT_HEIGHT 100.0f
+#define DEFAULT_HEIGHT 300.0f
 /** The default value of gravity (going down) */
 #define DEFAULT_GRAVITY -0.0f
 
