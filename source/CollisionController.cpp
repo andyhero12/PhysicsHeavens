@@ -180,7 +180,7 @@ bool CollisionController::monsterBaseCollsion(OverWorld& overWorld, std::shared_
             if (distance < impactDistance) {
                 hitSomething = true;
                 collision = true;
-                monsterController.removeEnemy(enemy);
+                monsterController.removeEnemy(enemy, true);
                 enemy->executeDeath(overWorld);
                 curEnemies.erase(curA);
             }

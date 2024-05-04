@@ -20,7 +20,7 @@ std::shared_ptr<NetEvent> DeathEvent::newEvent(){
     return std::make_shared<DeathEvent>();
 }
 
-std::shared_ptr<NetEvent> DeathEvent::allocDeathEvent(Vec2 pos, bool isHost, Size mSize, bool isBomb){
+std::shared_ptr<NetEvent> DeathEvent::allocDeathEvent(Vec2 pos, bool isHost, Size mSize, bool isBomb, bool isGate){
     //TODO: make a new shared copy of the event and set its _pos to pos.
 #pragma mark BEGIN SOLUTION
     auto event = std::make_shared<DeathEvent>();
@@ -28,6 +28,7 @@ std::shared_ptr<NetEvent> DeathEvent::allocDeathEvent(Vec2 pos, bool isHost, Siz
     event->_isHost = isHost;
     event->_size = mSize;
     event->_isBomb = isBomb;
+    event->_isGate = isGate;
     return event;
 #pragma mark END SOLUTION
 }
@@ -45,6 +46,7 @@ std::vector<std::byte> DeathEvent::serialize(){
     _serializer.writeFloat(_size.height);
     _serializer.writeBool(_isHost);
     _serializer.writeBool(_isBomb);
+    _serializer.writeBool(_isGate);
     return _serializer.serialize();
 #pragma mark END SOLUTION
 }
@@ -73,5 +75,6 @@ void DeathEvent::deserialize(const std::vector<std::byte>& data){
     _size = Size(w, h);
     _isHost = _deserializer.readBool();
     _isBomb = _deserializer.readBool();
+    _isGate = _deserializer.readBool();
 #pragma mark END SOLUTION
 }
