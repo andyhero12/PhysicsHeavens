@@ -271,8 +271,15 @@ void MonsterController::spawnBombEnemy(cugl::Vec2 pos, OverWorld& overWorld, flo
         _pending.emplace(static_enemy);
     }
 }
-void MonsterController::removeEnemy(std::shared_ptr<AbstractEnemy> enemy){
-    getNetwork()->pushOutEvent(DeathEvent::allocDeathEvent(enemy->getPosition(),getNetwork()->isHost(), enemy->getDimension()));
+
+void MonsterController::removeEnemy(std::shared_ptr<AbstractEnemy> enemy, bool isGate){
+    bool isBomb;
+    if (std::shared_ptr<BombEnemy> derivedPtr = std::dynamic_pointer_cast<BombEnemy>(enemy)) {
+        isBomb = true;
+    } else {
+        isBomb = false;
+    }
+    getNetwork()->pushOutEvent(DeathEvent::allocDeathEvent(enemy->getPosition(),getNetwork()->isHost(), enemy->getDimension(), isBomb, isGate));
     getNetwork()->getPhysController()->removeSharedObstacle(enemy);
     enemy->getTopLevelNode()->removeFromParent();
     if (auto absorb  = std::dynamic_pointer_cast<AbsorbEnemy>(enemy)){

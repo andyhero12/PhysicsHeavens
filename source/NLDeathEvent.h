@@ -23,7 +23,8 @@ protected:
     Vec2 _pos;
     Size _size;
     bool _isHost;
-    
+    bool _isBomb;
+    bool _isGate;
 public:
     /**
      * This method is used by the NetEventController to create a new event of using a
@@ -34,7 +35,7 @@ public:
      */
     std::shared_ptr<NetEvent> newEvent() override;
     
-    static std::shared_ptr<NetEvent> allocDeathEvent(Vec2 pos, bool isHost, Size size);
+    static std::shared_ptr<NetEvent> allocDeathEvent(Vec2 pos, bool isHost, Size size, bool isBomb, bool isGate);
     
     /**
      * Serialize any paramater that the event contains to a vector of bytes.
@@ -57,6 +58,10 @@ public:
     bool isHost() {return _isHost; }
     
     Size getSize() { return _size; }
+
+    bool isBomb() { return _isBomb; }
+
+    bool isGate() { return _isGate; }
 };
 
 

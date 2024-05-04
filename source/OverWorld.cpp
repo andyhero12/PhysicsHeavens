@@ -10,7 +10,7 @@
 
 #define WORLD_SIZE 3
 #define SHOOT_COST 5
-#define BOMB_COST 15
+#define BOMB_COST 10
 #include "NLDog.h"
 
 void OverWorld::reset()
