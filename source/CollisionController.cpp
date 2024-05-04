@@ -408,7 +408,7 @@ void CollisionController::hugeBlastCollisionClient(const std::shared_ptr<ActionP
         float dist = diff.length();
         if (withinAngle(action->getAngle()-45.0f, result, 90.0f) && dist <= 5.5f * action->getScale()){
             hitSomething = true;
-            spawner->subHealth(25);
+            spawner->subHealth(75);
         }
     }
     if (hitSomething){

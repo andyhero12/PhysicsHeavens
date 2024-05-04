@@ -41,7 +41,7 @@ void SpawnerController::update(MonsterController& monsterController, OverWorld& 
    // _difficulty *= 1.00003851f;
     accumulatedTime += timestep;
     //cout << (std::to_string(difficulty));
-    float timeDifficulty = (accumulatedTime / 90.0f) * (accumulatedTime / 90.0f) / (1 + accumulatedTime / 90.0f);
+    float timeDifficulty = (accumulatedTime / 180.0f) * (accumulatedTime / 180.0f) / (1 + accumulatedTime / 180.0f);
     float power = 1 + timeDifficulty + difficulty;
     float r = rand() / (float)RAND_MAX;
     r = r * r * r;
