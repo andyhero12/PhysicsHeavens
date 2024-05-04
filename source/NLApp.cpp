@@ -144,6 +144,7 @@ void NetApp::preUpdate(float timestep){
         _joingame.init(_assets,_network);
         _selection.init(_assets);
         _setting.init(_assets);
+        _rebind.init(_assets);
         _status = MAINMENU;
     }
     else if(_status == MAINMENU){
@@ -171,6 +172,8 @@ void NetApp::preUpdate(float timestep){
         updateSettingScene(timestep);
     }else if (_status == SINGLEPLAYER){
         updateSinglePlayerLevelScene(timestep);
+    }else if(_status == REBIND){
+        updateRebindscene(timestep);
     }
 }
 void NetApp::postUpdate(float timestep) {
@@ -503,15 +506,29 @@ void NetApp::updateSinglePlayerLevelScene(float timestep)
     }
 }
 void NetApp::updateSettingScene(float timestep){
+    _setting.update(timestep);
     if(_setting.getBackclick())
     {
         _setting.setActive(false);
         _mainmenu.setActive(true);
         _status = MAINMENU;
+    }else if(_setting.getLevel()==SettingScene::button::b4){
+        _setting.setActive(false);
+        _rebind.setActive(true);
+        _status = REBIND;
+
     }
-    _setting.update(timestep);
+    
 }
 
+void NetApp::updateRebindscene(float timestep){
+    if(_rebind.getBackclick()){
+        _setting.setActive(true);
+        _rebind.setActive(false);
+        _status = SETTING;
+    }
+    _rebind.update(timestep);
+}
 /**
  * The method called to draw the application to the screen.
  *
@@ -552,6 +569,10 @@ void NetApp::draw() {
             break;
         case SINGLEPLAYER:
             _singlePlayer.render(_batch);
+            break;
+        case REBIND:
+            _rebind.render(_batch);
+            break;
         default:
             break;
     }

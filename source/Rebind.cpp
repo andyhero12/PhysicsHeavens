@@ -57,7 +57,13 @@ bool RebindScene::init(const std::shared_ptr<AssetManager> &assets)
     _button->addListener([this](const std::string &name, bool down){
     if(down) { // Check if the button is pressed down
     }
-});
+    });
+    background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("background_rebind"), 1, 1);
+//    std::cout << "height of level scene "<< background->getTexture()->getHeight()<<std::endl;
+    background->setScale(2);
+    background->setPosition(0.5 * background->getSize());
+    addChild(background);
+    layer->setColor(Color4(0, 0, 0, 1));
     Application::get()->setClearColor(Color4(192, 192, 192, 255));
     addChild(layer);
     setActive(false);
@@ -91,11 +97,11 @@ void RebindScene::update(float progress)
 {
     _input.update();
 
-    if (_input.didPressConfirm() && readyToChangeLevel()){
+    if (_input.didPressConfirm()){
         _button->setDown(true);
     }
 
-    if(_input.didPressBack() && readyToChangeLevel()){
+    if(_input.didPressBack()){
         _backClicked = true;
     }
 
@@ -125,7 +131,6 @@ void RebindScene::setActive(bool value)
         Scene2::setActive(value);
         if (value)
         {
-            _level = Level::NONE;
             _button->activate();
             firsttime = true;
             _backClicked = false;

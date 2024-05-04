@@ -47,6 +47,8 @@ protected:
     // MODEL
 
     bool _backClicked;
+
+    bool firsttime;
     /**
      * Returns the active screen size of this scene.
      *
@@ -65,7 +67,9 @@ public:
      * This allows us to use the object without a heap pointer.
      */
     RebindScene() : cugl::Scene2(), 
-    firsttime(true){};
+    firsttime(true),
+    _backClicked(false)
+    {};
    
     /**
      * Disposes of all (non-static) resources allocated to this mode.
@@ -119,5 +123,7 @@ public:
     }
     
 };
+
+#endif /* Rebind.h */
 
 

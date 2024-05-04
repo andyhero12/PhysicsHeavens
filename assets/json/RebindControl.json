@@ -1,7 +1,7 @@
 {
   "textures": {
     "background_rebind": {
-      "file": "textures/Menu/title-screen.png"
+      "file": "textures/rebind_control.png"
     },
     "backbutton": {
       "file": "textures/Menu/play.png"
@@ -27,7 +27,7 @@
             ],
             "size": [
                 1280,
-                720
+                800
             ],
             "angle": 0,
             "position": [
