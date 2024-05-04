@@ -441,7 +441,7 @@ void CollisionController::resolveBlowupClient(const std::shared_ptr<ActionPolygo
         itS++;
         Vec2 diff = spawn->getPos() - action->getCenter();
         float dist = diff.length();
-        if (dist <= 2.2f * action->getScale()){
+        if (dist <= 3.4f * action->getScale()){
             spawn->subHealth(999);
         }
     }
@@ -522,7 +522,7 @@ void CollisionController::resolveBlowup(const std::shared_ptr<ActionPolygon>& ac
         auto curA = itA++;
         Vec2 diff = enemy->getPosition() - action->getCenter();
         float dist = diff.length();
-        if (dist <= 2.2f * action->getScale()){
+        if (dist <= 3.4f * action->getScale()){
             monsterController.removeEnemy(enemy);
             monsterEnemies.erase(curA);
         }
@@ -534,7 +534,7 @@ void CollisionController::resolveBlowup(const std::shared_ptr<ActionPolygon>& ac
         itS++;
         Vec2 diff = spawn->getPos() - action->getCenter();
         float dist = diff.length();
-        if (dist <= 2.2f * action->getScale()){
+        if (dist <= 3.4f * action->getScale()){
             spawn->subHealth(999);
         }
     }
