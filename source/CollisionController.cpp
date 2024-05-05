@@ -393,7 +393,7 @@ bool CollisionController::healFromBaseCollsion( BaseSet& bset, std::shared_ptr<D
         return false;
     }
     auto itP = bset._bases.begin();
-    float healDistanceCutoff = 1;
+    float healDistanceCutoff = 2.5;
     
     while (itP != bset._bases.end()){
         std::shared_ptr<Base> base = *itP;
