@@ -82,8 +82,6 @@ class World{
 public:
         
 private:
-    // Matrix with information about the overworld
-    std::shared_ptr<cugl::Texture> tile;
     std::shared_ptr<cugl::AssetManager> _assets;
     
 public:
@@ -92,8 +90,6 @@ public:
         return (result->init(_level, assets) ? result : nullptr);
     }
     ~World(){
-//        CULog("Destructing World");
-        tile = nullptr;
         _assets = nullptr;
     }
     std::vector<std::vector<std::shared_ptr<TileInfo>>> tileWorld;
@@ -139,7 +135,7 @@ public:
     
     // Get the number of columns of tiles in the world
     int getCols() const{
-        return (int) boundaryWorld[0].size();
+        return (int) boundaryWorld.at(0).size();
     }
 };
 

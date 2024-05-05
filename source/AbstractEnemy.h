@@ -41,7 +41,7 @@
 #include "stlastar.h"
 #include "WorldSearchVertex.h"
 
-class AbstractEnemy : public cugl::physics2::BoxObstacle {
+class AbstractEnemy : public cugl::physics2::CapsuleObstacle {
     
 public:
     
@@ -68,7 +68,7 @@ public:
     
 
     bool init(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex){
-        bool result = physics2::BoxObstacle::init(m_pos,m_size);
+        bool result = physics2::CapsuleObstacle::init(m_pos,m_size);
         
         if (result){
             _counter = 0;
@@ -104,13 +104,13 @@ public:
 
     void setVX(float value) override {
         if(!(_knockbackTimer > 0)) {
-            BoxObstacle::setVX(value);
+            CapsuleObstacle::setVX(value);
         }
     }
 
     void setVY(float value) override {
         if(!(_knockbackTimer > 0)) {
-            BoxObstacle::setVY(value);
+            CapsuleObstacle::setVY(value);
         }
     }
 
@@ -121,7 +121,7 @@ public:
 
     void setLinearVelocity(float x, float y) override {
         if(!(_knockbackTimer > 0)) {
-            BoxObstacle::setLinearVelocity(x, y);
+            CapsuleObstacle::setLinearVelocity(x, y);
         }
     }
 
@@ -375,7 +375,7 @@ protected:
 //        if(prevGoalVertex && trueGoal.x >= 0){
 //            Vec2 prevGoal = Vec2(prevGoalVertex->x, prevGoalVertex->y);
 //            if(prevGoal.distance(trueGoal) < SAME_GOAL_DISTANCE){
-//                //CULog("Goal too close, don't pathfind again");
+//                CULog("Goal too close, don't pathfind again");
 //                return true;
 //            }
 //        }
@@ -393,7 +393,7 @@ protected:
         cugl::Vec2 direction;
         
         // If there is no goal or we are already at the goal, do nothing
-        if(atGoal() || _nextStep.x < 0){
+        if(atGoal() || _nextStep.x < 0 ){
             if(atGoal()){
 //                CULog("At goal already, do nothing");
             } else {

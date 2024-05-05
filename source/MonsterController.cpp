@@ -33,8 +33,8 @@ bool MonsterController::init(OverWorld& overWorld,
     _current.clear();
     _pending.clear();
     _absorbEnem.clear();
-    _debugNode = nullptr;
-//    int ind = 0;
+    _debugNode = debugNode;
+    
     for (const LevelModel::PreSpawned& cluster : overWorld.getLevelModel()->preSpawnLocs()){
         float cx = cluster.x;
         float cy = cluster.y;
@@ -58,7 +58,7 @@ bool MonsterController::init(OverWorld& overWorld,
 
         for(int i = 0; i < cluster.count ; i++) {
 //         Check that the Position is a Valid Spot
-        Vec2 pos = Vec2(cx + generateRandomInclusiveHighLow(-200, 200) / 100.0f, cy + generateRandomInclusiveHighLow(-200, 200) / 100.0f);
+            Vec2 pos = Vec2(cx + generateRandomInclusiveHighLow(-200, 200) / 100.0f, cy + generateRandomInclusiveHighLow(-200, 200) / 100.0f);
             spawnEnemyFromString(enemyType, pos, overWorld, power);
         }
     }

@@ -16,7 +16,16 @@ class WorldSearchVertex{
 private:
     // Returns whether this node is close to an impassible corner
     bool closeToEdge() const;
-    
+    static constexpr std::array<std::pair<int, int>, 8> adj_list = {
+        std::make_pair(0, 1),
+        std::make_pair(0, -1),
+        std::make_pair(1, 0),
+        std::make_pair(-1, 0),
+        std::make_pair(-1, -1),
+        std::make_pair(1, 1),
+        std::make_pair(-1, 1),
+        std::make_pair(1, -1)
+    };
 public:
     
     // the world this node is in
@@ -28,18 +37,19 @@ public:
     // y coord of this node
     int y;
     
-    WorldSearchVertex( int px, int py,const World* world) { x=px; y=py;
-        _world = world;
+    WorldSearchVertex( int px, int py, const World* world)
+    : x{px}
+    , y{py}
+    , _world{world}
+    {
     }
     
     // WARNING: This default consrtuctor is needed by the astarstl class for some reason, this implementation might be incorrect
-    WorldSearchVertex(){
-        x = y = 0;
-        _world = nullptr;
-    }
-    
-    ~WorldSearchVertex(){
-        _world = nullptr;
+    WorldSearchVertex()
+    : x{0}
+    , y{0}
+    , _world{0}
+    {
     }
     
     // The heurstic used to determine the distance to the goal
