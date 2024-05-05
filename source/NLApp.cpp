@@ -58,6 +58,7 @@ void NetApp::onStartup() {
     _assets->loadAsync<LevelModel>(LEVEL_ONE_KEY,LEVEL_ONE_FILE,nullptr);
     _assets->loadAsync<LevelModel>(LEVEL_TWO_KEY,LEVEL_TWO_FILE,nullptr);
     _assets->loadAsync<LevelModel>(LEVEL_THREE_KEY,LEVEL_THREE_FILE,nullptr);
+    _assets->loadAsync<LevelModel>(LEVEL_FOUR_KEY,LEVEL_FOUR_FILE,nullptr);
     cugl::net::NetworkLayer::start(net::NetworkLayer::Log::INFO);
     
     Application::onStartup(); // YOU MUST END with call to parent
@@ -274,6 +275,9 @@ void NetApp::updateHostScene(float timestep) {
             case LevelScene::Level::L3:
                 _gameplay.init(_assets, _network, true, LEVEL_THREE_KEY);
                 break;
+            case LevelScene::Level::L4:
+                _gameplay.init(_assets, _network, true, LEVEL_FOUR_KEY);
+                break;
             default :
                 CUAssertLog(false, "bad level");
                 break;
@@ -322,6 +326,9 @@ void NetApp::updateClientScene(float timestep) {
                 break;
             case LevelScene::Level::L3:
                 _gameplay.init(_assets, _network, false, LEVEL_THREE_KEY);
+                break;
+            case LevelScene::Level::L4:
+                _gameplay.init(_assets, _network, false, LEVEL_FOUR_KEY);
                 break;
             default :
                 CUAssertLog(false, "bad level");
@@ -478,6 +485,9 @@ void NetApp::updateSinglePlayerLevelScene(float timestep)
                 break;
             case LevelScene::Level::L3:
                 _gameplay.init(_assets, _network, true, LEVEL_THREE_KEY);
+                break;
+            case LevelScene::Level::L4:
+                _gameplay.init(_assets, _network, true, LEVEL_FOUR_KEY);
                 break;
             default :
                 CUAssertLog(false, "bad level");
