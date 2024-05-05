@@ -64,6 +64,11 @@ bool SinglePlayerLevelScene::init(const std::shared_ptr<AssetManager> &assets, s
                 _level = Level::L3; // Assuming there's a level 4
                 break;
             case 4:
+                _level = Level::L4;
+                CULog("Current Level: L4");
+                break;
+            case 5:
+                _level = Level::L5;
                 CULog("Current Level: L4");
                 break;
             default:
