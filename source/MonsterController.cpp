@@ -188,6 +188,7 @@ void MonsterController::spawnEnemyFromString(std::string enemyType, cugl::Vec2 p
 }
 
 void MonsterController::spawnAbsorbEnemy(cugl::Vec2 pos, OverWorld& overWorld, float power){
+    return;
     if (!overWorld._isHost){
         return;
     }
