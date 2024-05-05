@@ -78,10 +78,9 @@ bool WorldSearchVertex::GetSuccessors( AStarSearch<WorldSearchVertex> *astarsear
         parent_y = parent_node->y;
     }
     
-    WorldSearchVertex NewNode(0, 0, _world);
     // push each possible move except allowing the search to go backwards
     for (const auto& diff : adj_list) {
-        NewNode = WorldSearchVertex( x - diff.first, y - diff.second, _world);
+        WorldSearchVertex NewNode = WorldSearchVertex( x - diff.first, y - diff.second, _world);
         
         //Avoid corners
         if(diff.first != 0 && diff.second != 0 && (!_world->isPassable(x - diff.first, y) || !_world->isPassable(x, y - diff.second))){
@@ -98,11 +97,11 @@ bool WorldSearchVertex::GetSuccessors( AStarSearch<WorldSearchVertex> *astarsear
 
 float WorldSearchVertex::GetCost( WorldSearchVertex &successor ) const
 {
-//    if(closeToEdge()){
-//        return 5;
-//    }else {
-//        return 1;
-//    }
+    if(successor.closeToEdge()){
+        return 50;
+    }else {
+        return 1;
+    }
     
     return 1;
 }

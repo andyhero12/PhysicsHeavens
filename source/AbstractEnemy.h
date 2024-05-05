@@ -319,11 +319,10 @@ protected:
             _pathfinder->FreeSolutionNodes();
         }
         
-        cugl::Vec2 my_pos = getPosition();
-        
-        // Initialize start and end for the search
-        WorldSearchVertex start = WorldSearchVertex(static_cast<int>(my_pos.x), static_cast<int>(my_pos.y), world);
-        WorldSearchVertex end = WorldSearchVertex(static_cast<int>(goal.x), static_cast<int>(goal.y), world);
+        const cugl::Vec2& my_pos = getPosition();
+        // Initialize start and end for the search Force truncation
+        WorldSearchVertex start = WorldSearchVertex(static_cast<int>(my_pos.x + 0.5), static_cast<int>(my_pos.y + 0.5), world);
+        WorldSearchVertex end = WorldSearchVertex(static_cast<int>(goal.x + 0.5), static_cast<int>(goal.y + 0.5), world);
         _pathfinder->SetStartAndGoalStates(start, end);
         
         // Perform the search
@@ -342,7 +341,7 @@ protected:
             WorldSearchVertex* nextNode = _pathfinder->GetSolutionNext();
             
             if(nextNode){
-                _nextStep = Vec2((int) nextNode->x, (int) nextNode->y);
+                _nextStep = Vec2(nextNode->x, nextNode->y);
             } else{
                 _nextStep = my_pos;
             }
@@ -369,19 +368,19 @@ protected:
 //        }
         
         WorldSearchVertex* prevGoalVertex =_pathfinder->GetSolutionEnd();
-        trueGoal = Vec2(static_cast<int>(goal.x), static_cast<int>(goal.y));
+        trueGoal = Vec2(goal.x, goal.y);
 
         
         // If the newly set goal is very close to the old goal, just keep the old goal
-        if(prevGoalVertex && trueGoal.x >= 0){
-            Vec2 prevGoal = Vec2(prevGoalVertex->x, prevGoalVertex->y);
-            if(prevGoal.distance(trueGoal) < SAME_GOAL_DISTANCE){
-                //CULog("Goal too close, don't pathfind again");
-                return true;
-            }
-        }
-        
-        CULogError("GOAL CHANGED! REDOING PATHFINDING");
+//        if(prevGoalVertex && trueGoal.x >= 0){
+//            Vec2 prevGoal = Vec2(prevGoalVertex->x, prevGoalVertex->y);
+//            if(prevGoal.distance(trueGoal) < SAME_GOAL_DISTANCE){
+//                //CULog("Goal too close, don't pathfind again");
+//                return true;
+//            }
+//        }
+//        
+//        CULogError("GOAL CHANGED! REDOING PATHFINDING");
         
         return rawSetGoal(goal, world);
     };
@@ -396,15 +395,15 @@ protected:
         // If there is no goal or we are already at the goal, do nothing
         if(atGoal() || _nextStep.x < 0){
             if(atGoal()){
-                CULog("At goal already, do nothing");
+//                CULog("At goal already, do nothing");
             } else {
-                CULog("No goal instantiated, do nothing");
+//                CULog("No goal instantiated, do nothing");
             }
             return;
         }
         
         Vec2 goalTile = Vec2(trueGoal.x, trueGoal.y);
-        CULog("True Goal is at (%f, %f)", trueGoal.x, trueGoal.y);
+//        CULog("True Goal is at (%f, %f)", trueGoal.x, trueGoal.y);
         
         // If we are very close to the goal, go directly to it instead of using pathfinding
         if(getPosition().distance(goalTile) <= CLOSE_DISTANCE){
@@ -421,21 +420,21 @@ protected:
             
             // If we already reached the next tile, get the next node along the path and set it as the next tile
             if(atTile(_nextStep)){
-                CULog("Reached Tile (%f, %f)", _nextStep.x, _nextStep.y);
+//                CULog("Reached Tile (%f, %f)", _nextStep.x, _nextStep.y);
                 WorldSearchVertex* nextNode = _pathfinder->GetSolutionNext();
                 
                 if(nextNode){
                     _nextStep = Vec2((int) nextNode->x, (int) nextNode->y);
                 } else{
                     rawSetGoal(trueGoal, goalNode->_world);
-                    CULog("Can't find next tile, recalculating");
+//                    CULog("Can't find next tile, recalculating");
                 }
                 
                 nextTile = Vec2(_nextStep.x, _nextStep.y);
             } else {
-                CULog("Didn't reach Tile (%f, %f), trying again", _nextStep.x, _nextStep.y);
+//                CULog("Didn't reach Tile (%f, %f), trying again", _nextStep.x, _nextStep.y);
                 if(!goalNode->_world->isPassable(_nextStep.x, _nextStep.y)){
-                    CULogError("ERROR TILE NOT ACTUALLY PASSABLE!!!");
+//                    CULogError("ERROR TILE NOT ACTUALLY PASSABLE!!!");
                 }
                ;
             }

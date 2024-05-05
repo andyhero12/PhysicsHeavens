@@ -163,7 +163,7 @@ void CollisionController::attackCollisions(OverWorld& overWorld, MonsterControll
 bool CollisionController::monsterBaseCollsion(OverWorld& overWorld, std::shared_ptr<BaseSet> curBases, MonsterController& monsterController){
     std::unordered_set<std::shared_ptr<AbstractEnemy>>& curEnemies = monsterController.getEnemies();
     bool collision = false;
-    float baseRadius = DEFAULT_RADIUS_COLLIDE;
+    float baseRadius = 2.0f;
     auto itP = curBases->_bases.begin();
     while (itP != curBases->_bases.end()){
         std::shared_ptr<Base> base = *itP;
