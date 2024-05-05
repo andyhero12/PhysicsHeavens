@@ -206,7 +206,6 @@ void MonsterController::spawnAbsorbEnemy(cugl::Vec2 pos, OverWorld& overWorld, f
 }
 
 void MonsterController::spawnBasicEnemy(cugl::Vec2 pos, OverWorld& overWorld, float power){
-    power = 1;
     if (!overWorld._isHost){
         return;
     }
