@@ -166,9 +166,6 @@ void MainMenuScene::update(float timestep)
     if (_isdown == Isdown::isSINGLE &&_input.didPressConfirm() ){
         _choice = Choice::SINGLE;
     }
-    else if(_isdown == Isdown::isCOOP && _input.didPressConfirm()){
-        _choice = Choice::COOP;
-    }
     else if (_isdown == Isdown::isSETTING && _input.didPressConfirm()) {
         _choice = Choice::SETTING;
     }

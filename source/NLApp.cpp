@@ -368,13 +368,6 @@ void NetApp::updateMainScene(float timestep)
         _status = SELECTION;
         isHosting = true;
         break;
-    case MainMenuScene::Choice::COOP:
-        // _mainmenu.setActive(false);
-        // _level.setActive(true);
-        // _status = LEVEL;
-        // _level.resetLevel();
-        // //isHosting = false;
-        break;
     case MainMenuScene::Choice::SETTING:
         _mainmenu.setActive(false);
         _setting.setActive(true);
