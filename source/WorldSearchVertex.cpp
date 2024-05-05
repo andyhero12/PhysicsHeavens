@@ -14,7 +14,7 @@ static inline int generateRandomCost(int low, int high)
     std::uniform_int_distribution<> dis(low, high); // Range is 1 to 3, inclusive
     return dis(gen);
 }
-bool WorldSearchVertex::IsSameState( WorldSearchVertex &rhs )
+bool WorldSearchVertex::IsSameState( WorldSearchVertex &rhs ) const
 {
     return (x == rhs.x) && (y == rhs.y);
 }
@@ -31,7 +31,7 @@ float WorldSearchVertex::GoalDistanceEstimate( WorldSearchVertex &nodeGoal ) con
     return (abs(x - nodeGoal.x) + abs(y - nodeGoal.y)) * 20 ;
 }
 
-bool WorldSearchVertex::IsGoal( WorldSearchVertex &nodeGoal )
+bool WorldSearchVertex::IsGoal( WorldSearchVertex &nodeGoal ) const
 {
     return (x == nodeGoal.x) && (y == nodeGoal.y);
 }
@@ -40,7 +40,7 @@ bool WorldSearchVertex::IsGoal( WorldSearchVertex &nodeGoal )
 // AddSuccessor to give the successors to the AStar class. The A* specific initialisation
 // is done for each node internally, so here you just set the state information that
 // is specific to the application
-bool WorldSearchVertex::GetSuccessors( AStarSearch<WorldSearchVertex> *astarsearch, WorldSearchVertex *parent_node )
+bool WorldSearchVertex::GetSuccessors( AStarSearch<WorldSearchVertex> *astarsearch, WorldSearchVertex *parent_node) const
 {
     
     int parent_x = -1;

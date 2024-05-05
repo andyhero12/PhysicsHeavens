@@ -56,16 +56,16 @@ public:
     float GoalDistanceEstimate( WorldSearchVertex &nodeGoal ) const;
     
     // Whether this node is the goal
-    bool IsGoal( WorldSearchVertex &nodeGoal );
+    bool IsGoal( WorldSearchVertex &nodeGoal ) const;
     
     // Adds the nodes you can move to from this node to the pathfinder
-    bool GetSuccessors( AStarSearch<WorldSearchVertex> *astarsearch, WorldSearchVertex *parent_node );
+    bool GetSuccessors( AStarSearch<WorldSearchVertex> *astarsearch, WorldSearchVertex *parent_node ) const;
     
     //The cost of moving to a successor
     float GetCost( WorldSearchVertex &successor ) const;
     
     // Whether rhs is the current node
-    bool IsSameState( WorldSearchVertex &rhs );
+    bool IsSameState( WorldSearchVertex &rhs ) const;
     
     // The hash of this node
     size_t Hash();

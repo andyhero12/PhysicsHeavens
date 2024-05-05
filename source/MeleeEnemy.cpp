@@ -112,7 +112,6 @@ bool MeleeEnemy::init(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_t
         setName(name);
         _contactDamage = MELEE_DAMAGE;
         _attackCooldown = 0;
-        updateRate = 10;
         return true;
     }
     return false;
