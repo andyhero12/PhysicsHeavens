@@ -344,7 +344,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _uinode->addChild(repeatWinNode);
     _uinode->addChild(_pause);
     loseNode->setVisible(false);
-    winNode->setVisible(true);
+    winNode->setVisible(false);
     repeatWinNode->setVisible(false);
     if (level_string == LEVEL_ONE_KEY){
         initTutorialOne();

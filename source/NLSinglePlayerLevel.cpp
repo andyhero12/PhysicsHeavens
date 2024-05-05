@@ -78,7 +78,7 @@ bool SinglePlayerLevelScene::init(const std::shared_ptr<AssetManager> &assets, s
     auto json = _assets->get<JsonValue>("server");
     _config.set(json);
     
-    background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("Background"), 1, 15);
+    background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("Background"), 1, 30);
     background->setScale(4.3);
     background->setPosition(0.5 * background->getSize());
     addChild(background);
