@@ -112,6 +112,7 @@ bool MeleeEnemy::init(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_t
         setName(name);
         _contactDamage = MELEE_DAMAGE;
         _attackCooldown = 0;
+        updateRate = 10;
         return true;
     }
     return false;
@@ -122,14 +123,11 @@ void MeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
         _attackCooldown++;
     }
     
-    _time += 1;
-    
     if (_counter < updateRate){
         _counter++;
     }
-    if (_counter < updateRate){
-        return;
-    }
+    
+    _time++;
     
     if(_health < _maxHealth/3){
         curAction = AbstractEnemy::EnemyActions::LOWHEALTH;
@@ -182,41 +180,45 @@ void MeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
 
 
 void MeleeEnemy::handleChase(OverWorld& overWorld) {
-//    cugl::Vec2 target_pos = getTargetPositionFromIndex(overWorld);
-//    
-//    cugl::Vec2 dist = target_pos - getPosition();
-//    
-//    setGoal(target_pos, overWorld.getWorld().get());
-//    goToGoal();
-//    
-//    
-//    movementDirection = dist;
-//    
+    cugl::Vec2 target_pos = getTargetPositionFromIndex(overWorld);
+    
+    cugl::Vec2 dist = target_pos - getPosition();
+    
+    if(_counter >= updateRate){
+        setGoal(target_pos, overWorld.getWorld());
+        _counter = 0;
+    }
+    
+    goToGoal();
+    
+    movementDirection = dist;
+    
+
 //    if( dist.length() < 4 && curAction == AbstractEnemy::EnemyActions::CHASE){
 //        curAction = AbstractEnemy::EnemyActions::ATTACK;
 //        _time = 0;
 //    }
-    cugl::Vec2 target_pos = getTargetPositionFromIndex(overWorld);
-    cugl::Vec2 direction = target_pos - getPosition();
-    if (overWorld._isHost && _counter >= updateRate){
-      setVX(direction.normalize().x * 2);
-      setVY(direction.normalize().y * 2);
-      setX(getX());
-      setY(getY());
-      _counter = 0;
-      _prevDirection =_curDirection;
-      _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
-        movementDirection = direction;
-    }
+//    cugl::Vec2 target_pos = getTargetPositionFromIndex(overWorld);
+//    cugl::Vec2 direction = target_pos - getPosition();
+//    if (overWorld._isHost && _counter >= updateRate){
+//      setVX(direction.normalize().x * 2);
+//      setVY(direction.normalize().y * 2);
+//      setX(getX());
+//      setY(getY());
+//      _counter = 0;
+//      _prevDirection =_curDirection;
+//      _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
+//        movementDirection = direction;
+//    }
 }
 
 void MeleeEnemy::handleLowHealth(OverWorld& overWorld) {
-//    runAnimations->setColor(cugl::Color4::BLACK);
+    runAnimations->setColor(cugl::Color4::BLACK);
     handleRunaway(overWorld);
 }
 
 void MeleeEnemy::handleAttack(OverWorld& overWorld) {
-//    attackAnimations->setColor(Color4::GREEN);
+    attackAnimations->setColor(Color4::GREEN);
     handleChase(overWorld);
 }
 
@@ -224,19 +226,20 @@ void MeleeEnemy::handleStay(OverWorld& overWorld) {}
 
 void MeleeEnemy::handleRunaway(OverWorld& overWorld){
     cugl::Vec2 dogPos = overWorld.getDog()->getPosition();
-       cugl::Vec2 myPos = getPosition();
-       cugl::Vec2 direction = myPos - dogPos;
-       float distance = direction.length();
-
-       if (distance < 4) {
-           direction.normalize();
-           setVX(-direction.x * 0.1f);
-           setVY(-direction.y * 0.1f);
-           movementDirection.x = -direction.x ;
-           movementDirection.y = -direction.y ;
-       }
-       else{
-           movementDirection.x = 0;
-           movementDirection.y = 0 ;
-       }
+    cugl::Vec2 myPos = getPosition();
+    cugl::Vec2 direction = myPos - dogPos;
+    direction.normalize();
+    float distance = myPos.distance(dogPos);
+    
+    
+    if (distance < 10) {
+       setVX(direction.x * 1.5f);
+       setVY(direction.y * 1.5f);
+       movementDirection.x = direction.x ;
+       movementDirection.y = direction.y ;
+    }
+    else{
+       movementDirection.x = 0;
+       movementDirection.y = 0 ;
+    }
 }

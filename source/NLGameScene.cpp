@@ -47,9 +47,9 @@ using namespace cugl::physics2::net;
 #define CANVAS_TILE_HEIGHT 8
 #define TILE_NAME   "TILE"
 /** Width of the game world in Box2d units */
-#define DEFAULT_WIDTH 100.0f
+#define DEFAULT_WIDTH 300.0f
 /** Height of the game world in Box2d units */
-#define DEFAULT_HEIGHT 100.0f
+#define DEFAULT_HEIGHT 300.0f
 /** The default value of gravity (going down) */
 #define DEFAULT_GRAVITY -0.0f
 
@@ -573,17 +573,31 @@ void GameScene::postUpdate(float dt)
     //_decorToHide.clear();
 
     //CULog((std::to_string(overWorld.getDog()->getPosition().x) + " " + std::to_string(overWorld.getDog()->getPosition().y)).c_str());
-
-    for (const std::shared_ptr<TileInfo>& t : _backgroundWrapper->getVisibleNodes()){
-        for (Rect r : _transparentRects) {
-            if((r.doesIntersect(overWorld.getDog()->getPosition(), 1) || r.doesIntersect(overWorld.getClientDog()->getPosition(), 1)) && r.contains(t->getPos())) {
-                if(t->getIsUpperDecor()) {
-                    _decorToHide.insert(t->getTileSprite());
-                    //t->getTileSprite()->setColor(Color4f(1, 1, 1, 0.6f).lerp(t->getTileSprite()->getColor(), 0.98f));
-                }
-            }
-        }
-    }
+//    const std::vector<std::vector<std::shared_ptr<TileInfo>>> &currentBackground = _backgroundWrapper->getTileWorld();
+//    int originalRows = (int)currentBackground.size();
+//    int originalCols = (int)currentBackground.at(0).size();
+//    for (int j = 0; j < originalCols; j++)
+//    {
+//        for (int i = originalRows - 1; i > -1; i--)
+//        {
+//            const std::shared_ptr<TileInfo>& t = currentBackground.at(i).at(j);
+//            if (t->texture != nullptr && (t->getPos() - overWorld.getDog()->getPosition()).length() < 0.5)
+//            {
+//                CULog("Dog Pos %s, Tile Pos %s",overWorld.getDog()->getPosition().toString().data(),  t->getPos().toString().data());
+//                t->getTileSprite()->setColor(Color4f(1, 1, 1, 0.6f));
+//            }
+//        }
+//    }
+//    for (const std::shared_ptr<TileInfo>& t : _backgroundWrapper->getVisibleNodes()){
+//        for (Rect r : _transparentRects) {
+//            if((r.doesIntersect(overWorld.getDog()->getPosition(), 1) || r.doesIntersect(overWorld.getClientDog()->getPosition(), 1)) && r.contains(t->getPos())) {
+//                if(t->getIsUpperDecor()) {
+//                    _decorToHide.insert(t->getTileSprite());
+//                    //t->getTileSprite()->setColor(Color4f(1, 1, 1, 0.6f).lerp(t->getTileSprite()->getColor(), 0.98f));
+//                }
+//            }
+//        }
+//    }
 
     for (auto it = _decorToHide.begin(); it != _decorToHide.end(); ) {
         auto t = *it;
