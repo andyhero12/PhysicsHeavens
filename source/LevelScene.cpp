@@ -73,7 +73,10 @@ bool LevelScene::init(const std::shared_ptr<AssetManager> &assets)
                 _level = Level::L3; // Assuming there's a level 4
                 break;
             case 4:
-                CULog("Current Level: L4");
+                _level = Level::L4;
+                break;
+            case 5:
+                _level = Level::L5;
                 break;
             default:
                 CULog("Unknown Level");
@@ -81,8 +84,7 @@ bool LevelScene::init(const std::shared_ptr<AssetManager> &assets)
         }
     }
 });
-    background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("Background"), 1, 15);
-//    std::cout << "height of level scene "<< background->getTexture()->getHeight()<<std::endl;
+    background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("Background"), 1, 30);
     background->setScale(4.3);
     background->setPosition(0.5 * background->getSize());
     addChild(background);
@@ -119,7 +121,6 @@ void LevelScene::dispose()
 void LevelScene::update(float progress)
 {
     _input.update();
-    
     if (curMoveAnim <= moveCooldown){
         curMoveAnim++;
     }
@@ -142,7 +143,6 @@ void LevelScene::update(float progress)
     updatelevelscene();
     resetgochange();
     adjustFrame(level);
-
     if (_input.didPressConfirm() && readyToChangeLevel()){
         _button->setDown(true);
     }
@@ -194,7 +194,7 @@ void LevelScene::setActive(bool value)
 
 void LevelScene::adjustFrame(int level){
     if (readToAnim()) {
-            int targetFrame = frameTargets[level];
+            int targetFrame = frameTargets.at(level);
             if (background->getFrame() != targetFrame) {
                 resetAnimCD();
                 if (background->getFrame() < targetFrame) {

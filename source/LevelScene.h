@@ -18,6 +18,7 @@
 #include "GlobalConstants.h"
 #include "NLInput.h"
 #include <map>
+#include "SpriteAnimationNode.h"
 
 
 /**
@@ -35,11 +36,15 @@ class LevelScene : public cugl::Scene2 {
 public:
     enum Level {
             /** User has not yet made a choice */
-            L1 = 0,
+            L1 ,
             /** User wants to host a game */
             L2,
             /** User wants to join a game */
             L3,
+
+            L4,
+
+            L5,
 
             NONE
         };
@@ -119,7 +124,9 @@ public:
     frameTargets = {
         {1, 2},
         {2, 8},
-        {3, 14}
+        {3, 14},
+        {4, 17},
+        {5, 23}
         // Add new levels and frames as needed
     };
 
@@ -179,7 +186,7 @@ public:
     }
     
     bool readyToChangeLevel(){
-        return finAnimLevel1() || finAnimLevel2() || finAnimLevel3();
+        return finAnimLevel1() || finAnimLevel2() || finAnimLevel3()||finAnimLevel4()||finAnimLevel5();
     }
     bool finAnimLevel1(){
         return level == 1 && background->getFrame() == 2;
@@ -190,6 +197,25 @@ public:
     bool finAnimLevel3(){
         return level == 3 && background->getFrame() == 14;
     }
+    bool finAnimLevel4(){
+        return level == 4 && background->getFrame() == 17;
+    }
+    bool finAnimLevel5(){
+        return level == 5 && background->getFrame() == 23;
+    }
+
+    // bool readyToChangeLevel() {
+    //     return isAnimationFinishedForLevel(level);
+    // }
+
+    // bool isAnimationFinishedForLevel(int lvl) {
+    //     auto it = frameTargets.find(lvl);
+    //     if (it != frameTargets.end()) {
+    //         return background->getFrame() == it->second;
+    //     }
+    //     return false;  // Return false if level is not found
+    // }
+
     void resetAnimCD(){
         curMoveAnim = 0;
     }
@@ -202,7 +228,7 @@ public:
     }
     
     void updatelevelscene(){
-       if (_goright && level < 3) {
+       if (_goright && level < frameTargets.size()) {
         level += 1;
         } else if (_goleft && level > 1) {
             level -= 1;
