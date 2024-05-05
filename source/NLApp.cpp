@@ -59,6 +59,7 @@ void NetApp::onStartup() {
     _assets->loadAsync<LevelModel>(LEVEL_TWO_KEY,LEVEL_TWO_FILE,nullptr);
     _assets->loadAsync<LevelModel>(LEVEL_THREE_KEY,LEVEL_THREE_FILE,nullptr);
     _assets->loadAsync<LevelModel>(LEVEL_FOUR_KEY,LEVEL_FOUR_FILE,nullptr);
+    _assets->loadAsync<LevelModel>(LEVEL_FIVE_KEY,LEVEL_FIVE_FILE,nullptr);
     cugl::net::NetworkLayer::start(net::NetworkLayer::Log::INFO);
     
     Application::onStartup(); // YOU MUST END with call to parent
@@ -278,6 +279,9 @@ void NetApp::updateHostScene(float timestep) {
             case LevelScene::Level::L4:
                 _gameplay.init(_assets, _network, true, LEVEL_FOUR_KEY);
                 break;
+            case LevelScene::Level::L5:
+                _gameplay.init(_assets, _network, true, LEVEL_FIVE_KEY);
+                break;
             default :
                 CUAssertLog(false, "bad level");
                 break;
@@ -329,6 +333,9 @@ void NetApp::updateClientScene(float timestep) {
                 break;
             case LevelScene::Level::L4:
                 _gameplay.init(_assets, _network, false, LEVEL_FOUR_KEY);
+                break;
+            case LevelScene::Level::L5:
+                _gameplay.init(_assets, _network, true, LEVEL_FIVE_KEY);
                 break;
             default :
                 CUAssertLog(false, "bad level");
@@ -425,42 +432,16 @@ void NetApp::updateLevelScene(float timestep)
         _selection.setActive(true);
         _status = SELECTION;
     }else{
-        switch (_level.getLevel()) {
-            case LevelScene::Level::L1:
-                _level.setActive(false);
-                if (isHosting){
-                    _hostgame.setActive(true);
-                    _status = HOST;
-                }else{
-                    _joingame.setActive(true);
-                    _status = CLIENT;
-                }
-                break;
-            case LevelScene::Level::L2:
-                _level.setActive(false);
-                if (isHosting){
-                    _hostgame.setActive(true);
-                    _status = HOST;
-                }else{
-                    _joingame.setActive(true);
-                    _status = CLIENT;
-                }
-                break;
-            case LevelScene::Level::L3:
-                _level.setActive(false);
-                if (isHosting){
-                    _hostgame.setActive(true);
-                    _status = HOST;
-                }else{
-                    _joingame.setActive(true);
-                    _status = CLIENT;
-                }
-                break;
-            default :
-                // DO NOTHING
-                break;
+        if (_level.getLevel()!= LevelScene::Level::NONE){
+            _level.setActive(false);
+            if (isHosting){
+                _hostgame.setActive(true);
+                _status = HOST;
+            }else{
+                _joingame.setActive(true);
+                _status = CLIENT;
             }
-
+        }
     }
 }
 
@@ -488,6 +469,9 @@ void NetApp::updateSinglePlayerLevelScene(float timestep)
                 break;
             case LevelScene::Level::L4:
                 _gameplay.init(_assets, _network, true, LEVEL_FOUR_KEY);
+                break;
+            case LevelScene::Level::L5:
+                _gameplay.init(_assets, _network, true, LEVEL_FIVE_KEY);
                 break;
             default :
                 CUAssertLog(false, "bad level");

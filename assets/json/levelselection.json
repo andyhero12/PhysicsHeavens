@@ -1,7 +1,7 @@
 {
 	"textures": {
         "Background":{
-            "file":      "textures/Image.png",
+            "file":      "textures/level_selectsto5.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },

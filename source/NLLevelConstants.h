@@ -69,5 +69,9 @@
 /** The key for our loaded level */
 #define LEVEL_FOUR_KEY       "level4"
 
+/** The source for our level file */
+#define LEVEL_FIVE_FILE      "json/levels/levelTwo.json"
+/** The key for our loaded level */
+#define LEVEL_FIVE_KEY       "level5"
 
 #endif /* defined(__TD_LEVEL_CONSTANTS_H__) */

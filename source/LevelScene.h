@@ -125,8 +125,8 @@ public:
         {1, 2},
         {2, 8},
         {3, 14},
-        {4, 17},
-        {5, 23}
+        {4, 20},
+        {5, 26}
         // Add new levels and frames as needed
     };
 
@@ -198,10 +198,10 @@ public:
         return level == 3 && background->getFrame() == 14;
     }
     bool finAnimLevel4(){
-        return level == 4 && background->getFrame() == 17;
+        return level == 4 && background->getFrame() == 20;
     }
     bool finAnimLevel5(){
-        return level == 5 && background->getFrame() == 23;
+        return level == 5 && background->getFrame() == 26;
     }
 
     // bool readyToChangeLevel() {
