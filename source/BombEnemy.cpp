@@ -8,7 +8,7 @@
 
 #define EXPLOSION_RADIUS 1.5f
 #define CONTACT_DAMAGE 4
-#define EXPLOSION_DAMAGE 11
+#define EXPLOSION_DAMAGE 12
 #define SPRITE_SCALE 1.14f
 #define DYNAMIC_COLOR   Color4::YELLOW
 std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode>> BombFactory::createObstacle(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex) {

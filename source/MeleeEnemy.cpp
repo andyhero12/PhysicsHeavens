@@ -7,7 +7,7 @@
 
 #define SPRITE_SCALE 1.14f
 
-#define MELEE_DAMAGE 5
+#define MELEE_DAMAGE 8
 #define FRAMES 200
 #define CHASE_FRAMES 2000
 #include "MeleeEnemy.h"
