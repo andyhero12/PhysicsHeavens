@@ -422,13 +422,33 @@
                  "minfilter": "linear",
                  "magfilter": "nearest"
         },
+       "basicLeftWalk": {
+           "file": "textures/basicEnemy/basicDevil-front-left.png",
+           "minfilter": "linear",
+           "magfilter": "nearest"
+       },
+       "basicUpRightWalk": {
+           "file": "textures/basicEnemy/basicDevil-back-right.png",
+           "minfilter": "linear",
+           "magfilter": "nearest"
+       },
+       "basicUpLeftWalk": {
+           "file": "textures/basicEnemy/basicDevil-back-left.png",
+           "minfilter": "linear",
+           "magfilter": "nearest"
+       },
+       "basicRightWalk": {
+           "file": "textures/basicEnemy/basicDevil-front-right.png",
+           "minfilter": "linear",
+           "magfilter": "nearest"
+       },
         "basicEnemy0": {
-            "file": "textures/basicEnemy/basicWalkLeft.PNG",
+            "file": "textures/basicEnemy/basicDevil-front-left.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
         "basicEnemy1": {
-            "file": "textures/basicEnemy/basicWalkRight.PNG",
+            "file": "textures/basicEnemy/basicDevil-front-right.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },

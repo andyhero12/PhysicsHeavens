@@ -66,19 +66,29 @@ public:
         int _framecols = data->getFloat("sprite cols", 0);
         int _framesize = data->getFloat("sprite size", 0);
         std::vector<std::shared_ptr<cugl::Texture>> textures;
-        textures.push_back(_assets->get<Texture>("basicEnemy1"));
-        textures.push_back(_assets->get<Texture>("basicEnemy1"));
-        textures.push_back(_assets->get<Texture>("basicEnemy1"));
-        textures.push_back(_assets->get<Texture>("basicEnemy1"));
-        textures.push_back(_assets->get<Texture>("basicEnemy0"));
-        textures.push_back(_assets->get<Texture>("basicEnemy0"));
-        textures.push_back(_assets->get<Texture>("basicEnemy0"));
-        textures.push_back(_assets->get<Texture>("basicEnemy0"));
+        textures.push_back(_assets->get<Texture>("basicRightWalk"));
+        textures.push_back(_assets->get<Texture>("basicRightWalk"));
+        textures.push_back(_assets->get<Texture>("basicLeftWalk"));
+        textures.push_back(_assets->get<Texture>("basicLeftWalk"));
+        textures.push_back(_assets->get<Texture>("basicLeftWalk"));
+        textures.push_back(_assets->get<Texture>("basicUpLeftWalk"));
+        textures.push_back(_assets->get<Texture>("basicUpRightWalk"));
+        textures.push_back(_assets->get<Texture>("basicRightWalk"));
         staticEnemyStruct._walkTextures  = textures;
-        staticEnemyStruct._attackTextures  = textures;
+        
+        std::vector<std::shared_ptr<cugl::Texture>> attacks;
+        attacks.push_back(_assets->get<Texture>("basicEnemy1"));
+        attacks.push_back(_assets->get<Texture>("basicEnemy1"));
+        attacks.push_back(_assets->get<Texture>("basicEnemy0"));
+        attacks.push_back(_assets->get<Texture>("basicEnemy0"));
+        attacks.push_back(_assets->get<Texture>("basicEnemy0"));
+        attacks.push_back(_assets->get<Texture>("basicEnemy0"));
+        attacks.push_back(_assets->get<Texture>("basicEnemy1"));
+        attacks.push_back(_assets->get<Texture>("basicEnemy1"));
+        staticEnemyStruct._attackTextures  = attacks;
         staticEnemyStruct._framesize = _framesize;
         staticEnemyStruct._framecols = _framecols;
-        staticEnemyStruct._freqAnimations = 5;
+        staticEnemyStruct._freqAnimations = 8;
     }
 
     /**

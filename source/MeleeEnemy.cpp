@@ -53,7 +53,9 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
 
     // Temp PlaceHolder
     runAnimations->setAnchor(Vec2::ANCHOR_CENTER);
-    std::shared_ptr<AnimationSceneNode> attackAnimations = AnimationSceneNode::allocWithTextures(_textures, rows,_framecols, _framesize, _freqAnims);
+    std::vector<std::shared_ptr<cugl::Texture>>& _attacks = staticEnemyStruct._attackTextures;
+    
+    std::shared_ptr<AnimationSceneNode> attackAnimations = AnimationSceneNode::allocWithTextures(_attacks, rows,_framecols, _framesize, _freqAnims);
     attackAnimations->setAnchor(Vec2::ANCHOR_CENTER);
     attackAnimations->setContentSize(m_size);
     
