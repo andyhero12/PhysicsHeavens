@@ -138,7 +138,6 @@ protected:
     virtual void handleLowHealth(OverWorld& overWorld) override;
     virtual void handleAttack(OverWorld& overWorld) override;
     virtual void handleStay(OverWorld& overWorld) override;
-    virtual void handleRunaway(OverWorld& overWorld) override;
 };
 
 #endif /* SpawnerEnemy_h */

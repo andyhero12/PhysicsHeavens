@@ -135,47 +135,49 @@ void MeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
     
     // Determine the action based on the state
     runAnimations->setColor(cugl::Color4::WHITE);
-    switch (curAction){
-        case EnemyActions::SPAWN:
-            handleSpawn();
-            break;
-        case EnemyActions::WANDER:
-            handleWander(dt);
-            if(_time >= FRAMES){
-                curAction = AbstractEnemy::EnemyActions::CHASE;
-                _time = 0;
-            }
-            break;
-        case EnemyActions::CHASE:
-            handleChase(overWorld);
-//            if(_time >= CHASE_FRAMES) {
+    
+    handleChase(overWorld);
+//    switch (curAction){
+//        case EnemyActions::SPAWN:
+//            handleSpawn();
+//            break;
+//        case EnemyActions::WANDER:
+//            handleWander(dt);
+//            if(_time >= FRAMES){
+//                curAction = AbstractEnemy::EnemyActions::CHASE;
+//                _time = 0;
+//            }
+//            break;
+//        case EnemyActions::CHASE:
+//            handleChase(overWorld);
+////            if(_time >= CHASE_FRAMES) {
+////                curAction = AbstractEnemy::EnemyActions::WANDER;
+////                _time = 0;
+////            }
+//            break;
+//        case EnemyActions::LOWHEALTH:
+//            handleLowHealth(overWorld);
+//            break;
+//        case EnemyActions::ATTACK:
+//            handleAttack(overWorld);
+//            if(_time >= FRAMES){
+//                curAction = AbstractEnemy::EnemyActions::STAY;
+//                _time = 0;
+//            }
+//            break;
+//        case EnemyActions::STAY:
+//            handleStay(overWorld);
+//            if(_time >= FRAMES){
 //                curAction = AbstractEnemy::EnemyActions::WANDER;
 //                _time = 0;
 //            }
-            break;
-        case EnemyActions::LOWHEALTH:
-            handleLowHealth(overWorld);
-            break;
-        case EnemyActions::ATTACK:
-            handleAttack(overWorld);
-            if(_time >= FRAMES){
-                curAction = AbstractEnemy::EnemyActions::STAY;
-                _time = 0;
-            }
-            break;
-        case EnemyActions::STAY:
-            handleStay(overWorld);
-            if(_time >= FRAMES){
-                curAction = AbstractEnemy::EnemyActions::WANDER;
-                _time = 0;
-            }
-            break;
-        case EnemyActions::RUNAWAY:
-            break;
-        default:
-            CULog("Case Not Handled");
-            break;
-    }
+//            break;
+//        case EnemyActions::RUNAWAY:
+//            break;
+//        default:
+//            CULog("Case Not Handled");
+//            break;
+//    }
 }
 
 

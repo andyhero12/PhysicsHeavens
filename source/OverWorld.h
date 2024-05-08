@@ -91,6 +91,9 @@ public:
     {
         return _bases;
     }
+    std::shared_ptr<NetEventController> getNetwork(){
+        return _network;
+    };
     std::shared_ptr<LevelModel> getLevelModel()
     {
         return _level;

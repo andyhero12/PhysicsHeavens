@@ -487,7 +487,39 @@ protected:
     virtual void handleLowHealth(OverWorld& overWorld) = 0;
     virtual void handleAttack(OverWorld& overWorld) = 0;
     virtual void handleStay(OverWorld& overWorld) = 0;
-    virtual void handleRunaway(OverWorld& overWorld)= 0;
+    
+    virtual void handleRunaway(OverWorld& overWorld){
+        Vec2 dogPos = overWorld.getDog()->getPosition();
+        Vec2 clientDogPos = Vec2(-10000, -1000);
+        cugl::Vec2 myPos = getPosition();
+        
+        // Get the position of the client dog if there are two players
+        if(overWorld.getNetwork()->getNumPlayers() == 2){
+            clientDogPos = overWorld.getClientDog()->getPosition();
+        };
+        
+        // Flee from the dog that is closer
+        if(getPosition().distance(clientDogPos) < getPosition().distance(dogPos)){
+            dogPos = clientDogPos;
+        };
+        
+        
+        cugl::Vec2 direction = myPos - dogPos;
+        direction.normalize();
+        float distance = myPos.distance(dogPos);
+        
+        
+        if (distance < 10) {
+           setVX(direction.x * 1.5f);
+           setVY(direction.y * 1.5f);
+           movementDirection.x = direction.x ;
+           movementDirection.y = direction.y ;
+        }
+        else{
+           movementDirection.x = 0;
+           movementDirection.y = 0 ;
+        }
+    };
     
     virtual void handleSpawn() {
         setHealth(_maxHealth);
@@ -528,7 +560,7 @@ protected:
         
         return !overWorld.getWorld()->isPassable(newX, newY);
     }
-
+    
     void handleWander(float dt){
         // Update time since last major direction change
          timeSinceLastMajorChange += dt;
