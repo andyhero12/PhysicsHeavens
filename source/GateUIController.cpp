@@ -19,8 +19,14 @@ bool GateUIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const
     UInode = node;
     _gates = gates;
     
-    _gateframe = cugl::scene2::PolygonNode::allocWithTexture(assets->get<Texture>("gateframe"));
-    _gatefill = SubTextureNode::allocWithTexture(assets->get<Texture>("gatefill"));
+    if(gates->getBases().size() == 1){
+        _gateframe = cugl::scene2::PolygonNode::allocWithTexture(assets->get<Texture>("gateframe"));
+        _gatefill = SubTextureNode::allocWithTexture(assets->get<Texture>("gatefill"));
+    } else {
+        _gateframe = cugl::scene2::PolygonNode::allocWithTexture(assets->get<Texture>("gateframe2"));
+        _gatefill = SubTextureNode::allocWithTexture(assets->get<Texture>("gatefillup"));
+        _gatefill2 = SubTextureNode::allocWithTexture(assets->get<Texture>("gatefilldown"));
+    }
     
     
     // set the scale
@@ -44,12 +50,20 @@ bool GateUIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const
     _gatefill->setPosition(gatefillx, gatey);
     
     node->addChild(_gatefill);
+    
+    if(_gatefill2){
+        _gatefill2->setScale(UI_SCALE);
+        _gatefill2->setAnchor(Vec2::ANCHOR_CENTER);
+        _gatefill2->setPosition(gatefillx, gatey);
+        node->addChild(_gatefill2);
+    }
+    
     node->addChild(_gateframe);
     
     return true;
 }
 
-void GateUIController::setGateBarTexture(float percentage){
+void GateUIController::setGateBarTexture(std::shared_ptr<SubTextureNode> fill, float percentage){
     CUAssert(0 <= percentage <= 1);
     // The percentage of the size bar that is empty space, needed to adjust how fast the health bar decreases
     GLfloat emptyPercent = 0;
@@ -59,18 +73,23 @@ void GateUIController::setGateBarTexture(float percentage){
     GLfloat minT = 0;
     GLfloat maxT = 1;
 
-    _gatefill->setSubtexture(minS, maxS, minT, maxT);
+    fill->setSubtexture(minS, maxS, minT, maxT);
     
-    float gatefillx = x + _screenSize.width - UI_SCALE * _gatefill->getTexture()->getWidth()/2;
+    float gatefillx = x + _screenSize.width - UI_SCALE * fill->getTexture()->getWidth()/2;
     float gatey = y + _screenSize.height - UI_SCALE * (_gateframe->getTexture()->getHeight()/2 + 2);
 
-    _gatefill->setAnchor(Vec2::ANCHOR_CENTER);
-    _gatefill->setPosition(gatefillx, gatey);
+    fill->setAnchor(Vec2::ANCHOR_CENTER);
+    fill->setPosition(gatefillx, gatey);
     
 }
 
 void GateUIController::updateHealthTexture(){
     std::shared_ptr<Base> firstGate = _gates->getBases().at(0);
-    setGateBarTexture(fmax(0.0,static_cast<double>(firstGate->getHealth())/firstGate->getMaxHealth()));
+    setGateBarTexture(_gatefill, fmax(0.0,static_cast<double>(firstGate->getHealth())/firstGate->getMaxHealth()));
+    
+    if(_gates->getBases().size() == 2){
+        std::shared_ptr<Base> secondGate = _gates->getBases().at(0);
+        setGateBarTexture(_gatefill2, fmax(0.0,static_cast<double>(secondGate->getHealth())/secondGate->getMaxHealth()));
+    }
 };
 

@@ -33,7 +33,8 @@ private:
     const Vec2 origin = Vec2(0, 0);
     std::shared_ptr<cugl::scene2::PolygonNode> _gateframe;
     std::shared_ptr<SubTextureNode> _gatefill;
-    std::shared_ptr<GateUIController> _uiController;
+    std::shared_ptr<SubTextureNode> _gatefill2;
+    
 public:
         
     std::shared_ptr<cugl::scene2::SceneNode> getUINode(){
@@ -45,9 +46,7 @@ public:
     
     bool init(std::shared_ptr<cugl::scene2::SceneNode> node, const std::shared_ptr<cugl::AssetManager>& assets, cugl::Size screenSize, std::shared_ptr<BaseSet> gates);
     
-    void setGateBarTexture(float percentage);
-    
-    void setUIController(std::shared_ptr<GateUIController> controller){ _uiController = controller; }
+    void setGateBarTexture(std::shared_ptr<SubTextureNode> fill, float percentage);
     
     void updateHealthTexture();
   
