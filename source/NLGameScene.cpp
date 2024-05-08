@@ -266,7 +266,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
         _uinode->addChild(overWorld.getClientDog()->getUINode());
     }
     
-    _uinode->addChild(overWorld.getBaseSet()->getUINode());
+    _uinode->addChild(overWorld.getGateUIController()->getUINode());
 
     _monsterController.setNetwork(_network);
     _monsterController.setMeleeAnimationData(_constants->get("basicEnemy"), assets);

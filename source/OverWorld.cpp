@@ -385,14 +385,15 @@ bool OverWorld::initDogModel()
 
 bool OverWorld::initBases()
 {
+    _bases = std::make_shared<BaseSet>();
+    _bases->init(_level->getBasesPos(), _assets);
+    
     std::shared_ptr<scene2::SceneNode> _uinode = scene2::SceneNode::alloc();
     _uinode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     
-    std::shared_ptr<GateUIController> _uiController = std::make_shared<GateUIController>();
-    _uiController->init(_uinode, _assets, _activeSize);
+    _gateUIController = std::make_shared<GateUIController>();
+    _gateUIController->init(_uinode, _assets, _activeSize, _bases);
     
-    _bases = std::make_shared<BaseSet>();
-    _bases->init(_level->getBasesPos(), _assets, _uiController);
     return true;
 }
 
@@ -662,6 +663,7 @@ void OverWorld::update(InputController &_input, cugl::Size totalSize, float time
     _decoys->update(timestep);
     _attackPolygonSet.update();
     _clientAttackPolygonSet.update();
+    _gateUIController->updateHealthTexture();
 }
 
 void OverWorld::postUpdate()

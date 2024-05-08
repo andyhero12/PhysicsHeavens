@@ -13,7 +13,6 @@
 #include <unordered_set>
 #include <vector>
 #include "SpriteAnimationNode.h"
-#include "GateUIController.h"
 
 class Base{
     
@@ -22,12 +21,11 @@ private:
     int _maxHealth;
     int _healVal;
     cugl::Vec2 _position;
-    std::shared_ptr<GateUIController> _gateUIController;
     std::shared_ptr<SpriteAnimationNode> _drawNode;
     float _damagedTimer;
     
 public:
-    Base(int health, cugl::Vec2 pos, std::shared_ptr<GateUIController> uiController, std::shared_ptr<SpriteAnimationNode> drawNode);
+    Base(int health, cugl::Vec2 pos, std::shared_ptr<SpriteAnimationNode> drawNode);
     void update();
     void reduceHealth(int val);
     
@@ -44,6 +42,9 @@ public:
     }
     const int getHealth() const{
         return _health;
+    }
+    const int getMaxHealth() const{
+        return _maxHealth;
     }
     const int getHealValue() const{
         return _healVal;

@@ -6,15 +6,18 @@
 //
 
 #include "GateUIController.h"
+#include "BaseSet.h"
 
 using namespace cugl;
 #define ANIM_FREQ 5
 
-bool GateUIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std::shared_ptr<cugl::AssetManager>& assets, cugl::Size screenSize){
+bool GateUIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std::shared_ptr<cugl::AssetManager>& assets, cugl::Size screenSize, std::shared_ptr<BaseSet> gates){
+    
 //    _childOffset = -1;
 //    // Get gameplay ui elements
     _screenSize = screenSize;
     UInode = node;
+    _gates = gates;
     
     _gateframe = cugl::scene2::PolygonNode::allocWithTexture(assets->get<Texture>("gateframe"));
     _gatefill = SubTextureNode::allocWithTexture(assets->get<Texture>("gatefill"));
@@ -49,7 +52,7 @@ bool GateUIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const
 void GateUIController::setGateBarTexture(float percentage){
     CUAssert(0 <= percentage <= 1);
     // The percentage of the size bar that is empty space, needed to adjust how fast the health bar decreases
-    GLfloat emptyPercent = 15.0/_gatefill->getWidth();
+    GLfloat emptyPercent = 0;
     
     GLfloat minS = emptyPercent + (1.0 - emptyPercent) * (1.0-percentage);
     GLfloat maxS = 1;
@@ -63,4 +66,11 @@ void GateUIController::setGateBarTexture(float percentage){
 
     _gatefill->setAnchor(Vec2::ANCHOR_CENTER);
     _gatefill->setPosition(gatefillx, gatey);
+    
 }
+
+void GateUIController::updateHealthTexture(){
+    std::shared_ptr<Base> firstGate = _gates->getBases().at(0);
+    setGateBarTexture(fmax(0.0,static_cast<double>(firstGate->getHealth())/firstGate->getMaxHealth()));
+};
+

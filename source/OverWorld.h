@@ -27,6 +27,8 @@
 #include "NLDashEvent.h"
 #include "NLSizeEvent.h"
 #include "NLClientHealthEvent.h"
+#include "GateUIController.h"
+
 class OverWorld
 {
 private:
@@ -42,6 +44,7 @@ private:
     AttackPolygons _attackPolygonSet;
     AttackPolygons _clientAttackPolygonSet;
     std::shared_ptr<World> _world;
+    std::shared_ptr<GateUIController> _gateUIController;
 
 public:
     bool _isHost;
@@ -114,6 +117,9 @@ public:
     AttackPolygons &getAttackPolygonsClient()
     {
         return _clientAttackPolygonSet;
+    }
+    std::shared_ptr<GateUIController> getGateUIController(){
+        return _gateUIController;
     }
     void dispose();
 };

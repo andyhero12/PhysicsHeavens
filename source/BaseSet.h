@@ -23,8 +23,7 @@ public:
     //    /* Base Textures */
     std::shared_ptr<cugl::Texture> _texture;
     //    /* Set of bases */
-    std::vector<std::shared_ptr<Base>> _bases;
-    std::shared_ptr<GateUIController> _uiController;
+    std::vector<std::shared_ptr<Base>> _bases; 
     
     BaseSet();
     
@@ -38,14 +37,14 @@ public:
     std::shared_ptr<cugl::scene2::SceneNode> getBaseSetNode(){
         return baseSetNode;
     }
-    bool init(const std::vector<cugl::Vec3>& basePoses, std::shared_ptr<cugl::AssetManager> assets, std::shared_ptr<GateUIController> uiController);
+    bool init(const std::vector<cugl::Vec3>& basePoses, std::shared_ptr<cugl::AssetManager> assets);
     
     bool baseLost();
     
     int getFirstHealth();
     
     const std::shared_ptr<cugl::Texture> getTexture() const { return _texture; }
-    std::shared_ptr<scene2::SceneNode> getUINode();
+    std::shared_ptr<cugl::scene2::SceneNode> getUINode();
 private:
     
 
