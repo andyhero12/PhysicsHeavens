@@ -49,6 +49,7 @@
 #include "MiniMap.h"
 #include "Tutorial.h"
 #include "SpriteAnimationNode.h"
+#include "NLAbsorbEvent.h"
 
 using namespace cugl::physics2::net;
 using namespace cugl;

@@ -290,6 +290,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _network->attachEventType<RecallEvent>();
     _network->attachEventType<ExplodeEvent>();
     _network->attachEventType<DashEvent>();
+    _network->attachEventType<AbsorbEvent>();
     _network->attachEventType<SizeEvent>();
     _network->attachEventType<DeathEvent>();
     _network->attachEventType<ShootEvent>();
@@ -768,6 +769,11 @@ void GameScene::fixedUpdate()
         {
 //            CULog("Got Health Event");
             overWorld.processClientHealthEvent(clientHealthEvent);
+        }
+        if (auto absorbEvent = std::dynamic_pointer_cast<AbsorbEvent>(e))
+        {
+            CULog("Got Absorb Event");
+            //overWorld.processClientHealthEvent(clientHealthEvent);
         }
     }
 #pragma mark END SOLUTION
