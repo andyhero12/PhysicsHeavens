@@ -14,10 +14,6 @@ static inline int generateRandomCost(int low, int high)
     std::uniform_int_distribution<> dis(low, high); // Range is 1 to 3, inclusive
     return dis(gen);
 }
-bool WorldSearchVertex::IsSameState( WorldSearchVertex &rhs ) const
-{
-    return (x == rhs.x) && (y == rhs.y);
-}
 
 size_t WorldSearchVertex::Hash()
 {
@@ -28,7 +24,7 @@ size_t WorldSearchVertex::Hash()
 
 float WorldSearchVertex::GoalDistanceEstimate( WorldSearchVertex &nodeGoal ) const
 {
-    return (abs(x - nodeGoal.x) + abs(y - nodeGoal.y)) * 20 ;
+    return (abs(x - nodeGoal.x) + abs(y - nodeGoal.y)) * 32 ;
 }
 
 bool WorldSearchVertex::IsGoal( WorldSearchVertex &nodeGoal ) const
@@ -65,9 +61,9 @@ bool WorldSearchVertex::GetSuccessors( AStarSearch<WorldSearchVertex> *astarsear
 
 float WorldSearchVertex::GetCost( WorldSearchVertex &successor ) const
 {
-    int costOrg = successor.closeToEdge() ? 100 : 10;
+    int costOrg = successor.closeToEdge() ? 100 : 16;
     
-    int noise = generateRandomCost(-10,10);
+    int noise = generateRandomCost(-16,16);
     
     return costOrg + noise;
 }

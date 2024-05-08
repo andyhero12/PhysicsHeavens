@@ -64,9 +64,10 @@ public:
     //The cost of moving to a successor
     float GetCost( WorldSearchVertex &successor ) const;
     
-    // Whether rhs is the current node
-    bool IsSameState( WorldSearchVertex &rhs ) const;
-    
+    bool IsSameState( WorldSearchVertex &rhs ) const
+    {
+        return (x == rhs.x) && (y == rhs.y);
+    }
     // The hash of this node
     size_t Hash();
 };
