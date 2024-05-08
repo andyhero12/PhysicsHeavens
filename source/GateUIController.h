@@ -14,7 +14,7 @@
 #include "SpriteAnimationNode.h"
 #include "GateUIController.h"
 
-#define UI_SCALE 6
+#define UI_SCALE 6.0f
 
 using namespace cugl;
 
