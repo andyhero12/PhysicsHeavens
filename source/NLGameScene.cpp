@@ -688,6 +688,7 @@ void GameScene::fixedUpdate()
         auto e = _network->popInEvent();
         if (auto monsterHealthEvent = std::dynamic_pointer_cast<MonsterHealthEvent>(e))
         {
+            _input.applyRumble(0, 10000, 50);
             if (!_isHost){ // These are client health Update
                 clientProcessMonsterHealth(monsterHealthEvent);
             }
