@@ -13,8 +13,9 @@
 #include "SubTextureNode.h"
 #include "SpriteAnimationNode.h"
 #include "GateUIController.h"
+#include "BaseSet.h"
 
-#define UI_SCALE 6
+#define UI_SCALE 6.0f
 
 using namespace cugl;
 
@@ -23,6 +24,7 @@ class GateUIController{
 private:
     std::shared_ptr<cugl::scene2::SceneNode> UInode;
     cugl::Size _screenSize;
+    std::shared_ptr<BaseSet> _gates;
     
     // represents the bottom left corner of the screen
     float x;
@@ -31,7 +33,8 @@ private:
     const Vec2 origin = Vec2(0, 0);
     std::shared_ptr<cugl::scene2::PolygonNode> _gateframe;
     std::shared_ptr<SubTextureNode> _gatefill;
-    std::shared_ptr<GateUIController> _uiController;
+    std::shared_ptr<SubTextureNode> _gatefill2;
+    
 public:
         
     std::shared_ptr<cugl::scene2::SceneNode> getUINode(){
@@ -41,11 +44,11 @@ public:
     
     ~GateUIController(){}
     
-    bool init(std::shared_ptr<cugl::scene2::SceneNode> node, const std::shared_ptr<cugl::AssetManager>& assets, cugl::Size screenSize);
+    bool init(std::shared_ptr<cugl::scene2::SceneNode> node, const std::shared_ptr<cugl::AssetManager>& assets, cugl::Size screenSize, std::shared_ptr<BaseSet> gates);
     
-    void setGateBarTexture(float percentage);
+    void setGateBarTexture(std::shared_ptr<SubTextureNode> fill, float percentage);
     
-    void setUIController(std::shared_ptr<GateUIController> controller){ _uiController = controller; }
+    void updateHealthTexture();
   
 };
 

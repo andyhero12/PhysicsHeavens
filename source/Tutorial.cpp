@@ -7,11 +7,12 @@
 
 #include "Tutorial.h"
 
-bool Tutorial::init(int tile, MODE m_progress){
+bool Tutorial::init(int tile, MODE m_progress, std::string m_text){
     tileX = tile;
     passed = false;
     progress = m_progress;
     enter = false;
+    text = m_text;
     return true;
 }
 

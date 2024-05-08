@@ -149,24 +149,6 @@ void UIController::setSizeBarTexture(float percentage){
     _sizefill->setPosition(sizefillx , sizefilly);
 }
 
-void UIController::setGateBarTexture(float percentage){
-    CUAssert(0 <= percentage <= 1);
-    // The percentage of the size bar that is empty space, needed to adjust how fast the health bar decreases
-    GLfloat emptyPercent = 0;
-    
-    GLfloat minS = 0;
-    GLfloat maxS = emptyPercent + (1.0 - emptyPercent) * percentage;
-    GLfloat minT = 0;
-    GLfloat maxT = 1;
-
-    _sizefill->setSubtexture(minS, maxS, minT, maxT);
-    
-    float sizefillx = x + UI_SCALE * _sizefill->getTexture()->getWidth()/2;
-    float sizefilly = y + _screenSize.height - UI_SCALE * _sizefill->getTexture()->getHeight()/2;
-
-    _sizefill->setPosition(sizefillx , sizefilly);
-}
-
 void UIController::setToggle(std::string mode){
     if (mode == "SHOOT") {
         _bombtoggle->setVisible(false);

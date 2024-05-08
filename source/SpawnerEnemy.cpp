@@ -117,24 +117,26 @@ void SpawnerEnemy::preUpdate(float dt, OverWorld& overWorld){
     if (_counter < updateRate){
         _counter++;
     }
+
     
+    handleRunaway(overWorld);
     // Determine the action based on the state; for now it's alway in atttack but should change
-    curAction = AbstractEnemy::EnemyActions::ATTACK;
-    if (curAction == EnemyActions::SPAWN){
-        handleSpawn();
-    }
-    else if (curAction == EnemyActions::WANDER){
-        handleWander(dt);
-    }
-    else if(curAction == EnemyActions::CHASE){
-        handleChase(overWorld);
-    }
-    else if(curAction == EnemyActions::LOWHEALTH){
-        handleLowHealth(overWorld);
-    }
-    else if(curAction == EnemyActions::ATTACK){
-        handleAttack(overWorld);
-    }
+//    curAction = AbstractEnemy::EnemyActions::ATTACK;
+//    if (curAction == EnemyActions::SPAWN){
+//        handleSpawn();
+//    }
+//    else if (curAction == EnemyActions::WANDER){
+//        handleWander(dt);
+//    }
+//    else if(curAction == EnemyActions::CHASE){
+//        handleChase(overWorld);
+//    }
+//    else if(curAction == EnemyActions::LOWHEALTH){
+//        handleLowHealth(overWorld);
+//    }
+//    else if(curAction == EnemyActions::ATTACK){
+//        handleAttack(overWorld);
+//    }
 }
 
 
@@ -156,4 +158,3 @@ void SpawnerEnemy::handleChase(OverWorld& overWorld) {
 void SpawnerEnemy::handleLowHealth(OverWorld& overWorld){}
 void SpawnerEnemy::handleAttack(OverWorld& overWorld){}
 void SpawnerEnemy::handleStay(OverWorld& overWorld){}
-void SpawnerEnemy::handleRunaway(OverWorld& overWorld){}
