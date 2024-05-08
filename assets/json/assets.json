@@ -554,13 +554,16 @@
              "magfilter": "nearest"
          },
          "repeat_win": {
-           "file": "textures/repeat_win.png"
+           "file": "textures/repeat_win.png",
+           "magfilter": "nearest"
          },
         "win_screen": {
-          "file": "textures/win_screen.png"
+          "file": "textures/win_screen.png",
+          "magfilter": "nearest"
         },
         "lose_screen": {
-          "file": "textures/loss_screen.png"
+          "file": "textures/loss_screen.png",
+          "magfilter": "nearest"
         }
     },
     "jsons": {
