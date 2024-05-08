@@ -959,20 +959,21 @@ void GameScene::updateInputController()
     {
         const std::shared_ptr<Tutorial>& tile = tutorialTiles.at(tutorialIndex);
         bool atLocation = tile->atArea(overWorld.getDog()->getX());
-        const std::shared_ptr<scene2::SceneNode>& node = _tutorialnode->getChildByName(Tutorial::toString(tile->getProgress()));
+        const std::shared_ptr<scene2::SceneNode>& node = tutorialTiles.at(tutorialIndex)->getSprite();
         const std::shared_ptr<SpriteAnimationNode>& spriteNode = std::dynamic_pointer_cast<SpriteAnimationNode>(node);
-
+        const std::shared_ptr<scene2::Label>& message = tutorialTiles.at(tutorialIndex)->getMessage();
         // just do tile->setVisible(tutorial) to draw stuff
         if (atLocation && !tile->didPass() && spriteNode)
         {
             spriteNode->setVisible(true);
             spriteNode->update();
-            
+            message->setVisible(true);
         }
         if (_input.update(tile->getProgress(), atLocation))
         {
             tile->setPass(true);
             node->setVisible(false);
+            message->setVisible(false);
             tutorialIndex++;
         }
         
@@ -1009,15 +1010,15 @@ void GameScene::initTutorialOne(){
     _uinode->addChild(_tutorialnode);
     tutorialTiles = std::vector<std::shared_ptr<Tutorial>>();
     
-    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::GREETING));
-    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::MOVEMENT));
-    tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::MODE::DEFENDGATE));
-    tutorialTiles.push_back(Tutorial::alloc(30, Tutorial::MODE::BITE));
-    tutorialTiles.push_back(Tutorial::alloc(30, Tutorial::MODE::GROW));
-    tutorialTiles.push_back(Tutorial::alloc(30, Tutorial::MODE::SPECIALSONE));
-    tutorialTiles.push_back(Tutorial::alloc(31, Tutorial::MODE::CHANGEABILITYTWO));
-    tutorialTiles.push_back(Tutorial::alloc(31, Tutorial::MODE::DESTROYSPAWNER));
-    tutorialTiles.push_back(Tutorial::alloc(31, Tutorial::MODE::SPECIALSTWO));
+    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::GREETING, "jsafk sdflk ajsflja kfjsdlkj falksjf klajsdf kaljf klj flldfj alf asfsdf afassdafasfljsd"));
+    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::MOVEMENT, " adf as saf "));
+    tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::MODE::DEFENDGATE, ""));
+    tutorialTiles.push_back(Tutorial::alloc(30, Tutorial::MODE::BITE, ""));
+    tutorialTiles.push_back(Tutorial::alloc(30, Tutorial::MODE::GROW, ""));
+    tutorialTiles.push_back(Tutorial::alloc(30, Tutorial::MODE::SPECIALSONE, ""));
+    tutorialTiles.push_back(Tutorial::alloc(31, Tutorial::MODE::CHANGEABILITYTWO, ""));
+    tutorialTiles.push_back(Tutorial::alloc(31, Tutorial::MODE::DESTROYSPAWNER, ""));
+    tutorialTiles.push_back(Tutorial::alloc(31, Tutorial::MODE::SPECIALSTWO, ""));
 //
     std::vector<std::string> modes = {"RECALL", "SHOOT"};
     overWorld.getDog()->setAbility(modes);
@@ -1048,20 +1049,37 @@ void GameScene::initTutorial(std::vector<int> frame)
 {
     Size screen = computeActiveSize();
     std::shared_ptr<SpriteAnimationNode> node;
+    std::shared_ptr<scene2::Label> message;
     std::string str;
-
+    
     for (int i = 0; i < tutorialTiles.size(); i++)
     {
         str = Tutorial::toString(tutorialTiles.at(i)->getProgress());
-//        node = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>(str));
         node = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>(str), 1, frame.at(i), frame.at(i), 5);
-        
-        _tutorialnode->addChildWithName(node, str);
+        _tutorialnode->addChild(node);
         node->setScale(4);
         node->setAnchor(Vec2::ANCHOR_CENTER);
         node->setPositionX(screen.width / 2);
         node->setPositionY(node->getScaleY() * node->getTexture()->getHeight() / 2);
         node->setVisible(false);
+        tutorialTiles.at(i)->setSprite(node);
+        
+        Size box = Size(node->getTexture()->getWidth()/2, 2 * node->getScaleY() * node->getTexture()->getHeight());
+        
+        CULog(" width: %d    height: %f", node->getTexture()->getWidth(), node->getTexture()->getHeight() * node->getScaleY());
+        
+        message = scene2::Label::allocWithTextBox(box, tutorialTiles.at(i)->getText() ,_assets->get<Font>(PRIMARY_FONT));
+        
+        message->setHorizontalAlignment(HorizontalAlign::CENTER);
+        message->setVerticalAlignment(VerticalAlign::MIDDLE);
+        message->setWrap(true);
+        message->setScale(.25);
+        _tutorialnode->addChild(message);
+        message->setAnchor(Vec2(0.8f , 0.5f));
+        message->setPositionX(3 * screen.width / 4);
+        message->setPositionY(node->getScaleY() * node->getTexture()->getHeight() / 2);
+        message->setVisible(false);
+        tutorialTiles.at(i)->setMessage(message);
     }
 }
 

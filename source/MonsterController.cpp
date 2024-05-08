@@ -182,6 +182,9 @@ void MonsterController::spawnEnemyFromString(std::string enemyType, cugl::Vec2 p
     else if (enemyType == "eating") {
         spawnAbsorbEnemy(pos, overWorld, power);
     }
+    else if (enemyType == "staticbasic") {
+        spawnStaticBasicEnemy(pos, overWorld, power);
+    }
     else {
         throw std::runtime_error("Unknown enemy type: " + enemyType);
     }
