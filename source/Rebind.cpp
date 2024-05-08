@@ -45,6 +45,12 @@ bool RebindScene::init(const std::shared_ptr<AssetManager> &assets)
     } else if (!Scene2::init(dimen)) {
         return false;
     }
+    
+    _root = scene2::ScrollPane::allocWithBounds(dimen*10);
+    _root->setContentSize(dimen*10);
+//    _root->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+
+    addChild(_root);
     //_input.init_withlistener();
     _input.init();
     // IMMEDIATELY load the splash screen assets
@@ -60,14 +66,18 @@ bool RebindScene::init(const std::shared_ptr<AssetManager> &assets)
     });
     background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("background_rebind"), 1, 1);
 //    std::cout << "height of level scene "<< background->getTexture()->getHeight()<<std::endl;
-    background->setScale(2);
+    background->setScale(20);
     background->setPosition(0.5 *dimen);
     addChild(background);
     layer->setColor(Color4(0, 0, 0, 1));
     Application::get()->setClearColor(Color4(192, 192, 192, 255));
-    addChild(_root);
     _root->addChild(layer);
+
+    
+    
     setActive(false);
+    
+
     return true;
 }
 
@@ -98,12 +108,18 @@ void RebindScene::update(float progress)
 {
     _input.update();
 
+    if(_input.didPressUp()){
+        _root->applyZoom(1.5);
+        _root->applyPan(1, 1);
+        CULog("fadjsfa f");
+    }
+    
     if (_input.didPressConfirm()){
         _button->setDown(true);
     }
 
     if(_input.didPressBack()){
-        _backClicked = true;
+//        _backClicked = true;
     }
 
     if (firsttime)
@@ -112,6 +128,8 @@ void RebindScene::update(float progress)
         _button->setVisible(false);
         firsttime = false;
     }
+    
+
 }
 
 /**
