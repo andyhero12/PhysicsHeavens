@@ -53,12 +53,12 @@ bool SettingScene::init(const std::shared_ptr<AssetManager> &assets)
     std::shared_ptr<cugl::scene2::SceneNode> layer = assets->get<scene2::SceneNode>("setting");
     _button = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("setting_play"));
     _slider1 = std::dynamic_pointer_cast<scene2::Slider>(assets->get<scene2::SceneNode>("setting_slider1"));
-    
     _slider1->setKnob(scene2::Button::alloc(scene2::PolygonNode::allocWithTexture(_assets->get<cugl::Texture>("knob"))));
-    _slider1->getKnob()->setScale(5);
+    _slider1->getKnob()->setScale(4);
     _slider2 = std::dynamic_pointer_cast<scene2::Slider>(assets->get<scene2::SceneNode>("setting_slider2"));
     _slider2->setKnob(scene2::Button::alloc(scene2::PolygonNode::allocWithTexture(_assets->get<cugl::Texture>("knob"))));
-    _label  = std::dynamic_pointer_cast<scene2::Label>(assets->get<scene2::SceneNode>("setting_label"));
+    _slider2->getKnob()->setScale(4);
+    //   _slider2->getKnob()->setScale(4);
     _value  = _slider1->getValue();
     _button->addListener([this](const std::string &name, bool down){
         if(down) { // Check if the button is pressed down
@@ -89,11 +89,9 @@ bool SettingScene::init(const std::shared_ptr<AssetManager> &assets)
         }
     });
 
-    _label->setText("Slider value is "+cugl::strtool::to_string(_value,1));
     _slider1->addListener([this](const std::string& name, float value) {
         if (value != _value) {
             _value = value;
-            _label->setText("Slider value is "+cugl::strtool::to_string(_value,1));
         }
     });
 

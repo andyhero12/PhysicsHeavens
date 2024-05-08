@@ -61,11 +61,12 @@ bool RebindScene::init(const std::shared_ptr<AssetManager> &assets)
     background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("background_rebind"), 1, 1);
 //    std::cout << "height of level scene "<< background->getTexture()->getHeight()<<std::endl;
     background->setScale(2);
-    background->setPosition(0.5 * background->getSize());
+    background->setPosition(0.5 *dimen);
     addChild(background);
     layer->setColor(Color4(0, 0, 0, 1));
     Application::get()->setClearColor(Color4(192, 192, 192, 255));
-    addChild(layer);
+    addChild(_root);
+    _root->addChild(layer);
     setActive(false);
     return true;
 }
