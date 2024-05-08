@@ -772,7 +772,8 @@ void GameScene::fixedUpdate()
         }
         if (auto absorbEvent = std::dynamic_pointer_cast<AbsorbEvent>(e))
         {
-            CULog("Got Absorb Event");
+            //CULog("Got Absorb Event");
+            processAbsorbEvent(absorbEvent);
             //overWorld.processClientHealthEvent(clientHealthEvent);
         }
     }
@@ -1167,6 +1168,18 @@ void GameScene::executeSlidingWindow(Vec2 dogPos)
                 }
             }
         }
+    }
+}
+
+void GameScene::processAbsorbEvent(std::shared_ptr<AbsorbEvent> absorbEvent) {
+    std::shared_ptr<cugl::physics2::Obstacle> it = _world->getObstacle(absorbEvent->getObstacleID());
+    if (it == nullptr){
+//        CULog("lagged event?");
+        return;
+    }
+    if (std::shared_ptr<AbstractEnemy> absorbEnemy = std::dynamic_pointer_cast<AbstractEnemy>(it)){
+//        CULog("Actual Enemy");
+        absorbEnemy->setDimension(Size(absorbEvent->getSize(), absorbEvent->getSize()));
     }
 }
 

@@ -57,7 +57,10 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
     static_enemy->setWalkingSceneNode(runAnimations);
     static_enemy->setAttackingSceneNode(attackAnimations);
     static_enemy->setFinalEnemy(topLevel);
-    topLevel->setScale(m_size.height / _textures.at(0)->getHeight() * SPRITE_SCALE);
+    static_enemy->_defaultScale = m_size.height / _textures.at(0)->getHeight() * SPRITE_SCALE;
+    topLevel->setScale(static_enemy->_defaultScale);
+    static_enemy->_defaultDimension = m_size.width;
+    static_enemy->_defaultHealth = m_health;
     static_enemy->setShared(true);
     
 //        static_enemy->setHealthBar(_healthBar);

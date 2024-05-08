@@ -338,6 +338,7 @@ public:
     void clientMonsterUpdate(float dt);
     
     void clientProcessMonsterHealth(std::shared_ptr<MonsterHealthEvent> monsterHealthEvent);
+    void processAbsorbEvent(std::shared_ptr<AbsorbEvent> absorbEvent);
 };
 
 #endif /* __NL_GAME_SCENE_H__ */

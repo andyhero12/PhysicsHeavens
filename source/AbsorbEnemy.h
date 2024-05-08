@@ -99,6 +99,9 @@ public:
 
 class AbsorbEnemy : public AbstractEnemy {
 public:
+    float _defaultScale;
+    float _defaultDimension;
+    int _defaultHealth;
     
     static std::shared_ptr<AbsorbEnemy> alloc(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex) {
         std::shared_ptr<AbsorbEnemy> result = std::make_shared<AbsorbEnemy>();
@@ -124,10 +127,11 @@ public:
     void increaseHealth(int inc_health){
         _health += inc_health;
         _maxHealth = max(_maxHealth,_health);
-//        float dim = (float) _health/6.0 + 1.0;
-//        cugl::Size nxtSize(dim,dim);
-//        setDimension(nxtSize);
-//        baseBlankNode->setScale(dim/64);
+
+        float dim = ((float)_maxHealth / _defaultHealth) * _defaultDimension;
+        cugl::Size nxtSize(dim,dim);
+        setDimension(nxtSize);
+        topLevelPlaceHolder->setScale(((float)_maxHealth / _defaultHealth) * _defaultScale);
     }
     
     bool canAttack() const override{
