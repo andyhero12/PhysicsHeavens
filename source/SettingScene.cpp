@@ -51,12 +51,13 @@ bool SettingScene::init(const std::shared_ptr<AssetManager> &assets)
     _assets = assets;
     _assets->loadDirectory("json/setting.json");
     std::shared_ptr<cugl::scene2::SceneNode> layer = assets->get<scene2::SceneNode>("setting");
-    layer->setContentSize(dimen);
-    layer->doLayout(); // This rearranges the children to fit the screen
     _button = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("setting_play"));
-    _knob = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("setting_knob"));
     _slider1 = std::dynamic_pointer_cast<scene2::Slider>(assets->get<scene2::SceneNode>("setting_slider1"));
+    
+    _slider1->setKnob(scene2::Button::alloc(scene2::PolygonNode::allocWithTexture(_assets->get<cugl::Texture>("knob"))));
+    _slider1->getKnob()->setScale(5);
     _slider2 = std::dynamic_pointer_cast<scene2::Slider>(assets->get<scene2::SceneNode>("setting_slider2"));
+    _slider2->setKnob(scene2::Button::alloc(scene2::PolygonNode::allocWithTexture(_assets->get<cugl::Texture>("knob"))));
     _label  = std::dynamic_pointer_cast<scene2::Label>(assets->get<scene2::SceneNode>("setting_label"));
     _value  = _slider1->getValue();
     _button->addListener([this](const std::string &name, bool down){
@@ -106,6 +107,9 @@ bool SettingScene::init(const std::shared_ptr<AssetManager> &assets)
     background->setScale(4.3);
     background->setPosition(0.5 * background->getSize());
     addChild(background);
+    
+    layer->setContentSize(dimen);
+    layer->doLayout(); // This rearranges the children to fit the screen
     layer->setColor(Color4(0, 0, 0, 1));
     Application::get()->setClearColor(Color4(192, 192, 192, 255));
     addChild(layer);
@@ -145,9 +149,6 @@ void SettingScene::update(float progress)
         _button->activate();
         _slider1->activate();
         _slider2->activate();
-        _knob->setVisible(true);
-        _slider1->setKnob (_knob);
-        _slider2->setKnob (_knob);
         _button->setVisible(false);
         firsttime = false;
     }
