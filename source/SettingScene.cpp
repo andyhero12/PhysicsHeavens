@@ -54,9 +54,11 @@ bool SettingScene::init(const std::shared_ptr<AssetManager> &assets)
     layer->setContentSize(dimen);
     layer->doLayout(); // This rearranges the children to fit the screen
     _button = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("setting_play"));
-    // _slider = std::dynamic_pointer_cast<scene2::Slider>(assets->get<scene2::SceneNode>("setting_action"));
-    // _label  = std::dynamic_pointer_cast<scene2::Label>(assets->get<scene2::SceneNode>("setting_label"));
-    // _value  = _slider->getValue();
+    _knob = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("setting_knob"));
+    _slider1 = std::dynamic_pointer_cast<scene2::Slider>(assets->get<scene2::SceneNode>("setting_slider1"));
+    _slider2 = std::dynamic_pointer_cast<scene2::Slider>(assets->get<scene2::SceneNode>("setting_slider2"));
+    _label  = std::dynamic_pointer_cast<scene2::Label>(assets->get<scene2::SceneNode>("setting_label"));
+    _value  = _slider1->getValue();
     _button->addListener([this](const std::string &name, bool down){
         if(down) { // Check if the button is pressed down
             switch (level) { // Use the current level stored in _level
@@ -85,17 +87,21 @@ bool SettingScene::init(const std::shared_ptr<AssetManager> &assets)
             }
         }
     });
-    // _slider->addListener([this](const std::string& name, float value) {
-    //     if (value != _value) {
-    //         _value = value;
-    //         _label->setText("Slider value is "+cugl::strtool::to_string(_value,1));
-    //     }
-    // });
 
-    
-    // if (_active) {
-    //     _slider->activate();
-    // }
+    _label->setText("Slider value is "+cugl::strtool::to_string(_value,1));
+    _slider1->addListener([this](const std::string& name, float value) {
+        if (value != _value) {
+            _value = value;
+            _label->setText("Slider value is "+cugl::strtool::to_string(_value,1));
+        }
+    });
+
+    _slider2->addListener([this](const std::string& name, float value) {
+        if (value != _value) {
+            _value = value;
+        }
+    });
+
     background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("setting_background"), 1, 9);
     background->setScale(4.3);
     background->setPosition(0.5 * background->getSize());
@@ -118,7 +124,8 @@ void SettingScene::dispose()
     }
     _button = nullptr;
     _assets = nullptr;
-    _slider = nullptr;
+    _slider1 = nullptr;
+    _slider2 = nullptr;
 }
 
 #pragma mark -
@@ -136,6 +143,11 @@ void SettingScene::update(float progress)
     if (firsttime)
     {
         _button->activate();
+        _slider1->activate();
+        _slider2->activate();
+        _knob->setVisible(true);
+        _slider1->setKnob (_knob);
+        _slider2->setKnob (_knob);
         _button->setVisible(false);
         firsttime = false;
     }
@@ -162,6 +174,22 @@ void SettingScene::update(float progress)
     updatelevelscene();
     resetgochange();
     adjustFrame(level);
+
+    if(_input._Leftright == -1 && readyToChangeLevel()){
+        if(level==1){
+            _slider1->setValue(_slider1->getValue()-1);
+        }else if(level==2){
+            _slider2->setValue(_slider2->getValue()-1);
+        }
+    }
+
+    if(_input._Leftright == 1 && readyToChangeLevel()){
+        if(level==1){
+            _slider1->setValue(_slider1->getValue()+1);
+        }else if(level==2){
+            _slider2->setValue(_slider2->getValue()+1);
+        }
+    }
 
     if (_input.didPressConfirm() && readyToChangeLevel()){
         _button->setDown(true);
@@ -194,7 +222,8 @@ void SettingScene::setActive(bool value)
         {
             _buttonselection = button::NONE;
             _button->activate();
-            //_slider->activate();
+            _slider1->activate();
+            _slider2->activate();
             firsttime = true;
             _backClicked = false;
         }
@@ -203,7 +232,8 @@ void SettingScene::setActive(bool value)
             background->setFrame(0);
             _button->deactivate();
             _button->setDown(false);
-            //_slider->deactivate();
+            _slider1->deactivate();
+            _slider2->deactivate();
             firsttime = true;
             _backClicked = false;
             level = 1;

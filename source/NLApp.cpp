@@ -41,6 +41,7 @@ void NetApp::onStartup() {
     
     Input::activate<Keyboard>();
     Input::activate<TextInput>();
+    Input::get<Mouse>()->setPointerAwareness(Mouse::PointerAwareness::DRAG);
     
     _assets->attach<Font>(FontLoader::alloc()->getHook());
     _assets->attach<Texture>(TextureLoader::alloc()->getHook());

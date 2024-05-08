@@ -536,10 +536,10 @@ void InputController::readInput_joystick(int value) {
             if (abs(LR) >= 0.2 || abs(UD) >= 0.2) {
                 _Vel = cugl::Vec2(LR, -UD);
                 _UseJoystick = true;
-                if (UD < -0.2) {  
+                if (UD < -0.4) {  
                     _updown = 1; //Up
                 }
-                else if (UD > 0.2) {
+                else if (UD > 0.4) {
                     _updown = -1; //down
                 }
                 if (LR < -0.2) {
