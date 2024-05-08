@@ -13,6 +13,8 @@
 #include <stdexcept>
 #include <string>
 #include <cugl/cugl.h>
+#include "SpriteAnimationNode.h"
+
 class Tutorial{
 public:
     
@@ -107,13 +109,16 @@ protected:
     bool passed;
     MODE progress;
     bool enter;
+    std::shared_ptr<SpriteAnimationNode> sprite;
+    std::shared_ptr<cugl::scene2::Label> message;
+    std::string text;
     
 public:
     Tutorial(){}
-    bool init(int tile, MODE progress);
-    static std::shared_ptr<Tutorial> alloc(int tile, MODE progress) {
+    bool init(int tile, MODE progress, std::string m_text);
+    static std::shared_ptr<Tutorial> alloc(int tile, MODE progress, std::string text) {
         std::shared_ptr<Tutorial> node = std::make_shared<Tutorial>();
-        return (node->init(tile, progress) ? node : nullptr);
+        return (node->init(tile, progress, text) ? node : nullptr);
     }
     int getX() const {return tileX;}
     bool didPass() const {return passed;}
@@ -122,6 +127,27 @@ public:
     // returns true if your x coordinate is at the right spot
     bool atArea(int tile);
     
+    void setSprite(std::shared_ptr<SpriteAnimationNode> node){
+        sprite = node;
+    }
+    
+    std::shared_ptr<SpriteAnimationNode> getSprite() const {
+        return sprite;
+    }
+    
+    
+    void setMessage(std::shared_ptr<cugl::scene2::Label> node){
+        message = node;
+    }
+    
+    std::shared_ptr<cugl::scene2::Label> getMessage() const {
+        return message;
+    }
+    
+    
+    std::string getText() const {
+        return text;
+    }
 };
 
 
