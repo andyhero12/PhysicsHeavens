@@ -157,7 +157,7 @@ public:
         if(_knockbackTimer <= 0){
             Vec2 direction = movementDirection;
             _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
-
+            
             runAnimations->animate(_curDirection, curAction != EnemyActions::ATTACK);
             attackAnimations->animate(_curDirection, curAction == EnemyActions::ATTACK);
         }
@@ -362,11 +362,6 @@ protected:
     
     /** Sets a new goal for this enemy to go to. Returns true if pathfinding to the goal was successful */
     bool setGoal(Vec2& goal, const World* world){
-//        if (world.expired()){
-//            CULog("World Expired");
-//            return false;
-//        }
-        
 //        WorldSearchVertex* prevGoalVertex =_pathfinder->GetSolutionEnd();
         trueGoal = goal;
 
@@ -417,6 +412,11 @@ protected:
         return _pathfinder->GetSolutionEnd() && _pathfinder->SearchStep() == AStarSearch<WorldSearchVertex>::SEARCH_STATE_SUCCEEDED;
     }
     
+    bool canResetAction() const{
+        bool attack = curAction == EnemyActions::ATTACK && attackAnimations->getFrame() == attackAnimations->getSpan() - 1;
+        bool nonAttack = curAction != EnemyActions::ATTACK && runAnimations->getFrame() == runAnimations->getSpan() - 1;
+        return nonAttack || attack;
+    }
     // update state
     virtual void handleChase(OverWorld& overWorld) = 0;
     virtual void handleLowHealth(OverWorld& overWorld) = 0;
