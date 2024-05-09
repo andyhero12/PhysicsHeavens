@@ -502,6 +502,11 @@
             "minfilter": "linear",
             "magfilter": "nearest"
         },
+        "spawnerSpawn": {
+            "file": "textures/spawnerEnemy/coffin_summoning_front.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
         "frame": {
             "file": "textures/frame.png"
         },

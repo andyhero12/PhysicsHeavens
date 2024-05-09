@@ -136,9 +136,6 @@ void MeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
     }
     
     _time++;
-    
-    // Determine the action based on the state
-//    runAnimations->setColor(cugl::Color4::WHITE);
     cugl::Vec2 target_pos = getTargetPositionFromIndex(overWorld);
     cugl::Vec2 dist = target_pos - getPosition();
     
