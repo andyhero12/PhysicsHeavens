@@ -102,30 +102,30 @@ public:
         return false;
     }
 
-    void setVX(float value) override {
+    virtual void setVX(float value) override {
         if(!(_knockbackTimer > 0)) {
             CapsuleObstacle::setVX(value);
         }
     }
 
-    void setVY(float value) override {
+    virtual void setVY(float value) override {
         if(!(_knockbackTimer > 0)) {
             CapsuleObstacle::setVY(value);
         }
     }
 
-    void setLinearVelocity(Vec2 value) override {
+    virtual void setLinearVelocity(Vec2 value) override {
         setLinearVelocity(value.x, value.y);
     }
 
 
-    void setLinearVelocity(float x, float y) override {
+    virtual void setLinearVelocity(float x, float y) override {
         if(!(_knockbackTimer > 0)) {
             CapsuleObstacle::setLinearVelocity(x, y);
         }
     }
 
-    void update(float delta) override {
+    virtual void update(float delta) override {
         Obstacle::update(delta);
         
         _knockbackTimer -= delta;
@@ -157,7 +157,7 @@ public:
         if(_knockbackTimer <= 0){
             Vec2 direction = movementDirection;
             _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
-
+            
             runAnimations->animate(_curDirection, curAction != EnemyActions::ATTACK);
             attackAnimations->animate(_curDirection, curAction == EnemyActions::ATTACK);
         }
@@ -361,14 +361,9 @@ protected:
     }
     
     /** Sets a new goal for this enemy to go to. Returns true if pathfinding to the goal was successful */
-    bool setGoal(Vec2 goal, const World* world){
-//        if (world.expired()){
-//            CULog("World Expired");
-//            return false;
-//        }
-        
-        WorldSearchVertex* prevGoalVertex =_pathfinder->GetSolutionEnd();
-        trueGoal = Vec2(goal.x, goal.y);
+    bool setGoal(Vec2& goal, const World* world){
+//        WorldSearchVertex* prevGoalVertex =_pathfinder->GetSolutionEnd();
+        trueGoal = goal;
 
         
         // If the newly set goal is very close to the old goal, just keep the old goal
@@ -385,96 +380,31 @@ protected:
         return rawSetGoal(goal, world);
     };
 
-
     void goToGoal(){
-        
-        // Get the goal
-        WorldSearchVertex* goalNode = _pathfinder->GetSolutionEnd();
-        cugl::Vec2 direction;
-        
-        // If there is no goal or we are already at the goal, do nothing
-        if(atGoal() || _nextStep.x < 0 ){
-            if(atGoal()){
-//                CULog("At goal already, do nothing");
-            } else {
-//                CULog("No goal instantiated, do nothing");
-            }
+        if(atGoal()){
             return;
         }
-        
-        Vec2 goalTile = Vec2(trueGoal.x, trueGoal.y);
-//        CULog("True Goal is at (%f, %f)", trueGoal.x, trueGoal.y);
-        
-        // If we are very close to the goal, go directly to it instead of using pathfinding
-        if(getPosition().distance(goalTile) <= CLOSE_DISTANCE){
-            CULog("Close enough, going directly to the goal");
-            direction = goalTile - getPosition();
-        } else {
-            
-            // If we strayed too far from the pathfinding path, restart pathfinding
-            Vec2 nextTile = Vec2(_nextStep.x, _nextStep.y);
-            if(getPosition().distance(nextTile) > STRAY_DISTANCE){
-                CULog("Recalculating Path...");
-                //rawSetGoal(Vec2(trueGoal.x, trueGoal.y), goalNode->_world);
-            }
-            
-            // If we already reached the next tile, get the next node along the path and set it as the next tile
-            if(atTile(_nextStep)){
-//                CULog("Reached Tile (%f, %f)", _nextStep.x, _nextStep.y);
-                WorldSearchVertex* nextNode = _pathfinder->GetSolutionNext();
-                
-                if(nextNode){
-                    _nextStep = Vec2((int) nextNode->x, (int) nextNode->y);
-                } else{
-                    rawSetGoal(trueGoal, goalNode->_world);
-//                    CULog("Can't find next tile, recalculating");
-                }
-                
-                nextTile = Vec2(_nextStep.x, _nextStep.y);
-            } else {
-//                CULog("Didn't reach Tile (%f, %f), trying again", _nextStep.x, _nextStep.y);
-                if(!goalNode->_world->isPassable(_nextStep.x, _nextStep.y)){
-//                    CULogError("ERROR TILE NOT ACTUALLY PASSABLE!!!");
-                }
-               ;
-            }
-            
-            direction = nextTile - getPosition();
+        if(atTile(_nextStep)){
+            WorldSearchVertex* nextNode = _pathfinder->GetSolutionNext();
+            _nextStep.x = nextNode->x;
+            _nextStep.y = nextNode->y;
         }
-        
-        //Move towards the next tile
+        Vec2& nextTile = _nextStep;
+        cugl::Vec2 direction = nextTile - getPosition();
         setVX(direction.normalize().x * 1.5);
         setVY(direction.normalize().y * 1.5);
         setX(getX());
         setY(getY());
         _prevDirection =_curDirection;
         _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
-        
-        
-        
-        
-        
-        // If we have been stuck on the same tile for too long, move randomly and then restart pathfinding
-        
-    };
-
-
+    }
     bool atGoal(){
         // Get the goal
-        return trueGoal.x < 0 || atTile(trueGoal);
+        return atTile(trueGoal);
     };
 
-    bool atTile(Vec2 tile){
-        
-        // Get the center of the tile
-        Vec2 tileCenter = Vec2(tile.x, tile.y);
-        
-        // Check if the enemy position is close to the center
-        if(getPosition().distance(tileCenter) < 0.03 ){
-            return true;
-        };
-        
-        return false;
+    bool atTile(Vec2& tile){
+        return getPosition().distanceSquared(tile) < 0.03*0.03;
     };
     
     /** Returns whether the last pathfind was successful */
@@ -482,6 +412,11 @@ protected:
         return _pathfinder->GetSolutionEnd() && _pathfinder->SearchStep() == AStarSearch<WorldSearchVertex>::SEARCH_STATE_SUCCEEDED;
     }
     
+    bool canResetAction() const{
+        bool attack = curAction == EnemyActions::ATTACK && attackAnimations->getFrame() == attackAnimations->getSpan() - 1;
+        bool nonAttack = curAction != EnemyActions::ATTACK && runAnimations->getFrame() == runAnimations->getSpan() - 1;
+        return nonAttack || attack;
+    }
     // update state
     virtual void handleChase(OverWorld& overWorld) = 0;
     virtual void handleLowHealth(OverWorld& overWorld) = 0;

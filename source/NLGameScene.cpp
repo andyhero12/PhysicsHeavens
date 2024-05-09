@@ -598,30 +598,30 @@ void GameScene::postUpdate(float dt)
 //            }
 //        }
 //    }
-
-    for (auto it = _decorToHide.begin(); it != _decorToHide.end(); ) {
-        auto t = *it;
-        bool in = false;
-        for (Rect r : _transparentRects) {
-            in |= (r.doesIntersect(overWorld.getDog()->getPosition(), 1) || r.doesIntersect(overWorld.getClientDog()->getPosition(), 1)) && r.contains(t->getPosition());
-        }
-
-        auto c = t->getColor();
-        auto white = Color4f::WHITE;
-        if(in) {
-            t->setColor(Color4f(1, 1, 1, 0.6f).lerp(c, 0.97f));
-        }
-        else {
-            c.a += 2;
-            t->setColor(c);
-            if(t->getColor().a > 253) {
-                t->setColor(Color4::WHITE);
-                _decorToHide.erase(it++);
-                continue;
-            }
-        }
-        ++it;
-    }
+//
+//    for (auto it = _decorToHide.begin(); it != _decorToHide.end(); ) {
+//        auto t = *it;
+//        bool in = false;
+//        for (Rect r : _transparentRects) {
+//            in |= (r.doesIntersect(overWorld.getDog()->getPosition(), 1) || r.doesIntersect(overWorld.getClientDog()->getPosition(), 1)) && r.contains(t->getPosition());
+//        }
+//
+//        auto c = t->getColor();
+//        auto white = Color4f::WHITE;
+//        if(in) {
+//            t->setColor(Color4f(1, 1, 1, 0.6f).lerp(c, 0.97f));
+//        }
+//        else {
+//            c.a += 2;
+//            t->setColor(c);
+//            if(t->getColor().a > 253) {
+//                t->setColor(Color4::WHITE);
+//                _decorToHide.erase(it++);
+//                continue;
+//            }
+//        }
+//        ++it;
+//    }
 
     Vec2 delta;
 

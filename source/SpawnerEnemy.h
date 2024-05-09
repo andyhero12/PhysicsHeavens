@@ -36,6 +36,8 @@ public:
         std::vector<std::shared_ptr<cugl::Texture>> _attackTextures;
         int _framesize;
         int _framecols;
+        int _framesizeAttack;
+        int _framecolsAttack;
         int _freqAnimations;
     };
     /** Pointer to the AssetManager for texture access, etc. */
@@ -76,9 +78,21 @@ public:
         textures.push_back(_assets->get<Texture>("spawnerFrontWalk"));
         textures.push_back(_assets->get<Texture>("spawnerFrontWalk"));
         staticEnemyStruct._walkTextures  = textures;
-        staticEnemyStruct._attackTextures  = textures;
+        
+        std::vector<std::shared_ptr<cugl::Texture>> attacks;
+        attacks.push_back(_assets->get<Texture>("spawnerSpawn"));
+        attacks.push_back(_assets->get<Texture>("spawnerSpawn"));
+        attacks.push_back(_assets->get<Texture>("spawnerSpawn"));
+        attacks.push_back(_assets->get<Texture>("spawnerSpawn"));
+        attacks.push_back(_assets->get<Texture>("spawnerSpawn"));
+        attacks.push_back(_assets->get<Texture>("spawnerSpawn"));
+        attacks.push_back(_assets->get<Texture>("spawnerSpawn"));
+        attacks.push_back(_assets->get<Texture>("spawnerSpawn"));
+        staticEnemyStruct._attackTextures  = attacks;
         staticEnemyStruct._framesize = _framesize;
         staticEnemyStruct._framecols = _framecols;
+        staticEnemyStruct._framesizeAttack = 9;
+        staticEnemyStruct._framecolsAttack = 9;
         staticEnemyStruct._freqAnimations = 10;
     }
 

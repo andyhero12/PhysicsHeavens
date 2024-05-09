@@ -73,7 +73,17 @@ public:
         textures.push_back(_assets->get<Texture>("basicEnemy1"));
         textures.push_back(_assets->get<Texture>("basicEnemy1"));
         staticEnemyStruct._walkTextures  = textures;
-        staticEnemyStruct._attackTextures  = textures;
+        
+        std::vector<std::shared_ptr<cugl::Texture>> attacks;
+        attacks.push_back(_assets->get<Texture>("basicEnemy1"));
+        attacks.push_back(_assets->get<Texture>("basicEnemy1"));
+        attacks.push_back(_assets->get<Texture>("basicEnemy0"));
+        attacks.push_back(_assets->get<Texture>("basicEnemy0"));
+        attacks.push_back(_assets->get<Texture>("basicEnemy0"));
+        attacks.push_back(_assets->get<Texture>("basicEnemy0"));
+        attacks.push_back(_assets->get<Texture>("basicEnemy1"));
+        attacks.push_back(_assets->get<Texture>("basicEnemy1"));
+        staticEnemyStruct._attackTextures  = attacks;
         staticEnemyStruct._framesize = _framesize;
         staticEnemyStruct._framecols = _framecols;
         staticEnemyStruct._freqAnimations = 5;
