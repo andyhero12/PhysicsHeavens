@@ -55,7 +55,13 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
     runAnimations->setAnchor(Vec2::ANCHOR_CENTER);
     std::vector<std::shared_ptr<cugl::Texture>>& _attacks = staticEnemyStruct._attackTextures;
     
-    std::shared_ptr<AnimationSceneNode> attackAnimations = AnimationSceneNode::allocWithTextures(_attacks, rows,_framecols, _framesize, _freqAnims);
+    int _framesizeAttack = staticEnemyStruct._framesizeAttack;
+    int _framecolsAttack = staticEnemyStruct._framecolsAttack;
+    if (_framesizeAttack % _framecolsAttack != 0)
+    {
+        rows++;
+    }
+    std::shared_ptr<AnimationSceneNode> attackAnimations = AnimationSceneNode::allocWithTextures(_attacks, rows,_framecolsAttack, _framesizeAttack, _freqAnims);
     attackAnimations->setAnchor(Vec2::ANCHOR_CENTER);
     attackAnimations->setContentSize(m_size);
     
@@ -181,7 +187,6 @@ void MeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
 //            break;
 //    }
 }
-
 
 void MeleeEnemy::handleChase(OverWorld& overWorld) {
     cugl::Vec2 target_pos = getTargetPositionFromIndex(overWorld);

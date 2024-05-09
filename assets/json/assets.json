@@ -422,6 +422,26 @@
                  "minfilter": "linear",
                  "magfilter": "nearest"
         },
+       "basicLeftAttack": {
+           "file": "textures/basicEnemy/basicDevil-front-left-swipe.png",
+           "minfilter": "linear",
+           "magfilter": "nearest"
+       },
+       "basicUpRightAttack": {
+           "file": "textures/basicEnemy/basicDevil-back-right-swipe.png",
+           "minfilter": "linear",
+           "magfilter": "nearest"
+       },
+       "basicUpLeftAttack": {
+           "file": "textures/basicEnemy/basicDevil-back-left-swipe.png",
+           "minfilter": "linear",
+           "magfilter": "nearest"
+       },
+       "basicRightAttack": {
+           "file": "textures/basicEnemy/basicDevil-front-right-swipe.png",
+           "minfilter": "linear",
+           "magfilter": "nearest"
+       },
        "basicLeftWalk": {
            "file": "textures/basicEnemy/basicDevil-front-left.png",
            "minfilter": "linear",
