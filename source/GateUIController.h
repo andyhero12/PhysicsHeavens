@@ -15,7 +15,7 @@
 #include "GateUIController.h"
 #include "BaseSet.h"
 
-#define UI_SCALE 6.0f
+#define UI_SCALE_GATE 6.0f
 
 using namespace cugl;
 
@@ -26,11 +26,6 @@ private:
     cugl::Size _screenSize;
     std::shared_ptr<BaseSet> _gates;
     
-    // represents the bottom left corner of the screen
-    float x;
-    float y;
-    
-    const Vec2 origin = Vec2(0, 0);
     std::shared_ptr<cugl::scene2::PolygonNode> _gateframe;
     std::shared_ptr<SubTextureNode> _gatefill;
     std::shared_ptr<SubTextureNode> _gatefill2;
@@ -40,7 +35,13 @@ public:
     std::shared_ptr<cugl::scene2::SceneNode> getUINode(){
         return UInode;
     }
-    GateUIController(){}
+    GateUIController()
+    : UInode(nullptr)
+    , _gates(nullptr)
+    , _gateframe(nullptr)
+    , _gatefill(nullptr)
+    , _gatefill2(nullptr)
+    {}
     
     ~GateUIController(){}
     
