@@ -542,13 +542,14 @@ void OverWorld::processShootEvent(const std::shared_ptr<ShootEvent> &shootEvent)
 {
     Vec2 center = shootEvent->getPos();
     float ang = shootEvent->getAng();
+    float scale = shootEvent->getScale();
     bool incomingHost = shootEvent->isHost();
     if (incomingHost)
     {
         if (incomingHost != _isHost){
             _dog->subAbsorb(SHOOT_COST);
         }
-        _attackPolygonSet.addShoot(center, ang, _dog->getShootRadius());
+        _attackPolygonSet.addShoot(center, ang, scale, _dog->getShootRadius());
         _dog->startShoot();
     }
     else
@@ -556,7 +557,7 @@ void OverWorld::processShootEvent(const std::shared_ptr<ShootEvent> &shootEvent)
         if (incomingHost != _isHost){
             _dogClient->subAbsorb(SHOOT_COST);
         }
-        _clientAttackPolygonSet.addShoot(center, ang, _dog->getShootRadius());
+        _clientAttackPolygonSet.addShoot(center, ang, scale, _dog->getShootRadius());
         _dogClient->startShoot();
     }
 }
@@ -624,7 +625,8 @@ void OverWorld::ownedDogUpdate(InputController& _input, cugl::Size, std::shared_
         if (_curDog->getMode() == "SHOOT" && _curDog->getAbsorb() >= 5)
         {
             _curDog->subAbsorb(SHOOT_COST);
-            _network->pushOutEvent(ShootEvent::allocShootEvent(_curDog->getShootCenter(), _curDog->getDirInDegrees(), _isHost));
+            float scale = float(_curDog->getAbsorb())/ (float) _curDog->getMaxAbsorb()/2;
+            _network->pushOutEvent(ShootEvent::allocShootEvent(_curDog->getShootCenter(), _curDog->getDirInDegrees(), scale, _isHost));
         }
         else if (_curDog->getMode() == "BAIT" && _curDog->getAbsorb() >= 5)
         {

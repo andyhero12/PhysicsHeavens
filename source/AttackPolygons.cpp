@@ -116,7 +116,7 @@ float convertArcTanToAngAttack(float ang){
     }
     return ang + 360.0f;
 }
-void AttackPolygons::addShoot(Vec2 center, float angle, float shootRadius){
+void AttackPolygons::addShoot(Vec2 center, float angle, float scale, float shootRadius){
     float ang = convertArcTanToAngAttack(angle);
     bool front = true;
     std::shared_ptr<cugl::Texture> shoot;
@@ -147,7 +147,7 @@ void AttackPolygons::addShoot(Vec2 center, float angle, float shootRadius){
     PolyFactory curFactory;
     Poly2 resultingPolygon_shoot = curFactory.makeArc(center, shootRadius, ang - degree/2, degree);
     
-    std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(shootSprite, Action::SHOOT, resultingPolygon_shoot, max_age, 1.0f, ang, center);
+    std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(shootSprite, Action::SHOOT, resultingPolygon_shoot, max_age, 1 + scale, ang, center);
     if(front){
         frontAttackPolygonNode->addChild(curPtr->getActionNode());
     }
@@ -156,7 +156,7 @@ void AttackPolygons::addShoot(Vec2 center, float angle, float shootRadius){
     }
 //    std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(Action::SHOOT, resultingPolygon_shoot, max_age, 1.0f, ang, center);
 //    backAttackPolygonNode->addChild(curPtr->getActionNode());
-    Vec2 offset = Vec2(cosf((angle) * 3.14f / 180), sinf((angle) * 3.14f / 180)) * DOG_SIZE.x * SHOOT_HEAD_OFFSET_RATIO;
+    Vec2 offset = Vec2(cosf((angle) * 3.14f / 180), sinf((angle) * 3.14f / 180)) * DOG_SIZE.x * SHOOT_HEAD_OFFSET_RATIO * (1 + scale);
     curPtr->getActionNode()->setPosition(offset * OFFSET_SCALE);
     currentAttacks.insert(curPtr);
 }

@@ -422,7 +422,7 @@ void CollisionController::hugeBlastCollisionClient(const std::shared_ptr<ActionP
             result += 360.0f;
         }
         float dist = diff.length();
-        if (withinAngle(action->getAngle()-45.0f, result, 90.0f) && dist <= 5.5f * action->getScale()){
+        if (withinAngle(action->getAngle()-45.0f, result, 90.0f) && dist <= 5.5f * action->getScale()*1.2){
             hitSomething = true;
             spawner->subHealth(60);
         }
@@ -488,7 +488,7 @@ void CollisionController::hugeBlastCollision(const std::shared_ptr<ActionPolygon
         }
         float dist = diff.length();
 //        CULog("Distance %f Scale %f", dist, action->getScale());
-        if (withinAngle(action->getAngle()-45.0f, result, 90.0f) && dist <= 5.5f * action->getScale()){
+        if (withinAngle(action->getAngle()-45.0f, result, 90.0f) && dist <= 5.5f * action->getScale()*1.2){
             hitSomething = true;
             monsterController.removeEnemy(enemy);
             enemies.erase(curA);
@@ -502,7 +502,7 @@ void CollisionController::hugeBlastCollision(const std::shared_ptr<ActionPolygon
             result += 360.0f;
         }
         float dist = diff.length();
-        if (withinAngle(action->getAngle()-45.0f, result, 90.0f) && dist <= 5.5f * action->getScale()){
+        if (withinAngle(action->getAngle()-45.0f, result, 90.0f) && dist <= 5.5f * action->getScale()*1.2){
             hitSomething = true;
             spawner->subHealth(60);
         }

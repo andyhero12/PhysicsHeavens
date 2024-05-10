@@ -22,6 +22,7 @@ protected:
     
     Vec2 _pos;
     float _ang;
+    float _scale;
     bool _isHost;
     
 public:
@@ -34,7 +35,7 @@ public:
      */
     std::shared_ptr<NetEvent> newEvent() override;
     
-    static std::shared_ptr<NetEvent> allocShootEvent(Vec2 pos, float ang, bool isHost);
+    static std::shared_ptr<NetEvent> allocShootEvent(Vec2 pos, float ang, float scale, bool isHost);
     
     /**
      * Serialize any paramater that the event contains to a vector of bytes.
@@ -57,6 +58,7 @@ public:
     /** Gets the position of the event. */
     float getAng() { return _ang; }
     
+    float getScale() { return _scale; }
     bool isHost() {return _isHost; }
 };
 
