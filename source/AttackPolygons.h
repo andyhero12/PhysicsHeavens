@@ -100,7 +100,7 @@ public:
     bool isEmpty() const { return currentAttacks.empty(); }
     void update();
     void addShoot(Vec2 center, float angle, float scale, float shootRadius);
-    void addExplode(cugl::Vec2 center, float explosionRadius);
+    void addExplode(cugl::Vec2 center, float scale, float explosionRadius);
     void addBite(cugl::Vec2 center, float angle, float explosionRad, float scale);
     std::shared_ptr<cugl::scene2::SceneNode> getFrontAttackPolygonNode(){
         return frontAttackPolygonNode;

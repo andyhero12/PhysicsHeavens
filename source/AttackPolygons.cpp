@@ -161,11 +161,11 @@ void AttackPolygons::addShoot(Vec2 center, float angle, float scale, float shoot
     currentAttacks.insert(curPtr);
 }
 
-void AttackPolygons::addExplode(Vec2 center, float explosionRad){
+void AttackPolygons::addExplode(Vec2 center, float scale, float explosionRad){
     std::shared_ptr<SpriteAnimationNode> explodeSprite = SpriteAnimationNode::allocWithSheet(bombTexture, 4, 5, 20, 3);
     PolyFactory curFactory;
-    Poly2 resultingPolygon = curFactory.makeCircle(center, explosionRad);
-    std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(explodeSprite, Action::EXPLODE, resultingPolygon, EXPLODE_AGE, explosionRad, 0, center);
+    Poly2 resultingPolygon = curFactory.makeCircle(center, explosionRad * ( 1 + scale));
+    std::shared_ptr<ActionPolygon> curPtr = std::make_shared<ActionPolygon>(explodeSprite, Action::EXPLODE, resultingPolygon, EXPLODE_AGE, explosionRad * ( 1+ scale), 0, center);
     frontAttackPolygonNode->addChild(curPtr->getActionNode());
     Vec2 offset = Vec2(0,0);
     curPtr->getActionNode()->setAnchor(Vec2::ANCHOR_CENTER);

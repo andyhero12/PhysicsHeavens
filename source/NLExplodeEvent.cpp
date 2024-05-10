@@ -20,11 +20,12 @@ std::shared_ptr<NetEvent> ExplodeEvent::newEvent(){
     return std::make_shared<ExplodeEvent>();
 }
 
-std::shared_ptr<NetEvent> ExplodeEvent::allocExplodeEvent(Vec2 pos, bool m_Host){
+std::shared_ptr<NetEvent> ExplodeEvent::allocExplodeEvent(Vec2 pos, float scale, bool m_Host){
     //TODO: make a new shared copy of the event and set its _pos to pos.
 #pragma mark BEGIN SOLUTION
     auto event = std::make_shared<ExplodeEvent>();
     event->_pos = pos;
+    event->_scale = scale;
     event->_isHost = m_Host;
     return event;
 #pragma mark END SOLUTION
@@ -39,6 +40,7 @@ std::vector<std::byte> ExplodeEvent::serialize(){
     _serializer.reset();
     _serializer.writeFloat(_pos.x);
     _serializer.writeFloat(_pos.y);
+    _serializer.writeFloat(_scale);
     _serializer.writeBool(_isHost);
     return _serializer.serialize();
 #pragma mark END SOLUTION
@@ -62,6 +64,8 @@ void ExplodeEvent::deserialize(const std::vector<std::byte>& data){
     float x = _deserializer.readFloat();
     float y = _deserializer.readFloat();
     _pos = Vec2(x,y);
+    float scale =_deserializer.readFloat();
+    _scale = scale;
     
     _isHost = _deserializer.readBool();
 #pragma mark END SOLUTION

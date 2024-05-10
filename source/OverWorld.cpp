@@ -564,13 +564,14 @@ void OverWorld::processShootEvent(const std::shared_ptr<ShootEvent> &shootEvent)
 void OverWorld::processExplodeEvent(const std::shared_ptr<ExplodeEvent> &explodeEvent)
 {
     Vec2 center = explodeEvent->getPos();
+    float scale = explodeEvent->getScale();
     bool incomingHost = explodeEvent->isHost();
     if (incomingHost)
     {
         if (incomingHost != _isHost){
             _dog->subAbsorb(BOMB_COST);
         }
-        _attackPolygonSet.addExplode(center, _dog->getExplosionRadius());
+        _attackPolygonSet.addExplode(center, scale, _dog->getExplosionRadius());
         _dog->startShoot();
     }
     else
@@ -578,7 +579,7 @@ void OverWorld::processExplodeEvent(const std::shared_ptr<ExplodeEvent> &explode
         if (incomingHost != _isHost){
             _dogClient->subAbsorb(BOMB_COST);
         }
-        _clientAttackPolygonSet.addExplode(center, _dog->getExplosionRadius());
+        _clientAttackPolygonSet.addExplode(center, scale, _dog->getExplosionRadius());
         _dogClient->startShoot();
     }
 }
@@ -636,7 +637,8 @@ void OverWorld::ownedDogUpdate(InputController& _input, cugl::Size, std::shared_
         else if (_curDog->getMode() == "BOMB" && _curDog->getAbsorb() >= 5)
         {
             _curDog->subAbsorb(BOMB_COST);
-            _network->pushOutEvent(ExplodeEvent::allocExplodeEvent(_curDog->getPosition(), _isHost));
+            float scale = float(_curDog->getAbsorb())/ (float) _curDog->getMaxAbsorb()/2;
+            _network->pushOutEvent(ExplodeEvent::allocExplodeEvent(_curDog->getPosition(),scale,  _isHost));
         }else if (_curDog->getMode() == "RECALL"){
             _network->pushOutEvent(RecallEvent::allocRecallEvent(_curDog->getPosition(),_isHost));
         }else {
