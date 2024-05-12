@@ -167,16 +167,23 @@ public:
         if (timeSinceLastMajorChange < 1.0){
             timeSinceLastMajorChange += dt;
         }
-        runAnimations->animate(_curDirection, true);
-        if (timeSinceLastMajorChange < 1.0){
-            return;
+        Vec2 pos = getPosition();
+        Vec2 clientDogPos = overWorld.getClientDog()->getPosition();
+        Vec2 diff = clientDogPos - pos;
+        float dogLen = diff.length();
+        if (timeSinceLastMajorChange >= 1.0){
+            timeSinceLastMajorChange = 0.0;
+            Vec2 vel = getLinearVelocity();
+            _prevDirection =_curDirection;
+            if (dogLen > 3){
+                _curDirection = AnimationSceneNode::convertRadiansToDirections(vel.getAngle());
+            }else{
+                _curDirection = AnimationSceneNode::convertRadiansToDirections(diff.getAngle());
+            }
         }
-        timeSinceLastMajorChange = 0.0;
-        Vec2 vel = getLinearVelocity();
-        _prevDirection =_curDirection;
-        _curDirection = AnimationSceneNode::convertRadiansToDirections(vel.getAngle());
-        runAnimations->animate(_curDirection, true);
-//        attackAnimations->animate(_curDirection, curAction == EnemyActions::ATTACK);
+        
+        runAnimations->animate(_curDirection, dogLen > 3);
+        attackAnimations->animate(_curDirection, dogLen <= 3);
     }
     bool isInContact() const { return _inContact; }
     void setInContact(bool value) { _inContact = value; }
