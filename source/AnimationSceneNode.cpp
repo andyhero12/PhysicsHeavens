@@ -29,9 +29,7 @@ _on(true)
 
 
 void AnimationSceneNode::dispose(){
-    for (auto& sprite : _animationSprites) {
-        sprite->dispose();
-    }
+    _animationSprites.clear();
 }
 
 /**
@@ -150,14 +148,34 @@ float convertArcTanToAng(float ang){
 /** Convert Angle to Direction: 0 radians is east */
 AnimationSceneNode::Directions AnimationSceneNode::convertAngleToDirections(float ang){
     ang = convertArcTanToAng(ang);
-    if (ang <= 46.0f){
+//    if (ang <= 46.0f){
+//        return Directions::EAST;
+//    }else if (ang <= 136.0f){
+//        return Directions::NORTH;
+//    }else if (ang <= 226.0f){
+//        return Directions::WEST;
+//    }else if (ang <= 316.0f){
+//        return Directions::SOUTH;
+//    }else{
+//        return Directions::EAST;
+//    }
+    
+    if (ang <= 22.5f){
         return Directions::EAST;
-    }else if (ang <= 136.0f){
+    }else if (ang <= 67.5f){
+        return Directions::NORTHEAST;
+    }else if (ang <= 112.5f){
         return Directions::NORTH;
-    }else if (ang <= 226.0f){
+    }else if (ang <= 157.5f){
+        return Directions::NORTHWEST;
+    }else if (ang <= 202.5f){
         return Directions::WEST;
-    }else if (ang <= 316.0f){
+    }else if (ang <= 247.5f){
+        return Directions::SOUTHWEST;
+    }else if (ang <= 292.5f){
         return Directions::SOUTH;
+    }else if (ang <= 337.5f){
+        return Directions::SOUTHEAST;
     }else{
         return Directions::EAST;
     }

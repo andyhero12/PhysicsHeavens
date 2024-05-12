@@ -58,7 +58,10 @@ private:
     std::shared_ptr<cugl::scene2::SceneNode> monsterControllerSceneNode;
 public:
     
-    void removeEnemy(std::shared_ptr<AbstractEnemy> enemy);
+    void removeEnemy(std::shared_ptr<AbstractEnemy> enemy, bool isGate);
+    void removeEnemy(std::shared_ptr<AbstractEnemy> enemy) {
+        removeEnemy(enemy, false);
+    }
     void setNetwork(std::shared_ptr<NetEventController> network){
         _network = network;
     }

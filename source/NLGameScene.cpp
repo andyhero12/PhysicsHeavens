@@ -32,6 +32,7 @@
 #include <iostream>
 #include <sstream>
 #include <algorithm>
+#include <cmath>
 
 using namespace cugl;
 using namespace cugl::physics2::net;
@@ -44,11 +45,11 @@ using namespace cugl::physics2::net;
 #define SCENE_HEIGHT 800
 
 #define CANVAS_TILE_HEIGHT 8
-
+#define TILE_NAME "TILE"
 /** Width of the game world in Box2d units */
-#define DEFAULT_WIDTH 100.0f
+#define DEFAULT_WIDTH 300.0f
 /** Height of the game world in Box2d units */
-#define DEFAULT_HEIGHT 100.0f
+#define DEFAULT_HEIGHT 300.0f
 /** The default value of gravity (going down) */
 #define DEFAULT_GRAVITY -0.0f
 
@@ -107,6 +108,9 @@ GameScene::GameScene() : cugl::Scene2(),
                          _isHost(false),
                          olddogPos(Vec2(0, 0)),
                          _network(nullptr),
+                         winNode(nullptr),
+                         loseNode(nullptr),
+                         repeatWinNode(nullptr),
                          tutorialIndex(0)
 
 {
@@ -205,14 +209,24 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     Vec2 offset((dimen.width - SCENE_WIDTH) / 2.0f, (dimen.height - SCENE_HEIGHT) / 2.0f);
     float zoom = dimen.height / CANVAS_TILE_HEIGHT;
 
-    //    _backgroundWrapper = std::make_shared<World>(Vec2(0, 0), _level->getTiles(), _level->getBoundaries(), assets->get<Texture>("tile"));
-    _backgroundWrapper = std::make_shared<World>(_level, _assets);
+    _backgroundWrapper = World::alloc(_level, _assets);
+
+    for (cugl::Rect r : _level->getTransparentRects())
+    {
+        int top = ceil(r.origin.y);
+        int bottom = floor(r.origin.y - r.size.height);
+        int left = floor(r.origin.x);
+        int right = ceil(r.origin.x + r.size.width);
+        _transparentRects.emplace_back(cugl::Rect(left, bottom, right - left - 1, top - bottom - 1));
+    }
+
     _worldnode = scene2::SceneNode::alloc();
     _worldnode->setScale(zoom);
     _worldnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
 
     _monsterSceneNode = scene2::SceneNode::alloc();
 
+    //    _debugnode = nullptr;
     _debugnode = scene2::SceneNode::alloc();
     _debugnode->setScale(zoom);
     _debugnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
@@ -238,7 +252,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 
     _network->enablePhysics(_world, linkSceneToObsFunc);
 
-    _spawnerController.init(_level->getSpawnersPos(), assets);
+    addChildBackground();
+    _spawnerController.init(_level->getSpawnersPos(), assets, _network);
     _spawnerController.setRootNode(_worldnode, _isHost);
     _worldnode->addChild(_monsterSceneNode);
     overWorld.init(assets, _level, computeActiveSize(), _network, isHost, _backgroundWrapper);
@@ -252,6 +267,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
         _uinode->addChild(overWorld.getClientDog()->getUINode());
     }
 
+    _uinode->addChild(overWorld.getGateUIController()->getUINode());
+
     _monsterController.setNetwork(_network);
     _monsterController.setMeleeAnimationData(_constants->get("basicEnemy"), assets);
     _monsterController.setSpawnerAnimationData(_constants->get("spawnerEnemy"), assets);
@@ -260,11 +277,13 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _monsterController.init(overWorld, _debugnode);
 
     _spawnerController.setAnimNode(_worldnode);
-    _collisionController.init();
+    _collisionController.init(_network);
 
     _active = true;
     setDebug(false);
 
+    _network->attachEventType<MonsterHealthEvent>();
+    _network->attachEventType<BaseHealthEvent>();
     _network->attachEventType<DecoyEvent>();
     _network->attachEventType<BiteEvent>();
     _network->attachEventType<WinEvent>();
@@ -276,37 +295,32 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _network->attachEventType<DeathEvent>();
     _network->attachEventType<ShootEvent>();
     _network->attachEventType<GameResEvent>();
+    _network->attachEventType<SpawnerDeathEvent>();
+    _network->attachEventType<ClientHealthEvent>();
 
     // XNA nostalgia
     Application::get()->setClearColor(Color4f::CORNFLOWER);
 
     _uinode->setContentSize(dimen);
     _uinode->doLayout();
-
-    loseNode = cugl::scene2::PolygonNode::allocWithTexture(_assets->get<cugl::Texture>("lose_screen"));
-    loseNode->setContentSize(dimen);
-    loseNode->setAnchor(Vec2::ANCHOR_CENTER);
+    loseNode = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("lose_screen"), 4, 5, 18, 4);
+    loseNode->setScale(5 * SCENE_WIDTH / loseNode->getTexture()->getWidth());
     loseNode->setPosition(0.5 * loseNode->getSize());
 
-    winNode = cugl::scene2::PolygonNode::allocWithTexture(_assets->get<cugl::Texture>("win_screen"));
-    winNode->setContentSize(dimen);
-    winNode->setAnchor(Vec2::ANCHOR_CENTER);
+    winNode = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("win_screen"), 1, 11, 11, 4);
+    winNode->setScale(SCENE_HEIGHT / winNode->getTexture()->getHeight());
     winNode->setPosition(0.5 * winNode->getSize());
-
-    _uinode->addChild(loseNode);
-    _uinode->addChild(winNode);
-    loseNode->setVisible(false);
-    winNode->setVisible(false);
-
+    repeatWinNode = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("repeat_win"), 1, 7, 7, 8);
+    repeatWinNode->setScale(SCENE_HEIGHT / repeatWinNode->getTexture()->getHeight());
+    repeatWinNode->setPosition(0.5 * repeatWinNode->getSize());
     _pause = std::make_shared<PauseScene>();
     _pause->init(_assets, computeActiveSize());
-    _uinode->addChild(_pause);
 
     _pause->setContentSize(dimen);
     _pause->doLayout();
 
     _zoom = ROOT_NODE_SCALE;
-    
+
     Vec2 delta;
     if (isHost)
     {
@@ -320,33 +334,39 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _rootnode->applyPan(-delta / _zoom);
     _rootnode->setScale(_zoom);
     previousPan = (-delta / _zoom);
-    
 
     addChildForeground();
     resetDraw();
     _minimap = Minimap::alloc(_assets, computeActiveSize(), overWorld, _spawnerController);
     _uinode->addChild(_minimap);
-
-    if (level_string == LEVEL_ONE_KEY){
+    _uinode->addChild(loseNode);
+    _uinode->addChild(winNode);
+    _uinode->addChild(repeatWinNode);
+    _uinode->addChild(_pause);
+    loseNode->setVisible(false);
+    winNode->setVisible(false);
+    repeatWinNode->setVisible(false);
+    if (level_string == LEVEL_ONE_KEY)
+    {
         initTutorialOne();
     }
-    else if(level_string == LEVEL_TWO_KEY){
-        initTutorialTwo();
-    }
-    else if(level_string == LEVEL_THREE_KEY){
-        initTutorialThree();
-    }
-    
+    //    else if(level_string == LEVEL_TWO_KEY){
+    //        initTutorialTwo();
+    //    }
+    //    else if(level_string == LEVEL_THREE_KEY){
+    //        initTutorialThree();
+    //    }
+
     return true;
 }
 void GameScene::resetDraw()
 {
-    std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>> tileDisplay = _backgroundWrapper->getTileDisplay();
+    const std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>> &tileDisplay = _backgroundWrapper->getTileDisplay();
     for (int i = 0; i < tileDisplay.size(); i++)
     {
         for (int j = 0; j < tileDisplay.at(i).size(); j++)
         {
-            for (std::shared_ptr<TileInfo> &tile : tileDisplay.at(i).at(j))
+            for (const std::shared_ptr<TileInfo> &tile : tileDisplay.at(i).at(j))
             {
                 Vec2 dogPos = _isHost ? overWorld.getDog()->getPosition() : overWorld.getClientDog()->getPosition();
                 Vec2 tilePos = tile->getTileSprite()->getPosition();
@@ -369,23 +389,20 @@ void GameScene::dispose()
 {
     if (_active)
     {
-        removeAllChildren();
         _pause->dispose();
-        //        _input.dispose();]
         tutorialTiles.clear();
-        _world->dispose();
         _world = nullptr;
         _worldnode = nullptr;
-        _debugnode = nullptr;
         _rootnode = nullptr;
         _monsterSceneNode = nullptr;
         _network = nullptr;
         _decorToHide.clear();
-        _backgroundWrapper = nullptr;
+        _transparentRects.clear();
         _pause = nullptr;
         _level = nullptr;
         winNode = nullptr;
         loseNode = nullptr;
+        repeatWinNode = nullptr;
         _uinode = nullptr;
         _debug = false;
         _constants = nullptr;
@@ -395,6 +412,8 @@ void GameScene::dispose()
         _spawnerController.dispose();
         _collisionController.dispose();
         overWorld.dispose();
+        _backgroundWrapper = nullptr;
+        _debugnode = nullptr;
         Scene2::dispose();
     }
 }
@@ -415,20 +434,19 @@ void GameScene::dispose()
 void GameScene::populate()
 {
     _world = physics2::net::NetWorld::alloc(Rect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT), Vec2(0, DEFAULT_GRAVITY));
-    _world->activateCollisionCallbacks(true);
-    _world->onBeginContact = [this](b2Contact* contact) {
-        this->beginContact(contact);
-    };
-    _world->onEndContact = [this](b2Contact* contact) {
-        this->endContact(contact);
-    };
-    _world->beforeSolve = [this](b2Contact *contact, const b2Manifold *oldManifold)
-    {
-        beforeSolve(contact, oldManifold);
-    };
+    //    _world->activateCollisionCallbacks(true);
+    //    _world->onBeginContact = [this](b2Contact* contact) {
+    //        this->beginContact(contact);
+    //    };
+    //    _world->onEndContact = [this](b2Contact* contact) {
+    //        this->endContact(contact);
+    //    };
+    //    _world->beforeSolve = [this](b2Contact *contact, const b2Manifold *oldManifold)
+    //    {
+    //        beforeSolve(contact, oldManifold);
+    //    };
 
 #pragma mark : Background
-    addChildBackground();
 }
 void GameScene::linkSceneToObs(const std::shared_ptr<physics2::Obstacle> &obj,
                                const std::shared_ptr<scene2::SceneNode> &node)
@@ -442,22 +460,6 @@ void GameScene::linkSceneToObs(const std::shared_ptr<physics2::Obstacle> &obj,
         scene2::SceneNode *weak = node.get(); // No need for smart pointer in callback
         obj->setListener([=](physics2::Obstacle *obs)
                          {
-//            if (auto enemy = dynamic_cast<AbstractEnemy*>(obs)){
-//               // check state -> to animations
-//               auto topLevel = enemy->getTopLevelNode();
-//               auto dog = overWorld.getDog();
-//               auto clientDog = overWorld.getClientDog();
-//
-//               cugl::Vec2 dist = dog->getPosition()-enemy->getPosition();
-//               float actualDistance = dist.length();
-//
-//               if(actualDistance < 5){
-//                   enemy->setCurAction(AbsorbEnemy::EnemyActions::ATTACK);
-//               }
-//               else{
-//                   enemy->setCurAction(AbsorbEnemy::EnemyActions::RUN);
-//               }
-//            }
             float leftover = Application::get()->getFixedRemainder() / 1000000.f;
             Vec2 pos = obs->getPosition() + leftover * obs->getLinearVelocity();
             float angle = obs->getAngle() + leftover * obs->getAngularVelocity();
@@ -495,7 +497,7 @@ void GameScene::addInitObstacle(const std::shared_ptr<physics2::Obstacle> &obj,
 void GameScene::preUpdate(float dt)
 {
     updateInputController();
-    if (loseNode->isVisible() || winNode->isVisible())
+    if (loseNode->isVisible() || winNode->isVisible() || repeatWinNode->isVisible())
     {
         return;
     }
@@ -515,7 +517,15 @@ void GameScene::preUpdate(float dt)
     overWorld.update(_input, computeActiveSize(), dt);
     _spawnerController.update(_monsterController, overWorld, dt);
     _monsterController.update(dt, overWorld);
-    if (overWorld.getDog()->readyToRecall())
+    if (!_isHost)
+    {
+        clientMonsterUpdate(dt);
+    }
+    if (_isHost && overWorld.getDog()->readyToRecall())
+    {
+        resetDraw();
+    }
+    if (!_isHost && overWorld.getClientDog()->readyToRecall())
     {
         resetDraw();
     }
@@ -538,6 +548,10 @@ void GameScene::preUpdate(float dt)
     }
     else
     {
+        _collisionController.clientIntraWorld(overWorld);
+        _collisionController.clienOverMonster(overWorld, _monsterController);
+        _collisionController.clientAttackCollide(overWorld, _monsterController, _spawnerController);
+
         if (overWorld.getClientDog()->getHealth() == 0 && !loseNode->isVisible())
         {
             //            loseNode->setVisible(true);
@@ -549,7 +563,7 @@ void GameScene::preUpdate(float dt)
 void GameScene::postUpdate(float dt)
 {
     // Nothing to do now
-    if (loseNode->isVisible() || winNode->isVisible())
+    if (loseNode->isVisible() || winNode->isVisible() || repeatWinNode->isVisible())
     {
         return;
     }
@@ -558,12 +572,59 @@ void GameScene::postUpdate(float dt)
 
     _rootnode->resetPane();
 
-    // reverting hidden tiles
-    for (int i = 0; i < _decorToHide.size(); i++)
-    {
-        _decorToHide.at(i)->setColor(Color4::WHITE);
-    }
-    _decorToHide.clear();
+    //_decorToHide.clear();
+
+    // CULog((std::to_string(overWorld.getDog()->getPosition().x) + " " + std::to_string(overWorld.getDog()->getPosition().y)).c_str());
+    //    const std::vector<std::vector<std::shared_ptr<TileInfo>>> &currentBackground = _backgroundWrapper->getTileWorld();
+    //    int originalRows = (int)currentBackground.size();
+    //    int originalCols = (int)currentBackground.at(0).size();
+    //    for (int j = 0; j < originalCols; j++)
+    //    {
+    //        for (int i = originalRows - 1; i > -1; i--)
+    //        {
+    //            const std::shared_ptr<TileInfo>& t = currentBackground.at(i).at(j);
+    //            if (t->texture != nullptr && (t->getPos() - overWorld.getDog()->getPosition()).length() < 0.5)
+    //            {
+    //                CULog("Dog Pos %s, Tile Pos %s",overWorld.getDog()->getPosition().toString().data(),  t->getPos().toString().data());
+    //                t->getTileSprite()->setColor(Color4f(1, 1, 1, 0.6f));
+    //            }
+    //        }
+    //    }
+    //    for (const std::shared_ptr<TileInfo>& t : _backgroundWrapper->getVisibleNodes()){
+    //        for (Rect r : _transparentRects) {
+    //            if((r.doesIntersect(overWorld.getDog()->getPosition(), 1) || r.doesIntersect(overWorld.getClientDog()->getPosition(), 1)) && r.contains(t->getPos())) {
+    //                if(t->getIsUpperDecor()) {
+    //                    _decorToHide.insert(t->getTileSprite());
+    //                    //t->getTileSprite()->setColor(Color4f(1, 1, 1, 0.6f).lerp(t->getTileSprite()->getColor(), 0.98f));
+    //                }
+    //            }
+    //        }
+    //    }
+    //
+    //    for (auto it = _decorToHide.begin(); it != _decorToHide.end(); ) {
+    //        auto t = *it;
+    //        bool in = false;
+    //        for (Rect r : _transparentRects) {
+    //            in |= (r.doesIntersect(overWorld.getDog()->getPosition(), 1) || r.doesIntersect(overWorld.getClientDog()->getPosition(), 1)) && r.contains(t->getPosition());
+    //        }
+    //
+    //        auto c = t->getColor();
+    //        auto white = Color4f::WHITE;
+    //        if(in) {
+    //            t->setColor(Color4f(1, 1, 1, 0.6f).lerp(c, 0.97f));
+    //        }
+    //        else {
+    //            c.a += 2;
+    //            t->setColor(c);
+    //            if(t->getColor().a > 253) {
+    //                t->setColor(Color4::WHITE);
+    //                _decorToHide.erase(it++);
+    //                continue;
+    //            }
+    //        }
+    //        ++it;
+    //    }
+
     Vec2 delta;
 
     if (_isHost)
@@ -576,35 +637,17 @@ void GameScene::postUpdate(float dt)
     }
     delta -= (computeActiveSize() / 2);
     Vec2 curr = -delta / _zoom;
-    Vec2 pan = curr.lerp(previousPan, 0.9f);
+    Vec2 pan;
+    if ((curr - previousPan).length() < computeActiveSize().height)
+    {
+        pan = curr.lerp(previousPan, 0.9f);
+    }
+    else
+    {
+        pan = curr;
+    }
     _rootnode->applyPan(pan + shakeMagnitude * Vec2(rand() / (float)RAND_MAX, rand() / (float)RAND_MAX));
     previousPan = pan;
-    //
-    //    std::vector<Vec2> upperPosHide;
-    //    for (int i = -1; i <= 1; i++)
-    //    {
-    //        for (int j = -1; j <= 1; j++)
-    //        {
-    //
-    //            upperPosHide.push_back(Vec2(int(delta.x + j),int(delta.y + i)));
-    //        }
-    //    }
-    //    for (const std::shared_ptr<TileInfo>& tile : _backgroundWrapper->getVisibleNodes()){
-    //        Vec2 pos = tile->getPosition();
-    //        Vec2 dogPos = _isHost ? overWorld.getDog()->getPosition() : overWorld.getClientDog()->getPosition();
-    //        if (abs(pos.x - dogPos.x) >= 15 || abs(pos.y - dogPos.y) >= 15){
-    //            tile->getTileSprite()->setVisible(false);
-    //        }else{
-    //            tile->getTileSprite()->setVisible(true);
-    //        }
-    //        if (tile->getIsUpperDecor()&& find(upperPosHide.begin(),upperPosHide.end(), tile->getPosition()) != upperPosHide.end() ){
-    //            _decorToHide.push_back(tile->getTileSprite());
-    //        }
-    //    }
-    //    for (int i = 0; i < _decorToHide.size(); i++)
-    //    {
-    //        _decorToHide.at(i)->setColor(Color4f(1, 1, 1, 0.7f));
-    //    }
 
     Vec2 dogPos = _isHost ? overWorld.getDog()->getPosition() : overWorld.getClientDog()->getPosition();
     executeSlidingWindow(dogPos);
@@ -613,15 +656,35 @@ void GameScene::postUpdate(float dt)
     olddogPos = dogPos;
 
     shakeMagnitude -= SHAKING_DECAY * dt;
-    if(shakeMagnitude < 0) {
+    if (shakeMagnitude < 0)
+    {
         shakeMagnitude = 0;
     }
 }
 
 void GameScene::fixedUpdate()
 {
-    if (loseNode->isVisible() || winNode->isVisible())
+    if (loseNode->isVisible() || winNode->isVisible() || repeatWinNode->isVisible())
     {
+        if (loseNode->isVisible() && loseNode->getFrame() != loseNode->getSpan() - 1)
+        {
+            loseNode->update();
+            //            loseNode->setFrame(5);
+            //            CULog("here frame %d", loseNode->getFrame());
+        }
+        if (winNode->isVisible() && winNode->getFrame() == winNode->getSpan() - 1)
+        {
+            repeatWinNode->setVisible(true);
+            winNode->setVisible(false);
+        }
+        if (winNode->isVisible() && winNode->getFrame() != winNode->getSpan() - 1)
+        {
+            winNode->update();
+        }
+        if (repeatWinNode->isVisible())
+        {
+            repeatWinNode->update();
+        }
         return;
     }
     // TODO: check for available incoming events from the network controller and call processCrateEvent if it is a CrateEvent.
@@ -632,6 +695,18 @@ void GameScene::fixedUpdate()
     while (_network->isInAvailable())
     {
         auto e = _network->popInEvent();
+        if (auto monsterHealthEvent = std::dynamic_pointer_cast<MonsterHealthEvent>(e))
+        {
+            _input.applyRumble(0, 10000, 50);
+            if (!_isHost)
+            { // These are client health Update
+                clientProcessMonsterHealth(monsterHealthEvent);
+            }
+        }
+        if (auto baseHealthEvent = std::dynamic_pointer_cast<BaseHealthEvent>(e))
+        {
+            overWorld.processBaseHealthEvent(baseHealthEvent);
+        }
         if (auto decoyEvent = std::dynamic_pointer_cast<DecoyEvent>(e))
         {
             //            CULog("Decoy Event Got");
@@ -639,7 +714,7 @@ void GameScene::fixedUpdate()
         }
         if (auto biteEvent = std::dynamic_pointer_cast<BiteEvent>(e))
         {
-            //shakeMagnitude = std::max(shakeMagnitude, 50.0f);
+            // shakeMagnitude = std::max(shakeMagnitude, 50.0f);
             _input.applyRumble(0, 10000, 50);
             overWorld.processBiteEvent(biteEvent);
         }
@@ -656,8 +731,11 @@ void GameScene::fixedUpdate()
         }
         if (auto shootEvent = std::dynamic_pointer_cast<ShootEvent>(e))
         {
-            shakeMagnitude = std::max(shakeMagnitude, 40.0f);
-            _input.applyRumble(30000, 0, 200);
+            if (shootEvent->isHost() == _isHost)
+            {
+                shakeMagnitude = std::max(shakeMagnitude, 40.0f);
+                _input.applyRumble(30000, 0, 200);
+            }
             //            CULog("Explode Event Got");
             overWorld.processShootEvent(shootEvent);
         }
@@ -673,17 +751,35 @@ void GameScene::fixedUpdate()
         }
         if (auto deathEvent = std::dynamic_pointer_cast<DeathEvent>(e))
         {
-            _spawnerController.processDeathEvent(deathEvent);
+            if (!deathEvent->isGate())
+                _spawnerController.processDeathEvent(deathEvent);
+            if (deathEvent->isBomb())
+            {
+                _collisionController.enemyExplodedCollision(deathEvent->getPos(), 2 * deathEvent->getSize().width, overWorld.getDog(), _monsterController, true);
+                _collisionController.enemyExplodedCollision(deathEvent->getPos(), 2 * deathEvent->getSize().width, overWorld.getClientDog(), _monsterController, false);
+            }
         }
         if (auto winEvent = std::dynamic_pointer_cast<WinEvent>(e))
         {
             winNode->setVisible(true);
             _pause->setPause(true);
+            _minimap->setVisible(false);
         }
         if (auto loseEvent = std::dynamic_pointer_cast<LoseEvent>(e))
         {
             loseNode->setVisible(true);
             _pause->setPause(true);
+            _minimap->setVisible(false);
+        }
+
+        if (auto spawnerDeathEvent = std::dynamic_pointer_cast<SpawnerDeathEvent>(e))
+        {
+            _spawnerController.processSpawnerDeathEvent(spawnerDeathEvent);
+        }
+        if (auto clientHealthEvent = std::dynamic_pointer_cast<ClientHealthEvent>(e))
+        {
+            //            CULog("Got Health Event");
+            overWorld.processClientHealthEvent(clientHealthEvent);
         }
     }
 #pragma mark END SOLUTION
@@ -715,35 +811,39 @@ void GameScene::update(float dt)
  */
 void GameScene::beginContact(b2Contact *contact)
 {
-    auto* bodyA = contact->GetFixtureA()->GetBody();
-    auto* bodyB = contact->GetFixtureB()->GetBody();
+    auto *bodyA = contact->GetFixtureA()->GetBody();
+    auto *bodyB = contact->GetFixtureB()->GetBody();
 
     // Check if either body is the correct type and then cast
-    auto* enemyA = dynamic_cast<AbstractEnemy*>(reinterpret_cast<AbstractEnemy*>(bodyA->GetUserData().pointer));
-    auto* enemyB = dynamic_cast<AbstractEnemy*>(reinterpret_cast<AbstractEnemy*>(bodyB->GetUserData().pointer));
+    auto *enemyA = dynamic_cast<AbstractEnemy *>(reinterpret_cast<AbstractEnemy *>(bodyA->GetUserData().pointer));
+    auto *enemyB = dynamic_cast<AbstractEnemy *>(reinterpret_cast<AbstractEnemy *>(bodyB->GetUserData().pointer));
 
-    if (enemyA) {
+    if (enemyA)
+    {
         enemyA->setInContact(true);
     }
-    if (enemyB) {
+    if (enemyB)
+    {
         enemyB->setInContact(true);
     }
 }
 
 void GameScene::endContact(b2Contact *contact)
 {
-    auto* bodyA = contact->GetFixtureA()->GetBody();
-    auto* bodyB = contact->GetFixtureB()->GetBody();
+    auto *bodyA = contact->GetFixtureA()->GetBody();
+    auto *bodyB = contact->GetFixtureB()->GetBody();
 
     // Check if either body is the correct type and then cast
-    auto* enemyA = dynamic_cast<AbstractEnemy*>(reinterpret_cast<AbstractEnemy*>(bodyA->GetUserData().pointer));
-    auto* enemyB = dynamic_cast<AbstractEnemy*>(reinterpret_cast<AbstractEnemy*>(bodyB->GetUserData().pointer));
+    auto *enemyA = dynamic_cast<AbstractEnemy *>(reinterpret_cast<AbstractEnemy *>(bodyA->GetUserData().pointer));
+    auto *enemyB = dynamic_cast<AbstractEnemy *>(reinterpret_cast<AbstractEnemy *>(bodyB->GetUserData().pointer));
 
     // Set inContact to false if the object is an AbstractEnemy
-    if (enemyA) {
+    if (enemyA)
+    {
         enemyA->setInContact(false);
     }
-    if (enemyB) {
+    if (enemyB)
+    {
         enemyB->setInContact(false);
     }
 }
@@ -792,27 +892,36 @@ void GameScene::addChildBackground()
     {
         for (int i = originalRows - 1; i > -1; i--)
         {
-            std::shared_ptr<TileInfo> t = currentBackground.at(i).at(j);
+            const std::shared_ptr<TileInfo> &t = currentBackground.at(i).at(j);
             if (t->texture != nullptr)
             {
                 _worldnode->addChild(t->getTileSprite());
             }
         }
     }
+
     const std::vector<std::vector<std::shared_ptr<TileInfo>>> &currentBoundaries = _backgroundWrapper->getBoundaryWorld();
     for (int i = 0; i < originalRows; i++)
     {
         for (int j = 0; j < originalCols; j++)
         {
-            std::shared_ptr<TileInfo> t = currentBoundaries.at(i).at(j);
+            const std::shared_ptr<TileInfo> &t = currentBoundaries.at(i).at(j);
             if (t->texture != nullptr)
             {
-                t->setDebugColor(DYNAMIC_COLOR);
-                _world->initObstacle(t);
-                t->setDebugScene(_debugnode);
+
+                std::shared_ptr<cugl::physics2::BoxObstacle> boundary = cugl::physics2::BoxObstacle::alloc(t->getPos(), cugl::Size(0.9, 0.9));
+                boundary->clearSharingDirtyBits();
+                boundary->setShared(false);
+                boundary->setBodyType(b2_staticBody);
+                boundary->setDensity(10.0f);
+                boundary->setFriction(0.4f);
+                boundary->setRestitution(0.1);
+                boundary->setDebugColor(DYNAMIC_COLOR); // Don't add these back
+                boundary->setDebugScene(_debugnode);
+                _world->initObstacle(boundary);
                 if (_isHost)
                 {
-                    _world->getOwnedObstacles().insert({t, 0});
+                    _world->getOwnedObstacles().insert({boundary, 0});
                 }
             }
         }
@@ -824,7 +933,7 @@ void GameScene::addChildBackground()
         {
             for (int j = 0; j < originalCols; j++)
             {
-                std::shared_ptr<TileInfo> t = lowerDecorWorld.at(n).at(i).at(j);
+                const std::shared_ptr<TileInfo> &t = lowerDecorWorld.at(n).at(i).at(j);
                 if (t->texture != nullptr)
                 {
                     _worldnode->addChild(t->getTileSprite());
@@ -849,7 +958,7 @@ void GameScene::addChildForeground()
         {
             for (int j = 0; j < originalCols; j++)
             {
-                std::shared_ptr<TileInfo> t = upperDecorWorld.at(n).at(i).at(j);
+                const std::shared_ptr<TileInfo> &t = upperDecorWorld.at(n).at(i).at(j);
                 if (t->texture != nullptr)
                 {
                     _worldnode->addChild(t->getTileSprite());
@@ -861,31 +970,32 @@ void GameScene::addChildForeground()
 
 void GameScene::updateInputController()
 {
-    
-    
+
+    //    std::cout <<overWorld.getDog()->getX() << std::endl;
     if (tutorialIndex < tutorialTiles.size())
     {
-        std::shared_ptr<Tutorial> tile = tutorialTiles.at(tutorialIndex);
+        const std::shared_ptr<Tutorial> &tile = tutorialTiles.at(tutorialIndex);
         bool atLocation = tile->atArea(overWorld.getDog()->getX());
-        std::shared_ptr<scene2::SceneNode> node = _tutorialnode->getChildByName(Tutorial::toString(tile->getProgress()));
-        std::shared_ptr<SpriteAnimationNode> spriteNode = std::dynamic_pointer_cast<SpriteAnimationNode>(node);
-
+        const std::shared_ptr<scene2::SceneNode> &node = tutorialTiles.at(tutorialIndex)->getSprite();
+        const std::shared_ptr<SpriteAnimationNode> &spriteNode = std::dynamic_pointer_cast<SpriteAnimationNode>(node);
+        const std::shared_ptr<scene2::Label> &message = tutorialTiles.at(tutorialIndex)->getMessage();
         // just do tile->setVisible(tutorial) to draw stuff
         if (atLocation && !tile->didPass() && spriteNode)
         {
             spriteNode->setVisible(true);
             spriteNode->update();
-            
+            message->setVisible(true);
         }
         if (_input.update(tile->getProgress(), atLocation))
         {
             tile->setPass(true);
             node->setVisible(false);
+            message->setVisible(false);
             tutorialIndex++;
         }
-        
     }
-    else{
+    else
+    {
         _input.update();
         // Process the toggled key commands
         if (_input.didPressDebug())
@@ -893,9 +1003,7 @@ void GameScene::updateInputController()
             setDebug(!isDebug());
         }
     }
-    
-    
-    
+
     if (_input.didPressExit())
     {
         Application::get()->quit();
@@ -911,23 +1019,33 @@ void GameScene::updateInputController()
     }
 }
 
-void GameScene::initTutorialOne(){
+void GameScene::initTutorialOne()
+{
     tutorialIndex = 0;
     _tutorialnode = scene2::SceneNode::alloc();
     _uinode->addChild(_tutorialnode);
-    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::GREETING));
-    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::MOVEMENT));
-    tutorialTiles.push_back(Tutorial::alloc(14, Tutorial::MODE::BITE));
-    std::vector<std::string> modes = {"SHOOT"};
+    tutorialTiles = std::vector<std::shared_ptr<Tutorial>>();
+
+    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::GREETING, "jsafk sdflk ajsflja kfjsdlkj falksjf klajsdf kaljf klj flldfj alf asfsdf afassdafasfljsd"));
+    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::MOVEMENT, " adf as saf "));
+    tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::MODE::DEFENDGATE, ""));
+    tutorialTiles.push_back(Tutorial::alloc(30, Tutorial::MODE::BITE, ""));
+    tutorialTiles.push_back(Tutorial::alloc(30, Tutorial::MODE::GROW, ""));
+    tutorialTiles.push_back(Tutorial::alloc(30, Tutorial::MODE::SPECIALSONE, ""));
+    tutorialTiles.push_back(Tutorial::alloc(31, Tutorial::MODE::CHANGEABILITYTWO, ""));
+    tutorialTiles.push_back(Tutorial::alloc(31, Tutorial::MODE::DESTROYSPAWNER, ""));
+    tutorialTiles.push_back(Tutorial::alloc(31, Tutorial::MODE::SPECIALSTWO, ""));
+    //
+    std::vector<std::string> modes = {"RECALL", "SHOOT"};
     overWorld.getDog()->setAbility(modes);
-    
+
     // each one need to write # of frames
-    std::vector<int> frame = {21, 21, 21};
+    std::vector<int> frame = {21, 21, 21, 21, 21, 21, 21, 21, 21};
     initTutorial(frame);
-    
 }
 
-void GameScene::initTutorialTwo(){
+void GameScene::initTutorialTwo()
+{
     tutorialIndex = 0;
     _tutorialnode = scene2::SceneNode::alloc();
     _uinode->addChild(_tutorialnode);
@@ -935,7 +1053,8 @@ void GameScene::initTutorialTwo(){
     overWorld.getDog()->setAbility(modes);
 }
 
-void GameScene::initTutorialThree(){
+void GameScene::initTutorialThree()
+{
     tutorialIndex = 0;
     _tutorialnode = scene2::SceneNode::alloc();
     _uinode->addChild(_tutorialnode);
@@ -947,23 +1066,39 @@ void GameScene::initTutorial(std::vector<int> frame)
 {
     Size screen = computeActiveSize();
     std::shared_ptr<SpriteAnimationNode> node;
+    std::shared_ptr<scene2::Label> message;
     std::string str;
 
     for (int i = 0; i < tutorialTiles.size(); i++)
     {
         str = Tutorial::toString(tutorialTiles.at(i)->getProgress());
-//        node = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>(str));
         node = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>(str), 1, frame.at(i), frame.at(i), 5);
-        
-        _tutorialnode->addChildWithName(node, str);
+        _tutorialnode->addChild(node);
         node->setScale(4);
         node->setAnchor(Vec2::ANCHOR_CENTER);
         node->setPositionX(screen.width / 2);
         node->setPositionY(node->getScaleY() * node->getTexture()->getHeight() / 2);
         node->setVisible(false);
+        tutorialTiles.at(i)->setSprite(node);
+
+        Size box = Size(node->getTexture()->getWidth() / 2, 2 * node->getScaleY() * node->getTexture()->getHeight());
+
+        CULog(" width: %d    height: %f", node->getTexture()->getWidth(), node->getTexture()->getHeight() * node->getScaleY());
+
+        message = scene2::Label::allocWithTextBox(box, tutorialTiles.at(i)->getText(), _assets->get<Font>(PRIMARY_FONT));
+
+        message->setHorizontalAlignment(HorizontalAlign::CENTER);
+        message->setVerticalAlignment(VerticalAlign::MIDDLE);
+        message->setWrap(true);
+        message->setScale(.25);
+        _tutorialnode->addChild(message);
+        message->setAnchor(Vec2(0.8f, 0.5f));
+        message->setPositionX(3 * screen.width / 4);
+        message->setPositionY(node->getScaleY() * node->getTexture()->getHeight() / 2);
+        message->setVisible(false);
+        tutorialTiles.at(i)->setMessage(message);
     }
 }
-
 
 void GameScene::executeSlidingWindow(Vec2 dogPos)
 {
@@ -1059,6 +1194,33 @@ void GameScene::executeSlidingWindow(Vec2 dogPos)
                     tile->getTileSprite()->setVisible(false);
                 }
             }
+        }
+    }
+}
+
+void GameScene::clientProcessMonsterHealth(std::shared_ptr<MonsterHealthEvent> monsterHealthEvent)
+{
+
+    std::shared_ptr<cugl::physics2::Obstacle> it = _world->getObstacle(monsterHealthEvent->getObstacleID());
+    if (it == nullptr)
+    {
+        //        CULog("lagged event?");
+        return;
+    }
+    if (std::shared_ptr<AbstractEnemy> enemy = std::dynamic_pointer_cast<AbstractEnemy>(it))
+    {
+        //        CULog("Actual Enemy");
+        enemy->setHealth(enemy->getHealth() - monsterHealthEvent->getHealthDiff());
+    }
+}
+
+void GameScene::clientMonsterUpdate(float dt)
+{
+    for (std::shared_ptr<cugl::physics2::Obstacle> obs : _world->getObstacles())
+    {
+        if (std::shared_ptr<AbstractEnemy> enemy = std::dynamic_pointer_cast<AbstractEnemy>(obs))
+        {
+            enemy->clientAnimationUpdate(overWorld, dt);
         }
     }
 }

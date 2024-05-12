@@ -85,7 +85,7 @@ protected:
     AnimationSceneNode::Directions prevDirection;
     cugl::Vec2 dir;
     cugl::Vec2 _ang;
-    std::shared_ptr<cugl::scene2::OrderedNode> baseBlankNode;
+    std::shared_ptr<cugl::scene2::SceneNode> baseBlankNode;
     
     std::shared_ptr<AnimationSceneNode> idleAnimation;
     std::shared_ptr<AnimationSceneNode> runAnimation;
@@ -120,7 +120,7 @@ protected:
     bool _startBite;
     bool _startShoot;
     bool _startRecall;
-    bool _sendSize;
+//    bool _sendSize;
     int _dashCounter;
     int _dashRate;
     int _mode;
@@ -137,6 +137,7 @@ protected:
     float _shootRadius;
     AnimationSceneNode::Directions _curDirection;
     float _damagedTimer;
+    float _healTimer;
 public:
 #pragma mark Constructors
     /**
@@ -293,12 +294,12 @@ public:
     void startDash(){
         _startDash = true;
     }
-    void resetSendSize(){
-        _sendSize = false;
-    }
-    bool shouldSendSize(){
-        return _sendSize;
-    }
+//    void resetSendSize(){
+//        _sendSize = false;
+//    }
+//    bool shouldSendSize(){
+//        return _sendSize;
+//    }
     void startBite(){
         _startBite = true;
     }
@@ -351,7 +352,7 @@ public:
     void setHealth(int value);
     
     void setAbsorbValue(int value);
-    
+    void setLocalAbsorb(int value);
     void setMode(int mode);
     
     /**

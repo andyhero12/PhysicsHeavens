@@ -35,7 +35,7 @@ class SettingScene : public cugl::Scene2 {
 public:
     enum button {
             /** User has not yet made a choice */
-            b1 = 0,
+            b1,
             /** User wants to host a game */
             b2,
             /** User wants to join a game */
@@ -60,6 +60,10 @@ protected:
     std::shared_ptr<cugl::scene2::Button>    _button;
 
     std::shared_ptr<cugl::scene2::SpriteNode> background;
+
+    std::shared_ptr<cugl::scene2::Slider> _slider;
+    std::shared_ptr<cugl::scene2::Label> _label;
+    float _value;
 
     button _buttonselection;
     InputController _input;
@@ -110,7 +114,8 @@ public:
     _buttonselection(NONE), 
     level(1),
     firsttime(true),
-    _backClicked(false){
+    _backClicked(false),
+    _value(0.0){
     frameTargets = {
         {1, 4},
         {2, 5},
@@ -206,6 +211,7 @@ public:
         } else if (_goleft && level > 1) {
             level -= 1;
         }
+
     }
 
     void adjustFrame(int level);

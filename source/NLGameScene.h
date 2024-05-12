@@ -32,6 +32,9 @@
 #include "NLDeathEvent.h"
 #include "NLWinEvent.h"
 #include "NLLoseEvent.h"
+#include "NLSpawnerDeathEvent.h"
+#include "NLBaseHealthEvent.h"
+#include "NLMonsterHealthEvent.h"
 #include "NLCameraController.h"
 #include "NLLevelModel.h"
 #include "World.h"
@@ -45,7 +48,7 @@
 #include "PauseScene.h"
 #include "MiniMap.h"
 #include "Tutorial.h"
-#include "CollisionListener.h"
+#include "SpriteAnimationNode.h"
 
 using namespace cugl::physics2::net;
 using namespace cugl;
@@ -87,8 +90,9 @@ protected:
 
     std::shared_ptr<cugl::physics2::net::NetWorld> _world;
     
-    std::shared_ptr<cugl::scene2::PolygonNode> loseNode;
-    std::shared_ptr<cugl::scene2::PolygonNode> winNode;
+    std::shared_ptr<SpriteAnimationNode> loseNode;
+    std::shared_ptr<SpriteAnimationNode> winNode;
+    std::shared_ptr<SpriteAnimationNode> repeatWinNode;
     /** The level model */
     std::shared_ptr<LevelModel> _level;
 
@@ -96,7 +100,8 @@ protected:
 
     std::shared_ptr<World> _backgroundWrapper;
     
-    std::vector<std::shared_ptr<scene2::SceneNode>> _decorToHide;
+    std::vector<cugl::Rect> _transparentRects;
+    std::set<std::shared_ptr<scene2::SceneNode>> _decorToHide;
     
     std::shared_ptr<Minimap> _minimap;
     
@@ -329,6 +334,9 @@ public:
     void addChildForeground();
     void executeSlidingWindow(Vec2 dest);
     void resetDraw();
+    void clientMonsterUpdate(float dt);
+    
+    void clientProcessMonsterHealth(std::shared_ptr<MonsterHealthEvent> monsterHealthEvent);
 };
 
 #endif /* __NL_GAME_SCENE_H__ */

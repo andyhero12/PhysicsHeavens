@@ -6,21 +6,13 @@
 //
 
 #include "WorldSearchVertex.h"
-
-bool WorldSearchVertex::IsSameState( WorldSearchVertex &rhs )
+static inline int generateRandomCost(int low, int high)
 {
-
-    // same state in a maze search is simply when (x,y) are the same
-    if( (x == rhs.x) &&
-        (y == rhs.y) )
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-
+    // Static used for the seed to ensure it's only seeded once
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(low, high); // Range is 1 to 3, inclusive
+    return dis(gen);
 }
 
 size_t WorldSearchVertex::Hash()
@@ -30,44 +22,22 @@ size_t WorldSearchVertex::Hash()
     return h1 ^ (h2 << 1);
 }
 
-float WorldSearchVertex::GoalDistanceEstimate( WorldSearchVertex &nodeGoal )
+float WorldSearchVertex::GoalDistanceEstimate( WorldSearchVertex &nodeGoal ) const
 {
-    return abs(x - nodeGoal.x) + abs(y - nodeGoal.y);
+    return (abs(x - nodeGoal.x) + abs(y - nodeGoal.y)) * 32 ;
 }
 
-bool WorldSearchVertex::IsGoal( WorldSearchVertex &nodeGoal )
+bool WorldSearchVertex::IsGoal( WorldSearchVertex &nodeGoal ) const
 {
-
-    if( (x == nodeGoal.x) &&
-        (y == nodeGoal.y) )
-    {
-        return true;
-    }
-
-    return false;
+    return (x == nodeGoal.x) && (y == nodeGoal.y);
 }
 
 // This generates the successors to the given Node. It uses a helper function called
 // AddSuccessor to give the successors to the AStar class. The A* specific initialisation
 // is done for each node internally, so here you just set the state information that
 // is specific to the application
-bool WorldSearchVertex::GetSuccessors( AStarSearch<WorldSearchVertex> *astarsearch, WorldSearchVertex *parent_node )
+bool WorldSearchVertex::GetSuccessors( AStarSearch<WorldSearchVertex> *astarsearch, WorldSearchVertex *parent_node) const
 {
-    
-    //Create list of all possible next tiles
-    std::list<std::pair<int, int>> adj_list;
-    
-    // Left, right, top, bottom
-    adj_list.push_back(std::make_pair(0, 1));
-    adj_list.push_back(std::make_pair(0, -1));
-    adj_list.push_back(std::make_pair(1, 0));
-    adj_list.push_back(std::make_pair(-1, 0));
-    
-    //Diagonals
-    adj_list.push_back(std::make_pair(-1, -1));
-    adj_list.push_back(std::make_pair(1, 1));
-    adj_list.push_back(std::make_pair(-1, 1));
-    adj_list.push_back(std::make_pair(1, -1));
     
     int parent_x = -1;
     int parent_y = -1;
@@ -78,12 +48,9 @@ bool WorldSearchVertex::GetSuccessors( AStarSearch<WorldSearchVertex> *astarsear
         parent_y = parent_node->y;
     }
     
-    WorldSearchVertex NewNode(0, 0, _world);
-    
     // push each possible move except allowing the search to go backwards
     for (const auto& diff : adj_list) {
-        NewNode = WorldSearchVertex( x - diff.first, y - diff.second, _world);
-        
+        WorldSearchVertex NewNode = WorldSearchVertex( x - diff.first, y - diff.second, _world);
         if(_world->isPassable(NewNode.x, NewNode.y) && !((parent_x == NewNode.x) && (parent_y == NewNode.y))){
             astarsearch->AddSuccessor( NewNode );
         }
@@ -92,7 +59,22 @@ bool WorldSearchVertex::GetSuccessors( AStarSearch<WorldSearchVertex> *astarsear
     return true;
 }
 
-float WorldSearchVertex::GetCost( WorldSearchVertex &successor )
+float WorldSearchVertex::GetCost( WorldSearchVertex &successor ) const
 {
-    return 0;
+    int costOrg = successor.closeToEdge() ? 100 : 16;
+    
+    int noise = generateRandomCost(-16,16);
+    
+    return costOrg + noise;
+}
+
+bool WorldSearchVertex::closeToEdge() const {
+
+    for (const auto& diff : adj_list) {
+        if(!(_world->isPassable(x - diff.first, y - diff.second))){
+            return true;
+        }
+    }
+
+    return false;
 }

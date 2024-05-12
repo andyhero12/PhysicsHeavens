@@ -22,11 +22,21 @@
 class MeleeFactory : public ObstacleFactory
 {
 public:
+    MeleeFactory(){
+        _data = nullptr;
+        _assets = nullptr;
+    };
+    virtual ~MeleeFactory(){
+        _data = nullptr;
+        _assets = nullptr;
+    };
     struct AnimationStruct{
         std::vector<std::shared_ptr<cugl::Texture>> _walkTextures;
         std::vector<std::shared_ptr<cugl::Texture>> _attackTextures;
         int _framesize;
         int _framecols;
+        int _framesizeAttack;
+        int _framecolsAttack;
         int _freqAnimations;
     };
     /** Pointer to the AssetManager for texture access, etc. */
@@ -55,22 +65,34 @@ public:
     {
         _data = data;
         _assets = assets;
-        int _framecols = data->getFloat("sprite cols", 0);
-        int _framesize = data->getFloat("sprite size", 0);
+        int _framecols = 4;
+        int _framesize = 4;
         std::vector<std::shared_ptr<cugl::Texture>> textures;
-        textures.push_back(_assets->get<Texture>("basicEnemy1"));
-        textures.push_back(_assets->get<Texture>("basicEnemy1"));
-        textures.push_back(_assets->get<Texture>("basicEnemy1"));
-        textures.push_back(_assets->get<Texture>("basicEnemy1"));
-        textures.push_back(_assets->get<Texture>("basicEnemy0"));
-        textures.push_back(_assets->get<Texture>("basicEnemy0"));
-        textures.push_back(_assets->get<Texture>("basicEnemy0"));
-        textures.push_back(_assets->get<Texture>("basicEnemy0"));
+        textures.push_back(_assets->get<Texture>("basicRightWalk"));
+        textures.push_back(_assets->get<Texture>("basicRightWalk"));
+        textures.push_back(_assets->get<Texture>("basicLeftWalk"));
+        textures.push_back(_assets->get<Texture>("basicLeftWalk"));
+        textures.push_back(_assets->get<Texture>("basicLeftWalk"));
+        textures.push_back(_assets->get<Texture>("basicUpLeftWalk"));
+        textures.push_back(_assets->get<Texture>("basicUpRightWalk"));
+        textures.push_back(_assets->get<Texture>("basicRightWalk"));
         staticEnemyStruct._walkTextures  = textures;
-        staticEnemyStruct._attackTextures  = textures;
+        
+        std::vector<std::shared_ptr<cugl::Texture>> attacks;
+        attacks.push_back(_assets->get<Texture>("basicRightAttack"));
+        attacks.push_back(_assets->get<Texture>("basicRightAttack"));
+        attacks.push_back(_assets->get<Texture>("basicLeftAttack"));
+        attacks.push_back(_assets->get<Texture>("basicLeftAttack"));
+        attacks.push_back(_assets->get<Texture>("basicLeftAttack"));
+        attacks.push_back(_assets->get<Texture>("basicUpLeftAttack"));
+        attacks.push_back(_assets->get<Texture>("basicUpRightAttack"));
+        attacks.push_back(_assets->get<Texture>("basicRightAttack"));
+        staticEnemyStruct._attackTextures  = attacks;
         staticEnemyStruct._framesize = _framesize;
         staticEnemyStruct._framecols = _framecols;
-        staticEnemyStruct._freqAnimations = 5;
+        staticEnemyStruct._framesizeAttack = 5;
+        staticEnemyStruct._framecolsAttack = 5;
+        staticEnemyStruct._freqAnimations = 8;
     }
 
     /**

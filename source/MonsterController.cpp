@@ -1,4 +1,5 @@
 //
+//
 //  MonsterController.cpp
 //  Heavan
 //
@@ -33,7 +34,7 @@ bool MonsterController::init(OverWorld& overWorld,
     _pending.clear();
     _absorbEnem.clear();
     _debugNode = debugNode;
-
+    
     for (const LevelModel::PreSpawned& cluster : overWorld.getLevelModel()->preSpawnLocs()){
         float cx = cluster.x;
         float cy = cluster.y;
@@ -53,14 +54,13 @@ bool MonsterController::init(OverWorld& overWorld,
             power = 1;
         }
 
-        std::string enemyType = cluster.enemy;
+        const std::string& enemyType = cluster.enemy;
 
-//        for(int i = 0; i < cluster.count; i++) {
-        // Check that the Position is a Valid Spot
-//            Vec2 pos = Vec2(cx + generateRandomInclusiveHighLow(-200, 200) / 100.0f, cy + generateRandomInclusiveHighLow(-200, 200) / 100.0f);
-//            
-//            spawnEnemyFromString(enemyType, pos, overWorld, power);
-//        }
+        for(int i = 0; i < cluster.count ; i++) {
+//         Check that the Position is a Valid Spot
+            Vec2 pos = Vec2(cx + generateRandomInclusiveHighLow(-200, 200) / 100.0f, cy + generateRandomInclusiveHighLow(-200, 200) / 100.0f);
+            spawnEnemyFromString(enemyType, pos, overWorld, power);
+        }
     }
     return true;
 }
@@ -125,7 +125,6 @@ void MonsterController::update(float timestep, OverWorld& overWorld){
         return;
     }
     
-    //CULog("Boundary World Size in MonsterController: %zu", overWorld.getWorld()->getBoundaryWorld().size());
     for (std::shared_ptr<AbstractEnemy> curEnemy: _current){
         curEnemy->preUpdate(timestep, overWorld);
         if (std::shared_ptr<SpawnerEnemy> spawnerEnemy = std::dynamic_pointer_cast<SpawnerEnemy>(curEnemy)){
@@ -183,12 +182,16 @@ void MonsterController::spawnEnemyFromString(std::string enemyType, cugl::Vec2 p
     else if (enemyType == "eating") {
         spawnAbsorbEnemy(pos, overWorld, power);
     }
+    else if (enemyType == "staticbasic") {
+        spawnStaticBasicEnemy(pos, overWorld, power);
+    }
     else {
         throw std::runtime_error("Unknown enemy type: " + enemyType);
     }
 }
 
 void MonsterController::spawnAbsorbEnemy(cugl::Vec2 pos, OverWorld& overWorld, float power){
+    return;
     if (!overWorld._isHost){
         return;
     }
@@ -271,8 +274,15 @@ void MonsterController::spawnBombEnemy(cugl::Vec2 pos, OverWorld& overWorld, flo
         _pending.emplace(static_enemy);
     }
 }
-void MonsterController::removeEnemy(std::shared_ptr<AbstractEnemy> enemy){
-    getNetwork()->pushOutEvent(DeathEvent::allocDeathEvent(enemy->getPosition(),getNetwork()->isHost(), enemy->getDimension()));
+
+void MonsterController::removeEnemy(std::shared_ptr<AbstractEnemy> enemy, bool isGate){
+    bool isBomb;
+    if (std::shared_ptr<BombEnemy> derivedPtr = std::dynamic_pointer_cast<BombEnemy>(enemy)) {
+        isBomb = true;
+    } else {
+        isBomb = false;
+    }
+    getNetwork()->pushOutEvent(DeathEvent::allocDeathEvent(enemy->getPosition(),getNetwork()->isHost(), enemy->getDimension(), isBomb, isGate));
     getNetwork()->getPhysController()->removeSharedObstacle(enemy);
     enemy->getTopLevelNode()->removeFromParent();
     if (auto absorb  = std::dynamic_pointer_cast<AbsorbEnemy>(enemy)){

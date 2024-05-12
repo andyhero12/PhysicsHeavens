@@ -48,7 +48,16 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
     runAnimations->setContentSize(m_size);
     // Temp PlaceHolder
     runAnimations->setAnchor(Vec2::ANCHOR_CENTER);
-    std::shared_ptr<AnimationSceneNode> attackAnimations = AnimationSceneNode::allocWithTextures(_textures, rows,_framecols, _framesize, _freqAnims);
+    
+    int _framesizeAttack = staticEnemyStruct._framesizeAttack;
+    int _framecolsAttack = staticEnemyStruct._framecolsAttack;
+    int _freqAnimsAttack = staticEnemyStruct._freqAnimations;
+    int rowsAttack = _framesizeAttack / _framecolsAttack;
+    if (_framesizeAttack % _framecolsAttack != 0)
+    {
+        rowsAttack++;
+    }
+    std::shared_ptr<AnimationSceneNode> attackAnimations = AnimationSceneNode::allocWithTextures(staticEnemyStruct._attackTextures, rowsAttack,_framecolsAttack, _framesizeAttack, _freqAnimsAttack);
     attackAnimations->setAnchor(Vec2::ANCHOR_CENTER);
     attackAnimations->setContentSize(m_size);
     topLevel->setPosition(m_pos);
@@ -117,24 +126,30 @@ void SpawnerEnemy::preUpdate(float dt, OverWorld& overWorld){
     if (_counter < updateRate){
         _counter++;
     }
-    
+
+    if (_attackCooldown >= 210){
+        curAction = EnemyActions::ATTACK;
+    }else{
+        curAction = EnemyActions::RUNAWAY;
+    }
+    handleRunaway(overWorld);
     // Determine the action based on the state; for now it's alway in atttack but should change
-    curAction = AbstractEnemy::EnemyActions::ATTACK;
-    if (curAction == EnemyActions::SPAWN){
-        handleSpawn();
-    }
-    else if (curAction == EnemyActions::WANDER){
-        handleWander(dt);
-    }
-    else if(curAction == EnemyActions::CHASE){
-        handleChase(overWorld);
-    }
-    else if(curAction == EnemyActions::LOWHEALTH){
-        handleLowHealth(overWorld);
-    }
-    else if(curAction == EnemyActions::ATTACK){
-        handleAttack(overWorld);
-    }
+//    curAction = AbstractEnemy::EnemyActions::ATTACK;
+//    if (curAction == EnemyActions::SPAWN){
+//        handleSpawn();
+//    }
+//    else if (curAction == EnemyActions::WANDER){
+//        handleWander(dt);
+//    }
+//    else if(curAction == EnemyActions::CHASE){
+//        handleChase(overWorld);
+//    }
+//    else if(curAction == EnemyActions::LOWHEALTH){
+//        handleLowHealth(overWorld);
+//    }
+//    else if(curAction == EnemyActions::ATTACK){
+//        handleAttack(overWorld);
+//    }
 }
 
 
@@ -156,4 +171,3 @@ void SpawnerEnemy::handleChase(OverWorld& overWorld) {
 void SpawnerEnemy::handleLowHealth(OverWorld& overWorld){}
 void SpawnerEnemy::handleAttack(OverWorld& overWorld){}
 void SpawnerEnemy::handleStay(OverWorld& overWorld){}
-void SpawnerEnemy::handleRunaway(OverWorld& overWorld){}

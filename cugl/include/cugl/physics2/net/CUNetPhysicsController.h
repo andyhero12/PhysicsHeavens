@@ -369,6 +369,9 @@ public:
         return _outEvents;
     }
     
+    std::shared_ptr<NetWorld> getPhysicsWorld() const{
+        return _world;
+    }
     /**
      * Updates the physics controller.
      */
@@ -416,7 +419,6 @@ public:
      * Resets the physics controller.
      */
     void reset();
-    
 };
 
         }

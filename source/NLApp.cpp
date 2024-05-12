@@ -58,6 +58,8 @@ void NetApp::onStartup() {
     _assets->loadAsync<LevelModel>(LEVEL_ONE_KEY,LEVEL_ONE_FILE,nullptr);
     _assets->loadAsync<LevelModel>(LEVEL_TWO_KEY,LEVEL_TWO_FILE,nullptr);
     _assets->loadAsync<LevelModel>(LEVEL_THREE_KEY,LEVEL_THREE_FILE,nullptr);
+    _assets->loadAsync<LevelModel>(LEVEL_FOUR_KEY,LEVEL_FOUR_FILE,nullptr);
+    _assets->loadAsync<LevelModel>(LEVEL_FIVE_KEY,LEVEL_FIVE_FILE,nullptr);
     cugl::net::NetworkLayer::start(net::NetworkLayer::Log::INFO);
     
     Application::onStartup(); // YOU MUST END with call to parent
@@ -129,7 +131,7 @@ void NetApp::onResume() {
 #pragma mark Application Loop
 
 void NetApp::preUpdate(float timestep){
-//    std::cout << _status << std::endl;
+    //    std::cout << _status << std::endl;
     if (_status == LOAD && !_loading.doneLoading()) {
         _loading.update(0.01f);
     }else if (_status == LOAD) {
@@ -138,11 +140,13 @@ void NetApp::preUpdate(float timestep){
         _mainmenu.init(_assets);
         _menu.init(_assets);
         _level.init(_assets);
+        _singlePlayer.init(_assets,_network);
         _mainmenu.setActive(true);
         _hostgame.init(_assets,_network);
         _joingame.init(_assets,_network);
         _selection.init(_assets);
         _setting.init(_assets);
+        _rebind.init(_assets);
         _status = MAINMENU;
     }
     else if(_status == MAINMENU){
@@ -166,10 +170,14 @@ void NetApp::preUpdate(float timestep){
     else if(_status == SELECTION){
         updateSelectionScene(timestep);
     }
-    else if(_status == SETTING)
+    else if(_status == SETTING){
         updateSettingScene(timestep);
+    }else if (_status == SINGLEPLAYER){
+        updateSinglePlayerLevelScene(timestep);
+    }else if(_status == REBIND){
+        updateRebindscene(timestep);
     }
-
+}
 void NetApp::postUpdate(float timestep) {
     if (_status == GAME) {
         _gameplay.postUpdate(timestep);
@@ -232,6 +240,9 @@ void NetApp::updateMenuScene(float timestep) {
         case MenuScene::Choice::NONE:
             // DO NOTHING
             break;
+        case MenuScene::Back:
+            CULog("Pressed Back");
+            break;
         }
     }
     
@@ -248,6 +259,7 @@ void NetApp::updateMenuScene(float timestep) {
 void NetApp::updateHostScene(float timestep) {
     _hostgame.update(timestep);
     if(_hostgame.getBackClicked()){
+        _network->disconnect();
         _status = LEVEL;
         _hostgame.setActive(false);
         _level.setActive(true);
@@ -263,6 +275,12 @@ void NetApp::updateHostScene(float timestep) {
                 break;
             case LevelScene::Level::L3:
                 _gameplay.init(_assets, _network, true, LEVEL_THREE_KEY);
+                break;
+            case LevelScene::Level::L4:
+                _gameplay.init(_assets, _network, true, LEVEL_FOUR_KEY);
+                break;
+            case LevelScene::Level::L5:
+                _gameplay.init(_assets, _network, true, LEVEL_FIVE_KEY);
                 break;
             default :
                 CUAssertLog(false, "bad level");
@@ -298,11 +316,31 @@ void NetApp::updateClientScene(float timestep) {
     _joingame.update(timestep);
     if(_joingame.getBackClicked()){
         _status = LEVEL;
+        _network->disconnect();
         _joingame.setActive(false);
         _level.setActive(true);
     }
     else if (_network->getStatus() == NetEventController::Status::HANDSHAKE && _network->getShortUID()) {
-        _gameplay.init(_assets, _network, false, LEVEL_TWO_KEY);
+        switch (_level.getLevel()) {
+            case LevelScene::Level::L1:
+                _gameplay.init(_assets, _network, false, LEVEL_ONE_KEY);
+                break;
+            case LevelScene::Level::L2:
+                _gameplay.init(_assets, _network, false, LEVEL_TWO_KEY);
+                break;
+            case LevelScene::Level::L3:
+                _gameplay.init(_assets, _network, false, LEVEL_THREE_KEY);
+                break;
+            case LevelScene::Level::L4:
+                _gameplay.init(_assets, _network, false, LEVEL_FOUR_KEY);
+                break;
+            case LevelScene::Level::L5:
+                _gameplay.init(_assets, _network, true, LEVEL_FIVE_KEY);
+                break;
+            default :
+                CUAssertLog(false, "bad level");
+                break;
+        }
         _network->markReady();
     }
     else if (_network->getStatus() == NetEventController::Status::INGAME) {
@@ -328,9 +366,8 @@ void NetApp::updateGameScene(float timestep) {
         _network->disconnect(); // Get rid of This?
         _mainmenu.setActive(true);
         _gameplay.setActive(false);
-//        _hostgame.setActive(false);
         _hostgame.endGame();
-//        _joingame.setActive(false);
+        _singlePlayer.endGame();
         _status = MAINMENU;
     }
 }
@@ -344,13 +381,6 @@ void NetApp::updateMainScene(float timestep)
         _selection.setActive(true);
         _status = SELECTION;
         isHosting = true;
-        break;
-    case MainMenuScene::Choice::COOP:
-        // _mainmenu.setActive(false);
-        // _level.setActive(true);
-        // _status = LEVEL;
-        // _level.resetLevel();
-        // //isHosting = false;
         break;
     case MainMenuScene::Choice::SETTING:
         _mainmenu.setActive(false);
@@ -367,22 +397,29 @@ void NetApp::updateMainScene(float timestep)
 void NetApp::updateSelectionScene(float timestep)
 {
     _selection.update(timestep);
-    switch (_selection.getChoice()) {
-    case SelectionScene::Choice::PLAYER1:
+    if(_selection.getBackclick()){
         _selection.setActive(false);
-        _level.setActive(true);
-        _status = LEVEL;
-        _level.resetLevel();
-        isHosting = true;
-        break;
-    case SelectionScene::Choice::PLAYER2:
-        _selection.setActive(false);
-        _menu.setActive(true);
-        _status = MENU;
-        break;
-    case SelectionScene::Choice::NONE:
-        // DO NOTHING
-        break;
+        _mainmenu.setActive(true);
+        _status = MAINMENU;
+    }
+    else{
+        switch (_selection.getChoice()) {
+        case SelectionScene::Choice::PLAYER1:
+            _selection.setActive(false);
+            _singlePlayer.setActive(true);
+            _status = SINGLEPLAYER;
+            _singlePlayer.resetLevel();
+            isHosting = true;
+            break;
+        case SelectionScene::Choice::PLAYER2:
+            _selection.setActive(false);
+            _menu.setActive(true);
+            _status = MENU;
+            break;
+        case SelectionScene::Choice::NONE:
+            // DO NOTHING
+            break;
+        }
     }
 }
 
@@ -392,58 +429,93 @@ void NetApp::updateLevelScene(float timestep)
     if(_level.getBackclick())
     {
         _level.setActive(false);
-        _mainmenu.setActive(true);
-        _status = MAINMENU;
+        _selection.setActive(true);
+        _status = SELECTION;
     }else{
-        switch (_level.getLevel()) {
-            case LevelScene::Level::L1:
-                _level.setActive(false);
-                if (isHosting){
-                    _hostgame.setActive(true);
-                    _status = HOST;
-                }else{
-                    _joingame.setActive(true);
-                    _status = CLIENT;
-                }
-                break;
-            case LevelScene::Level::L2:
-                _level.setActive(false);
-                if (isHosting){
-                    _hostgame.setActive(true);
-                    _status = HOST;
-                }else{
-                    _joingame.setActive(true);
-                    _status = CLIENT;
-                }
-                break;
-            case LevelScene::Level::L3:
-                _level.setActive(false);
-                if (isHosting){
-                    _hostgame.setActive(true);
-                    _status = HOST;
-                }else{
-                    _joingame.setActive(true);
-                    _status = CLIENT;
-                }
-                break;
-            default :
-                // DO NOTHING
-                break;
+        if (_level.getLevel()!= LevelScene::Level::NONE){
+            _level.setActive(false);
+            if (isHosting){
+                _hostgame.setActive(true);
+                _status = HOST;
+            }else{
+                _joingame.setActive(true);
+                _status = CLIENT;
             }
-
+        }
     }
 }
 
+
+void NetApp::updateSinglePlayerLevelScene(float timestep)
+{
+    _singlePlayer.update(timestep);
+    if(_singlePlayer.getBackclick())
+    {
+        _network->disconnect();
+        _singlePlayer.setActive(false);
+        _selection.setActive(true);
+        _status = SELECTION;
+    }
+    else if (_network->getStatus() == NetEventController::Status::HANDSHAKE && _network->getShortUID()) {
+        switch (_singlePlayer.getLevel()) {
+            case LevelScene::Level::L1:
+                _gameplay.init(_assets, _network, true, LEVEL_ONE_KEY);
+                break;
+            case LevelScene::Level::L2:
+                _gameplay.init(_assets, _network, true, LEVEL_TWO_KEY);
+                break;
+            case LevelScene::Level::L3:
+                _gameplay.init(_assets, _network, true, LEVEL_THREE_KEY);
+                break;
+            case LevelScene::Level::L4:
+                _gameplay.init(_assets, _network, true, LEVEL_FOUR_KEY);
+                break;
+            case LevelScene::Level::L5:
+                _gameplay.init(_assets, _network, true, LEVEL_FIVE_KEY);
+                break;
+            default :
+                CUAssertLog(false, "bad level");
+                break;
+        }
+        _network->markReady();
+    }
+    else if (_network->getStatus() == NetEventController::Status::INGAME) {
+        _singlePlayer.setActive(false);
+        _gameplay.setActive(true);
+        _status = GAME;
+    }
+    else if (_network->getStatus() == NetEventController::Status::NETERROR) {
+        _network->disconnect();
+        _singlePlayer.setActive(false);
+        _mainmenu.setActive(true);
+        _gameplay.dispose();
+        _status = MAINMENU;
+    }
+}
 void NetApp::updateSettingScene(float timestep){
+    _setting.update(timestep);
     if(_setting.getBackclick())
     {
         _setting.setActive(false);
         _mainmenu.setActive(true);
         _status = MAINMENU;
+    }else if(_setting.getLevel()==SettingScene::button::b4){
+        _setting.setActive(false);
+        _rebind.setActive(true);
+        _status = REBIND;
+
     }
-    _setting.update(timestep);
+    
 }
 
+void NetApp::updateRebindscene(float timestep){
+    if(_rebind.getBackclick()){
+        _setting.setActive(true);
+        _rebind.setActive(false);
+        _status = SETTING;
+    }
+    _rebind.update(timestep);
+}
 /**
  * The method called to draw the application to the screen.
  *
@@ -481,6 +553,12 @@ void NetApp::draw() {
             break;
         case SETTING:
             _setting.render(_batch);
+            break;
+        case SINGLEPLAYER:
+            _singlePlayer.render(_batch);
+            break;
+        case REBIND:
+            _rebind.render(_batch);
             break;
         default:
             break;

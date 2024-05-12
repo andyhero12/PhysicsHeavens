@@ -49,7 +49,7 @@ bool LevelScene::init(const std::shared_ptr<AssetManager> &assets)
     _input.init();
     // IMMEDIATELY load the splash screen assets
     _assets = assets;
-    _assets->loadDirectory("json/level.json");
+    _assets->loadDirectory("json/levelselection.json");
     std::shared_ptr<cugl::scene2::SceneNode> layer = assets->get<scene2::SceneNode>("level");
     layer->setContentSize(dimen);
     layer->doLayout(); // This rearranges the children to fit the screen
@@ -73,7 +73,10 @@ bool LevelScene::init(const std::shared_ptr<AssetManager> &assets)
                 _level = Level::L3; // Assuming there's a level 4
                 break;
             case 4:
-                CULog("Current Level: L4");
+                _level = Level::L4;
+                break;
+            case 5:
+                _level = Level::L5;
                 break;
             default:
                 CULog("Unknown Level");
@@ -81,14 +84,14 @@ bool LevelScene::init(const std::shared_ptr<AssetManager> &assets)
         }
     }
 });
-    background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("Background"), 1, 15);
-    std::cout << "height of level scene "<< background->getTexture()->getHeight()<<std::endl;
+    background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("Background"), 3, 10,27);
     background->setScale(4.3);
     background->setPosition(0.5 * background->getSize());
     addChild(background);
     layer->setColor(Color4(0, 0, 0, 1));
     Application::get()->setClearColor(Color4(192, 192, 192, 255));
     addChild(layer);
+    setActive(false);
     return true;
 }
 
@@ -118,7 +121,6 @@ void LevelScene::dispose()
 void LevelScene::update(float progress)
 {
     _input.update();
-    
     if (curMoveAnim <= moveCooldown){
         curMoveAnim++;
     }
@@ -141,7 +143,6 @@ void LevelScene::update(float progress)
     updatelevelscene();
     resetgochange();
     adjustFrame(level);
-
     if (_input.didPressConfirm() && readyToChangeLevel()){
         _button->setDown(true);
     }
@@ -193,7 +194,7 @@ void LevelScene::setActive(bool value)
 
 void LevelScene::adjustFrame(int level){
     if (readToAnim()) {
-            int targetFrame = frameTargets[level];
+            int targetFrame = frameTargets.at(level);
             if (background->getFrame() != targetFrame) {
                 resetAnimCD();
                 if (background->getFrame() < targetFrame) {

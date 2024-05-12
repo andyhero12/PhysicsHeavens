@@ -20,6 +20,14 @@
 class StaticMeleeFactory : public ObstacleFactory
 {
 public:
+    StaticMeleeFactory(){
+        _data = nullptr;
+        _assets = nullptr;
+    };
+    virtual ~StaticMeleeFactory(){
+        _data = nullptr;
+        _assets = nullptr;
+    }
     struct AnimationStruct{
         std::vector<std::shared_ptr<cugl::Texture>> _walkTextures;
         std::vector<std::shared_ptr<cugl::Texture>> _attackTextures;
@@ -65,7 +73,17 @@ public:
         textures.push_back(_assets->get<Texture>("basicEnemy1"));
         textures.push_back(_assets->get<Texture>("basicEnemy1"));
         staticEnemyStruct._walkTextures  = textures;
-        staticEnemyStruct._attackTextures  = textures;
+        
+        std::vector<std::shared_ptr<cugl::Texture>> attacks;
+        attacks.push_back(_assets->get<Texture>("basicEnemy1"));
+        attacks.push_back(_assets->get<Texture>("basicEnemy1"));
+        attacks.push_back(_assets->get<Texture>("basicEnemy0"));
+        attacks.push_back(_assets->get<Texture>("basicEnemy0"));
+        attacks.push_back(_assets->get<Texture>("basicEnemy0"));
+        attacks.push_back(_assets->get<Texture>("basicEnemy0"));
+        attacks.push_back(_assets->get<Texture>("basicEnemy1"));
+        attacks.push_back(_assets->get<Texture>("basicEnemy1"));
+        staticEnemyStruct._attackTextures  = attacks;
         staticEnemyStruct._framesize = _framesize;
         staticEnemyStruct._framecols = _framecols;
         staticEnemyStruct._freqAnimations = 5;
@@ -97,7 +115,9 @@ public:
     }
     StaticMeleeEnemy();
     bool init(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex);
-    ~StaticMeleeEnemy(){}
+    virtual ~StaticMeleeEnemy(){
+        
+    }
     
     virtual void preUpdate(float dt, OverWorld& overWorld) override;
     

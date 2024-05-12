@@ -28,7 +28,10 @@
 #include "AttackPolygons.h"
 #include "OverWorld.h"
 #include "MonsterController.h"
-
+#include "NLBaseHealthEvent.h"
+#include "NLClientHealthEvent.h"
+#include "NLMonsterHealthEvent.h"
+#include "NLSizeEvent.h"
 /**
  * Namespace of functions implementing simple game physics.
  *
@@ -70,34 +73,46 @@ public:
      *
      * @return true if initialization was successful
      */
-    bool init() {
+    bool init(std::shared_ptr<NetEventController> net) {
+        _network = net;
         return true;
     }
     
     void resolveBlowup(const std::shared_ptr<ActionPolygon>& action, MonsterController& monsterController, std::unordered_set<std::shared_ptr<AbstractSpawner>>& spawners);
     
     void hugeBlastCollision(const std::shared_ptr<ActionPolygon>& action, MonsterController& monsterController, std::unordered_set<std::shared_ptr<AbstractSpawner>>& spawners);
-    
-    bool healFromBaseCollsion( BaseSet& bset, std::shared_ptr<Dog> ship);
-    
     void resolveBiteAttack(const std::shared_ptr<ActionPolygon>& action, MonsterController& monsterController,
-                           OverWorld& overWorld, std::unordered_set<std::shared_ptr<AbstractSpawner>>& spawners);
+                           OverWorld& overWorld, std::unordered_set<std::shared_ptr<AbstractSpawner>>& spawners,bool isHostAttack);
+    
+    void resolveBlowupClient(const std::shared_ptr<ActionPolygon>& action, MonsterController& monsterController, std::unordered_set<std::shared_ptr<AbstractSpawner>>& spawners);
+    
+    void hugeBlastCollisionClient(const std::shared_ptr<ActionPolygon>& action, MonsterController& monsterController, std::unordered_set<std::shared_ptr<AbstractSpawner>>& spawners);
+    void resolveBiteAttackClient(const std::shared_ptr<ActionPolygon>& action, MonsterController& monsterController,
+                           OverWorld& overWorld, std::unordered_set<std::shared_ptr<AbstractSpawner>>& spawners,bool isHostAttack);
+    bool healFromBaseCollsion( BaseSet& bset, std::shared_ptr<Dog> ship);
     
     // Post Update Functions
     void intraOverWorldCollisions( OverWorld& overWorld);
     
     void overWorldMonsterControllerCollisions(OverWorld& overWorld, MonsterController& monsterController);
     
-    bool monsterDogCollision(std::shared_ptr<Dog> curDog, std::unordered_set<std::shared_ptr<AbstractEnemy>>& curEnemies);
+    bool monsterDogCollision(std::shared_ptr<Dog> curDog, MonsterController& monsterController, std::unordered_set<std::shared_ptr<AbstractEnemy>>& curEnemies);
     bool monsterDecoyCollision(std::shared_ptr<DecoySet> decoySet, std::unordered_set<std::shared_ptr<AbstractEnemy>>& curEnemies);
     bool monsterDecoyExplosionCollision(std::shared_ptr<DecoySet> decoySet, MonsterController& monsterController);
     bool monsterBaseCollsion(OverWorld& overWorld, std::shared_ptr<BaseSet> curBases, MonsterController& monsterController);
     bool absorbEnemMonsterCollision(MonsterController& monsterController, std::unordered_set<std::shared_ptr<AbsorbEnemy>>& absorbCurEnemies);
     
+    void clientIntraWorld(OverWorld& overWorld);
+    void clienOverMonster(OverWorld& overWorld, MonsterController& monsterController);
+    void clientAttackCollide(OverWorld& overWorld, MonsterController& monsterController, SpawnerController& spawnerController);
+    
     
     void attackCollisions(OverWorld& overWorld, MonsterController& monsterController, SpawnerController& spawnerController);
     
+    bool clientDogMonsterCollision(std::shared_ptr<Dog> curDog, MonsterController& monsterController, std::unordered_set<std::shared_ptr<AbstractEnemy>>& curEnemies);
+    bool enemyExplodedCollision(Vec2 pos, float radius, std::shared_ptr<Dog> curDog, MonsterController& monsterController, bool isHost);
     void dispose();
+    std::shared_ptr<NetEventController> _network;
 };
 
 #endif /* __SL_COLLISION_CONTROLLER_H__ */

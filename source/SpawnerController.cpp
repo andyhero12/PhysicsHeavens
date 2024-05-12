@@ -41,7 +41,7 @@ void SpawnerController::update(MonsterController& monsterController, OverWorld& 
    // _difficulty *= 1.00003851f;
     accumulatedTime += timestep;
     //cout << (std::to_string(difficulty));
-    float timeDifficulty = (accumulatedTime / 90.0f) * (accumulatedTime / 90.0f) / (1 + accumulatedTime / 90.0f);
+    float timeDifficulty = (accumulatedTime / 180.0f) * (accumulatedTime / 180.0f) / (1 + accumulatedTime / 180.0f);
     float power = 1 + timeDifficulty + difficulty;
     float r = rand() / (float)RAND_MAX;
     r = r * r * r;
@@ -70,13 +70,9 @@ void SpawnerController::update(MonsterController& monsterController, OverWorld& 
         std::shared_ptr<AbstractSpawner> spawner = *it;
         
         if (spawner->dead()){
-            Vec2 pos = spawner->getPos();
-            auto deathNode = SpriteAnimationNode::allocWithSheet(_deathSpawner, 1, 1, 1, 1);
-            float scale = 1 / 64.0f;
-            deathNode->setAnchor(cugl::Vec2::ANCHOR_CENTER);
-            deathNode->setScale(scale);
-            deathNode->setPosition(pos);
-            baseSpawnerNode->addChild(deathNode);
+            if (_isHost){
+                _network->pushOutEvent(SpawnerDeathEvent::allocSpawnerDeathEvent(spawner->getPos()));
+            }
             it = _spawners.erase(it);
             spawner->getSpawnerNode()->removeFromParent();
             difficulty += 0.1;
@@ -105,15 +101,34 @@ void SpawnerController::update(MonsterController& monsterController, OverWorld& 
 }
 
 void SpawnerController::processDeathEvent(const std::shared_ptr<DeathEvent>& deathEvent){
-    std::shared_ptr<SpriteAnimationNode> deathAnim = SpriteAnimationNode::allocWithSheet(_deathTexture, 2, 5, 10, 6);
-    deathAnim->setAnchor(Vec2::ANCHOR_CENTER);
-//    spawnAnim->setScale(power * cugl::Size(1,1)/32.0);
-    deathAnim->setScale(deathEvent->getSize()/32.0);
+    std::shared_ptr<SpriteAnimationNode> deathAnim;
+    if(deathEvent->isBomb()) {
+        deathAnim = SpriteAnimationNode::allocWithSheet(_explodeTexture, 4, 5, 20, 1);
+        deathAnim->setFrame(2);
+        deathAnim->setAnchor(Vec2::ANCHOR_CENTER);
+        deathAnim->setScale(deathEvent->getSize()/64.0);
+    }
+    else {
+        deathAnim = SpriteAnimationNode::allocWithSheet(_deathTexture, 2, 5, 10, 6);
+        deathAnim->setAnchor(Vec2::ANCHOR_CENTER);
+        //spawnAnim->setScale(power * cugl::Size(1,1)/32.0);
+        deathAnim->setScale(deathEvent->getSize()/32.0);
+    }
     deathAnim->setPosition(deathEvent->getPos());
     _curAnimations.emplace(deathAnim);
     animSpawnerNode->addChild(deathAnim);
 }
-bool SpawnerController::init(const std::vector<LevelModel::Spawner>& startLocs, std::shared_ptr<cugl::AssetManager> assets) {
+
+void SpawnerController::processSpawnerDeathEvent(const std::shared_ptr<SpawnerDeathEvent>& spawnerDeathEvent){
+    Vec2 pos = spawnerDeathEvent->getPos();
+    auto deathNode = SpriteAnimationNode::allocWithSheet(_deathSpawner, 1, 1, 1, 1);
+    float scale = 1 / 48.0f;
+    deathNode->setAnchor(cugl::Vec2::ANCHOR_CENTER);
+    deathNode->setScale(scale);
+    deathNode->setPosition(pos);
+    baseSpawnerNode->addChild(deathNode);
+}
+bool SpawnerController::init(const std::vector<LevelModel::Spawner>& startLocs, std::shared_ptr<cugl::AssetManager> assets, std::shared_ptr<NetEventController> net) {
     _spawners.clear();
     animationNodes.clear();
     _curAnimations.clear();
@@ -122,13 +137,15 @@ bool SpawnerController::init(const std::vector<LevelModel::Spawner>& startLocs, 
     _spawnTexture = assets->get<cugl::Texture>("enemySpawn");
     _deathTexture = assets->get<cugl::Texture>("enemyDeath");
     _deathSpawner = assets->get<cugl::Texture>("spawnerDeath");
+    _explodeTexture = assets->get<cugl::Texture>("explodingGate");
+    _network = net;
     for (int i =0; i< startLocs.size(); i++){
         LevelModel::Spawner spawner = startLocs.at(i);
         cugl::Vec2 pos = Vec2(spawner.spawnerX, spawner.spawnerY);
         int health = spawner.hp;
         std::shared_ptr<SimpleSpawner> curSpawner = std::make_shared<SimpleSpawner>(spawner.regularDelay,pos,health,spawner.initDelay,spawner.primaryEnemy, spawner.secondaryEnemy, spawner.tertiaryEnemy);
         auto drawNode = SpriteAnimationNode::allocWithSheet(assets->get<cugl::Texture>("spawner"), 1, 4, 4, 6);
-        float scale = 1 / 64.0f;
+        float scale = 1 / 48.0f;
         drawNode->setAnchor(cugl::Vec2::ANCHOR_CENTER);
         drawNode->setScale(scale);
         drawNode->setPosition(pos);
@@ -175,4 +192,8 @@ void SpawnerController::dispose(){
     baseSpawnerNode = nullptr;
     animSpawnerNode = nullptr;
     _network = nullptr;
+    _deathTexture = nullptr;
+    _spawnTexture = nullptr;
+    _deathSpawner = nullptr;
+    _curAnimations.clear();
 }

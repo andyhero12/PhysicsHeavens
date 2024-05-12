@@ -1,5 +1,5 @@
 {
-	"textures": {
+    "textures": {
         "Background":{
             "file":      "textures/Newlevel.png",
             "minfilter": "linear",
@@ -12,9 +12,9 @@
             "minfilter": "linear",
             "magfilter": "linear"
         }
-	},
+    },
     "scene2s" : {
-        "level" : {
+        "single_player_level" : {
             "type"      : "Solid",
             "format"    : {
                 "type" : "Anchored"

@@ -9,7 +9,8 @@
 #include "OverWorld.h"
 
 #define WORLD_SIZE 3
-
+#define SHOOT_COST 5
+#define BOMB_COST 10
 #include "NLDog.h"
 
 void OverWorld::reset()
@@ -202,7 +203,7 @@ bool OverWorld::initDogModel()
     mediumDogDash->setAnchor(Vec2::ANCHOR_CENTER);
     mediumDogDash->setContentSize(DOG_SIZE);
 
-    std::shared_ptr<AnimationSceneNode> clientMediumDogDash = AnimationSceneNode::allocWithTextures(textures, 4, 5, 20, 1);
+    std::shared_ptr<AnimationSceneNode> clientMediumDogDash = AnimationSceneNode::allocWithTextures(dashTextures, 4, 5, 20, 1);
     clientMediumDogDash->setAnchor(Vec2::ANCHOR_CENTER);
     clientMediumDogDash->setContentSize(DOG_SIZE);
 
@@ -386,6 +387,13 @@ bool OverWorld::initBases()
 {
     _bases = std::make_shared<BaseSet>();
     _bases->init(_level->getBasesPos(), _assets);
+    
+    std::shared_ptr<scene2::SceneNode> _uinode = scene2::SceneNode::alloc();
+    _uinode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    
+    _gateUIController = std::make_shared<GateUIController>();
+    _gateUIController->init(_uinode, _assets, _activeSize, _bases);
+    
     return true;
 }
 
@@ -486,17 +494,22 @@ void OverWorld::processDashEvent(const std::shared_ptr<DashEvent> &dashEvent)
         _dogClient->startDash();
     }
 }
+void OverWorld::processClientHealthEvent(const std::shared_ptr<ClientHealthEvent>& clientHealthEvent){
+    bool incomingHost = clientHealthEvent->isHostDog();
+    if (incomingHost){
+        _dog->setHealth(_dog->getHealth() - clientHealthEvent->getHealthLost());
+    }else{
+        _dogClient->setHealth(_dogClient->getHealth() - clientHealthEvent->getHealthLost());
+    }
+}
 void OverWorld::processSizeEvent(const std::shared_ptr<SizeEvent> &sizeEvent)
 {
     bool incomingHost = sizeEvent->isHost();
-    bool currentHost = _isHost;
-//    CULog("processing Size Event %d %d", incomingHost, currentHost);
-    if (incomingHost != currentHost)
-    { // means we received from other person
-        if (incomingHost)
-        { // means incoming is from Original host
-            _dog->updateDogSize(sizeEvent->getSize());
-        }
+    if (incomingHost)
+    { // means incoming is from Original host
+        _dog->addAbsorb(sizeEvent->getSize());
+    }else{
+        _dogClient->addAbsorb(sizeEvent->getSize());
     }
 }
 void OverWorld::processBiteEvent(const std::shared_ptr<BiteEvent> &biteEvent)
@@ -504,14 +517,15 @@ void OverWorld::processBiteEvent(const std::shared_ptr<BiteEvent> &biteEvent)
     Vec2 center = biteEvent->getPos();
     float ang = biteEvent->getAng();
     bool incomingHost = biteEvent->isHost();
+    float scale = biteEvent->getScale();
     if (incomingHost)
     {
-        _attackPolygonSet.addBite(center, ang, _dog->getBiteRadius(), (float)_dog->getAbsorb() / _dog->getMaxAbsorb());
+        _attackPolygonSet.addBite(center, ang, _dog->getBiteRadius(), scale);
         _dog->startBite();
     }
     else
     {
-        _clientAttackPolygonSet.addBite(center, ang, _dogClient->getBiteRadius(), (float)_dogClient->getAbsorb() / _dogClient->getMaxAbsorb());
+        _clientAttackPolygonSet.addBite(center, ang, _dogClient->getBiteRadius(), scale);
         _dogClient->startBite();
     }
 }
@@ -528,21 +542,54 @@ void OverWorld::processShootEvent(const std::shared_ptr<ShootEvent> &shootEvent)
 {
     Vec2 center = shootEvent->getPos();
     float ang = shootEvent->getAng();
-    _attackPolygonSet.addShoot(center, ang, _dog->getShootRadius());
+    float scale = shootEvent->getScale();
     bool incomingHost = shootEvent->isHost();
     if (incomingHost)
     {
+        if (incomingHost != _isHost){
+            _dog->subAbsorb(SHOOT_COST);
+        }
+        _attackPolygonSet.addShoot(center, ang, scale, _dog->getShootRadius());
         _dog->startShoot();
     }
     else
     {
+        if (incomingHost != _isHost){
+            _dogClient->subAbsorb(SHOOT_COST);
+        }
+        _clientAttackPolygonSet.addShoot(center, ang, scale, _dog->getShootRadius());
         _dogClient->startShoot();
     }
 }
 void OverWorld::processExplodeEvent(const std::shared_ptr<ExplodeEvent> &explodeEvent)
 {
     Vec2 center = explodeEvent->getPos();
-    _attackPolygonSet.addExplode(center, _dog->getExplosionRadius());
+    float scale = explodeEvent->getScale();
+    bool incomingHost = explodeEvent->isHost();
+    if (incomingHost)
+    {
+        if (incomingHost != _isHost){
+            _dog->subAbsorb(BOMB_COST);
+        }
+        _attackPolygonSet.addExplode(center, scale, _dog->getExplosionRadius());
+        _dog->startShoot();
+    }
+    else
+    {
+        if (incomingHost != _isHost){
+            _dogClient->subAbsorb(BOMB_COST);
+        }
+        _clientAttackPolygonSet.addExplode(center, scale, _dog->getExplosionRadius());
+        _dogClient->startShoot();
+    }
+}
+
+void OverWorld::processBaseHealthEvent(const std::shared_ptr<BaseHealthEvent>& basEvent){
+    for (std::shared_ptr<Base> base : getBaseSet()->_bases){
+        if (base->getPos() == basEvent->getPos()){
+            base->reduceHealth(basEvent->getDamage());
+        }
+    }
 }
 void OverWorld::recallDogToClosetBase(std::shared_ptr<Dog> _curDog){
     float shortestDist = 1000000.0f;
@@ -560,11 +607,6 @@ void OverWorld::recallDogToClosetBase(std::shared_ptr<Dog> _curDog){
 void OverWorld::ownedDogUpdate(InputController& _input, cugl::Size, std::shared_ptr<Dog> _curDog){
     _curDog->moveOnInputSetAction(_input);
     _curDog->updateUI();
-    if (_curDog->shouldSendSize())
-    {
-        _curDog->resetSendSize();
-        _network->pushOutEvent(SizeEvent::allocSizeEvent(_curDog->getAbsorb(), _isHost));
-    }
     if (_curDog->readyToRecall()){
         recallDogToClosetBase(_curDog);
     }
@@ -574,7 +616,8 @@ void OverWorld::ownedDogUpdate(InputController& _input, cugl::Size, std::shared_
     }
     if (_input.didPressFire() && _curDog->canFireWeapon() && _curDog->getAction() != Dog::Actions::DASH)
     {
-        _network->pushOutEvent(BiteEvent::allocBiteEvent(_curDog->getBiteCenter(), _curDog->getDirInDegrees(), _isHost));
+        float scale = float(_curDog->getAbsorb())/ (float) _curDog->getMaxAbsorb();
+        _network->pushOutEvent(BiteEvent::allocBiteEvent(_curDog->getBiteCenter(), _curDog->getDirInDegrees(),scale,  _isHost));
         _curDog->reloadWeapon();
     }
     if (_input.didPressSpecial() && _curDog->canFireWeapon()&& _curDog->getAction() != Dog::Actions::DASH)
@@ -582,8 +625,9 @@ void OverWorld::ownedDogUpdate(InputController& _input, cugl::Size, std::shared_
         _curDog->reloadWeapon();
         if (_curDog->getMode() == "SHOOT" && _curDog->getAbsorb() >= 5)
         {
-            _curDog->subAbsorb(5);
-            _network->pushOutEvent(ShootEvent::allocShootEvent(_curDog->getShootCenter(), _curDog->getDirInDegrees(), _isHost));
+            _curDog->subAbsorb(SHOOT_COST);
+            float scale = float(_curDog->getAbsorb())/ (float) _curDog->getMaxAbsorb()/2;
+            _network->pushOutEvent(ShootEvent::allocShootEvent(_curDog->getShootCenter(), _curDog->getDirInDegrees(), scale, _isHost));
         }
         else if (_curDog->getMode() == "BAIT" && _curDog->getAbsorb() >= 5)
         {
@@ -592,8 +636,9 @@ void OverWorld::ownedDogUpdate(InputController& _input, cugl::Size, std::shared_
         }
         else if (_curDog->getMode() == "BOMB" && _curDog->getAbsorb() >= 5)
         {
-            _curDog->subAbsorb(15);
-            _network->pushOutEvent(ExplodeEvent::allocExplodeEvent(_curDog->getPosition()));
+            _curDog->subAbsorb(BOMB_COST);
+            float scale = float(_curDog->getAbsorb())/ (float) _curDog->getMaxAbsorb()/2;
+            _network->pushOutEvent(ExplodeEvent::allocExplodeEvent(_curDog->getPosition(),scale,  _isHost));
         }else if (_curDog->getMode() == "RECALL"){
             _network->pushOutEvent(RecallEvent::allocRecallEvent(_curDog->getPosition(),_isHost));
         }else {
@@ -622,6 +667,7 @@ void OverWorld::update(InputController &_input, cugl::Size totalSize, float time
     _decoys->update(timestep);
     _attackPolygonSet.update();
     _clientAttackPolygonSet.update();
+    _gateUIController->updateHealthTexture();
 }
 
 void OverWorld::postUpdate()

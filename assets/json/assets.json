@@ -1,77 +1,82 @@
 {
     "textures": {
-        "GREETING":{
+        "GREETING": {
             "file": "textures/tutorial/greeting.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
-        "SPECIALSONE":{
+        "GROW": {
+            "file": "textures/tutorial/grow.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "SPECIALSONE": {
+            "file": "textures/tutorial/trigger.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "CHANGEABILITYTWO": {
+            "file": "textures/tutorial/swap.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "SPECIALSTWO": {
+            "file": "textures/tutorial/trigger.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "CHANGEABILITYTHREE": {
             "file": "textures/tutorial/greeting.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
-        "CHANGEABILITYTWO":{
+        "SPECIALSTHREE": {
             "file": "textures/tutorial/greeting.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
-        "SPECIALSTWO":{
+        "CHANGEABILITYFOUR": {
             "file": "textures/tutorial/greeting.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
-        "CHANGEABILITYTHREE":{
-            "file": "textures/tutorial/greeting.png",
-            "minfilter": "linear",
-            "magfilter": "nearest"
-        },
-        "SPECIALSTHREE":{
-            "file": "textures/tutorial/greeting.png",
-            "minfilter": "linear",
-            "magfilter": "nearest"
-        },
-        "CHANGEABILITYFOUR":{
-            "file": "textures/tutorial/greeting.png",
-            "minfilter": "linear",
-            "magfilter": "nearest"
-        },
-        "MOVEMENT":{
+        "MOVEMENT": {
             "file": "textures/tutorial/move.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
-        "BITE":{
+        "BITE": {
             "file": "textures/tutorial/bite.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
-        "DEFENDGATE":{
-            "file": "textures/tutorial/greeting.png",
+        "DEFENDGATE": {
+            "file": "textures/tutorial/gate.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
-        "DESTORYSPAWNER":{
-            "file": "textures/tutorial/greeting.png",
+        "DESTROYSPAWNER": {
+            "file": "textures/tutorial/spawners.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
         "minimap": {
-            "file": "textures/minimap/minimap.png",
+            "file": "textures/minimap/map_background.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
         "dogmap": {
-            "file": "textures/minimap/dog.png",
+            "file": "textures/minimap/map_dog.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
         "spawnermap": {
-            "file": "textures/minimap/spawner.png",
+            "file": "textures/minimap/map_spawner.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
         "basemap": {
-            "file": "textures/minimap/base.png",
+            "file": "textures/minimap/map_gate.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
@@ -136,11 +141,11 @@
             "magfilter": "nearest"
         },
         "healthframe": {
-            "file": "textures/game_ui/HEALTH_FRAME.png",
+            "file": "textures/game_ui/main_frame.png",
             "magfilter": "nearest"
         },
         "healthfill": {
-            "file": "textures/game_ui/HEALTH_FILL.png",
+            "file": "textures/game_ui/main_health_fill.png",
             "magfilter": "nearest"
         },
         "sizeframe": {
@@ -148,26 +153,46 @@
             "magfilter": "nearest"
         },
         "sizefill": {
-            "file": "textures/game_ui/SIZE_FILL.png",
+            "file": "textures/game_ui/main_size_fill.png",
+            "magfilter": "nearest"
+        },
+        "gateframe": {
+            "file": "textures/game_ui/gate_health_single.png",
+            "magfilter": "nearest"
+        },
+        "gateframe2": {
+            "file": "textures/game_ui/gate_health_double.png",
+            "magfilter": "nearest"
+        },
+        "gatefill": {
+            "file": "textures/game_ui/gate_fill.png",
+            "magfilter": "nearest"
+        },
+        "gatefillup": {
+            "file": "textures/game_ui/gate_double_upper_fill.png",
+            "magfilter": "nearest"
+        },
+        "gatefilldown": {
+            "file": "textures/game_ui/gate_double_lower_fill.png",
             "magfilter": "nearest"
         },
         "baittoggle": {
-            "file": "textures/game_ui/BAIT_TOGGLE.png",
+            "file": "textures/game_ui/main_bait_icon.png",
             "magfilter": "nearest"
         },
         "bombtoggle": {
-            "file": "textures/game_ui/BOMB_TOGGLE.png",
+            "file": "textures/game_ui/main_bomb_icon.png",
             "magfilter": "nearest"
         },
         "shoottoggle": {
-            "file": "textures/game_ui/SHOOT_TOGGLE.png",
+            "file": "textures/game_ui/main_bark_icon.png",
             "magfilter": "nearest"
         },
         "hometoggle": {
-            "file": "textures/game_ui/SPAWN_TOGGLE.png",
+            "file": "textures/game_ui/main_recall_icon.png",
             "magfilter": "nearest"
         },
-        "initialflash":{
+        "initialflash": {
             "file": "textures/game_ui/Icon_flash_offset.png",
             "magfilter": "nearest"
         },
@@ -374,36 +399,76 @@
         "chompright": {
             "file": "textures/dog/effects/magic_chomp_right.png",
             "magfilter": "nearest"
-       },
-       "recall":{
-           "file": "textures/dog/effects/recall.png",
+        },
+        "recall": {
+            "file": "textures/dog/effects/recall.png",
             "magfilter": "nearest"
-       },
-       "dash":{
-           "file": "textures/dog/effects/dash.png",
+        },
+        "dash": {
+            "file": "textures/dog/effects/dash.png",
             "magfilter": "nearest"
-       },
-       "penta":{
-           "file": "textures/dog/effects/penta.png",
+        },
+        "penta": {
+            "file": "textures/dog/effects/penta.png",
             "magfilter": "nearest"
-       },
-       "absorbEnemyLeftWalk": {
-           "file": "textures/absorbEnemy/absorbLeftWalk.png",
-                 "minfilter": "linear",
-                 "magfilter": "nearest"
-       },
-       "absorbEnemyRightWalk": {
-           "file": "textures/absorbEnemy/absorbRightWalk.png",
-                 "minfilter": "linear",
-                 "magfilter": "nearest"
+        },
+        "absorbEnemyLeftWalk": {
+            "file": "textures/absorbEnemy/absorbLeftWalk.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "absorbEnemyRightWalk": {
+            "file": "textures/absorbEnemy/absorbRightWalk.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "basicLeftAttack": {
+            "file": "textures/basicEnemy/basicDevil-front-left-swipe.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "basicUpRightAttack": {
+            "file": "textures/basicEnemy/basicDevil-back-right-swipe.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "basicUpLeftAttack": {
+            "file": "textures/basicEnemy/basicDevil-back-left-swipe.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "basicRightAttack": {
+            "file": "textures/basicEnemy/basicDevil-front-right-swipe.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "basicLeftWalk": {
+            "file": "textures/basicEnemy/basicDevil-front-left.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "basicUpRightWalk": {
+            "file": "textures/basicEnemy/basicDevil-back-right.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "basicUpLeftWalk": {
+            "file": "textures/basicEnemy/basicDevil-back-left.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "basicRightWalk": {
+            "file": "textures/basicEnemy/basicDevil-front-right.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
         },
         "basicEnemy0": {
-            "file": "textures/basicEnemy/basicWalkLeft.PNG",
+            "file": "textures/basicEnemy/basicDevil-front-left.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
         "basicEnemy1": {
-            "file": "textures/basicEnemy/basicWalkRight.PNG",
+            "file": "textures/basicEnemy/basicDevil-front-right.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
@@ -436,6 +501,14 @@
             "file": "textures/spawnerEnemy/spawnerFrontWalk.png",
             "minfilter": "linear",
             "magfilter": "nearest"
+        },
+        "spawnerSpawn": {
+            "file": "textures/spawnerEnemy/coffin_summoning_front.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "frame": {
+            "file": "textures/frame.png"
         },
         "street_tiles": {
             "file": "textures/tile/tile.png",
@@ -510,9 +583,6 @@
         "button": {
             "file": "textures/button.png"
         },
-        "frame": {
-            "file": "textures/frame.png"
-        },
         "left": {
             "file": "textures/left_arrow.png"
         },
@@ -521,18 +591,24 @@
             "magfilter": "nearest"
         },
         "enemySpawn": {
-             "file": "textures/effects/spawn_flame.png",
-             "magfilter": "nearest"
-         },
-         "enemyDeath": {
-             "file": "textures/effects/death_poof.png",
-             "magfilter": "nearest"
-         },
+            "file": "textures/effects/spawn_flame.png",
+            "magfilter": "nearest"
+        },
+        "enemyDeath": {
+            "file": "textures/effects/death_poof.png",
+            "magfilter": "nearest"
+        },
+        "repeat_win": {
+            "file": "textures/repeat_win.png",
+            "magfilter": "nearest"
+        },
         "win_screen": {
-          "file": "textures/win_screen.png"
+            "file": "textures/win_screen.png",
+            "magfilter": "nearest"
         },
         "lose_screen": {
-          "file": "textures/fail_screen.png"
+            "file": "textures/loss_screen.png",
+            "magfilter": "nearest"
         }
     },
     "jsons": {

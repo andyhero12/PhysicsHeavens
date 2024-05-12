@@ -21,7 +21,7 @@ enum Terrain {
 };
 
 // Information for a tile, add to this later since idk what this will include
-class TileInfo : public cugl::physics2::BoxObstacle{
+class TileInfo{
 public:
 #pragma mark Static Constructors
     
@@ -47,11 +47,16 @@ public:
     }
 #pragma mark Constructors
     
-    virtual bool init(const cugl::Vec2& pos, const cugl::Size& size,Terrain m_type, std::shared_ptr<cugl::Texture> m_texture);
+    bool init(const cugl::Vec2& pos, const cugl::Size& size,Terrain m_type, std::shared_ptr<cugl::Texture> m_texture);
     std::shared_ptr<cugl::Texture> texture;
     std::shared_ptr<scene2::PolygonNode> tileSprite;
     bool isUpper;
+    Vec2 pos;
     
+    
+    Vec2 getPos() const {
+        return pos;
+    }
     void setUpperTrue(){
         isUpper = true;
     }
@@ -62,12 +67,13 @@ public:
         return tileSprite;
     }
     Terrain type;
+    
     TileInfo(){
-        
-    }
-    virtual ~TileInfo(){
+        isUpper = false;
         texture = nullptr;
         tileSprite = nullptr;
+        pos = Vec2(0,0);
+        type = Terrain::IMPASSIBLE;
     }
 private:
 };
@@ -76,13 +82,16 @@ class World{
 public:
         
 private:
-    // Matrix with information about the overworld
-    std::shared_ptr<cugl::Texture> tile;
     std::shared_ptr<cugl::AssetManager> _assets;
-    cugl::Vec2 start;
     
 public:
-    
+    static std::shared_ptr<World> alloc(std::shared_ptr<LevelModel> _level,std::shared_ptr<cugl::AssetManager> assets) {
+        std::shared_ptr<World> result = std::make_shared<World>();
+        return (result->init(_level, assets) ? result : nullptr);
+    }
+    ~World(){
+        _assets = nullptr;
+    }
     std::vector<std::vector<std::shared_ptr<TileInfo>>> tileWorld;
     std::vector<std::vector<std::shared_ptr<TileInfo>>> boundaryWorld;
     std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>> lowerDecorWorld;
@@ -90,13 +99,7 @@ public:
     
     std::vector<std::vector<std::vector<std::shared_ptr<TileInfo>>>> tilesAtCoords;
     std::vector<std::shared_ptr<TileInfo>> allTiles;
-    
-    World () {};
-    ~World(){
-        tile = nullptr;
-        _assets = nullptr;
-    };
-    World(std::shared_ptr<LevelModel> _level,std::shared_ptr<cugl::AssetManager> assets);
+    bool init(std::shared_ptr<LevelModel> _level,std::shared_ptr<cugl::AssetManager> assets);
 
     std::shared_ptr<cugl::Texture> getBoxFromTileSet(int position, const std::map<int,TileSet>& tileSets);
     
@@ -111,7 +114,7 @@ public:
         return tilesAtCoords;
     }
     
-    const std::vector<std::vector<std::shared_ptr<TileInfo>>>& getBoundaryWorld(){
+    const std::vector<std::vector<std::shared_ptr<TileInfo>>>& getBoundaryWorld() const {
         return boundaryWorld;
     }
     
@@ -123,16 +126,16 @@ public:
     }
     
     // Get whether a tile is passible or not
-    const bool isPassable(int x, int y);
+    bool isPassable(int x, int y) const;
     
     // Get the number of rows of tiles in the world
-    int getRows(){
+    int getRows() const{
         return(int) boundaryWorld.size();
     }
     
     // Get the number of columns of tiles in the world
-    int getCols(){
-        return (int) boundaryWorld[0].size();
+    int getCols() const{
+        return (int) boundaryWorld.at(0).size();
     }
 };
 

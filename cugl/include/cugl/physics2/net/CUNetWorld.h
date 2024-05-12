@@ -481,7 +481,11 @@ public:
      * @return id for the given obstacle.
      */
     Sint64 getObstacleId(const std::shared_ptr<Obstacle>& obs) {
-        return _obsToId.at(obs);
+        auto it = _obsToId.find(obs);
+        if (it == _obsToId.end()){
+            return -1;
+        }
+        return it->second;
     }
     
     /**

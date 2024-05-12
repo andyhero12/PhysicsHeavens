@@ -25,6 +25,8 @@
 #include "NLInput.h"
 #include "NLSelection.h"
 #include "Setting.h"
+#include "NLSinglePlayerLevel.h"
+#include "Rebind.h"
 
 using namespace cugl::physics2::net;
 
@@ -42,7 +44,9 @@ enum Status {
     CLIENT,
     SELECTION,
     SETTING,
-    GAME
+    GAME,
+    REBIND,
+    SINGLEPLAYER
 };
 
 protected:
@@ -68,12 +72,16 @@ protected:
     HostScene _hostgame;
 
     LevelScene _level;
+    
+    SinglePlayerLevelScene _singlePlayer;
 
     InputController _input;
 
     SelectionScene _selection;
 
     SettingScene _setting;
+
+    RebindScene _rebind;
     
     /** Whether or not we have finished loading all assets */
     bool _loaded;
@@ -95,7 +103,7 @@ public:
      * of initialization from the constructor allows main.cpp to perform
      * advanced configuration of the application before it starts.
      */
-    NetApp() : cugl::Application(), _loaded(false), isHosting(false) {}
+    NetApp() : cugl::Application(), _loaded(false), isHosting(false){}
     
     /**
      * Disposes of this application, releasing all resources.
@@ -217,10 +225,14 @@ public:
     void updateMainScene(float timestep);
 
     void updateLevelScene(float timestep);
+    
+    void updateSinglePlayerLevelScene(float timestep);
 
     void updateSelectionScene(float timestep);
 
     void updateSettingScene(float timestep);
+
+    void updateRebindscene(float timestep);
 
     /**
      * The method called to draw the application to the screen.

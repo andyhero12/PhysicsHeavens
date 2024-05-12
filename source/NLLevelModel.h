@@ -89,10 +89,6 @@ public:
 private:
     std::shared_ptr<cugl::AssetManager> _assets;
     
-    std::shared_ptr<cugl::JsonValue> _tileset;
-    
-    std::shared_ptr<cugl::Texture> _defaultTexture;
-    
     int _numLowerDecorLayers;
     int _numUpperDecorLayers;
     
@@ -119,6 +115,7 @@ private:
     // ordered for lower bound
     std::map<int,std::string> tileSetMapping;
     std::map<int,TileSet> tilesMappingWithTextures;
+    std::vector<cugl::Rect> _transparentRects;
 protected:
     
 #pragma mark Internal Helper
@@ -134,6 +131,7 @@ public:
         return tilesMappingWithTextures;
     }
     void setTileSetAssets(std::shared_ptr<cugl::AssetManager> assets){
+        tilesMappingWithTextures.clear();
         for (auto& kv : tileSetMapping){
             tilesMappingWithTextures.insert({kv.first,TileSet(kv.first, kv.second,assets)});
         }
@@ -169,6 +167,9 @@ public:
     };
     const std::vector<std::vector<std::vector<int>>>& getUpperDecorations(){
         return _upperDecorLayers;
+    };
+    const std::vector<cugl::Rect>& getTransparentRects() {
+        return _transparentRects;
     };
 #pragma mark Static Constructors
     /**
@@ -221,6 +222,7 @@ public:
     bool loadUpperDecorLayer(const std::shared_ptr<JsonValue>& json, int index);
     bool loadPlayer(const std::shared_ptr<JsonValue>& json);
     bool loadSpanwerLocations(const std::shared_ptr<JsonValue>& json);
+    bool loadTransparentLocs(const std::shared_ptr<JsonValue>& json);
     /**
      * Loads this game level from the source file
      *

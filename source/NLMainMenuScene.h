@@ -36,8 +36,7 @@ public:
     enum Choice {
         /** User has not yet made a choice */
         SINGLE,
-        /** User wants to host a game */
-        COOP,
+
         /** User wants to join a game */
         SETTING,
 
@@ -46,9 +45,7 @@ public:
     enum Isdown {
         /** User has not yet made a choice */
         isSINGLE,
-        /** User wants to host a game */
-        isCOOP,
-        /** User wants to join a game */
+
         isSETTING,
 
         isNONE
@@ -76,14 +73,11 @@ protected:
     //std::shared_ptr<cugl::scene2::SceneNode>  _brand;
     /** The "play" button */
     std::shared_ptr<cugl::scene2::Button>    _button1;
-    std::shared_ptr<cugl::scene2::Button>    _button2;
     std::shared_ptr<cugl::scene2::Button>    _button3;
     std::vector<std::shared_ptr<cugl::scene2::Button>> _buttonset;
     std::shared_ptr<SpriteAnimationNode> background;
 
     // MODEL
-    /** The progress displayed on the screen */
-    float _progress;
     /** Whether or not the player has pressed play to continue */
     bool  _completed;
 
@@ -106,7 +100,7 @@ public:
      * This constructor does not allocate any objects or start the game.
      * This allows us to use the object without a heap pointer.
      */
-    MainMenuScene() : cugl::Scene2() {}
+    MainMenuScene() : cugl::Scene2(), _firstset(true),_counter(0),timeSinceLastSwitch(0.0) {}
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.

@@ -21,10 +21,13 @@
 #include "NLRecallEvent.h"
 #include "NLBiteEvent.h"
 #include "NLExplodeEvent.h"
+#include "NLBaseHealthEvent.h"
 #include "NLShootEvent.h"
 #include "World.h"
 #include "NLDashEvent.h"
 #include "NLSizeEvent.h"
+#include "NLClientHealthEvent.h"
+#include "GateUIController.h"
 
 class OverWorld
 {
@@ -41,6 +44,7 @@ private:
     AttackPolygons _attackPolygonSet;
     AttackPolygons _clientAttackPolygonSet;
     std::shared_ptr<World> _world;
+    std::shared_ptr<GateUIController> _gateUIController;
 
 public:
     bool _isHost;
@@ -71,6 +75,8 @@ public:
     void processRecallEvent(const std::shared_ptr<RecallEvent>& recallEvent);
     void processExplodeEvent(const std::shared_ptr<ExplodeEvent>& explodeEvent);
     void processDashEvent(const std::shared_ptr<DashEvent>& dashEvent);
+    void processBaseHealthEvent(const std::shared_ptr<BaseHealthEvent>& basEvent);
+    void processClientHealthEvent(const std::shared_ptr<ClientHealthEvent>& clientHealthEvent);
     void recallDogToClosetBase(std::shared_ptr<Dog> _curDog);
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch,cugl::Size totalSize);
     std::shared_ptr<Dog> getDog() const {
@@ -88,13 +94,16 @@ public:
     {
         return _bases;
     }
+    std::shared_ptr<NetEventController> getNetwork(){
+        return _network;
+    };
     std::shared_ptr<LevelModel> getLevelModel()
     {
         return _level;
     }
-    std::shared_ptr<World> getWorld()
+    World* getWorld()
     {
-        return _world;
+        return _world.get();
     }
 
     int getTotalTargets() const
@@ -108,6 +117,9 @@ public:
     AttackPolygons &getAttackPolygonsClient()
     {
         return _clientAttackPolygonSet;
+    }
+    std::shared_ptr<GateUIController> getGateUIController(){
+        return _gateUIController;
     }
     void dispose();
 };

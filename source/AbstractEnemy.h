@@ -24,8 +24,10 @@
 #define PATHFIND_COOLDOWN 20
 
 
-#define CLOSE_DISTANCE 2
-#define STRAY_DISTANCE 3
+/** Set these to 0 to disable */
+#define CLOSE_DISTANCE 0
+#define STRAY_DISTANCE 1000000
+#define SAME_GOAL_DISTANCE 2
 
 #define DAMAGED_DURATION 0.5f
 
@@ -34,10 +36,12 @@
 #define KNOCKBACK_TIME 0.25f
 #define KNOCKBACK_LIMIT 14
 
+#define MAX_ESCAPE_TIME 25
+
 #include "stlastar.h"
 #include "WorldSearchVertex.h"
 
-class AbstractEnemy : public cugl::physics2::BoxObstacle {
+class AbstractEnemy : public cugl::physics2::CapsuleObstacle {
     
 public:
     
@@ -53,15 +57,22 @@ public:
     
     AbstractEnemy(){}
     // Virtual destructor
-    virtual ~AbstractEnemy() {}
+    virtual ~AbstractEnemy(){
+        
+        topLevelPlaceHolder = nullptr;
+        runAnimations = nullptr;
+        attackAnimations = nullptr;
+        _pathfinder = nullptr;
+        _healthBar = nullptr;
+    }
     
 
     bool init(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex){
-        bool result = physics2::BoxObstacle::init(m_pos,m_size);
+        bool result = physics2::CapsuleObstacle::init(m_pos,m_size);
         
         if (result){
             _counter = 0;
-            updateRate = 15;
+            updateRate = 5;
             clearSharingDirtyBits();
             setShared(true);
             setDensity(DEFAULT_DENSITY);
@@ -91,32 +102,32 @@ public:
         return false;
     }
 
-    void setVX(float value) override {
+    virtual void setVX(float value) override {
         if(!(_knockbackTimer > 0)) {
-            BoxObstacle::setVX(value);
+            CapsuleObstacle::setVX(value);
         }
     }
 
-    void setVY(float value) override {
+    virtual void setVY(float value) override {
         if(!(_knockbackTimer > 0)) {
-            BoxObstacle::setVY(value);
+            CapsuleObstacle::setVY(value);
         }
     }
 
-    void setLinearVelocity(Vec2 value) override {
+    virtual void setLinearVelocity(Vec2 value) override {
         setLinearVelocity(value.x, value.y);
     }
 
 
-    void setLinearVelocity(float x, float y) override {
+    virtual void setLinearVelocity(float x, float y) override {
         if(!(_knockbackTimer > 0)) {
-            BoxObstacle::setLinearVelocity(x, y);
+            CapsuleObstacle::setLinearVelocity(x, y);
         }
     }
 
-    void update(float delta) override {
+    virtual void update(float delta) override {
         Obstacle::update(delta);
-
+        
         _knockbackTimer -= delta;
         if(_knockbackTimer < 0) {
             _knockbackTimer = 0;
@@ -146,12 +157,27 @@ public:
         if(_knockbackTimer <= 0){
             Vec2 direction = movementDirection;
             _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
-
+            
             runAnimations->animate(_curDirection, curAction != EnemyActions::ATTACK);
             attackAnimations->animate(_curDirection, curAction == EnemyActions::ATTACK);
         }
     }
     
+    void clientAnimationUpdate(OverWorld& overWorld, float dt){
+        if (timeSinceLastMajorChange < 1.0){
+            timeSinceLastMajorChange += dt;
+        }
+        runAnimations->animate(_curDirection, true);
+        if (timeSinceLastMajorChange < 1.0){
+            return;
+        }
+        timeSinceLastMajorChange = 0.0;
+        Vec2 vel = getLinearVelocity();
+        _prevDirection =_curDirection;
+        _curDirection = AnimationSceneNode::convertRadiansToDirections(vel.getAngle());
+        runAnimations->animate(_curDirection, true);
+//        attackAnimations->animate(_curDirection, curAction == EnemyActions::ATTACK);
+    }
     bool isInContact() const { return _inContact; }
     void setInContact(bool value) { _inContact = value; }
     
@@ -179,7 +205,11 @@ public:
         if(m_health < _health) {
             _damagedTimer = DAMAGED_DURATION;
         }
-        _health = m_health;
+        _health = fmax(0.0,m_health);
+        if (_health > _maxHealth){
+            _health = _maxHealth;
+        }
+        
         _healthBar->setProgress((float)_health/_maxHealth);
     }
     void applyDamage(int dmg, Vec2 direction) {
@@ -247,10 +277,15 @@ protected:
     int _health;
     int targetIndex;
     int updateRate;
+    Vec2 trueGoal = Vec2(-1, -1);
+    
+    // timers
     int _counter;
     float _knockbackTimer;
     float _damagedTimer;
     int _time;
+    int _escapeBoundTimer;
+    
     // used for wander
     float _wanderAngle;
     const float wanderStrength = 0.3f;
@@ -274,27 +309,20 @@ protected:
     std::shared_ptr<cugl::scene2::ProgressBar>  _healthBar;
     
     /** Timers */
-    int _pathfindTimer = PATHFIND_COOLDOWN;
     
-    /** Sets a new goal for this enemy to go to. Returns true if pathfinding to the goal was successful */
-    bool setGoal(Vec2 goal, std::shared_ptr<World> world){
-        
-        // If we already pathfound recently, don't path find again
-        if(_pathfindTimer < PATHFIND_COOLDOWN){
-            return searchSuccess();
-        }
-        
+    /** Sets a new goal for this enemy to go to. This will rerun pathfinding every time it is called. USING THIS IS NOT RECOMMENDED, USE setGoal() INSTEADl */
+    bool rawSetGoal(Vec2 goal, const World* world){
+
         // Garbage collect the nodes used for the previous path if they exist
         if(_pathfinder->GetSolutionEnd() && _pathfinder->SearchStep() == AStarSearch<WorldSearchVertex>::SEARCH_STATE_SUCCEEDED){
     //            CULog("Garbage Collecting Path...");
             _pathfinder->FreeSolutionNodes();
         }
         
-        cugl::Vec2 my_pos = getPosition();
-        
-        // Initialize start and end for the search
-        WorldSearchVertex start = WorldSearchVertex(static_cast<int>(my_pos.x), static_cast<int>(my_pos.y), world);
-        WorldSearchVertex end = WorldSearchVertex(static_cast<int>(goal.x), static_cast<int>(goal.y), world);
+        const cugl::Vec2& my_pos = getPosition();
+        // Initialize start and end for the search Force truncation
+        WorldSearchVertex start = WorldSearchVertex(static_cast<int>(my_pos.x + 0.5), static_cast<int>(my_pos.y + 0.5), world);
+        WorldSearchVertex end = WorldSearchVertex(static_cast<int>(goal.x + 0.5), static_cast<int>(goal.y + 0.5), world);
         _pathfinder->SetStartAndGoalStates(start, end);
         
         // Perform the search
@@ -313,7 +341,7 @@ protected:
             WorldSearchVertex* nextNode = _pathfinder->GetSolutionNext();
             
             if(nextNode){
-                _nextStep = Vec2((int) nextNode->x, (int) nextNode->y);
+                _nextStep = Vec2(nextNode->x, nextNode->y);
             } else{
                 _nextStep = my_pos;
             }
@@ -330,88 +358,53 @@ protected:
         }
         
         return false;
+    }
+    
+    /** Sets a new goal for this enemy to go to. Returns true if pathfinding to the goal was successful */
+    bool setGoal(Vec2& goal, const World* world){
+//        WorldSearchVertex* prevGoalVertex =_pathfinder->GetSolutionEnd();
+        trueGoal = goal;
+
+        
+        // If the newly set goal is very close to the old goal, just keep the old goal
+//        if(prevGoalVertex && trueGoal.x >= 0){
+//            Vec2 prevGoal = Vec2(prevGoalVertex->x, prevGoalVertex->y);
+//            if(prevGoal.distance(trueGoal) < SAME_GOAL_DISTANCE){
+//                CULog("Goal too close, don't pathfind again");
+//                return true;
+//            }
+//        }
+//        
+//        CULogError("GOAL CHANGED! REDOING PATHFINDING");
+        
+        return rawSetGoal(goal, world);
     };
 
-
     void goToGoal(){
-        
-        // Get the goal
-        WorldSearchVertex* goalNode = _pathfinder->GetSolutionEnd();
-        cugl::Vec2 direction;
-        
-        // If there is no goal or we are already at the goal, do nothing
-        if(!goalNode || atGoal() || _nextStep.x == -1){
+        if(atGoal()){
             return;
         }
-        
-        Vec2 goalTile = Vec2(goalNode->x + 0.5, goalNode->y + 0.5);
-        
-        // If we are very close to the goal, go directly to it instead of using pathfinding
-        if(getPosition().distance(goalTile) < CLOSE_DISTANCE){
-            direction = goalTile - getPosition();
+        if(atTile(_nextStep)){
+            WorldSearchVertex* nextNode = _pathfinder->GetSolutionNext();
+            _nextStep.x = nextNode->x;
+            _nextStep.y = nextNode->y;
         }
-        else {
-            
-            // If we strayed too far from the pathfinding path, restart pathfinding
-            Vec2 nextTile = Vec2(_nextStep.x + 0.5, _nextStep.y + 0.5);
-            if(getPosition().distance(nextTile) > STRAY_DISTANCE){
-                CULog("Recalculating Path...");
-                setGoal(Vec2(goalNode->x, goalNode->y), goalNode->_world);
-            }
-            
-            // If we already reached the next tile, get the next node along the path and set it as the next tile
-            if(atTile(_nextStep)){
-                
-                WorldSearchVertex* nextNode = _pathfinder->GetSolutionNext();
-                
-                if(nextNode){
-                    _nextStep = Vec2((int) nextNode->x, (int) nextNode->y);
-                } else{
-                    return;
-                }
-            
-            }
-            
-            direction = _nextStep - getPosition();
-        }
-        
-        //Move towards the next tile
-        setVX(direction.normalize().x * 0.75);
-        setVY(direction.normalize().y * 0.75);
+        Vec2& nextTile = _nextStep;
+        cugl::Vec2 direction = nextTile - getPosition();
+        setVX(direction.normalize().x * 1.5);
+        setVY(direction.normalize().y * 1.5);
         setX(getX());
         setY(getY());
         _prevDirection =_curDirection;
         _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
-        
-        
-        
-        
-        
-        // If we have been stuck on the same tile for too long, move randomly and then restart pathfinding
-        
-    };
-
-
+    }
     bool atGoal(){
         // Get the goal
-        WorldSearchVertex* goalNode = _pathfinder->GetSolutionEnd();
-        
-        Vec2 goal = Vec2(goalNode->x, goalNode->y);
-        
-        return atTile(goal);
+        return atTile(trueGoal);
     };
 
-    bool atTile(Vec2 tile){
-        
-        // Get the center of the tile
-        Vec2 tileCenter = Vec2(tile.x + 0.5, tile.y + 0.5);
-        
-        // Check if the enemy position is close to the center
-        if(getPosition().distance(tileCenter) < 0.05 ){
-            return true;
-        };
-        
-        return false;
+    bool atTile(Vec2& tile){
+        return getPosition().distanceSquared(tile) < 0.03*0.03;
     };
     
     /** Returns whether the last pathfind was successful */
@@ -419,21 +412,90 @@ protected:
         return _pathfinder->GetSolutionEnd() && _pathfinder->SearchStep() == AStarSearch<WorldSearchVertex>::SEARCH_STATE_SUCCEEDED;
     }
     
+    bool canResetAction() const{
+        bool attack = curAction == EnemyActions::ATTACK && attackAnimations->getFrame() == attackAnimations->getSpan() - 1;
+        bool nonAttack = curAction != EnemyActions::ATTACK && runAnimations->getFrame() == runAnimations->getSpan() - 1;
+        return nonAttack || attack;
+    }
     // update state
     virtual void handleChase(OverWorld& overWorld) = 0;
     virtual void handleLowHealth(OverWorld& overWorld) = 0;
     virtual void handleAttack(OverWorld& overWorld) = 0;
     virtual void handleStay(OverWorld& overWorld) = 0;
-    virtual void handleRunaway(OverWorld& overWorld)= 0;
+    
+    virtual void handleRunaway(OverWorld& overWorld){
+        Vec2 dogPos = overWorld.getDog()->getPosition();
+        Vec2 clientDogPos = Vec2(-10000, -1000);
+        cugl::Vec2 myPos = getPosition();
+        
+        // Get the position of the client dog if there are two players
+        if(overWorld.getNetwork()->getNumPlayers() == 2){
+            clientDogPos = overWorld.getClientDog()->getPosition();
+        };
+        
+        // Flee from the dog that is closer
+        if(getPosition().distance(clientDogPos) < getPosition().distance(dogPos)){
+            dogPos = clientDogPos;
+        };
+        
+        
+        cugl::Vec2 direction = myPos - dogPos;
+        direction.normalize();
+        float distance = myPos.distance(dogPos);
+        
+        
+        if (distance < 10) {
+           setVX(direction.x * 1.5f);
+           setVY(direction.y * 1.5f);
+           movementDirection.x = direction.x ;
+           movementDirection.y = direction.y ;
+        }
+        else{
+           movementDirection.x = 0;
+           movementDirection.y = 0 ;
+        }
+    };
     
     virtual void handleSpawn() {
         setHealth(_maxHealth);
         _wanderAngle = 0.0f;
         timeSinceLastMajorChange = 0.0f;
-        curAction = EnemyActions::WANDER;
+        curAction = EnemyActions::CHASE;
         
     }
+    
+    Vec2 randomTile(OverWorld& overWorld){
+        // Create a random device
+        std::random_device rd;
 
+        // Seed the generator
+        std::mt19937 gen(rd());
+
+        // Define the range for the x position
+        std::uniform_int_distribution<> xdistr(0, overWorld.getWorld()->getCols());
+
+        // Define the range for the y position
+        std::uniform_int_distribution<> ydistr(0, overWorld.getWorld()->getRows());
+
+        // Generate and output the random integers from different ranges
+        Vec2 randomTile = Vec2(xdistr(gen), ydistr(gen));
+        
+        // If the tile generated is not passible, regenerate the tile
+        while(overWorld.getWorld()->isPassable(randomTile.x, randomTile.y)){
+            randomTile = Vec2(xdistr(gen), ydistr(gen));
+        }
+
+        return randomTile;
+    }
+    
+    bool atDeadEnd(Vec2 direction, OverWorld& overWorld){
+        direction.normalize();
+        float newX = getPosition().x + std::round(direction.x);
+        float newY = getPosition().y + std::round(direction.y);
+        
+        return !overWorld.getWorld()->isPassable(newX, newY);
+    }
+    
     void handleWander(float dt){
         // Update time since last major direction change
          timeSinceLastMajorChange += dt;

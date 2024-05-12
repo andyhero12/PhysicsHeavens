@@ -50,12 +50,12 @@
 #define BOUNDARY_FIELD      "boundary"
 
 /** The source for our level file */
-#define LEVEL_ONE_FILE      "json/levels/levelOne.json"
+#define LEVEL_ONE_FILE      "json/levels/tutorialOne.json"
 /** The key for our loaded level */
 #define LEVEL_ONE_KEY       "level1"
 
 /** The source for our level file */
-#define LEVEL_TWO_FILE      "json/levels/levelTwo.json"
+#define LEVEL_TWO_FILE      "json/levels/level_May4.json"
 /** The key for our loaded level */
 #define LEVEL_TWO_KEY       "level2"
 
@@ -64,5 +64,14 @@
 /** The key for our loaded level */
 #define LEVEL_THREE_KEY       "level3"
 
+/** The source for our level file */
+#define LEVEL_FOUR_FILE      "json/levels/levelTwo.json"
+/** The key for our loaded level */
+#define LEVEL_FOUR_KEY       "level4"
+
+/** The source for our level file */
+#define LEVEL_FIVE_FILE      "json/levels/levelTwo.json"
+/** The key for our loaded level */
+#define LEVEL_FIVE_KEY       "level5"
 
 #endif /* defined(__TD_LEVEL_CONSTANTS_H__) */

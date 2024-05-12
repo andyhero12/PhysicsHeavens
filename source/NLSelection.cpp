@@ -56,7 +56,7 @@ bool SelectionScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     // Acquire the scene built by the asset loader and resize it the scene
 
     _input.init();
-    _assets->loadDirectory("json/selection.json");
+    _assets->loadDirectory("json/playerselection.json");
     std::shared_ptr<scene2::SceneNode> layer = _assets->get<scene2::SceneNode>("Menu_selection");
     layer->setContentSize(dimen);
     layer->doLayout(); // This rearranges the children to fit the screen
@@ -94,9 +94,6 @@ bool SelectionScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _counter = 0;
     switchFreq = 0.2;
     _isdown = Isdown::isNONE;
-    
-    
-    
     
     background = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("backgroundslection"), 1, 6, 5);
     background->setScale(SCENE_HEIGHT/background->getTexture()->getHeight());
@@ -136,6 +133,9 @@ void SelectionScene::setActive(bool value) {
             _isdown = Isdown::isNONE;
             _button1->activate();
             _button2->activate();
+            _firstset = true;
+            _backClicked = false;
+            _counter = 0;
         } else {
             _button1->deactivate();
             _button2->deactivate();
@@ -149,6 +149,10 @@ void SelectionScene::update(float timestep)
 {
     background->update();
     _input.update();
+    if(_firstset&&_input.getState() == InputController::State::CONTROLLER){
+        _button1->setDown(true);
+        _firstset = false;
+    }
     timeSinceLastSwitch += timestep;
     //std::cout << timeSinceLastSwitch << std::endl;
     if (timeSinceLastSwitch >= switchFreq) {
@@ -164,10 +168,14 @@ void SelectionScene::update(float timestep)
                 _buttonset.at(_counter)->setDown(true);
             }
             timeSinceLastSwitch = 0;
-
         }
     }
     //std::cout << _input._confirm << std::endl;
+
+    if(_input.didPressBack()){
+        _backClicked = true;
+        std::cout<<"back"<<std::endl;
+    }
     if (_isdown == Isdown::isPLAYER1 &&_input.didPressConfirm() ){
         _choice = Choice::PLAYER1;
     }

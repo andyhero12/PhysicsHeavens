@@ -34,6 +34,7 @@
 
 #include <vector>
 #include <SDL_stdinc.h>
+#include <cstring>
 
 namespace cugl {
     /**
@@ -153,9 +154,10 @@ public:
         if (_pos >= _data.size()) {
             return 0.0f;
         }
-        const float* r = reinterpret_cast<const float*>(_data.data() + _pos);
-        _pos += sizeof(float);
-        return marshall(*r);
+        float r; // Declare a variable to hold the data
+        memcpy(&r, _data.data() + _pos, sizeof(float)); // Copy the data into 'r'
+        _pos += sizeof(float); // Move the position forward by the size of Uint32
+        return marshall(r);
     }
     
     /**
@@ -170,9 +172,10 @@ public:
         if (_pos >= _data.size()) {
             return 0;
         }
-        const Sint32* r = reinterpret_cast<const Sint32*>(_data.data() + _pos);
-        _pos += sizeof(Sint32);
-        return marshall(*r);
+        Sint32 r; // Declare a variable to hold the data
+        memcpy(&r, _data.data() + _pos, sizeof(Sint32)); // Copy the data into 'r'
+        _pos += sizeof(Sint32); // Move the position forward by the size of Uint32
+        return marshall(r);
     }
     
     /**
@@ -187,9 +190,10 @@ public:
         if (_pos >= _data.size()) {
             return 0;
         }
-        const Uint16* r = reinterpret_cast<const Uint16*>(_data.data() + _pos);
-        _pos += sizeof(Uint16);
-        return marshall(*r);
+        Uint16 r; // Declare a variable to hold the data
+        memcpy(&r, _data.data() + _pos, sizeof(Uint16)); // Copy the data into 'r'
+        _pos += sizeof(Uint16); // Move the position forward by the size of Uint32
+        return marshall(r);
     }
     
     /**
@@ -204,9 +208,11 @@ public:
         if (_pos >= _data.size()) {
             return 0;
         }
-        const Uint32* r = reinterpret_cast<const Uint32*>(_data.data() + _pos);
-        _pos += sizeof(Uint32);
-        return marshall(*r);
+        
+        Uint32 r; // Declare a variable to hold the data
+        memcpy(&r, _data.data() + _pos, sizeof(Uint32)); // Copy the data into 'r'
+        _pos += sizeof(Uint32); // Move the position forward by the size of Uint32
+        return marshall(r);
     }
     
     /**
@@ -221,9 +227,10 @@ public:
         if (_pos >= _data.size()) {
             return 0;
         }
-        const Uint64* r = reinterpret_cast<const Uint64*>(_data.data() + _pos);
-        _pos += sizeof(Uint64);
-        return marshall(*r);
+        Uint64 r; // Declare a variable to hold the data
+        memcpy(&r, _data.data() + _pos, sizeof(Uint64)); // Copy the data into 'r'
+        _pos += sizeof(Uint64); // Move the position forward by the size of Uint64
+        return marshall(r);
     }
     
     /**

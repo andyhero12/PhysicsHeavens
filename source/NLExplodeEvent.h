@@ -21,7 +21,8 @@ protected:
     LWDeserializer _deserializer;
     
     Vec2 _pos;
-    
+    float _scale;
+    bool _isHost;
     
 public:
     /**
@@ -33,7 +34,7 @@ public:
      */
     std::shared_ptr<NetEvent> newEvent() override;
     
-    static std::shared_ptr<NetEvent> allocExplodeEvent(Vec2 pos);
+    static std::shared_ptr<NetEvent> allocExplodeEvent(Vec2 pos, float scale , bool m_Host);
     
     /**
      * Serialize any paramater that the event contains to a vector of bytes.
@@ -52,6 +53,9 @@ public:
     
     /** Gets the position of the event. */
     Vec2 getPos() { return _pos; }
+    
+    float getScale() { return _scale; }
+    bool isHost() { return _isHost; }
 };
 
 
