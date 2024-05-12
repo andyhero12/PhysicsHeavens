@@ -66,7 +66,7 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
     static_enemy->setFinalEnemy(topLevel);
     topLevel->setScale(m_size.height / _textures.at(0)->getHeight());
     static_enemy->setShared(true);
-
+    static_enemy->setAudioController(_audioController);
     return std::make_pair(static_enemy, topLevel);
 #pragma mark END SOLUTION
 }

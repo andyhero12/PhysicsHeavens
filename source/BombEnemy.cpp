@@ -60,6 +60,7 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
     topLevel->setScale(m_size.height / _textures.at(0)->getHeight() * SPRITE_SCALE);
     static_enemy->setShared(true);
     
+    static_enemy->setAudioController(_audioController);
 //        static_enemy->setHealthBar(_healthBar);
     return std::make_pair(static_enemy, topLevel);
 #pragma mark END SOLUTION
@@ -194,6 +195,7 @@ void BombEnemy::handleLowHealth(OverWorld& overWorld) {
 }
 
 void BombEnemy::handleAttack(OverWorld& overWorld) {
+    _audioController->playSFX(BOMB_HISS, BOMB_HISS);
 }
 
 

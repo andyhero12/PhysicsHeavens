@@ -23,6 +23,8 @@ bool Minimap::init(std::shared_ptr<cugl::AssetManager> &assets, cugl::Size scree
     std::shared_ptr<cugl::Texture> dogTexture = assets->get<Texture>("dogmap");
     spawnerTexture = assets->get<Texture>("spawnermap");
     baseTexture = assets->get<Texture>("basemap");
+    spawnerArrowTexture = assets->get<Texture>("spawnermaparrow");
+    baseArrowTexture = assets->get<Texture>("basemaparrow");
     
     std::shared_ptr<cugl::scene2::PolygonNode> map = cugl::scene2::PolygonNode::allocWithTexture(miniMapTexture);
     map->setScale(MAPSCALE);
@@ -66,6 +68,7 @@ void Minimap::createMap(){
             continue;
         }
         std::shared_ptr<cugl::scene2::PolygonNode> spawnerObj = cugl::scene2::PolygonNode::allocWithTexture(spawnerTexture);
+        std::shared_ptr<cugl::scene2::PolygonNode> spawnerArrowObj = cugl::scene2::PolygonNode::allocWithTexture(spawnerArrowTexture);
         cugl::Vec2 dist = spawner->getPos() - dogPos;
         float actualDistance = dist.length();
         float scaledDistance = radius * actualDistance / (actualDistance + scalingFactor);
@@ -74,14 +77,20 @@ void Minimap::createMap(){
         cugl::Vec2 newPosition = normalized * scaledDistance;
 
         spawnerObj->setPosition(x + newPosition.x, y + newPosition.y);
+        spawnerArrowObj->setPosition(spawnerObj->getPosition());
+        spawnerArrowObj->setAngle((-dist).getAngle() - M_PI_2);
+
         mutableObj->addChild(spawnerObj);
+        mutableObj->addChild(spawnerArrowObj);
         
         float scale = OBJECTSCALE * std::max(1.0f, A / (1 + k * actualDistance * actualDistance));
         spawnerObj->setScale(scale);
+        spawnerArrowObj->setScale(scale);
     }
 
     for (const auto& base : _bases) {
         std::shared_ptr<cugl::scene2::PolygonNode> baseObj = cugl::scene2::PolygonNode::allocWithTexture(baseTexture);
+        std::shared_ptr<cugl::scene2::PolygonNode> baseArrowObj = cugl::scene2::PolygonNode::allocWithTexture(baseArrowTexture);
         cugl::Vec2 dist = base->getPos() - dogPos;
         float actualDistance = dist.length();
         float scaledDistance = radius * actualDistance / (actualDistance + scalingFactor);
@@ -90,9 +99,15 @@ void Minimap::createMap(){
         cugl::Vec2 newPosition = normalized * scaledDistance;
 
         baseObj->setPosition(x + newPosition.x, y + newPosition.y);
+        baseArrowObj->setPosition(baseObj->getPosition());
+        baseArrowObj->setAngle((-dist).getAngle() - M_PI_2);
+        
+        
         mutableObj->addChild(baseObj);
+        mutableObj->addChild(baseArrowObj);
 
         float scale = OBJECTSCALE * std::max(1.0f, A / (1 + k * actualDistance * actualDistance));
         baseObj->setScale(scale);
+        baseArrowObj->setScale(scale);
     }
 }

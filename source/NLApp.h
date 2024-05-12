@@ -27,27 +27,30 @@
 #include "Setting.h"
 #include "NLSinglePlayerLevel.h"
 #include "Rebind.h"
+#include "AudioController.h"
 
 using namespace cugl::physics2::net;
 
 /**
  * This class represents the application root for the ship demo.
  */
-class NetApp : public cugl::Application {
-    
-enum Status {
-    LOAD,
-    MAINMENU,
-    LEVEL,
-    MENU,
-    HOST,
-    CLIENT,
-    SELECTION,
-    SETTING,
-    GAME,
-    REBIND,
-    SINGLEPLAYER
-};
+class NetApp : public cugl::Application
+{
+
+    enum Status
+    {
+        LOAD,
+        MAINMENU,
+        LEVEL,
+        MENU,
+        HOST,
+        CLIENT,
+        SELECTION,
+        SETTING,
+        GAME,
+        REBIND,
+        SINGLEPLAYER
+    };
 
 protected:
     /** The global sprite batch for drawing (only want one of these) */
@@ -56,7 +59,7 @@ protected:
     std::shared_ptr<cugl::AssetManager> _assets;
 
     std::shared_ptr<NetEventController> _network;
-    
+
     // Player modes
     /** The primary controller for the game world */
     GameScene _gameplay;
@@ -66,23 +69,21 @@ protected:
     MenuScene _menu;
 
     MainMenuScene _mainmenu;
-    
+
     ClientScene _joingame;
-    
+
     HostScene _hostgame;
 
     LevelScene _level;
-    
-    SinglePlayerLevelScene _singlePlayer;
 
-    InputController _input;
+    SinglePlayerLevelScene _singlePlayer;
 
     SelectionScene _selection;
 
     SettingScene _setting;
 
     RebindScene _rebind;
-    
+
     /** Whether or not we have finished loading all assets */
     bool _loaded;
     bool isHosting;
@@ -91,7 +92,7 @@ protected:
     float timeSinceLastSwitch;
 
     float switchFreq;
-    
+
 public:
 #pragma mark Constructors
     /**
@@ -103,8 +104,8 @@ public:
      * of initialization from the constructor allows main.cpp to perform
      * advanced configuration of the application before it starts.
      */
-    NetApp() : cugl::Application(), _loaded(false), isHosting(false){}
-    
+    NetApp() : cugl::Application(), _loaded(false), isHosting(false) {}
+
     /**
      * Disposes of this application, releasing all resources.
      *
@@ -112,9 +113,8 @@ public:
      * It simply calls the dispose() method in Application.  There is nothing
      * special to do here.
      */
-    ~NetApp() { }
-    
-    
+    ~NetApp() {}
+
 #pragma mark Application State
 
     /**
@@ -128,7 +128,7 @@ public:
      * causing the application to run.
      */
     virtual void onStartup() override;
-    
+
     /**
      * The method called when the application is ready to quit.
      *
@@ -141,7 +141,7 @@ public:
      * causing the application to be deleted.
      */
     virtual void onShutdown() override;
-    
+
     /**
      * The method called when the application is suspended and put in the background.
      *
@@ -154,7 +154,7 @@ public:
      * the background.
      */
     virtual void onSuspend() override;
-    
+
     /**
      * The method called when the application resumes and put in the foreground.
      *
@@ -165,18 +165,16 @@ public:
      * If you are using audio, you should use this method to resume any audio
      * paused before app suspension.
      */
-    virtual void onResume()  override;
-    
-    
+    virtual void onResume() override;
+
 #pragma mark Application Loop
-    
 
     virtual void preUpdate(float timestep) override;
 
     virtual void postUpdate(float timestep) override;
 
     virtual void fixedUpdate() override;
-    
+
     /**
      * The method called to update the application data.
      *
@@ -189,7 +187,7 @@ public:
      * @param timestep  The amount of time (in seconds) since the last frame
      */
     virtual void update(float timestep) override;
-    
+
     /**
      * Inidividualized update method for the menu scene.
      *
@@ -209,7 +207,7 @@ public:
      * @param timestep  The amount of time (in seconds) since the last frame
      */
     void updateHostScene(float timestep);
-    
+
     /**
      * Inidividualized update method for the client scene.
      *
@@ -219,13 +217,13 @@ public:
      * @param timestep  The amount of time (in seconds) since the last frame
      */
     void updateClientScene(float timestep);
-    
+
     void updateGameScene(float timestep);
 
     void updateMainScene(float timestep);
 
     void updateLevelScene(float timestep);
-    
+
     void updateSinglePlayerLevelScene(float timestep);
 
     void updateSelectionScene(float timestep);

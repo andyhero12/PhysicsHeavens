@@ -49,6 +49,7 @@
 #include "MiniMap.h"
 #include "Tutorial.h"
 #include "SpriteAnimationNode.h"
+#include "AudioController.h"
 
 using namespace cugl::physics2::net;
 using namespace cugl;
@@ -105,6 +106,8 @@ protected:
     
     std::shared_ptr<Minimap> _minimap;
     
+    std::shared_ptr<AudioController> _audioController;
+    
     /** Host is by default the left cannon */
     bool _isHost;
 
@@ -122,7 +125,6 @@ protected:
     
     Vec2 previousPan;
     float shakeMagnitude;
-
     /**
      * Lays out the game geography.
      *
@@ -176,7 +178,6 @@ protected:
     void initTutorialOne();
     void initTutorialTwo();
     void initTutorialThree();
-    
 
 public:
 #pragma mark -

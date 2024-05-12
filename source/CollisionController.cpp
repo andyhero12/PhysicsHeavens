@@ -212,6 +212,7 @@ bool CollisionController::monsterDecoyCollision(std::shared_ptr<DecoySet> decoyS
             }
         }
     }
+    
 //    auto itDec = removedDecoys.begin();
 //    auto itMon = curEnemies.begin();
 //    float decoyRadius = 0.26f;
@@ -412,7 +413,6 @@ void CollisionController::hugeBlastCollisionClient(const std::shared_ptr<ActionP
     if (!action->dealDamage())
         return;
     Poly2 blastRectangle = action->getPolygon();
-    std::unordered_set<std::shared_ptr<AbstractEnemy>>& enemies = monsterController.getEnemies();
     bool hitSomething = false;
     for (auto& spawner : spawners){
         Vec2 diff = spawner->getPos() - action->getCenter();

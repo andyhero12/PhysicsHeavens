@@ -35,6 +35,9 @@ void DecoySet::update(float timestep){
             
             _removedDecoys.emplace_back(curDecoy);
             itD = _currentDecoys.erase(itD);
+            
+            auto source = _assets->get<Sound>(DUMMY_GATE_EXPLOSION);
+            AudioEngine::get()->play(DUMMY_GATE_EXPLOSION, source, false , source->getVolume());
         }else {
             ++itD;
         }
