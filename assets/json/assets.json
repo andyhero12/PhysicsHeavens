@@ -1,5 +1,10 @@
 {
     "textures": {
+        "lowHealth": {
+            "file": "textures/game_ui/low_health.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
         "arrow": {
             "file": "textures/tutorial/arrow.png",
             "minfilter": "linear",

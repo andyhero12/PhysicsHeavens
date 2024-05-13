@@ -26,6 +26,9 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     _initialFlash = SpriteAnimationNode::allocWithSheet(assets->get<Texture>("initialflash"), 1, 5, 5, 6);
     _toggleFlash = SpriteAnimationNode::allocWithSheet(assets->get<Texture>("flash"), 1, 5, 5, 10);
     
+    _lowHealth = SpriteAnimationNode::allocWithSheet(assets->get<Texture>("lowHealth"), 2, 5, 6, 8);
+    _lowHealth->setScale(2 * 800/_lowHealth->getTexture()->getHeight());
+    _lowHealth->setPosition(0.5 * _lowHealth->getSize());
     
     // set the scale
     _healthframe->setScale(UI_SCALE);
@@ -39,6 +42,7 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     _hometoggle->setScale(UI_SCALE);
     _initialFlash->setScale(UI_SCALE);
     _toggleFlash->setScale(UI_SCALE);
+//    _lowHealth->setScale(UI_SCALE);
     
     // set the position
     _healthframe->setAnchor(Vec2::ANCHOR_CENTER);
@@ -52,7 +56,6 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     _hometoggle->setAnchor(Vec2::ANCHOR_CENTER);
     _initialFlash->setAnchor(Vec2::ANCHOR_CENTER);
     _toggleFlash->setAnchor(Vec2::ANCHOR_CENTER);
-    
     x =0;
     y =0;
     
@@ -90,6 +93,7 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     _initialFlash->setPosition(togglex, toggley);
     _toggleFlash->setPosition(togglex, toggley);
     
+    _lowHealth->setVisible(true);
     _shoottoggle->setVisible(true);
     _bombtoggle->setVisible(false);
     _baittoggle->setVisible(false);
@@ -97,6 +101,7 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     _initialFlash->setVisible(false);
     _toggleFlash->setVisible(false);
     
+    node->addChild(_lowHealth);
     node->addChild(_healthfill);
     node->addChild(_sizefill);
     node->addChild(_healthframe);
@@ -129,6 +134,11 @@ void UIController::setHealthBarTexture(float percentage){
     float healthfillx = x + UI_SCALE * _healthfill->getTexture()->getWidth()/2;
     _healthfill->setAnchor(Vec2::ANCHOR_CENTER);
     _healthfill->setPosition(healthfillx, healthy);
+    if (percentage < 0.3){
+        _lowHealth->setVisible(true);
+    }else{
+        _lowHealth->setVisible(false);
+    }
 }
 
 void UIController::setSizeBarTexture(float percentage){
@@ -184,6 +194,7 @@ void UIController::setToggle(std::string mode){
 }
 
 void UIController::animateFlash(int absorb){
+    _lowHealth->update();
 //    if(absorb > 10){
 //        if(!_flashAnimated){
 //            _initialFlash->setVisible(true);
