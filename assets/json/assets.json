@@ -1,5 +1,10 @@
 {
     "textures": {
+        "abilityReady": {
+            "file": "textures/game_ui/ability_ready.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
         "lowHealth": {
             "file": "textures/game_ui/low_health.png",
             "minfilter": "linear",
