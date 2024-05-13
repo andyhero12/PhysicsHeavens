@@ -36,7 +36,7 @@ class LevelScene : public cugl::Scene2 {
 public:
     enum Level {
             /** User has not yet made a choice */
-            L1 ,
+            L1,
             /** User wants to host a game */
             L2,
             /** User wants to join a game */
@@ -45,9 +45,10 @@ public:
             L4,
 
             L5,
-
-            NONE
+        
+            NONE,
         };
+    
 protected:
     /** The asset manager for loading. */
     std::shared_ptr<cugl::AssetManager> _assets;
@@ -63,6 +64,11 @@ protected:
     std::shared_ptr<cugl::scene2::Button>    _button;
 
     std::shared_ptr<cugl::scene2::SpriteNode> background;
+    
+    std::shared_ptr<JsonWriter> _writer;
+    
+    // The number of the highest unlocked level
+    int unlockedLevels = 1;
 
     Level _level;
     InputController _input;
@@ -81,11 +87,7 @@ protected:
     int moveCooldown;
 
     int level;
-
-    bool level1;
-    bool level2;
-    bool level3;
-
+    
     bool _goright;
     bool _goleft;
     bool firsttime;
@@ -111,10 +113,7 @@ public:
     _progress(0.0f), 
     frame(0.0f), 
     curMoveAnim(6), 
-    moveCooldown(6), 
-    level1(true), 
-    level2(false), 
-    level3(false), 
+    moveCooldown(6),
     _goleft(false), 
     _goright(false), 
     _level(NONE), 
@@ -228,7 +227,7 @@ public:
     }
     
     void updatelevelscene(){
-       if (_goright && level < frameTargets.size()) {
+       if (_goright && level < unlockedLevels) {
         level += 1;
         } else if (_goleft && level > 1) {
             level -= 1;

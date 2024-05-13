@@ -37,6 +37,12 @@ using namespace cugl;
  */
 bool LevelScene::init(const std::shared_ptr<AssetManager> &assets)
 {
+    
+    // Initialize json writer
+    std::string root = cugl::Application::get()->getSaveDirectory();
+    std::string path = cugl::filetool::join_path({root,"save.json"});
+    _writer = JsonWriter::alloc(path);
+    
     // Initialize the scene to a locked width
     Size dimen = Application::get()->getDisplaySize();
     dimen *= SCENE_SIZE/dimen.height;
