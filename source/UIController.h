@@ -60,7 +60,7 @@ public:
     void setSizeBarTexture(float percentage);
     void setGateBarTexture(float percentage);
     void setToggle(std::string mode);
-    void animateFlash(int absorb);
+    void animateFlash(int absorb, float healthPercentage);
   
 };
 

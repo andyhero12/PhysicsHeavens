@@ -134,11 +134,6 @@ void UIController::setHealthBarTexture(float percentage){
     float healthfillx = x + UI_SCALE * _healthfill->getTexture()->getWidth()/2;
     _healthfill->setAnchor(Vec2::ANCHOR_CENTER);
     _healthfill->setPosition(healthfillx, healthy);
-    if (percentage < 0.3){
-        _lowHealth->setVisible(true);
-    }else{
-        _lowHealth->setVisible(false);
-    }
 }
 
 void UIController::setSizeBarTexture(float percentage){
@@ -193,7 +188,12 @@ void UIController::setToggle(std::string mode){
     }
 }
 
-void UIController::animateFlash(int absorb){
+void UIController::animateFlash(int absorb, float healthPercentage){
+    if (healthPercentage < 0.3){
+        _lowHealth->setVisible(true);
+    }else{
+        _lowHealth->setVisible(false);
+    }
     _lowHealth->update();
 //    if(absorb > 10){
 //        if(!_flashAnimated){

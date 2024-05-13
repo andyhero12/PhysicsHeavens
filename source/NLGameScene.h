@@ -110,7 +110,9 @@ protected:
     
     /** Host is by default the left cannon */
     bool _isHost;
-
+    bool gameOverWin;
+    bool gameOverLoss;
+    int gameOverDelay;
     bool _todoReset;
     /** Whether or not debug mode is active */
     bool _debug;

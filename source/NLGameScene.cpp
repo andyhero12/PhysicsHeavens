@@ -112,7 +112,10 @@ GameScene::GameScene() : cugl::Scene2(),
                          loseNode(nullptr),
                          repeatWinNode(nullptr),
                          tutorialIndex(0),
-tutorialArrow(nullptr)
+tutorialArrow(nullptr),
+gameOverLoss(false),
+gameOverWin(false),
+gameOverDelay(0)
 
 {
 }
@@ -190,7 +193,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _audioController = AudioController::alloc(assets);
     
     _isHost = isHost;
-
+    gameOverLoss = false;
+    gameOverWin = false;
+    gameOverDelay = 0;
     _network = network;
 
     // Start up the input handler
@@ -502,6 +507,30 @@ void GameScene::addInitObstacle(const std::shared_ptr<physics2::Obstacle> &obj,
 void GameScene::preUpdate(float dt)
 {
     updateInputController();
+    if (gameOverLoss || gameOverWin){
+        if ( gameOverDelay < 120){
+            gameOverDelay++;
+        }
+        if (gameOverDelay >= 120 ){
+            if (gameOverWin){
+                winNode->setVisible(true);
+                _pause->setPause(true);
+                _minimap->setVisible(false);
+                /** stop all sound and play win screen sound*/
+                AudioEngine::get()->clear();
+                _audioController->playMusic(VICTORY_SCREEN, VICTORY_SCREEN);
+            }
+            if (gameOverLoss){
+                loseNode->setVisible(true);
+                _pause->setPause(true);
+                _minimap->setVisible(false);
+                AudioEngine::get()->clear();
+                _audioController->playMusic(LOSS_SCREEN, LOSS_SCREEN);
+            }
+            gameOverLoss = false;
+            gameOverWin = false;
+        }
+    }
     if (loseNode->isVisible() || winNode->isVisible() || repeatWinNode->isVisible())
     {
         return;
@@ -758,21 +787,11 @@ void GameScene::fixedUpdate()
                 }
                 if (auto winEvent = std::dynamic_pointer_cast<WinEvent>(e))
                 {
-                    winNode->setVisible(true);
-                    _pause->setPause(true);
-                    _minimap->setVisible(false);
-                    /** stop all sound and play win screen sound*/
-                    AudioEngine::get()->clear();
-                    _audioController->playMusic(VICTORY_SCREEN, VICTORY_SCREEN);
+                    gameOverWin = true;
                 }
                 if (auto loseEvent = std::dynamic_pointer_cast<LoseEvent>(e))
                 {
-                    loseNode->setVisible(true);
-                    _pause->setPause(true);
-                    _minimap->setVisible(false);
-                    /** stops all sound and play lose screen sound*/
-                    AudioEngine::get()->clear();
-                    _audioController->playMusic(LOSS_SCREEN, LOSS_SCREEN);
+                    gameOverLoss = true;
                 }
 
                 if (auto spawnerDeathEvent = std::dynamic_pointer_cast<SpawnerDeathEvent>(e))
