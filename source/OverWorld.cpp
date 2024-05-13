@@ -516,13 +516,11 @@ void OverWorld::processClientHealthEvent(const std::shared_ptr<ClientHealthEvent
         health = _dogClient->getHealth() - clientHealthEvent->getHealthLost();
         _dogClient->setHealth(health);
     }
-    if (incomingHost == _isHost){
-        if(health <= 0){
-            playSound("death" + std::to_string(dogSeq), DOG_DIE);
-        }
-        else{
-            playSound("heal" + std::to_string(dogSeq), DOG_DAMAGE);
-        }
+    if(health <= 0){
+        playSound("death" + std::to_string(dogSeq), DOG_DIE);
+    }
+    else{
+        playSound("heal" + std::to_string(dogSeq), DOG_DAMAGE);
     }
 }
 void OverWorld::processSizeEvent(const std::shared_ptr<SizeEvent> &sizeEvent)
