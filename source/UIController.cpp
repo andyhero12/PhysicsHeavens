@@ -121,7 +121,7 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
 void UIController::setHealthBarTexture(float percentage){
     CUAssert(0 <= percentage <= 1);
     // The percentage of the health bar that is empty space, needed to adjust how fast the health bar decreases
-    GLfloat emptyPercent = 15.0/_healthfill->getWidth();
+    GLfloat emptyPercent = 0.25;
     
     GLfloat minS = 0;
     GLfloat maxS = emptyPercent + (1.0 - emptyPercent) * percentage;
@@ -139,7 +139,7 @@ void UIController::setHealthBarTexture(float percentage){
 void UIController::setSizeBarTexture(float percentage){
     CUAssert(0 <= percentage <= 1);
     // The percentage of the size bar that is empty space, needed to adjust how fast the health bar decreases
-    GLfloat emptyPercent = 0;
+    GLfloat emptyPercent = 0.25;
     
     GLfloat minS = 0;
     GLfloat maxS = emptyPercent + (1.0 - emptyPercent) * percentage;
