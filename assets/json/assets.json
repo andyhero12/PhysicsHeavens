@@ -1,5 +1,10 @@
 {
     "textures": {
+        "arrow": {
+            "file": "textures/tutorial/arrow.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
         "GREETING": {
             "file": "textures/tutorial/greeting.png",
             "minfilter": "linear",

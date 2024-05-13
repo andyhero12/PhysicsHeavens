@@ -120,7 +120,7 @@ protected:
 
     float _zoom;
     std::vector<std::shared_ptr<Tutorial>> tutorialTiles;
-    
+    std::shared_ptr<SpriteAnimationNode> tutorialArrow;
     int tutorialIndex;
     
     Vec2 previousPan;
@@ -173,7 +173,7 @@ protected:
     
     
     /** Initialize tutorial */
-    void initTutorial(std::vector<int> frame);
+    void initTutorial(std::vector<int>& frame);
     
     void initTutorialOne();
     void initTutorialTwo();

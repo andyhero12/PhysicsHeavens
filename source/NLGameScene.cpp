@@ -111,7 +111,8 @@ GameScene::GameScene() : cugl::Scene2(),
                          winNode(nullptr),
                          loseNode(nullptr),
                          repeatWinNode(nullptr),
-                         tutorialIndex(0)
+                         tutorialIndex(0),
+tutorialArrow(nullptr)
 
 {
 }
@@ -972,6 +973,10 @@ void GameScene::updateInputController()
 //    std::cout <<overWorld.getDog()->getX() << std::endl;
     if (tutorialIndex < tutorialTiles.size())
     {
+        tutorialArrow->setVisible(true);
+        tutorialArrow->update();
+//        CULog("Tutorial Index %d Pos: %f", tutorialIndex, overWorld.getDog()->getX());
+        
         const std::shared_ptr<Tutorial>& tile = tutorialTiles.at(tutorialIndex);
         bool atLocation = tile->atArea(overWorld.getDog()->getX());
         const std::shared_ptr<scene2::SceneNode>& node = tutorialTiles.at(tutorialIndex)->getSprite();
@@ -982,13 +987,18 @@ void GameScene::updateInputController()
         {
             spriteNode->setVisible(true);
             spriteNode->update();
-            message->setVisible(true);
+//            message->setVisible(true);
+        }
+        if (tutorialIndex == tutorialTiles.size() - 1){
+            if (tutorialArrow != nullptr){
+                tutorialArrow->setVisible(false);
+            }
         }
         if (_input.update(tile->getProgress(), atLocation))
         {
             tile->setPass(true);
             node->setVisible(false);
-            message->setVisible(false);
+//            message->setVisible(false);
             tutorialIndex++;
         }
         
@@ -1028,18 +1038,19 @@ void GameScene::initTutorialOne(){
     tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::GREETING, "jsafk sdflk ajsflja kfjsdlkj falksjf klajsdf kaljf klj flldfj alf asfsdf afassdafasfljsd"));
     tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::MOVEMENT, " adf as saf "));
     tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::MODE::DEFENDGATE, ""));
-    tutorialTiles.push_back(Tutorial::alloc(30, Tutorial::MODE::BITE, ""));
-    tutorialTiles.push_back(Tutorial::alloc(30, Tutorial::MODE::GROW, ""));
-    tutorialTiles.push_back(Tutorial::alloc(30, Tutorial::MODE::SPECIALSONE, ""));
-    tutorialTiles.push_back(Tutorial::alloc(31, Tutorial::MODE::CHANGEABILITYTWO, ""));
-    tutorialTiles.push_back(Tutorial::alloc(31, Tutorial::MODE::DESTROYSPAWNER, ""));
-    tutorialTiles.push_back(Tutorial::alloc(31, Tutorial::MODE::SPECIALSTWO, ""));
+    tutorialTiles.push_back(Tutorial::alloc(15, Tutorial::MODE::BITE, ""));
+    tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::GROW, ""));
+    tutorialTiles.push_back(Tutorial::alloc(22, Tutorial::MODE::SPECIALSONE, ""));
+    tutorialTiles.push_back(Tutorial::alloc(24, Tutorial::MODE::CHANGEABILITYTWO, ""));
+    tutorialTiles.push_back(Tutorial::alloc(26, Tutorial::MODE::DESTROYSPAWNER, ""));
+//    tutorialTiles.push_back(Tutorial::alloc(28, Tutorial::MODE::SPECIALSTWO, ""));
 //
-    std::vector<std::string> modes = {"RECALL", "SHOOT"};
-    overWorld.getDog()->setAbility(modes);
+//    std::vector<std::string> modes = {"SHOOT", "SHOOT"};
+//    overWorld.getDog()->setAbility(modes);
     
     // each one need to write # of frames
     std::vector<int> frame = {21, 21, 21, 21, 21, 21, 21, 21, 21};
+    overWorld.getDog()->addAbsorb(6);
     initTutorial(frame);
     
 }
@@ -1060,12 +1071,19 @@ void GameScene::initTutorialThree(){
     overWorld.getDog()->setAbility(modes);
 }
 
-void GameScene::initTutorial(std::vector<int> frame)
+void GameScene::initTutorial(std::vector<int>& frame)
 {
     Size screen = computeActiveSize();
     std::shared_ptr<SpriteAnimationNode> node;
     std::shared_ptr<scene2::Label> message;
     std::string str;
+    
+    tutorialArrow = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("arrow"), 2, 5, 8, 8);
+    tutorialArrow->setAnchor(Vec2::ANCHOR_CENTER);
+    tutorialArrow->setScale(4);
+    tutorialArrow->setPositionX(screen.width / 2 + 320);
+    tutorialArrow->setPositionY(screen.height / 2);
+    _tutorialnode->addChild(tutorialArrow);
     
     for (int i = 0; i < tutorialTiles.size(); i++)
     {
@@ -1077,6 +1095,9 @@ void GameScene::initTutorial(std::vector<int> frame)
         node->setPositionX(screen.width / 2);
         node->setPositionY(node->getScaleY() * node->getTexture()->getHeight() / 2);
         node->setVisible(false);
+    
+        node->setVisible(false);
+        
         tutorialTiles.at(i)->setSprite(node);
         
         Size box = Size(node->getTexture()->getWidth()/2, 2 * node->getScaleY() * node->getTexture()->getHeight());
