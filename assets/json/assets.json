@@ -5,6 +5,16 @@
             "minfilter": "linear",
             "magfilter": "nearest"
         },
+        "bombInit": {
+            "file": "textures/newAbility/bomb_init.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "bombRepeat": {
+            "file": "textures/newAbility/bomb_repeat.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
         "baitInit": {
             "file": "textures/newAbility/bait_init.png",
             "minfilter": "linear",

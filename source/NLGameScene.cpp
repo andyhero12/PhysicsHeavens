@@ -362,9 +362,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     else if(level_string == LEVEL_TWO_KEY){
         initTutorialTwo();
     }
-//    else if(level_string == LEVEL_THREE_KEY){
-//        initTutorialThree();
-//    }
+    else if(level_string == LEVEL_THREE_KEY){
+        initTutorialThree();
+    }
     
     return true;
 }
@@ -1006,7 +1006,7 @@ void GameScene::updateInputController()
         // just do tile->setVisible(tutorial) to draw stuff
         if (atLocation && !tile->didPass() && spriteNode)
         {
-            if (tile->getProgress() == Tutorial::MODE::RECALLGIVE || tile->getProgress() == Tutorial::MODE::BARKGIVE || tile->getProgress() == Tutorial::MODE::BAITGIVE){
+            if (tile->getProgress() == Tutorial::MODE::RECALLGIVE || tile->getProgress() == Tutorial::MODE::BARKGIVE || tile->getProgress() == Tutorial::MODE::BAITGIVE || tile->getProgress() == Tutorial::MODE::BOMBGIVE){
                 if (spriteNode->getFrame() != spriteNode->getSpan() -1){
                     spriteNode->setVisible(true);
                     spriteNode->update();
@@ -1030,7 +1030,7 @@ void GameScene::updateInputController()
             }
         }
         
-        if (tile->getProgress() == Tutorial::MODE::RECALLGIVE || tile->getProgress() == Tutorial::MODE::BARKGIVE || tile->getProgress() == Tutorial::MODE::BAITGIVE){
+        if (tile->getProgress() == Tutorial::MODE::RECALLGIVE || tile->getProgress() == Tutorial::MODE::BARKGIVE || tile->getProgress() == Tutorial::MODE::BAITGIVE || tile->getProgress() == Tutorial::MODE::BOMBGIVE){
             if (_input.update(tile->getProgress(), atLocation)){
                 tile->setPass(true);
                 spriteNode->setVisible(false);
@@ -1108,7 +1108,7 @@ void GameScene::initTutorialTwo(){
     tutorialTiles = std::vector<std::shared_ptr<Tutorial>>();
     tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::BAITGIVE, ""));
     std::vector<int> frame = {21};
-    std::vector<std::string> modes = {"RECALL", "BAIT", "SHOOT"};
+    std::vector<std::string> modes = {"SHOOT", "BAIT", "RECALL"};
     overWorld.getDog()->setAbility(modes);
     overWorld.getDog()->toggleMode();
     overWorld.getDog()->addAbsorb(6);
@@ -1119,8 +1119,14 @@ void GameScene::initTutorialThree(){
     tutorialIndex = 0;
     _tutorialnode = scene2::SceneNode::alloc();
     _uinode->addChild(_tutorialnode);
-    std::vector<std::string> modes = {"SHOOT", "BAIT", "BOMB"};
+    tutorialTiles = std::vector<std::shared_ptr<Tutorial>>();
+    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::BOMBGIVE, ""));
+    std::vector<int> frame = {21};
+    std::vector<std::string> modes = {"BAIT", "BOMB", "RECALL", "SHOOT"};
     overWorld.getDog()->setAbility(modes);
+    overWorld.getDog()->toggleMode();
+    overWorld.getDog()->addAbsorb(10);
+    initTutorial(frame);
 }
 
 void GameScene::initTutorial(std::vector<int>& frame)
@@ -1141,7 +1147,7 @@ void GameScene::initTutorial(std::vector<int>& frame)
     {
         
         Tutorial::MODE mode = tutorialTiles.at(i)->getProgress();
-        if (mode == Tutorial::MODE::RECALLGIVE || mode == Tutorial::MODE::BARKGIVE || mode == Tutorial::MODE::BAITGIVE){
+        if (mode == Tutorial::MODE::RECALLGIVE || mode == Tutorial::MODE::BARKGIVE || mode == Tutorial::MODE::BAITGIVE ||  mode == Tutorial::MODE::BOMBGIVE){
             
             std::shared_ptr<SpriteAnimationNode> init;
             std::shared_ptr<SpriteAnimationNode> repeat;
@@ -1156,6 +1162,9 @@ void GameScene::initTutorial(std::vector<int>& frame)
             }else if (mode == Tutorial::MODE::BAITGIVE){
                 init = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("baitInit"), 3, 5,  14,  2);
                 repeat = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("baitRepeat"), 2, 5, 9,  5);
+            }else if (mode == Tutorial::MODE::BOMBGIVE){
+                init = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("bombInit"), 3, 5,  14,  2);
+                repeat = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("bombRepeat"), 4, 5, 18,  5);
             }
             
             

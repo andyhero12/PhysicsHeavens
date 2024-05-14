@@ -36,7 +36,8 @@ public:
         SPECIALSFOUR = 13,
         RECALLGIVE = 14,
         BARKGIVE = 15,
-        BAITGIVE = 16
+        BAITGIVE = 16,
+        BOMBGIVE = 17
     };
 
     static std::string toString(MODE mode)
