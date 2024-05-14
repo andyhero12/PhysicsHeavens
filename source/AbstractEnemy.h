@@ -10,6 +10,7 @@
 #include <cugl/cugl.h>
 #include <random>
 #include "OverWorld.h"
+#include "AudioController.h"
 #include "AnimationSceneNode.h"
 #define MAGIC_NUMBER_ENEMY_ANIMATION_FREQUENECY 4
 // Default physics values
@@ -100,6 +101,11 @@ public:
             return true;
         }
         return false;
+    }
+
+    void setAudioController(std::shared_ptr<AudioController> m_audioController)
+    {
+        _audioController = m_audioController;
     }
 
     virtual void setVX(float value) override {
@@ -280,6 +286,7 @@ public:
     
     
 protected:
+    std::shared_ptr<AudioController> _audioController;
     int _maxHealth;
     int _health;
     int targetIndex;
@@ -381,7 +388,7 @@ protected:
 //                return true;
 //            }
 //        }
-//        
+//
 //        CULogError("GOAL CHANGED! REDOING PATHFINDING");
         
         return rawSetGoal(goal, world);
@@ -543,3 +550,5 @@ protected:
 
 };
 #endif /* AbstractEnemy_h */
+
+

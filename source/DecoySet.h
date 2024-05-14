@@ -9,6 +9,7 @@
 #define DecoySet_hpp
 #include "Decoy.h"
 #include "SpriteAnimationNode.h"
+#include "Constants.h"
 #include <unordered_set>
 #include <vector>
 #include <cugl/cugl.h>
@@ -24,8 +25,8 @@ private:
     std::shared_ptr<cugl::Texture> _explodeTexture;
     std::unordered_set<std::shared_ptr<SpriteAnimationNode>> _curAnimations;
     std::unordered_set<std::shared_ptr<SpriteAnimationNode>> _decAnimations;
+    std::shared_ptr<cugl::AssetManager> _assets;
 public:
-    
     std::shared_ptr<cugl::scene2::SceneNode> getDecoySetNode(){
         return decoySetNode;
     }
@@ -45,6 +46,7 @@ public:
         return _removedDecoys.size() != 0;
     }
     void init();
+    void setAsset(std::shared_ptr<cugl::AssetManager> assets){_assets = assets;}
     void update(float timestep);
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch);
     void setTexture(const std::shared_ptr<cugl::Texture> &value);
