@@ -5,6 +5,16 @@
             "minfilter": "linear",
             "magfilter": "nearest"
         },
+        "baitInit": {
+            "file": "textures/newAbility/bait_init.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "baitRepeat": {
+            "file": "textures/newAbility/bait_repeat.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
         "recallInit": {
             "file": "textures/newAbility/recall_init.png",
             "minfilter": "linear",
@@ -12,6 +22,16 @@
         },
         "recallRepeat": {
             "file": "textures/newAbility/recall_repeat.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "barkInit": {
+            "file": "textures/newAbility/bark_init.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "barkRepeat": {
+            "file": "textures/newAbility/bark_repeat.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },

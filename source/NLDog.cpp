@@ -230,7 +230,7 @@ void Dog::moveOnInputSetAction(InputController &_input)
 {
     if (_mode != -1)
     {
-        CULog("Animate Flash %d", _absorbValue);
+//        CULog("Animate Flash %d", _absorbValue);
         _uiController->animateFlash(_absorbValue, (float) getHealth() / getMaxHealth());
     }
     if (_refire <= _firerate)

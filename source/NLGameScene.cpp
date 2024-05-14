@@ -359,9 +359,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     if (level_string == LEVEL_ONE_KEY){
         initTutorialOne();
     }
-//    else if(level_string == LEVEL_TWO_KEY){
-//        initTutorialTwo();
-//    }
+    else if(level_string == LEVEL_TWO_KEY){
+        initTutorialTwo();
+    }
 //    else if(level_string == LEVEL_THREE_KEY){
 //        initTutorialThree();
 //    }
@@ -1006,7 +1006,7 @@ void GameScene::updateInputController()
         // just do tile->setVisible(tutorial) to draw stuff
         if (atLocation && !tile->didPass() && spriteNode)
         {
-            if (tile->getProgress() == Tutorial::MODE::RECALLGIVE){
+            if (tile->getProgress() == Tutorial::MODE::RECALLGIVE || tile->getProgress() == Tutorial::MODE::BARKGIVE || tile->getProgress() == Tutorial::MODE::BAITGIVE){
                 if (spriteNode->getFrame() != spriteNode->getSpan() -1){
                     spriteNode->setVisible(true);
                     spriteNode->update();
@@ -1030,7 +1030,7 @@ void GameScene::updateInputController()
             }
         }
         
-        if (tile->getProgress() == Tutorial::MODE::RECALLGIVE){
+        if (tile->getProgress() == Tutorial::MODE::RECALLGIVE || tile->getProgress() == Tutorial::MODE::BARKGIVE || tile->getProgress() == Tutorial::MODE::BAITGIVE){
             if (_input.update(tile->getProgress(), atLocation)){
                 tile->setPass(true);
                 spriteNode->setVisible(false);
@@ -1079,22 +1079,23 @@ void GameScene::initTutorialOne(){
     _uinode->addChild(_tutorialnode);
     tutorialTiles = std::vector<std::shared_ptr<Tutorial>>();
     
-    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::RECALLGIVE, ""));
     tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::GREETING, "jsafk sdflk ajsflja kfjsdlkj falksjf klajsdf kaljf klj flldfj alf asfsdf afassdafasfljsd"));
     tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::MOVEMENT, " adf as saf "));
     tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::MODE::DEFENDGATE, ""));
     tutorialTiles.push_back(Tutorial::alloc(15, Tutorial::MODE::BITE, ""));
     tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::GROW, ""));
+    tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::RECALLGIVE, ""));
+    tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::BARKGIVE, ""));
     tutorialTiles.push_back(Tutorial::alloc(22, Tutorial::MODE::SPECIALSONE, ""));
     tutorialTiles.push_back(Tutorial::alloc(24, Tutorial::MODE::CHANGEABILITYTWO, ""));
     tutorialTiles.push_back(Tutorial::alloc(26, Tutorial::MODE::DESTROYSPAWNER, ""));
 //    tutorialTiles.push_back(Tutorial::alloc(28, Tutorial::MODE::SPECIALSTWO, ""));
 //
-//    std::vector<std::string> modes = {"SHOOT", "SHOOT"};
-//    overWorld.getDog()->setAbility(modes);
-    
+    std::vector<std::string> modes = {"RECALL", "SHOOT"};
+    overWorld.getDog()->setAbility(modes);
+    overWorld.getDog()->toggleMode();
     // each one need to write # of frames
-    std::vector<int> frame = {21, 21, 21, 21, 21, 21, 21, 21, 21};
+    std::vector<int> frame = {21, 21, 21, 21, 21, 21, 21, 21, 21,21};
     overWorld.getDog()->addAbsorb(6);
     initTutorial(frame);
     
@@ -1104,8 +1105,14 @@ void GameScene::initTutorialTwo(){
     tutorialIndex = 0;
     _tutorialnode = scene2::SceneNode::alloc();
     _uinode->addChild(_tutorialnode);
-    std::vector<std::string> modes = {"SHOOT", "BAIT"};
+    tutorialTiles = std::vector<std::shared_ptr<Tutorial>>();
+    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::BAITGIVE, ""));
+    std::vector<int> frame = {21};
+    std::vector<std::string> modes = {"RECALL", "BAIT", "SHOOT"};
     overWorld.getDog()->setAbility(modes);
+    overWorld.getDog()->toggleMode();
+    overWorld.getDog()->addAbsorb(6);
+    initTutorial(frame);
 }
 
 void GameScene::initTutorialThree(){
@@ -1134,32 +1141,46 @@ void GameScene::initTutorial(std::vector<int>& frame)
     {
         
         Tutorial::MODE mode = tutorialTiles.at(i)->getProgress();
-        if (mode == Tutorial::MODE::RECALLGIVE){
-            std::shared_ptr<SpriteAnimationNode> recallInit = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("recallInit"), 3, 5,  14,  2);
-            std::shared_ptr<SpriteAnimationNode> recallRepeat = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("recallRepeat"), 4, 5, 16,  5);
+        if (mode == Tutorial::MODE::RECALLGIVE || mode == Tutorial::MODE::BARKGIVE || mode == Tutorial::MODE::BAITGIVE){
+            
+            std::shared_ptr<SpriteAnimationNode> init;
+            std::shared_ptr<SpriteAnimationNode> repeat;
             std::shared_ptr<SpriteAnimationNode> pressA = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("pressA"), 1, 2, 2, 30);
-            tutorialTiles.at(i)->setSprite(recallInit);
-            tutorialTiles.at(i)->setSpriteRepeat(recallRepeat);
+            
+            if (mode == Tutorial::MODE::RECALLGIVE){
+                init = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("recallInit"), 3, 5,  14,  2);
+                repeat = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("recallRepeat"), 4, 5, 16,  5);
+            }else if (mode == Tutorial::MODE::BARKGIVE){
+                init = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("barkInit"), 3, 5,  14,  2);
+                repeat = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("barkRepeat"), 1, 2, 2,  5);
+            }else if (mode == Tutorial::MODE::BAITGIVE){
+                init = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("baitInit"), 3, 5,  14,  2);
+                repeat = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("baitRepeat"), 2, 5, 9,  5);
+            }
+            
+            
+            tutorialTiles.at(i)->setSprite(init);
+            tutorialTiles.at(i)->setSpriteRepeat(repeat);
             tutorialTiles.at(i)->setPressButton(pressA);
             
-            _tutorialnode->addChild(recallInit);
-            _tutorialnode->addChild(recallRepeat);
+            _tutorialnode->addChild(init);
+            _tutorialnode->addChild(repeat);
             _tutorialnode->addChild(pressA);
             
-            recallInit->setAnchor(Vec2::ANCHOR_CENTER);
-            recallRepeat->setAnchor(Vec2::ANCHOR_CENTER);
+            init->setAnchor(Vec2::ANCHOR_CENTER);
+            repeat->setAnchor(Vec2::ANCHOR_CENTER);
             pressA->setAnchor(Vec2::ANCHOR_CENTER);
             
-            recallInit->setScale(1.5);
-            recallRepeat->setScale(1.5);
+            init->setScale(1.5);
+            repeat->setScale(1.5);
             pressA->setScale(6);
             
-            recallInit->setPosition(screen/2);
-            recallRepeat->setPosition(screen/2);
-            pressA->setPosition(screen/2  - Size(0, recallInit->getHeight()));
+            init->setPosition(screen/2);
+            repeat->setPosition(screen/2);
+            pressA->setPosition(screen/2  - Size(0, init->getHeight()));
             
-            recallInit->setVisible(false);
-            recallRepeat->setVisible(false);
+            init->setVisible(false);
+            repeat->setVisible(false);
             pressA->setVisible(false);
             
         }else {

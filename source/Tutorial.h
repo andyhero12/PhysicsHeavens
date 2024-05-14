@@ -34,7 +34,9 @@ public:
         SPECIALSTHREE = 11,
         CHANGEABILITYFOUR = 12,
         SPECIALSFOUR = 13,
-        RECALLGIVE = 14
+        RECALLGIVE = 14,
+        BARKGIVE = 15,
+        BAITGIVE = 16
     };
 
     static std::string toString(MODE mode)

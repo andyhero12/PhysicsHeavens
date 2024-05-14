@@ -26,7 +26,7 @@
 
 
 /** Set these to 0 to disable */
-#define CLOSE_DISTANCE 0
+#define CLOSE_DISTANCE 9
 #define STRAY_DISTANCE 1000000
 #define SAME_GOAL_DISTANCE 2
 
@@ -398,13 +398,19 @@ protected:
         if(atGoal()){
             return;
         }
-        if(atTile(_nextStep)){
-            WorldSearchVertex* nextNode = _pathfinder->GetSolutionNext();
-            _nextStep.x = nextNode->x;
-            _nextStep.y = nextNode->y;
+        Vec2 goalTile = Vec2(trueGoal.x, trueGoal.y);
+        cugl::Vec2 direction;
+        if(getPosition().distanceSquared(goalTile) <= CLOSE_DISTANCE){
+            direction = goalTile - getPosition();
+        }else{
+            if(atTile(_nextStep)){
+                WorldSearchVertex* nextNode = _pathfinder->GetSolutionNext();
+                _nextStep.x = nextNode->x;
+                _nextStep.y = nextNode->y;
+            }
+            Vec2& nextTile = _nextStep;
+            direction = nextTile - getPosition();
         }
-        Vec2& nextTile = _nextStep;
-        cugl::Vec2 direction = nextTile - getPosition();
         setVX(direction.normalize().x * 1.5);
         setVY(direction.normalize().y * 1.5);
         setX(getX());
