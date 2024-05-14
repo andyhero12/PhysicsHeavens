@@ -14,6 +14,9 @@ bool Tutorial::init(int tile, MODE m_progress, std::string m_text)
     progress = m_progress;
     enter = false;
     text = m_text;
+    sprite = nullptr;
+    spriteRepeat = nullptr;
+    pressA = nullptr;
     return true;
 }
 

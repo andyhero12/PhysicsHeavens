@@ -1,5 +1,20 @@
 {
     "textures": {
+        "pressA": {
+            "file": "textures/press_a.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "recallInit": {
+            "file": "textures/newAbility/recall_init.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "recallRepeat": {
+            "file": "textures/newAbility/recall_repeat.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
         "abilityReady": {
             "file": "textures/game_ui/ability_ready.png",
             "minfilter": "linear",

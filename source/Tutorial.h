@@ -33,7 +33,8 @@ public:
         CHANGEABILITYTHREE = 10,
         SPECIALSTHREE = 11,
         CHANGEABILITYFOUR = 12,
-        SPECIALSFOUR = 13
+        SPECIALSFOUR = 13,
+        RECALLGIVE = 14
     };
 
     static std::string toString(MODE mode)
@@ -142,6 +143,8 @@ protected:
     MODE progress;
     bool enter;
     std::shared_ptr<SpriteAnimationNode> sprite;
+    std::shared_ptr<SpriteAnimationNode> spriteRepeat;
+    std::shared_ptr<SpriteAnimationNode> pressA;
     std::shared_ptr<cugl::scene2::Label> message;
     std::string text;
 
@@ -164,12 +167,30 @@ public:
     {
         sprite = node;
     }
+    
+    void setSpriteRepeat(std::shared_ptr<SpriteAnimationNode> node)
+    {
+        spriteRepeat = node;
+    }
+    
+    void setPressButton(std::shared_ptr<SpriteAnimationNode> node)
+    {
+        pressA = node;
+    }
 
     std::shared_ptr<SpriteAnimationNode> getSprite() const
     {
         return sprite;
     }
+    std::shared_ptr<SpriteAnimationNode> getSpriteRepeat() const
+    {
+        return spriteRepeat;
+    }
 
+    std::shared_ptr<SpriteAnimationNode> getPressA() const
+    {
+        return pressA;
+    }
     void setMessage(std::shared_ptr<cugl::scene2::Label> node)
     {
         message = node;

@@ -1000,12 +1000,28 @@ void GameScene::updateInputController()
         bool atLocation = tile->atArea(overWorld.getDog()->getX());
         const std::shared_ptr<scene2::SceneNode>& node = tutorialTiles.at(tutorialIndex)->getSprite();
         const std::shared_ptr<SpriteAnimationNode>& spriteNode = std::dynamic_pointer_cast<SpriteAnimationNode>(node);
+        const std::shared_ptr<SpriteAnimationNode>& spriteNodeRepeat = tutorialTiles.at(tutorialIndex)->getSpriteRepeat();
+        const std::shared_ptr<SpriteAnimationNode>& pressA = tutorialTiles.at(tutorialIndex)->getPressA();
         const std::shared_ptr<scene2::Label>& message = tutorialTiles.at(tutorialIndex)->getMessage();
         // just do tile->setVisible(tutorial) to draw stuff
         if (atLocation && !tile->didPass() && spriteNode)
         {
-            spriteNode->setVisible(true);
-            spriteNode->update();
+            if (tile->getProgress() == Tutorial::MODE::RECALLGIVE){
+                if (spriteNode->getFrame() != spriteNode->getSpan() -1){
+                    spriteNode->setVisible(true);
+                    spriteNode->update();
+                } else{
+                    spriteNode->setVisible(false);
+                    spriteNodeRepeat->setVisible(true);
+                    spriteNodeRepeat->update();
+                    pressA->setVisible(true);
+                    pressA->update();
+                }
+            }else{
+                spriteNode->setVisible(true);
+                spriteNode->update();
+            }
+            
 //            message->setVisible(true);
         }
         if (tutorialIndex == tutorialTiles.size() - 1){
@@ -1013,7 +1029,16 @@ void GameScene::updateInputController()
                 tutorialArrow->setVisible(false);
             }
         }
-        if (_input.update(tile->getProgress(), atLocation))
+        
+        if (tile->getProgress() == Tutorial::MODE::RECALLGIVE){
+            if (_input.update(tile->getProgress(), atLocation)){
+                tile->setPass(true);
+                spriteNode->setVisible(false);
+                spriteNodeRepeat->setVisible(false);
+                pressA->setVisible(false);
+                tutorialIndex++;
+            }
+        } else if (_input.update(tile->getProgress(), atLocation))
         {
             tile->setPass(true);
             node->setVisible(false);
@@ -1054,6 +1079,7 @@ void GameScene::initTutorialOne(){
     _uinode->addChild(_tutorialnode);
     tutorialTiles = std::vector<std::shared_ptr<Tutorial>>();
     
+    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::RECALLGIVE, ""));
     tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::GREETING, "jsafk sdflk ajsflja kfjsdlkj falksjf klajsdf kaljf klj flldfj alf asfsdf afassdafasfljsd"));
     tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::MOVEMENT, " adf as saf "));
     tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::MODE::DEFENDGATE, ""));
@@ -1106,35 +1132,67 @@ void GameScene::initTutorial(std::vector<int>& frame)
     
     for (int i = 0; i < tutorialTiles.size(); i++)
     {
-        str = Tutorial::toString(tutorialTiles.at(i)->getProgress());
-        node = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>(str), 1, frame.at(i), frame.at(i), 5);
-        _tutorialnode->addChild(node);
-        node->setScale(4);
-        node->setAnchor(Vec2::ANCHOR_CENTER);
-        node->setPositionX(screen.width / 2);
-        node->setPositionY(node->getScaleY() * node->getTexture()->getHeight() / 2);
-        node->setVisible(false);
-    
-        node->setVisible(false);
         
-        tutorialTiles.at(i)->setSprite(node);
-        
-        Size box = Size(node->getTexture()->getWidth()/2, 2 * node->getScaleY() * node->getTexture()->getHeight());
-        
-        CULog(" width: %d    height: %f", node->getTexture()->getWidth(), node->getTexture()->getHeight() * node->getScaleY());
-        
-        message = scene2::Label::allocWithTextBox(box, tutorialTiles.at(i)->getText() ,_assets->get<Font>(PRIMARY_FONT));
-        
-        message->setHorizontalAlignment(HorizontalAlign::CENTER);
-        message->setVerticalAlignment(VerticalAlign::MIDDLE);
-        message->setWrap(true);
-        message->setScale(.25);
-        _tutorialnode->addChild(message);
-        message->setAnchor(Vec2(0.8f , 0.5f));
-        message->setPositionX(3 * screen.width / 4);
-        message->setPositionY(node->getScaleY() * node->getTexture()->getHeight() / 2);
-        message->setVisible(false);
-        tutorialTiles.at(i)->setMessage(message);
+        Tutorial::MODE mode = tutorialTiles.at(i)->getProgress();
+        if (mode == Tutorial::MODE::RECALLGIVE){
+            std::shared_ptr<SpriteAnimationNode> recallInit = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("recallInit"), 3, 5,  14,  2);
+            std::shared_ptr<SpriteAnimationNode> recallRepeat = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("recallRepeat"), 4, 5, 16,  5);
+            std::shared_ptr<SpriteAnimationNode> pressA = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("pressA"), 1, 2, 2, 30);
+            tutorialTiles.at(i)->setSprite(recallInit);
+            tutorialTiles.at(i)->setSpriteRepeat(recallRepeat);
+            tutorialTiles.at(i)->setPressButton(pressA);
+            
+            _tutorialnode->addChild(recallInit);
+            _tutorialnode->addChild(recallRepeat);
+            _tutorialnode->addChild(pressA);
+            
+            recallInit->setAnchor(Vec2::ANCHOR_CENTER);
+            recallRepeat->setAnchor(Vec2::ANCHOR_CENTER);
+            pressA->setAnchor(Vec2::ANCHOR_CENTER);
+            
+            recallInit->setScale(1.5);
+            recallRepeat->setScale(1.5);
+            pressA->setScale(6);
+            
+            recallInit->setPosition(screen/2);
+            recallRepeat->setPosition(screen/2);
+            pressA->setPosition(screen/2  - Size(0, recallInit->getHeight()));
+            
+            recallInit->setVisible(false);
+            recallRepeat->setVisible(false);
+            pressA->setVisible(false);
+            
+        }else {
+            str = Tutorial::toString(tutorialTiles.at(i)->getProgress());
+            node = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>(str), 1, frame.at(i), frame.at(i), 5);
+            _tutorialnode->addChild(node);
+            node->setScale(4);
+            node->setAnchor(Vec2::ANCHOR_CENTER);
+            node->setPositionX(screen.width / 2);
+            node->setPositionY(node->getScaleY() * node->getTexture()->getHeight() / 2);
+            node->setVisible(false);
+            
+            node->setVisible(false);
+            
+            tutorialTiles.at(i)->setSprite(node);
+            
+            Size box = Size(node->getTexture()->getWidth()/2, 2 * node->getScaleY() * node->getTexture()->getHeight());
+            
+            CULog(" width: %d    height: %f", node->getTexture()->getWidth(), node->getTexture()->getHeight() * node->getScaleY());
+            
+            message = scene2::Label::allocWithTextBox(box, tutorialTiles.at(i)->getText() ,_assets->get<Font>(PRIMARY_FONT));
+            
+            message->setHorizontalAlignment(HorizontalAlign::CENTER);
+            message->setVerticalAlignment(VerticalAlign::MIDDLE);
+            message->setWrap(true);
+            message->setScale(.25);
+            _tutorialnode->addChild(message);
+            message->setAnchor(Vec2(0.8f , 0.5f));
+            message->setPositionX(3 * screen.width / 4);
+            message->setPositionY(node->getScaleY() * node->getTexture()->getHeight() / 2);
+            message->setVisible(false);
+            tutorialTiles.at(i)->setMessage(message);
+        }
     }
 }
 
