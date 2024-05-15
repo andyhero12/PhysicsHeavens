@@ -101,6 +101,8 @@ bool SettingScene::init(const std::shared_ptr<AssetManager> &assets)
         }
     });
 
+    _slider1->setVisible(false);
+    _slider2->setVisible(false);
     background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("setting_background"), 1, 9);
     background->setScale(4.3);
     background->setPosition(0.5 * background->getSize());
@@ -142,14 +144,7 @@ void SettingScene::dispose()
 void SettingScene::update(float progress)
 {
     _input.update();
-    if (firsttime)
-    {
-        _button->activate();
-        _slider1->activate();
-        _slider2->activate();
-        _button->setVisible(false);
-        firsttime = false;
-    }
+
     
     if (curMoveAnim <= moveCooldown){
         curMoveAnim++;
@@ -173,6 +168,20 @@ void SettingScene::update(float progress)
     updatelevelscene();
     resetgochange();
     adjustFrame(level);
+
+    if (firsttime)
+    {
+        _button->activate();
+        _slider1->activate();
+        _slider2->activate();
+        _button->setVisible(false);
+        firsttime = false;
+    }
+
+    if(background->getFrame()>=3){
+        _slider1->setVisible(true);
+        _slider2->setVisible(true);
+    }
 
     if(_input._Leftright == -1 && readyToChangeLevel()){
         if(level==1){
