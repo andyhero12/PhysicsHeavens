@@ -75,7 +75,7 @@ bool SettingScene::init(const std::shared_ptr<AssetManager> &assets)
                     break;
                 case 3:
                     CULog("Current Level: L3");
-                    _buttonselection = button::b3; 
+                    _buttonselection = button::b3;
                     _button->setDown(false);
                     break;
                 case 4:
@@ -227,7 +227,7 @@ void SettingScene::setActive(bool value)
             _backClicked = false;
         }
         else
-        {   
+        {
             background->setFrame(0);
             _button->deactivate();
             _button->setDown(false);

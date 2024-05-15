@@ -53,7 +53,15 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
 
     // Temp PlaceHolder
     runAnimations->setAnchor(Vec2::ANCHOR_CENTER);
-    std::shared_ptr<AnimationSceneNode> attackAnimations = AnimationSceneNode::allocWithTextures(_textures, rows,_framecols, _framesize, _freqAnims);
+    std::vector<std::shared_ptr<cugl::Texture>>& _attacks = staticEnemyStruct._attackTextures;
+    
+    int _framesizeAttack = staticEnemyStruct._framesizeAttack;
+    int _framecolsAttack = staticEnemyStruct._framecolsAttack;
+    if (_framesizeAttack % _framecolsAttack != 0)
+    {
+        rows++;
+    }
+    std::shared_ptr<AnimationSceneNode> attackAnimations = AnimationSceneNode::allocWithTextures(_attacks, rows,_framecolsAttack, _framesizeAttack, _freqAnims);
     attackAnimations->setAnchor(Vec2::ANCHOR_CENTER);
     attackAnimations->setContentSize(m_size);
     
@@ -128,69 +136,70 @@ void MeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
     }
     
     _time++;
+    cugl::Vec2 target_pos = getTargetPositionFromIndex(overWorld);
+    cugl::Vec2 dist = target_pos - getPosition();
     
-    if(_health < _maxHealth/3){
-        curAction = AbstractEnemy::EnemyActions::LOWHEALTH;
+    if (canResetAction()){
+        float defaultLength = 4;
+        if (getTargetIndex() == 0){
+            float dogRadius = fmax(overWorld.getDog()->getWidth(), overWorld.getDog()->getHeight())/2;
+            float enemyRadius = fmax(getWidth(), getHeight())/2;
+            defaultLength = (dogRadius + enemyRadius + 1.0f) * (dogRadius + enemyRadius + 1.0f);
+        }
+        curAction = dist.lengthSquared() <= defaultLength ? EnemyActions::ATTACK : EnemyActions::CHASE;
+        if(_health < _maxHealth/3.0){
+            curAction = AbstractEnemy::EnemyActions::LOWHEALTH;
+        }
     }
-    
-    // Determine the action based on the state
-    runAnimations->setColor(cugl::Color4::WHITE);
-    
-    handleChase(overWorld);
-//    switch (curAction){
-//        case EnemyActions::SPAWN:
-//            handleSpawn();
-//            break;
-//        case EnemyActions::WANDER:
-//            handleWander(dt);
-//            if(_time >= FRAMES){
-//                curAction = AbstractEnemy::EnemyActions::CHASE;
-//                _time = 0;
-//            }
-//            break;
-//        case EnemyActions::CHASE:
-//            handleChase(overWorld);
-////            if(_time >= CHASE_FRAMES) {
-////                curAction = AbstractEnemy::EnemyActions::WANDER;
-////                _time = 0;
-////            }
-//            break;
-//        case EnemyActions::LOWHEALTH:
-//            handleLowHealth(overWorld);
-//            break;
-//        case EnemyActions::ATTACK:
-//            handleAttack(overWorld);
-//            if(_time >= FRAMES){
-//                curAction = AbstractEnemy::EnemyActions::STAY;
-//                _time = 0;
-//            }
-//            break;
-//        case EnemyActions::STAY:
-//            handleStay(overWorld);
-//            if(_time >= FRAMES){
-//                curAction = AbstractEnemy::EnemyActions::WANDER;
-//                _time = 0;
-//            }
-//            break;
-//        case EnemyActions::RUNAWAY:
-//            break;
-//        default:
-//            CULog("Case Not Handled");
-//            break;
-//    }
+    switch (curAction){
+        case EnemyActions::SPAWN:
+            handleSpawn();
+            break;
+        case EnemyActions::WANDER:
+            handleWander(dt);
+            if(_time >= FRAMES){
+                curAction = AbstractEnemy::EnemyActions::CHASE;
+                _time = 0;
+            }
+            break;
+        case EnemyActions::CHASE:
+            handleChase(overWorld);
+            break;
+        case EnemyActions::LOWHEALTH:
+            handleLowHealth(overWorld);
+            break;
+        case EnemyActions::ATTACK:
+            handleAttack(overWorld);
+            if(_time >= FRAMES){
+                curAction = AbstractEnemy::EnemyActions::STAY;
+                _time = 0;
+            }
+            break;
+        case EnemyActions::STAY:
+            handleStay(overWorld);
+            if(_time >= FRAMES){
+                curAction = AbstractEnemy::EnemyActions::WANDER;
+                _time = 0;
+            }
+            break;
+        case EnemyActions::RUNAWAY:
+            break;
+        default:
+            CULog("Case Not Handled");
+            break;
+    }
 }
-
 
 void MeleeEnemy::handleChase(OverWorld& overWorld) {
     cugl::Vec2 target_pos = getTargetPositionFromIndex(overWorld);
     
     cugl::Vec2 dist = target_pos - getPosition();
     
+    bool found = false;
     if(_counter >= updateRate){
-        setGoal(target_pos, overWorld.getWorld());
+        found = setGoal(target_pos, overWorld.getWorld());
         _counter = 0;
     }
-    
     goToGoal();
     
     movementDirection = dist;
@@ -220,7 +229,7 @@ void MeleeEnemy::handleLowHealth(OverWorld& overWorld) {
 }
 
 void MeleeEnemy::handleAttack(OverWorld& overWorld) {
-    attackAnimations->setColor(Color4::GREEN);
+//    attackAnimations->setColor(Color4::GREEN);
     handleChase(overWorld);
 }
 

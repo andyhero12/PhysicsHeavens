@@ -137,7 +137,9 @@ protected:
     float _shootRadius;
     AnimationSceneNode::Directions _curDirection;
     float _damagedTimer;
+    DogSize _size;
     float _healTimer;
+    
 public:
 #pragma mark Constructors
     /**
@@ -227,6 +229,13 @@ public:
     
     void updateDogSize(int absorbValue);
     void addEffects(std::shared_ptr<cugl::scene2::SceneNode> fnode, std::shared_ptr<cugl::scene2::SceneNode> bnode);
+    
+    
+    DogSize getSize(){
+        return _size;
+    }
+    
+    
 #pragma mark Static Constructors
     /**
      * Returns a newly allocate rocket at the origin.
@@ -315,7 +324,10 @@ public:
     std::shared_ptr<scene2::SceneNode> getUINode(){
         return _uiController->getUINode();
     }
-    void addAbsorb(int value);
+    /**
+     returns true if max size
+     */
+    bool addAbsorb(int value);
     void subAbsorb(int value);
     const int getAbsorb() const{ 
         return _absorbValue;

@@ -111,7 +111,7 @@ public:
     }
 
     /**
-     * Returns whether the fire button was pressed.
+     * Returns whether the shoot (bite) button was pressed.
      *
      * @return whether the fire button was pressed.
      */

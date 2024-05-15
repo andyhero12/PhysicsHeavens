@@ -25,7 +25,11 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     _hometoggle = cugl::scene2::PolygonNode::allocWithTexture(assets->get<Texture>("hometoggle"));
     _initialFlash = SpriteAnimationNode::allocWithSheet(assets->get<Texture>("initialflash"), 1, 5, 5, 6);
     _toggleFlash = SpriteAnimationNode::allocWithSheet(assets->get<Texture>("flash"), 1, 5, 5, 10);
+    _readyAbility = SpriteAnimationNode::allocWithSheet(assets->get<Texture>("abilityReady"), 2, 5, 8, 10);
     
+    _lowHealth = SpriteAnimationNode::allocWithSheet(assets->get<Texture>("lowHealth"), 2, 5, 6, 8);
+    _lowHealth->setScale(2 * 800/_lowHealth->getTexture()->getHeight());
+    _lowHealth->setPosition(0.5 * _lowHealth->getSize());
     
     // set the scale
     _healthframe->setScale(UI_SCALE);
@@ -39,6 +43,8 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     _hometoggle->setScale(UI_SCALE);
     _initialFlash->setScale(UI_SCALE);
     _toggleFlash->setScale(UI_SCALE);
+    _readyAbility->setScale(UI_SCALE);
+//    _lowHealth->setScale(UI_SCALE);
     
     // set the position
     _healthframe->setAnchor(Vec2::ANCHOR_CENTER);
@@ -52,7 +58,7 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     _hometoggle->setAnchor(Vec2::ANCHOR_CENTER);
     _initialFlash->setAnchor(Vec2::ANCHOR_CENTER);
     _toggleFlash->setAnchor(Vec2::ANCHOR_CENTER);
-    
+    _readyAbility->setAnchor(Vec2::ANCHOR_CENTER);
     x =0;
     y =0;
     
@@ -87,16 +93,19 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     _shoottoggle->setPosition(togglex, toggley);
     _baittoggle->setPosition(togglex, toggley);
     _hometoggle->setPosition(togglex, toggley);
-    _initialFlash->setPosition(togglex, toggley);
-    _toggleFlash->setPosition(togglex, toggley);
+//    _initialFlash->setPosition(togglex, toggley);
+//    _toggleFlash->setPosition(togglex, toggley);
+    _readyAbility->setPosition(togglex, toggley);
     
+    _lowHealth->setVisible(false);
     _shoottoggle->setVisible(true);
     _bombtoggle->setVisible(false);
     _baittoggle->setVisible(false);
     _hometoggle->setVisible(false);
     _initialFlash->setVisible(false);
     _toggleFlash->setVisible(false);
-    
+    _readyAbility->setVisible(false);
+    node->addChild(_lowHealth);
     node->addChild(_healthfill);
     node->addChild(_sizefill);
     node->addChild(_healthframe);
@@ -107,6 +116,7 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     node->addChild(_shoottoggle);
     node->addChild(_baittoggle);
     node->addChild(_hometoggle);
+    node->addChild(_readyAbility);
 //    node->addChild(_toggleFlash);
 //    node->addChild(_initialFlash);
     
@@ -116,7 +126,7 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
 void UIController::setHealthBarTexture(float percentage){
     CUAssert(0 <= percentage <= 1);
     // The percentage of the health bar that is empty space, needed to adjust how fast the health bar decreases
-    GLfloat emptyPercent = 15.0/_healthfill->getWidth();
+    GLfloat emptyPercent = 0.25;
     
     GLfloat minS = 0;
     GLfloat maxS = emptyPercent + (1.0 - emptyPercent) * percentage;
@@ -134,7 +144,7 @@ void UIController::setHealthBarTexture(float percentage){
 void UIController::setSizeBarTexture(float percentage){
     CUAssert(0 <= percentage <= 1);
     // The percentage of the size bar that is empty space, needed to adjust how fast the health bar decreases
-    GLfloat emptyPercent = 0;
+    GLfloat emptyPercent = 0.25;
     
     GLfloat minS = 0;
     GLfloat maxS = emptyPercent + (1.0 - emptyPercent) * percentage;
@@ -183,23 +193,27 @@ void UIController::setToggle(std::string mode){
     }
 }
 
-void UIController::animateFlash(int absorb){
-//    if(absorb > 10){
-//        if(!_flashAnimated){
-//            _initialFlash->setVisible(true);
-//            _initialFlash->update();
-//            
-//            if(_initialFlash->getFrame() == _initialFlash->getSpan() - 1){
-//                _flashAnimated = true;
-//            }
-//        } else{
-//            _toggleFlash->update();
-//        }
-//        
-//    } else{
-//        _initialFlash->setVisible(false);
-//        _flashAnimated = false;
-//        _initialFlash->setFrame(0);
-//        _toggleFlash->setFrame(3);
-//    }
+void UIController::animateFlash(int absorb, float healthPercentage){
+    if (healthPercentage < 0.3){
+        _lowHealth->setVisible(true);
+    }else{
+        _lowHealth->setVisible(false);
+    }
+    _lowHealth->update();
+    if (_bombtoggle->isVisible() && absorb >= 10){
+        _readyAbility->setVisible(true);
+        _readyAbility->update();
+    }else if (_shoottoggle->isVisible() && absorb >= 5){
+        _readyAbility->setVisible(true);
+        _readyAbility->update();
+    }else if (_hometoggle->isVisible()){
+        _readyAbility->setVisible(true);
+        _readyAbility->update();
+    }else if (_baittoggle->isVisible() && absorb >= 5){
+        _readyAbility->setVisible(true);
+        _readyAbility->update();
+    }else{
+        _readyAbility->setVisible(false);
+        _readyAbility->setFrame(0);
+    }
 }

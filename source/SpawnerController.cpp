@@ -100,6 +100,7 @@ void SpawnerController::update(MonsterController& monsterController, OverWorld& 
     
 }
 
+/** monster death event*/
 void SpawnerController::processDeathEvent(const std::shared_ptr<DeathEvent>& deathEvent){
     std::shared_ptr<SpriteAnimationNode> deathAnim;
     if(deathEvent->isBomb()) {
@@ -127,8 +128,10 @@ void SpawnerController::processSpawnerDeathEvent(const std::shared_ptr<SpawnerDe
     deathNode->setScale(scale);
     deathNode->setPosition(pos);
     baseSpawnerNode->addChild(deathNode);
+    _audioController->playSFX(SPAWNER_DEATH, SPAWNER_DEATH);
 }
-bool SpawnerController::init(const std::vector<LevelModel::Spawner>& startLocs, std::shared_ptr<cugl::AssetManager> assets, std::shared_ptr<NetEventController> net) {
+bool SpawnerController::init(const std::vector<LevelModel::Spawner>& startLocs, std::shared_ptr<cugl::AssetManager> assets, std::shared_ptr<NetEventController> net, std::shared_ptr<AudioController> audioController) {
+    _audioController = audioController;
     _spawners.clear();
     animationNodes.clear();
     _curAnimations.clear();
@@ -196,4 +199,5 @@ void SpawnerController::dispose(){
     _spawnTexture = nullptr;
     _deathSpawner = nullptr;
     _curAnimations.clear();
+    _audioController = nullptr;
 }

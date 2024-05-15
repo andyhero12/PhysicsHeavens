@@ -12,9 +12,7 @@ using namespace cugl;
 #define ANIM_FREQ 5
 
 bool GateUIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std::shared_ptr<cugl::AssetManager>& assets, cugl::Size screenSize, std::shared_ptr<BaseSet> gates){
-    
-//    _childOffset = -1;
-//    // Get gameplay ui elements
+
     _screenSize = screenSize;
     UInode = node;
     _gates = gates;
@@ -30,29 +28,26 @@ bool GateUIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const
     
     
     // set the scale
-    _gateframe->setScale(UI_SCALE);
-    _gatefill->setScale(UI_SCALE);
+    _gateframe->setScale(UI_SCALE_GATE);
+    _gatefill->setScale(UI_SCALE_GATE);
     
     // set the position
     _gateframe->setAnchor(Vec2::ANCHOR_CENTER);
     _gatefill->setAnchor(Vec2::ANCHOR_CENTER);
     
-    x = 0;
-    y = 0;
-    
-    float gatex = x + screenSize.width - UI_SCALE * _gateframe->getTexture()->getWidth()/2;
-    float gatey = y + screenSize.height - UI_SCALE * (_gateframe->getTexture()->getHeight()/2 + 2);
+    float gatex = screenSize.width - UI_SCALE_GATE * _gateframe->getTexture()->getWidth()/2;
+    float gatey = screenSize.height - UI_SCALE_GATE * (_gateframe->getTexture()->getHeight()/2 + 2);
     
     _gateframe->setPosition(gatex, gatey);
     
-    float gatefillx = x + screenSize.width - UI_SCALE * _gatefill->getTexture()->getWidth()/2;
+    float gatefillx = screenSize.width - UI_SCALE_GATE * _gatefill->getTexture()->getWidth()/2;
     
     _gatefill->setPosition(gatefillx, gatey);
     
     node->addChild(_gatefill);
     
     if(_gatefill2){
-        _gatefill2->setScale(UI_SCALE);
+        _gatefill2->setScale(UI_SCALE_GATE);
         _gatefill2->setAnchor(Vec2::ANCHOR_CENTER);
         _gatefill2->setPosition(gatefillx, gatey);
         node->addChild(_gatefill2);
@@ -75,8 +70,8 @@ void GateUIController::setGateBarTexture(std::shared_ptr<SubTextureNode> fill, f
 
     fill->setSubtexture(minS, maxS, minT, maxT);
     
-    float gatefillx = x + _screenSize.width - UI_SCALE * fill->getTexture()->getWidth()/2;
-    float gatey = y + _screenSize.height - UI_SCALE * (_gateframe->getTexture()->getHeight()/2 + 2);
+    float gatefillx = _screenSize.width - UI_SCALE_GATE * fill->getTexture()->getWidth()/2;
+    float gatey = _screenSize.height - UI_SCALE_GATE * (_gateframe->getTexture()->getHeight()/2 + 2);
 
     fill->setAnchor(Vec2::ANCHOR_CENTER);
     fill->setPosition(gatefillx, gatey);
