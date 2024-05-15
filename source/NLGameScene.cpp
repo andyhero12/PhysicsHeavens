@@ -1022,6 +1022,8 @@ void GameScene::updateInputController()
             }else{
                 spriteNode->setVisible(true);
                 spriteNode->update();
+                pressA->setVisible(true);
+                pressA->update();
             }
             
 //            message->setVisible(true);
@@ -1044,6 +1046,7 @@ void GameScene::updateInputController()
         {
             tile->setPass(true);
             node->setVisible(false);
+            pressA->setVisible(false);
 //            message->setVisible(false);
             tutorialIndex++;
         }
@@ -1238,6 +1241,22 @@ void GameScene::initTutorial(std::vector<int>& frame)
             message->setPositionY(node->getScaleY() * node->getTexture()->getHeight() / 2);
             message->setVisible(false);
             tutorialTiles.at(i)->setMessage(message);
+            
+            std::shared_ptr<SpriteAnimationNode> pressA;
+            if (mode == Tutorial::MODE::GREETING || mode == Tutorial::MODE::DEFENDGATE || mode == Tutorial::MODE::GROW
+                || mode == Tutorial::MODE::BITE){
+                pressA = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("pressA"), 1, 2, 2, 30);
+            }else{
+                pressA = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("pressB"), 1, 2, 2, 30);
+            }
+            tutorialTiles.at(i)->setPressButton(pressA);
+            pressA->setAnchor(Vec2::ANCHOR_CENTER);
+            pressA->setScale(6);
+//            pressA->setPosition(screen/2);
+            pressA->setPositionX(screen.width * 0.80);
+            pressA->setPositionY(node->getScaleY() * node->getTexture()->getHeight() / 4 - 30);
+            _tutorialnode->addChild(pressA);
+            pressA->setVisible(false);
         }
     }
 }
