@@ -5,7 +5,7 @@
       "minfilter": "linear",
       "magfilter": "nearest"
     },
-    "play_menu": {
+    "_menu": {
       "file": "textures/play_menu.png"
     },
     "Host": {
