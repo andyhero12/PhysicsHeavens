@@ -57,6 +57,8 @@ private:
     AnimationDataStruct absorbAnimationData;
     
     std::shared_ptr<cugl::scene2::SceneNode> monsterControllerSceneNode;
+    
+    std::shared_ptr<AudioController> _audioController;
 public:
     
     void removeEnemy(std::shared_ptr<AbstractEnemy> enemy, bool isGate);
@@ -77,6 +79,8 @@ public:
     }
     bool init(OverWorld& overWorld,
               std::shared_ptr<cugl::scene2::SceneNode> _debugNode);
+    
+    void setAudioController(std::shared_ptr<AudioController> m_audioController){ _audioController = m_audioController;}
     
     bool isEmpty(){
         return _current.size() == 0 && _pending.size() == 0;

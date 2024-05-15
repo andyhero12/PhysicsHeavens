@@ -62,7 +62,7 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
     static_enemy->_defaultDimension = m_size.width;
     static_enemy->_defaultHealth = m_health;
     static_enemy->setShared(true);
-    
+    static_enemy->setAudioController(_audioController);
 //        static_enemy->setHealthBar(_healthBar);
     return std::make_pair(static_enemy, topLevel);
 #pragma mark END SOLUTION

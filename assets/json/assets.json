@@ -1,61 +1,121 @@
 {
     "textures": {
-        "GREETING":{
+        "pressA": {
+            "file": "textures/press_a.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "bombInit": {
+            "file": "textures/newAbility/bomb_init.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "bombRepeat": {
+            "file": "textures/newAbility/bomb_repeat.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "baitInit": {
+            "file": "textures/newAbility/bait_init.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "baitRepeat": {
+            "file": "textures/newAbility/bait_repeat.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "recallInit": {
+            "file": "textures/newAbility/recall_init.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "recallRepeat": {
+            "file": "textures/newAbility/recall_repeat.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "barkInit": {
+            "file": "textures/newAbility/bark_init.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "barkRepeat": {
+            "file": "textures/newAbility/bark_repeat.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "abilityReady": {
+            "file": "textures/game_ui/ability_ready.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "lowHealth": {
+            "file": "textures/game_ui/low_health.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "arrow": {
+            "file": "textures/tutorial/arrow.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "GREETING": {
             "file": "textures/tutorial/greeting.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
-        "GROW":{
+        "GROW": {
             "file": "textures/tutorial/grow.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
-        "SPECIALSONE":{
+        "SPECIALSONE": {
             "file": "textures/tutorial/trigger.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
-        "CHANGEABILITYTWO":{
+        "CHANGEABILITYTWO": {
             "file": "textures/tutorial/swap.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
-        "SPECIALSTWO":{
+        "SPECIALSTWO": {
             "file": "textures/tutorial/trigger.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
-        "CHANGEABILITYTHREE":{
+        "CHANGEABILITYTHREE": {
             "file": "textures/tutorial/greeting.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
-        "SPECIALSTHREE":{
+        "SPECIALSTHREE": {
             "file": "textures/tutorial/greeting.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
-        "CHANGEABILITYFOUR":{
+        "CHANGEABILITYFOUR": {
             "file": "textures/tutorial/greeting.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
-        "MOVEMENT":{
+        "MOVEMENT": {
             "file": "textures/tutorial/move.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
-        "BITE":{
+        "BITE": {
             "file": "textures/tutorial/bite.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
-        "DEFENDGATE":{
+        "DEFENDGATE": {
             "file": "textures/tutorial/gate.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
-        "DESTROYSPAWNER":{
+        "DESTROYSPAWNER": {
             "file": "textures/tutorial/spawners.png",
             "minfilter": "linear",
             "magfilter": "nearest"
@@ -77,6 +137,16 @@
         },
         "basemap": {
             "file": "textures/minimap/map_gate.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "spawnermaparrow": {
+            "file": "textures/minimap/spawner_arrow.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "basemaparrow": {
+            "file": "textures/minimap/gate_arrow.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
@@ -192,7 +262,7 @@
             "file": "textures/game_ui/main_recall_icon.png",
             "magfilter": "nearest"
         },
-        "initialflash":{
+        "initialflash": {
             "file": "textures/game_ui/Icon_flash_offset.png",
             "magfilter": "nearest"
         },
@@ -399,36 +469,76 @@
         "chompright": {
             "file": "textures/dog/effects/magic_chomp_right.png",
             "magfilter": "nearest"
-       },
-       "recall":{
-           "file": "textures/dog/effects/recall.png",
+        },
+        "recall": {
+            "file": "textures/dog/effects/recall.png",
             "magfilter": "nearest"
-       },
-       "dash":{
-           "file": "textures/dog/effects/dash.png",
+        },
+        "dash": {
+            "file": "textures/dog/effects/dash.png",
             "magfilter": "nearest"
-       },
-       "penta":{
-           "file": "textures/dog/effects/penta.png",
+        },
+        "penta": {
+            "file": "textures/dog/effects/penta.png",
             "magfilter": "nearest"
-       },
-       "absorbEnemyLeftWalk": {
-           "file": "textures/absorbEnemy/absorbLeftWalk.png",
-                 "minfilter": "linear",
-                 "magfilter": "nearest"
-       },
-       "absorbEnemyRightWalk": {
-           "file": "textures/absorbEnemy/absorbRightWalk.png",
-                 "minfilter": "linear",
-                 "magfilter": "nearest"
+        },
+        "absorbEnemyLeftWalk": {
+            "file": "textures/absorbEnemy/absorbLeftWalk.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "absorbEnemyRightWalk": {
+            "file": "textures/absorbEnemy/absorbRightWalk.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "basicLeftAttack": {
+            "file": "textures/basicEnemy/basicDevil-front-left-swipe.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "basicUpRightAttack": {
+            "file": "textures/basicEnemy/basicDevil-back-right-swipe.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "basicUpLeftAttack": {
+            "file": "textures/basicEnemy/basicDevil-back-left-swipe.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "basicRightAttack": {
+            "file": "textures/basicEnemy/basicDevil-front-right-swipe.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "basicLeftWalk": {
+            "file": "textures/basicEnemy/basicDevil-front-left.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "basicUpRightWalk": {
+            "file": "textures/basicEnemy/basicDevil-back-right.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "basicUpLeftWalk": {
+            "file": "textures/basicEnemy/basicDevil-back-left.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "basicRightWalk": {
+            "file": "textures/basicEnemy/basicDevil-front-right.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
         },
         "basicEnemy0": {
-            "file": "textures/basicEnemy/basicWalkLeft.PNG",
+            "file": "textures/basicEnemy/basicDevil-front-left.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
         "basicEnemy1": {
-            "file": "textures/basicEnemy/basicWalkRight.PNG",
+            "file": "textures/basicEnemy/basicDevil-front-right.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
@@ -459,6 +569,11 @@
         },
         "spawnerFrontWalk": {
             "file": "textures/spawnerEnemy/spawnerFrontWalk.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "spawnerSpawn": {
+            "file": "textures/spawnerEnemy/coffin_summoning_front.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
@@ -546,21 +661,24 @@
             "magfilter": "nearest"
         },
         "enemySpawn": {
-             "file": "textures/effects/spawn_flame.png",
-             "magfilter": "nearest"
-         },
-         "enemyDeath": {
-             "file": "textures/effects/death_poof.png",
-             "magfilter": "nearest"
-         },
-         "repeat_win": {
-           "file": "textures/repeat_win.png"
-         },
+            "file": "textures/effects/spawn_flame.png",
+            "magfilter": "nearest"
+        },
+        "enemyDeath": {
+            "file": "textures/effects/death_poof.png",
+            "magfilter": "nearest"
+        },
+        "repeat_win": {
+            "file": "textures/repeat_win.png",
+            "magfilter": "nearest"
+        },
         "win_screen": {
-          "file": "textures/win_screen.png"
+            "file": "textures/win_screen.png",
+            "magfilter": "nearest"
         },
         "lose_screen": {
-          "file": "textures/loss_screen.png"
+            "file": "textures/loss_screen.png",
+            "magfilter": "nearest"
         }
     },
     "jsons": {
@@ -584,10 +702,135 @@
         "mainmenu": "json/mainmenuassets.json"
     },
     "sounds": {
-        "bump": {
+        "dogBark": {
             "type": "sample",
-            "file": "sounds/bump.wav",
-            "volume": 0.5
+            "file": "sounds/Player/dogBark.wav",
+            "volume": 0.4
+        },
+        "dogBiteSmall": {
+            "type": "sample",
+            "file": "sounds/Player/dogBiteLittle.wav",
+            "volume": 0.4
+        },
+        "dogBiteMedium": {
+            "type": "sample",
+            "file": "sounds/Player/dogBiteMedium.wav",
+            "volume": 0.4
+        },
+        "dogBiteLarge": {
+            "type": "sample",
+            "file": "sounds/Player/dogBiteLarge.wav",
+            "volume": 0.4
+        },
+        "dogDamage": {
+            "type": "sample",
+            "file": "sounds/Player/dogDamage.wav",
+            "volume": 0.4
+        },
+        "dogDash": {
+            "type": "sample",
+            "file": "sounds/Player/dogDash.wav",
+            "volume": 0.4
+        },
+        "dogDie": {
+            "type": "sample",
+            "file": "sounds/Player/dogDie.wav",
+            "volume": 0.4
+        },
+        "dogBomb": {
+            "type": "sample",
+            "file": "sounds/Player/dogBomb.wav",
+            "volume": 0.4
+        },
+        "dogTeleport": {
+            "type": "sample",
+            "file": "sounds/Player/dogTeleport.wav",
+            "volume": 0.4
+        },
+        "dummyGateExplosion": {
+            "type": "sample",
+            "file": "sounds/Player/dummyGateExplosion.wav",
+            "volume": 0.4
+        },
+        "dummyGatePlacement": {
+            "type": "sample",
+            "file": "sounds/Player/dummyGatePlacement.wav",
+            "volume": 0.4
+        },
+        "absorbEnemyAbsoring": {
+            "type": "sample",
+            "file": "sounds/Enemies/absorbEnemyAbsorbing.wav",
+            "volume": 0.4
+        },
+        "bombHiss": {
+            "type": "sample",
+            "file": "sounds/Enemies/bombHiss.wav",
+            "volume": 0.4
+        },
+        "enemyDeath": {
+            "type": "sample",
+            "file": "sounds/Enemies/enemyDeath.wav",
+            "volume": 0.4
+        },
+        "spawnerDeath": {
+            "type": "sample",
+            "file": "sounds/Enemies/spawnerDeath.wav",
+            "volume": 0.4
+        },
+        "spawnerHit": {
+            "type": "sample",
+            "file": "sounds/Enemies/spawnerHit.wav",
+            "volume": 0.4
+        },
+        "spawning": {
+            "type": "sample",
+            "file": "sounds/Enemies/spawning.wav",
+            "volume": 0.4
+        },
+        "BGM": {
+            "type": "sample",
+            "file": "sounds/Env/BGM.wav",
+            "volume": 0.4
+        },
+        "buttonPress": {
+            "type": "sample",
+            "file": "sounds/Env/buttonPress.wav",
+            "volume": 0.4
+        },
+        "buttonSwap": {
+            "type": "sample",
+            "file": "sounds/Env/buttonSwap.wav",
+            "volume": 0.4
+        },
+        "gateTakesDamage": {
+            "type": "sample",
+            "file": "sounds/Env/gateTakesDamage.wav",
+            "volume": 0.4
+        },
+        "lossScreen": {
+            "type": "sample",
+            "file": "sounds/Env/lossScreen.wav",
+            "volume": 0.4
+        },
+        "sizeBarMax": {
+            "type": "sample",
+            "file": "sounds/Env/sizeBarMax.wav",
+            "volume": 0.4
+        },
+        "subway": {
+            "type": "sample",
+            "file": "sounds/Env/subway.wav",
+            "volume": 0.4
+        },
+        "victoryScreen": {
+            "type": "sample",
+            "file": "sounds/Env/victoryScreen.wav",
+            "volume": 0.4
+        },
+        "tutorial": {
+            "type": "sample",
+            "file": "sounds/tutorial.wav",
+            "volume": 0.4
         }
     },
     "fonts": {

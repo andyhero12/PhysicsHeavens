@@ -40,6 +40,8 @@ private:
     std::shared_ptr<cugl::scene2::PolygonNode> _baittoggle;
     std::shared_ptr<cugl::scene2::PolygonNode> _hometoggle;
     std::shared_ptr<SpriteAnimationNode> _toggleFlash;
+    std::shared_ptr<SpriteAnimationNode> _lowHealth;
+    std::shared_ptr<SpriteAnimationNode> _readyAbility;
     std::shared_ptr<SpriteAnimationNode> _initialFlash;
     bool _flashAnimated = false;
     int _freq = 0;
@@ -59,7 +61,7 @@ public:
     void setSizeBarTexture(float percentage);
     void setGateBarTexture(float percentage);
     void setToggle(std::string mode);
-    void animateFlash(int absorb);
+    void animateFlash(int absorb, float healthPercentage);
   
 };
 

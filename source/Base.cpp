@@ -9,11 +9,10 @@
 
 #define DAMAGED_DURATION 0.4f
 
-Base::Base(int health, cugl::Vec2 pos, std::shared_ptr<GateUIController> uiController, std::shared_ptr<SpriteAnimationNode> drawNode)
+Base::Base(int health, cugl::Vec2 pos, std::shared_ptr<SpriteAnimationNode> drawNode)
 :_health{health},
 _maxHealth{health}
 ,_position{pos}
-, _gateUIController{uiController}
 ,_healVal{5}
 ,_drawNode{drawNode}
 ,_damagedTimer{0}
@@ -40,7 +39,6 @@ void Base::update(){
 void Base::reduceHealth(int val){
     _health = _health - val;
 //    CULog("%f", static_cast<double>(_health)/_maxHealth);
-    _gateUIController->setGateBarTexture(static_cast<double>(_health)/_maxHealth);
     _damagedTimer = DAMAGED_DURATION;
 }
 

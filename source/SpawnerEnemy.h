@@ -26,16 +26,20 @@ public:
     SpawnerEnemyFactory(){
         _data = nullptr;
         _assets = nullptr;
+        _audioController = nullptr;
     };
     virtual ~SpawnerEnemyFactory(){
         _data = nullptr;
         _assets = nullptr;
+        _audioController = nullptr;
     }
     struct AnimationStruct{
         std::vector<std::shared_ptr<cugl::Texture>> _walkTextures;
         std::vector<std::shared_ptr<cugl::Texture>> _attackTextures;
         int _framesize;
         int _framecols;
+        int _framesizeAttack;
+        int _framecolsAttack;
         int _freqAnimations;
     };
     /** Pointer to the AssetManager for texture access, etc. */
@@ -46,21 +50,22 @@ public:
     LWSerializer _serializer;
     /** Deserializer for supporting parameters */
     LWDeserializer _deserializer;
+    std::shared_ptr<AudioController> _audioController;
 
     /**
      * Allocates a new instance of the factory using the given AssetManager.
      */
-    static std::shared_ptr<SpawnerEnemyFactory> alloc(std::shared_ptr<cugl::JsonValue> data, std::shared_ptr<AssetManager> &assets)
+    static std::shared_ptr<SpawnerEnemyFactory> alloc(std::shared_ptr<cugl::JsonValue> data, std::shared_ptr<AssetManager> &assets, std::shared_ptr<AudioController> m_audioController)
     {
         auto f = std::make_shared<SpawnerEnemyFactory>();
-        f->init(data, assets);
+        f->init(data, assets, m_audioController);
         return f;
     };
 
     /**
      * Initializes empty factories using the given AssetManager.
      */
-    void init(std::shared_ptr<cugl::JsonValue> data, std::shared_ptr<AssetManager> &assets)
+    void init(std::shared_ptr<cugl::JsonValue> data, std::shared_ptr<AssetManager> &assets, std::shared_ptr<AudioController> m_audioController)
     {
         _data = data;
         _assets = assets;
@@ -76,10 +81,23 @@ public:
         textures.push_back(_assets->get<Texture>("spawnerFrontWalk"));
         textures.push_back(_assets->get<Texture>("spawnerFrontWalk"));
         staticEnemyStruct._walkTextures  = textures;
-        staticEnemyStruct._attackTextures  = textures;
+        
+        std::vector<std::shared_ptr<cugl::Texture>> attacks;
+        attacks.push_back(_assets->get<Texture>("spawnerSpawn"));
+        attacks.push_back(_assets->get<Texture>("spawnerSpawn"));
+        attacks.push_back(_assets->get<Texture>("spawnerSpawn"));
+        attacks.push_back(_assets->get<Texture>("spawnerSpawn"));
+        attacks.push_back(_assets->get<Texture>("spawnerSpawn"));
+        attacks.push_back(_assets->get<Texture>("spawnerSpawn"));
+        attacks.push_back(_assets->get<Texture>("spawnerSpawn"));
+        attacks.push_back(_assets->get<Texture>("spawnerSpawn"));
+        staticEnemyStruct._attackTextures  = attacks;
         staticEnemyStruct._framesize = _framesize;
         staticEnemyStruct._framecols = _framecols;
+        staticEnemyStruct._framesizeAttack = 9;
+        staticEnemyStruct._framecolsAttack = 9;
         staticEnemyStruct._freqAnimations = 10;
+        _audioController = m_audioController;
     }
 
     /**
@@ -138,7 +156,6 @@ protected:
     virtual void handleLowHealth(OverWorld& overWorld) override;
     virtual void handleAttack(OverWorld& overWorld) override;
     virtual void handleStay(OverWorld& overWorld) override;
-    virtual void handleRunaway(OverWorld& overWorld) override;
 };
 
 #endif /* SpawnerEnemy_h */

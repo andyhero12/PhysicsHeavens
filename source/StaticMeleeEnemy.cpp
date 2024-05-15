@@ -6,7 +6,7 @@
 //
 
 #include "StaticMeleeEnemy.h"
-#define DISTANCE_CUTOFF 5
+#define DISTANCE_CUTOFF 6
 #define SPRITE_SCALE 1.14f
 
 #define DYNAMIC_COLOR   Color4::YELLOW
@@ -60,7 +60,7 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
     static_enemy->setFinalEnemy(topLevel);
     topLevel->setScale(m_size.height / _textures.at(0)->getHeight() * SPRITE_SCALE);
     static_enemy->setShared(true);
-    
+    static_enemy->setAudioController(_audioController);
 //        static_enemy->setHealthBar(_healthBar);
     return std::make_pair(static_enemy, topLevel);
 #pragma mark END SOLUTION
@@ -128,67 +128,49 @@ void StaticMeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
     cugl::Vec2 org_dist = dog_pos - original_pos;
     float distance = org_dist.length();
     if (distance > DISTANCE_CUTOFF){
-        curAction = AbstractEnemy::EnemyActions::ATTACK;
+        curAction = AbstractEnemy::EnemyActions::RUNAWAY;
+        handleRunaway(overWorld);
     }
     else{
-        curAction = AbstractEnemy::EnemyActions::RUNAWAY;
-    }
-    
-    
-    // FSM handle update and actions
-    if (curAction == EnemyActions::SPAWN){
-        handleSpawn();
-    }
-    else if (curAction == EnemyActions::WANDER){
-        handleWander(dt);
-    }
-    else if(curAction == EnemyActions::CHASE){
-        handleChase(overWorld);
-    }
-    else if(curAction == EnemyActions::LOWHEALTH){
-        handleLowHealth(overWorld);
-    }
-    else if(curAction == EnemyActions::ATTACK){
+        curAction = AbstractEnemy::EnemyActions::ATTACK;
         handleAttack(overWorld);
     }
 }
 
 
-void StaticMeleeEnemy::handleChase(OverWorld& overWorld){
+void StaticMeleeEnemy::handleChase(OverWorld& overWorld){}
+void StaticMeleeEnemy::handleLowHealth(OverWorld& overWorld){}
+void StaticMeleeEnemy::handleAttack(OverWorld& overWorld){
     cugl::Vec2 dog_pos = overWorld.getDog()->getPosition();
-    cugl::Vec2 org_dist = dog_pos - original_pos;
-    float distance = org_dist.length();
     cugl::Vec2 direction;
     direction = dog_pos - getPosition();
     if (overWorld._isHost && _counter >= updateRate){
         _counter = 0;
-        setVX(direction.normalize().x);
-        setVY(direction.normalize().y);
         _prevDirection =_curDirection;
         _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
         movementDirection = direction;
     }
+    setVX(direction.normalize().x * 1.5);
+    setVY(direction.normalize().y * 1.5);
+    setX(getX());
+    setY(getY());
 }
-void StaticMeleeEnemy::handleLowHealth(OverWorld& overWorld){}
-void StaticMeleeEnemy::handleAttack(OverWorld& overWorld){}
 void StaticMeleeEnemy::handleStay(OverWorld& overWorld){}
 void StaticMeleeEnemy::handleRunaway(OverWorld& overWorld){
-    cugl::Vec2 dog_pos = overWorld.getDog()->getPosition();
-    cugl::Vec2 org_dist = dog_pos - original_pos;
-    float distance = org_dist.length();
-    cugl::Vec2 direction;
-    direction = original_pos - getPosition();
+    cugl::Vec2 org_dist = original_pos - getPosition();
     if (overWorld._isHost && _counter >= updateRate){
         _counter = 0;
-        if (direction.lengthSquared() >= 1){
-            setVX(direction.normalize().x);
-            setVY(direction.normalize().y);
-        }else{
-            setVX(0);
-            setVY(0);
-        }
         _prevDirection =_curDirection;
-        _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
-        movementDirection = direction;
+        _curDirection = AnimationSceneNode::convertRadiansToDirections(org_dist.getAngle());
+        movementDirection = org_dist;
     }
+    if (org_dist.lengthSquared() >= 1){
+        setVX(org_dist.normalize().x * 1.5);
+        setVY(org_dist.normalize().y * 1.5);
+    }else{
+        setVX(0);
+        setVY(0);
+    }
+    setX(getX());
+    setY(getY());
 }

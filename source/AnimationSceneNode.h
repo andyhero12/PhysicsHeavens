@@ -22,14 +22,14 @@ public:
      * From top to bottom correponds to index 0 to 7
      */
     enum class Directions : int {
-        EAST,
-        SOUTHEAST,
-        SOUTH,
-        SOUTHWEST,
-        WEST,
-        NORTHWEST,
-        NORTH,
-        NORTHEAST
+        EAST = 0 ,
+        SOUTHEAST= 1,
+        SOUTH = 2,
+        SOUTHWEST = 3,
+        WEST = 4,
+        NORTHWEST = 5,
+        NORTH = 6,
+        NORTHEAST = 7
     };
 #pragma mark -
 #pragma mark Helper Functions

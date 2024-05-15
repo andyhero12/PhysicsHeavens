@@ -385,14 +385,15 @@ bool OverWorld::initDogModel()
 
 bool OverWorld::initBases()
 {
+    _bases = std::make_shared<BaseSet>();
+    _bases->init(_level->getBasesPos(), _assets);
+    
     std::shared_ptr<scene2::SceneNode> _uinode = scene2::SceneNode::alloc();
     _uinode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     
-    std::shared_ptr<GateUIController> _uiController = std::make_shared<GateUIController>();
-    _uiController->init(_uinode, _assets, _activeSize);
+    _gateUIController = std::make_shared<GateUIController>();
+    _gateUIController->init(_uinode, _assets, _activeSize, _bases);
     
-    _bases = std::make_shared<BaseSet>();
-    _bases->init(_level->getBasesPos(), _assets, _uiController);
     return true;
 }
 
@@ -400,6 +401,7 @@ bool OverWorld::initDecoys()
 {
     _decoys = std::make_shared<DecoySet>();
     _decoys->init();
+    _decoys->setAsset(_assets);
     _decoys->setTexture(_assets->get<cugl::Texture>("base"));
     _decoys->setExplodeTexture(_assets->get<cugl::Texture>("explodingGate"));
     return true;
@@ -426,8 +428,9 @@ bool OverWorld::initWorld()
     return true;
 }
 
-bool OverWorld::init(const std::shared_ptr<cugl::AssetManager> &assets, const std::shared_ptr<LevelModel> &level, cugl::Size activeSize, std::shared_ptr<cugl::physics2::net::NetEventController> network, bool isHost, std::shared_ptr<World> world)
+bool OverWorld::init(const std::shared_ptr<cugl::AssetManager> &assets, const std::shared_ptr<LevelModel> &level, cugl::Size activeSize, std::shared_ptr<cugl::physics2::net::NetEventController> network, bool isHost, std::shared_ptr<World> world, std::shared_ptr<AudioController> audioController)
 {
+    _audioController = audioController;
     _assets = assets;
     _level = level;
     _network = network;
@@ -436,6 +439,8 @@ bool OverWorld::init(const std::shared_ptr<cugl::AssetManager> &assets, const st
     _constants = assets->get<cugl::JsonValue>("constants");
     _world = world;
 
+    dogSeq = 0;
+    
     initWorld();
     initDogModel();
     initBases();
@@ -492,23 +497,44 @@ void OverWorld::processDashEvent(const std::shared_ptr<DashEvent> &dashEvent)
     {
         _dogClient->startDash();
     }
+    if (incomingHost == _isHost){
+        playSound("dogDash" + std::to_string(dogSeq), DOG_DASH);
+    }
+}
+void OverWorld::processDecoyEvent(const std::shared_ptr<DecoyEvent>& decoyEvent){
+    getDecoys()->addNewDecoy(Vec2(decoyEvent->getPos().x, decoyEvent->getPos().y));
+    playSound("dogGate"+ std::to_string(dogSeq), DUMMY_GATE_PLACEMENT);
+
 }
 void OverWorld::processClientHealthEvent(const std::shared_ptr<ClientHealthEvent>& clientHealthEvent){
     bool incomingHost = clientHealthEvent->isHostDog();
+    int health = 0;
     if (incomingHost){
-        _dog->setHealth(_dog->getHealth() - clientHealthEvent->getHealthLost());
+        health = _dog->getHealth() - clientHealthEvent->getHealthLost();
+        _dog->setHealth(health);
     }else{
-        _dogClient->setHealth(_dogClient->getHealth() - clientHealthEvent->getHealthLost());
+        health = _dogClient->getHealth() - clientHealthEvent->getHealthLost();
+        _dogClient->setHealth(health);
+    }
+    if(health <= 0){
+        playSound("death" + std::to_string(dogSeq), DOG_DIE);
+    }
+    else{
+        playSound("heal" + std::to_string(dogSeq), DOG_DAMAGE);
     }
 }
 void OverWorld::processSizeEvent(const std::shared_ptr<SizeEvent> &sizeEvent)
 {
     bool incomingHost = sizeEvent->isHost();
+    bool maxSize = false;
     if (incomingHost)
     { // means incoming is from Original host
-        _dog->addAbsorb(sizeEvent->getSize());
+        maxSize = _dog->addAbsorb(sizeEvent->getSize());
     }else{
-        _dogClient->addAbsorb(sizeEvent->getSize());
+        maxSize = _dogClient->addAbsorb(sizeEvent->getSize());
+    }
+    if (incomingHost == _isHost && maxSize){
+        playSound("death" + std::to_string(dogSeq), SIZE_BAR_MAX);
     }
 }
 void OverWorld::processBiteEvent(const std::shared_ptr<BiteEvent> &biteEvent)
@@ -517,15 +543,40 @@ void OverWorld::processBiteEvent(const std::shared_ptr<BiteEvent> &biteEvent)
     float ang = biteEvent->getAng();
     bool incomingHost = biteEvent->isHost();
     float scale = biteEvent->getScale();
+    std::string sound;
+    std::shared_ptr<Dog> playerDog;
+  
     if (incomingHost)
     {
+        playerDog = _dog;
         _attackPolygonSet.addBite(center, ang, _dog->getBiteRadius(), scale);
-        _dog->startBite();
+
     }
     else
     {
+        playerDog = _dogClient;
         _clientAttackPolygonSet.addBite(center, ang, _dogClient->getBiteRadius(), scale);
-        _dogClient->startBite();
+    }
+    
+    
+    playerDog->startBite();
+    
+    if (incomingHost == _isHost){
+        switch (playerDog->getSize()) {
+            case Dog::DogSize::SMALL:
+                sound = DOG_BITE_SMALL;
+                break;
+            case Dog::DogSize::MEDIUM:
+                sound = DOG_BITE_MEDIUM;
+                break;
+            case Dog::DogSize::LARGE:
+                sound = DOG_BITE_LARGE;
+                break;
+            default:
+                CUAssert(false);
+                break;
+        }
+        playSound("dogBite"+ std::to_string(dogSeq), sound);
     }
 }
 void OverWorld::processRecallEvent(const std::shared_ptr<RecallEvent>& recallEvent){
@@ -535,19 +586,24 @@ void OverWorld::processRecallEvent(const std::shared_ptr<RecallEvent>& recallEve
     }else{
         _dogClient->startRecall();
     }
+    
+    if (incomingHost == _isHost){
+        playSound("dogTeleport"+ std::to_string(dogSeq), DOG_TELEPORT);
+    }
 }
 
 void OverWorld::processShootEvent(const std::shared_ptr<ShootEvent> &shootEvent)
 {
     Vec2 center = shootEvent->getPos();
     float ang = shootEvent->getAng();
+    float scale = shootEvent->getScale();
     bool incomingHost = shootEvent->isHost();
     if (incomingHost)
     {
         if (incomingHost != _isHost){
             _dog->subAbsorb(SHOOT_COST);
         }
-        _attackPolygonSet.addShoot(center, ang, _dog->getShootRadius());
+        _attackPolygonSet.addShoot(center, ang, scale, _dog->getShootRadius());
         _dog->startShoot();
     }
     else
@@ -555,20 +611,24 @@ void OverWorld::processShootEvent(const std::shared_ptr<ShootEvent> &shootEvent)
         if (incomingHost != _isHost){
             _dogClient->subAbsorb(SHOOT_COST);
         }
-        _clientAttackPolygonSet.addShoot(center, ang, _dog->getShootRadius());
+        _clientAttackPolygonSet.addShoot(center, ang, scale, _dog->getShootRadius());
         _dogClient->startShoot();
+    }
+    if (incomingHost == _isHost){
+        playSound("dogBark"+ std::to_string(dogSeq), DOG_BARK);
     }
 }
 void OverWorld::processExplodeEvent(const std::shared_ptr<ExplodeEvent> &explodeEvent)
 {
     Vec2 center = explodeEvent->getPos();
+    float scale = explodeEvent->getScale();
     bool incomingHost = explodeEvent->isHost();
     if (incomingHost)
     {
         if (incomingHost != _isHost){
             _dog->subAbsorb(BOMB_COST);
         }
-        _attackPolygonSet.addExplode(center, _dog->getExplosionRadius());
+        _attackPolygonSet.addExplode(center, scale, _dog->getExplosionRadius());
         _dog->startShoot();
     }
     else
@@ -576,8 +636,11 @@ void OverWorld::processExplodeEvent(const std::shared_ptr<ExplodeEvent> &explode
         if (incomingHost != _isHost){
             _dogClient->subAbsorb(BOMB_COST);
         }
-        _clientAttackPolygonSet.addExplode(center, _dog->getExplosionRadius());
+        _clientAttackPolygonSet.addExplode(center, scale, _dog->getExplosionRadius());
         _dogClient->startShoot();
+    }
+    if (incomingHost == _isHost){
+        playSound("dogBomb"+ std::to_string(dogSeq), DOG_BOMB);
     }
 }
 
@@ -623,7 +686,8 @@ void OverWorld::ownedDogUpdate(InputController& _input, cugl::Size, std::shared_
         if (_curDog->getMode() == "SHOOT" && _curDog->getAbsorb() >= 5)
         {
             _curDog->subAbsorb(SHOOT_COST);
-            _network->pushOutEvent(ShootEvent::allocShootEvent(_curDog->getShootCenter(), _curDog->getDirInDegrees(), _isHost));
+            float scale = float(_curDog->getAbsorb())/ (float) _curDog->getMaxAbsorb()/2;
+            _network->pushOutEvent(ShootEvent::allocShootEvent(_curDog->getShootCenter(), _curDog->getDirInDegrees(), scale, _isHost));
         }
         else if (_curDog->getMode() == "BAIT" && _curDog->getAbsorb() >= 5)
         {
@@ -633,7 +697,8 @@ void OverWorld::ownedDogUpdate(InputController& _input, cugl::Size, std::shared_
         else if (_curDog->getMode() == "BOMB" && _curDog->getAbsorb() >= 5)
         {
             _curDog->subAbsorb(BOMB_COST);
-            _network->pushOutEvent(ExplodeEvent::allocExplodeEvent(_curDog->getPosition(), _isHost));
+            float scale = float(_curDog->getAbsorb())/ (float) _curDog->getMaxAbsorb()/2;
+            _network->pushOutEvent(ExplodeEvent::allocExplodeEvent(_curDog->getPosition(),scale,  _isHost));
         }else if (_curDog->getMode() == "RECALL"){
             _network->pushOutEvent(RecallEvent::allocRecallEvent(_curDog->getPosition(),_isHost));
         }else {
@@ -643,16 +708,20 @@ void OverWorld::ownedDogUpdate(InputController& _input, cugl::Size, std::shared_
 }
 void OverWorld::dogUpdate(InputController &_input, cugl::Size totalSize)
 {
+    std::shared_ptr<Dog> playerDog;
+    std::shared_ptr<Dog> otherDog;
     if (_isHost)
     {
-        _dogClient->updateClientAnimations();
-        ownedDogUpdate(_input, totalSize, _dog);
+        playerDog = _dogClient;
+        otherDog = _dog;
     }
     else
     {
-        _dog->updateClientAnimations();
-        ownedDogUpdate(_input, totalSize, _dogClient);
+        playerDog = _dog;
+        otherDog = _dogClient;
     }
+    playerDog->updateClientAnimations();
+    ownedDogUpdate(_input, totalSize, otherDog);
 }
 
 void OverWorld::update(InputController &_input, cugl::Size totalSize, float timestep)
@@ -662,6 +731,7 @@ void OverWorld::update(InputController &_input, cugl::Size totalSize, float time
     _decoys->update(timestep);
     _attackPolygonSet.update();
     _clientAttackPolygonSet.update();
+    _gateUIController->updateHealthTexture();
 }
 
 void OverWorld::postUpdate()
@@ -680,4 +750,9 @@ void OverWorld::dispose(){
     _attackPolygonSet.dispose();
     _clientAttackPolygonSet.dispose();
     _world = nullptr;
+}
+
+void OverWorld::playSound(std::string key, std::string sound){
+    dogSeq += 1;
+    _audioController->playSFX(key, sound);
 }
