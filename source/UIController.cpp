@@ -97,7 +97,7 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
 //    _toggleFlash->setPosition(togglex, toggley);
     _readyAbility->setPosition(togglex, toggley);
     
-    _lowHealth->setVisible(true);
+    _lowHealth->setVisible(false);
     _shoottoggle->setVisible(true);
     _bombtoggle->setVisible(false);
     _baittoggle->setVisible(false);

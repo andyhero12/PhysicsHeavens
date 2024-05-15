@@ -352,7 +352,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _uinode->addChild(loseNode);
     _uinode->addChild(winNode);
     _uinode->addChild(repeatWinNode);
-    _uinode->addChild(_pause);
     loseNode->setVisible(false);
     winNode->setVisible(false);
     repeatWinNode->setVisible(false);
@@ -365,7 +364,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     else if(level_string == LEVEL_THREE_KEY){
         initTutorialThree();
     }
-    
+    _uinode->addChild(_pause);
     return true;
 }
 void GameScene::resetDraw()
@@ -548,6 +547,9 @@ void GameScene::preUpdate(float dt)
         _rootnode->setScale(_zoom);
     }
 
+    if (tutorialIndex < tutorialTiles.size()){
+        return;
+    }
     overWorld.update(_input, computeActiveSize(), dt);
     _spawnerController.update(_monsterController, overWorld, dt);
     _monsterController.update(dt, overWorld);
@@ -1094,6 +1096,8 @@ void GameScene::initTutorialOne(){
     std::vector<std::string> modes = {"RECALL", "SHOOT"};
     overWorld.getDog()->setAbility(modes);
     overWorld.getDog()->toggleMode();
+    overWorld.getClientDog()->setAbility(modes);
+    overWorld.getClientDog()->toggleMode();
     // each one need to write # of frames
     std::vector<int> frame = {21, 21, 21, 21, 21, 21, 21, 21, 21,21};
     overWorld.getDog()->addAbsorb(6);
@@ -1111,6 +1115,8 @@ void GameScene::initTutorialTwo(){
     std::vector<std::string> modes = {"SHOOT", "BAIT", "RECALL"};
     overWorld.getDog()->setAbility(modes);
     overWorld.getDog()->toggleMode();
+    overWorld.getClientDog()->setAbility(modes);
+    overWorld.getClientDog()->toggleMode();
     overWorld.getDog()->addAbsorb(6);
     initTutorial(frame);
 }
@@ -1125,6 +1131,8 @@ void GameScene::initTutorialThree(){
     std::vector<std::string> modes = {"BAIT", "BOMB", "RECALL", "SHOOT"};
     overWorld.getDog()->setAbility(modes);
     overWorld.getDog()->toggleMode();
+    overWorld.getClientDog()->setAbility(modes);
+    overWorld.getClientDog()->toggleMode();
     overWorld.getDog()->addAbsorb(10);
     initTutorial(frame);
 }
@@ -1156,15 +1164,31 @@ void GameScene::initTutorial(std::vector<int>& frame)
             if (mode == Tutorial::MODE::RECALLGIVE){
                 init = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("recallInit"), 3, 5,  14,  2);
                 repeat = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("recallRepeat"), 4, 5, 16,  5);
+                init->setScale(3* SCENE_HEIGHT/init->getTexture()->getHeight());
+                init->setPosition(0.5 * init->getSize());
+                repeat->setScale(4*SCENE_HEIGHT/repeat->getTexture()->getHeight());
+                repeat->setPosition(0.5 * repeat->getSize());
             }else if (mode == Tutorial::MODE::BARKGIVE){
                 init = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("barkInit"), 3, 5,  14,  2);
                 repeat = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("barkRepeat"), 1, 2, 2,  5);
+                init->setScale(3* SCENE_HEIGHT/init->getTexture()->getHeight());
+                init->setPosition(0.5 * init->getSize());
+                repeat->setScale(SCENE_HEIGHT/repeat->getTexture()->getHeight());
+                repeat->setPosition(0.5 * repeat->getSize());
             }else if (mode == Tutorial::MODE::BAITGIVE){
                 init = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("baitInit"), 3, 5,  14,  2);
                 repeat = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("baitRepeat"), 2, 5, 9,  5);
+                init->setScale(3* SCENE_HEIGHT/init->getTexture()->getHeight());
+                init->setPosition(0.5 * init->getSize());
+                repeat->setScale(2*SCENE_HEIGHT/repeat->getTexture()->getHeight());
+                repeat->setPosition(0.5 * repeat->getSize());
             }else if (mode == Tutorial::MODE::BOMBGIVE){
                 init = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("bombInit"), 3, 5,  14,  2);
                 repeat = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("bombRepeat"), 4, 5, 18,  5);
+                init->setScale(3* SCENE_HEIGHT/init->getTexture()->getHeight());
+                init->setPosition(0.5 * init->getSize());
+                repeat->setScale(4*SCENE_HEIGHT/repeat->getTexture()->getHeight());
+                repeat->setPosition(0.5 * repeat->getSize());
             }
             
             
@@ -1172,21 +1196,13 @@ void GameScene::initTutorial(std::vector<int>& frame)
             tutorialTiles.at(i)->setSpriteRepeat(repeat);
             tutorialTiles.at(i)->setPressButton(pressA);
             
+            pressA->setAnchor(Vec2::ANCHOR_CENTER);
+            pressA->setScale(6);
+            pressA->setPosition(screen/2 - Size(0, screen.height/4));
+            
             _tutorialnode->addChild(init);
             _tutorialnode->addChild(repeat);
             _tutorialnode->addChild(pressA);
-            
-            init->setAnchor(Vec2::ANCHOR_CENTER);
-            repeat->setAnchor(Vec2::ANCHOR_CENTER);
-            pressA->setAnchor(Vec2::ANCHOR_CENTER);
-            
-            init->setScale(1.5);
-            repeat->setScale(1.5);
-            pressA->setScale(6);
-            
-            init->setPosition(screen/2);
-            repeat->setPosition(screen/2);
-            pressA->setPosition(screen/2  - Size(0, init->getHeight()));
             
             init->setVisible(false);
             repeat->setVisible(false);
