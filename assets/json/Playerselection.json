@@ -1,7 +1,9 @@
 {
   "textures": {
-    "play_background": {
-      "file": "textures/play_background.png"
+    "backgroundslection":{
+      "file" : "textures/Menu/title-screen.png",
+      "minfilter": "linear",
+      "magfilter": "nearest"
     },
     "play_menu": {
       "file": "textures/play_menu.png"
@@ -16,7 +18,7 @@
   "fonts": {},
   "widgets": {},
   "scene2s": {
-    "lab": {
+    "Playerselection": {
         "type": "Node",
         "format": {
             "type": "Anchored"
@@ -38,33 +40,6 @@
             "visible": true
         },
         "children": {
-            "play_background": {
-                "type": "Image",
-                "data": {
-                    "texture": "play_background",
-                    "anchor": [
-                        0,
-                        1
-                    ],
-                    "size": [
-                        1293,
-                        720
-                    ],
-                    "angle": 0,
-                    "position": [
-                        0,
-                        0
-                    ],
-                    "visible": true
-                },
-                "layout": {
-                    "x_anchor": "left",
-                    "y_anchor": "top",
-                    "absolute": false,
-                    "x_offset": 0,
-                    "y_offset": 0
-                }
-            },
             "play_menu": {
                 "type": "Image",
                 "data": {
