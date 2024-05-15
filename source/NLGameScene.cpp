@@ -547,10 +547,10 @@ void GameScene::preUpdate(float dt)
         _rootnode->setScale(_zoom);
     }
 
+    overWorld.update(_input, computeActiveSize(), dt);
     if (tutorialIndex < tutorialTiles.size()){
         return;
     }
-    overWorld.update(_input, computeActiveSize(), dt);
     _spawnerController.update(_monsterController, overWorld, dt);
     _monsterController.update(dt, overWorld);
     if (!_isHost){
