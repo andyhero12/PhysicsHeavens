@@ -1,7 +1,7 @@
 {
 	"textures": {
-        "Background":{
-            "file":      "textures/level_selectsto5.png",
+        "LongBackground":{
+            "file":      "textures/15_levels.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
