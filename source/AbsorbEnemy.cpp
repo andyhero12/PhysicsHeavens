@@ -111,6 +111,7 @@ bool AbsorbEnemy::init(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_
         std::string name("Absorb Enemy");
         setName(name);
         _contactDamage = CONTACT_DAMAGE;
+        goalSpeed = 0.8f;
         return true;
     }
     return false;
