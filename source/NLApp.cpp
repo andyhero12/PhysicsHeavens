@@ -247,8 +247,8 @@ void NetApp::updateMenuScene(float timestep)
     if (_menu.getBackclick())
     {
         _menu.setActive(false);
-        _mainmenu.setActive(true);
-        _status = MAINMENU;
+        _selection.setActive(true);
+        _status = SELECTION;
     }
     else
     {

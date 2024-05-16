@@ -119,7 +119,7 @@ void RebindScene::update(float progress)
     }
 
     if(_input.didPressBack()){
-//        _backClicked = true;
+        _backClicked = true;
     }
 
     if (firsttime)
