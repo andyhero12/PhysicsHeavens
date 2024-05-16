@@ -242,6 +242,8 @@ void SettingScene::setActive(bool value)
             _button->setDown(false);
             _slider1->deactivate();
             _slider2->deactivate();
+            _slider1->setVisible(false);
+            _slider2->setVisible(false);
             firsttime = true;
             _backClicked = false;
             level = 1;

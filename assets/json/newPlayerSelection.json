@@ -124,7 +124,7 @@
                                         1
                                     ],
                                     "size": [
-                                        362,
+                                        488,
                                         145
                                     ],
                                     "angle": 0,
@@ -185,7 +185,7 @@
                                         1
                                     ],
                                     "size": [
-                                        362,
+                                        488,
                                         145
                                     ],
                                     "angle": 0,
@@ -219,7 +219,7 @@
                     "x_anchor": "left",
                     "y_anchor": "top",
                     "absolute": false,
-                    "x_offset": 0.36,
+                    "x_offset": 0.32,
                     "y_offset": -0.3
                 }
             }

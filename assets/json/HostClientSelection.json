@@ -5,20 +5,20 @@
       "minfilter": "linear",
       "magfilter": "nearest"
     },
-    "_menu": {
-      "file": "textures/play_menu.png"
+    "menu_HostClient": {
+      "file": "textures/menu_host_join.png"
     },
     "Host": {
-      "file": "textures/play_1.png"
+      "file": "textures/host_game.png"
     },
     "Client": {
-      "file": "textures/play_2.png"
+      "file": "textures/join_game.png"
     }
   },
   "fonts": {},
   "widgets": {},
   "scene2s": {
-    "Playerselection": {
+    "HostClient": {
         "type": "Node",
         "format": {
             "type": "Anchored"
@@ -40,10 +40,10 @@
             "visible": true
         },
         "children": {
-            "play_menu": {
+            "HostClient_menu": {
                 "type": "Image",
                 "data": {
-                    "texture": "play_menu",
+                    "texture": "menu_HostClient",
                     "anchor": [
                         0.5,
                         1
@@ -67,7 +67,7 @@
                     "y_offset": -0.19
                 }
             },
-            "play_menu_buttons": {
+            "HostClient_buttons": {
                 "type": "Node",
                 "format": {
                     "type": "Float",
@@ -92,7 +92,7 @@
                     "visible": true
                 },
                 "children": {
-                    "button1": {
+                    "buttonhost": {
                         "type": "Button",
                         "format": {
                             "type": "Anchored"
@@ -112,20 +112,20 @@
                                 72.5
                             ],
                             "visible": true,
-                            "upnode": "play_1"
+                            "upnode": "Host"
                         },
                         "children": {
                             "play_1": {
                                 "type": "Image",
                                 "data": {
-                                    "texture": "play_1",
+                                    "texture": "Host",
                                     "anchor": [
                                         0,
                                         1
                                     ],
                                     "size": [
-                                        362,
-                                        145
+                                        409,
+                                        122
                                     ],
                                     "angle": 0,
                                     "position": [
@@ -153,7 +153,7 @@
                             ]
                         }
                     },
-                    "button2": {
+                    "buttonjoin": {
                         "type": "Button",
                         "format": {
                             "type": "Anchored"
@@ -173,20 +173,20 @@
                                 217.5
                             ],
                             "visible": true,
-                            "upnode": "play_2"
+                            "upnode": "Client"
                         },
                         "children": {
                             "play_2": {
                                 "type": "Image",
                                 "data": {
-                                    "texture": "play_2",
+                                    "texture": "Client",
                                     "anchor": [
                                         0,
                                         1
                                     ],
                                     "size": [
-                                        362,
-                                        145
+                                        409,
+                                        122
                                     ],
                                     "angle": 0,
                                     "position": [
