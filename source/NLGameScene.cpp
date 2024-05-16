@@ -320,8 +320,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     winNode = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("win_screen"), 1, 11, 11, 4);
     winNode->setScale(SCENE_HEIGHT/winNode->getTexture()->getHeight());
     winNode->setPosition(0.5 * winNode->getSize());
-    repeatWinNode = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("repeat_win"), 1, 7, 7, 8);
-    repeatWinNode->setScale(SCENE_HEIGHT/repeatWinNode->getTexture()->getHeight());
+    repeatWinNode = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("repeat_win"), 2, 5, 8, 8);
+    repeatWinNode->setScale(2* SCENE_HEIGHT/repeatWinNode->getTexture()->getHeight());
     repeatWinNode->setPosition(0.5 * repeatWinNode->getSize());
     _pause = std::make_shared<PauseScene>();
     _pause->init(_assets, computeActiveSize());
@@ -548,10 +548,10 @@ void GameScene::preUpdate(float dt)
         _rootnode->setScale(_zoom);
     }
 
+    overWorld.update(_input, computeActiveSize(), dt);
     if (tutorialIndex < tutorialTiles.size()){
         return;
     }
-    overWorld.update(_input, computeActiveSize(), dt);
     _spawnerController.update(_monsterController, overWorld, dt);
     _monsterController.update(dt, overWorld);
     if (!_isHost){
@@ -1029,6 +1029,8 @@ void GameScene::updateInputController()
             }else{
                 spriteNode->setVisible(true);
                 spriteNode->update();
+                pressA->setVisible(true);
+                pressA->update();
             }
             
 //            message->setVisible(true);
@@ -1051,6 +1053,7 @@ void GameScene::updateInputController()
         {
             tile->setPass(true);
             node->setVisible(false);
+            pressA->setVisible(false);
 //            message->setVisible(false);
             tutorialIndex++;
         }
@@ -1177,21 +1180,21 @@ void GameScene::initTutorial(std::vector<int>& frame)
                 repeat->setPosition(0.5 * repeat->getSize());
             }else if (mode == Tutorial::MODE::BARKGIVE){
                 init = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("barkInit"), 3, 5,  14,  2);
-                repeat = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("barkRepeat"), 1, 2, 2,  5);
+                repeat = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("barkRepeat"), 1, 2, 2,  30);
                 init->setScale(3* SCENE_HEIGHT/init->getTexture()->getHeight());
                 init->setPosition(0.5 * init->getSize());
                 repeat->setScale(SCENE_HEIGHT/repeat->getTexture()->getHeight());
                 repeat->setPosition(0.5 * repeat->getSize());
             }else if (mode == Tutorial::MODE::BAITGIVE){
                 init = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("baitInit"), 3, 5,  14,  2);
-                repeat = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("baitRepeat"), 2, 5, 9,  5);
+                repeat = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("baitRepeat"), 2, 5, 9,  6);
                 init->setScale(3* SCENE_HEIGHT/init->getTexture()->getHeight());
                 init->setPosition(0.5 * init->getSize());
                 repeat->setScale(2*SCENE_HEIGHT/repeat->getTexture()->getHeight());
                 repeat->setPosition(0.5 * repeat->getSize());
             }else if (mode == Tutorial::MODE::BOMBGIVE){
                 init = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("bombInit"), 3, 5,  14,  2);
-                repeat = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("bombRepeat"), 4, 5, 18,  5);
+                repeat = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("bombRepeat"), 4, 5, 18,  3);
                 init->setScale(3* SCENE_HEIGHT/init->getTexture()->getHeight());
                 init->setPosition(0.5 * init->getSize());
                 repeat->setScale(4*SCENE_HEIGHT/repeat->getTexture()->getHeight());
@@ -1245,6 +1248,22 @@ void GameScene::initTutorial(std::vector<int>& frame)
             message->setPositionY(node->getScaleY() * node->getTexture()->getHeight() / 2);
             message->setVisible(false);
             tutorialTiles.at(i)->setMessage(message);
+            
+            std::shared_ptr<SpriteAnimationNode> pressA;
+            if (mode == Tutorial::MODE::GREETING || mode == Tutorial::MODE::DEFENDGATE || mode == Tutorial::MODE::GROW
+                || mode == Tutorial::MODE::BITE){
+                pressA = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("pressA"), 1, 2, 2, 30);
+            }else{
+                pressA = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("pressB"), 1, 2, 2, 30);
+            }
+            tutorialTiles.at(i)->setPressButton(pressA);
+            pressA->setAnchor(Vec2::ANCHOR_CENTER);
+            pressA->setScale(6);
+//            pressA->setPosition(screen/2);
+            pressA->setPositionX(screen.width * 0.80);
+            pressA->setPositionY(node->getScaleY() * node->getTexture()->getHeight() / 4 - 30);
+            _tutorialnode->addChild(pressA);
+            pressA->setVisible(false);
         }
     }
 }

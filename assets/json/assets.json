@@ -5,6 +5,11 @@
             "minfilter": "linear",
             "magfilter": "nearest"
         },
+        "pressB": {
+            "file": "textures/press_b.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
         "bombInit": {
             "file": "textures/newAbility/bomb_init.png",
             "minfilter": "linear",

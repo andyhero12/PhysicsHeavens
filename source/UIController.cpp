@@ -27,8 +27,8 @@ bool UIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std
     _toggleFlash = SpriteAnimationNode::allocWithSheet(assets->get<Texture>("flash"), 1, 5, 5, 10);
     _readyAbility = SpriteAnimationNode::allocWithSheet(assets->get<Texture>("abilityReady"), 2, 5, 8, 10);
     
-    _lowHealth = SpriteAnimationNode::allocWithSheet(assets->get<Texture>("lowHealth"), 2, 5, 6, 8);
-    _lowHealth->setScale(2 * 800/_lowHealth->getTexture()->getHeight());
+    _lowHealth = SpriteAnimationNode::allocWithSheet(assets->get<Texture>("lowHealth"), 1, 6, 6, 8);
+    _lowHealth->setScale(800/_lowHealth->getTexture()->getHeight());
     _lowHealth->setPosition(0.5 * _lowHealth->getSize());
     
     // set the scale
