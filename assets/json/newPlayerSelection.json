@@ -13,6 +13,9 @@
     },
     "play_2": {
       "file": "textures/play_2.png"
+    },
+    "Header": {
+      "file": "textures/ModeHeader.png"
     }
   },
   "fonts": {},
@@ -65,6 +68,33 @@
                     "absolute": false,
                     "x_offset": 0.01,
                     "y_offset": -0.19
+                }
+            },
+            "Header": {
+                "type": "Image",
+                "data": {
+                    "texture": "Header",
+                    "anchor": [
+                        0.5,
+                        1
+                    ],
+                    "size": [
+                        390,
+                        220
+                    ],
+                    "angle": 0,
+                    "position": [
+                        352,
+                        137
+                    ],
+                    "visible": true
+                },
+                "layout": {
+                    "x_anchor": "center",
+                    "y_anchor": "top",
+                    "absolute": false,
+                    "x_offset": 0.01,
+                    "y_offset": -0.01
                 }
             },
             "play_menu_buttons": {

@@ -13,6 +13,9 @@
     },
     "Client": {
       "file": "textures/join_game.png"
+    },
+    "Header1": {
+      "file": "textures/ModeHeader.png"
     }
   },
   "fonts": {},
@@ -65,6 +68,33 @@
                     "absolute": false,
                     "x_offset": 0.01,
                     "y_offset": -0.19
+                }
+            },
+            "Header1": {
+                "type": "Image",
+                "data": {
+                    "texture": "Header1",
+                    "anchor": [
+                        0.5,
+                        1
+                    ],
+                    "size": [
+                        390,
+                        220
+                    ],
+                    "angle": 0,
+                    "position": [
+                        352,
+                        137
+                    ],
+                    "visible": true
+                },
+                "layout": {
+                    "x_anchor": "center",
+                    "y_anchor": "top",
+                    "absolute": false,
+                    "x_offset": 0.01,
+                    "y_offset": -0.01
                 }
             },
             "HostClient_buttons": {
