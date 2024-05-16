@@ -71,6 +71,36 @@ bool SinglePlayerLevelScene::init(const std::shared_ptr<AssetManager> &assets, s
                 _level = Level::L5;
                 CULog("Current Level: L4");
                 break;
+            case 6:
+                _level = Level::L6;
+                break;
+            case 7:
+                _level = Level::L7;
+                break;
+            case 8:
+                _level = Level::L8;
+                break;
+            case 9:
+                _level = Level::L9;
+                break;
+            case 10:
+                _level = Level::L10;
+                break;
+            case 11:
+                _level = Level::L11;
+                break;
+            case 12:
+                _level = Level::L12;
+                break;
+            case 13:
+                _level = Level::L13;
+                break;
+            case 14:
+                _level = Level::L14;
+                break;
+            case 15:
+                _level = Level::L15;
+                break;
             default:
                 CULog("Unknown Level");
                 break;
@@ -83,10 +113,14 @@ bool SinglePlayerLevelScene::init(const std::shared_ptr<AssetManager> &assets, s
     auto json = _assets->get<JsonValue>("server");
     _config.set(json);
     
-    background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("Background"), 3,10,27);
+    auto _uinode = scene2::SceneNode::alloc();
+    background = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("BackgroundLevelSingle"), 3, 27, 81, 5);
     background->setScale(4.3);
     background->setPosition(0.5 * background->getSize());
-    addChild(background);
+    
+    addChild(_uinode);
+    _uinode->addChild(background);
+    
     layer->setColor(Color4(0, 0, 0, 1));
     Application::get()->setClearColor(Color4(192, 192, 192, 255));
     addChild(layer);
