@@ -361,6 +361,7 @@ void CollisionController::resolveBiteAttack(const std::shared_ptr<ActionPolygon>
             if(enemy->getHealth() <= 0){
                 monsterController.removeEnemy(enemy);
                 enemy->executeDeath(overWorld);
+                _network->pushOutEvent(ClientHealthEvent::allocClientHealthEvent(-1,isHostAttack));
 //                overWorld.getDog()->addAbsorb((*curA)->getAbsorbValue());
                 addedAbsorb += (*curA)->getAbsorbValue();
                 
