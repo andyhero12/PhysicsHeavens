@@ -11,7 +11,14 @@
 #include <cmath>
 
 
-
+int generateRandomInclusiveHighLowNew(int low, int high)
+{
+    // Static used for the seed to ensure it's only seeded once
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(low, high); // Range is 1 to 3, inclusive
+    return dis(gen);
+}
 SimpleSpawner::SimpleSpawner(int rate, cugl::Vec2 pos, int health, int delay, std::string s1, std::string s2, std::string s3)
 :AbstractSpawner(rate, pos, health, delay)
 {
@@ -43,13 +50,10 @@ void SimpleSpawner::update(MonsterController& monsterController, OverWorld& over
         else {
             s = spawnType3;
         }
-
-        monsterController.spawnEnemyFromString(s, getPos(), overWorld, difficulty);
-        monsterController.spawnEnemyFromString(s, getPos(), overWorld, difficulty);
-        monsterController.spawnEnemyFromString(s, getPos(), overWorld, difficulty);
-        monsterController.spawnEnemyFromString(s, getPos(), overWorld, difficulty);
-        monsterController.spawnEnemyFromString(s, getPos(), overWorld, difficulty);
-        monsterController.spawnEnemyFromString(s, getPos(), overWorld, difficulty);
+        for (int i =0 ; i< 6 ;i++){
+            Vec2 pos = getPos() + Vec2(generateRandomInclusiveHighLowNew(-30, 30) / 100.0f, generateRandomInclusiveHighLowNew(-30, 30) / 100.0f);
+            monsterController.spawnEnemyFromString(s, pos, overWorld, difficulty);
+        }
     }
 
     if(_damagedTimer > 0) {
