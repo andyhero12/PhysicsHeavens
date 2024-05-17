@@ -65,7 +65,7 @@ protected:
 
     std::shared_ptr<cugl::scene2::SpriteNode> background;
     
-    std::shared_ptr<JsonWriter> _writer;
+    std::shared_ptr<cugl::JsonWriter> _writer;
     
     // The number of the highest unlocked level
     int unlockedLevels = 1;
