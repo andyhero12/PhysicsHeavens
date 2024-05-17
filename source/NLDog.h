@@ -340,7 +340,20 @@ public:
      *
      * @return the amount of thrust that this rocket has.
      */
-    float getThrust() const { return DEFAULT_THRUST; }
+    float getThrust() const { 
+        switch (_size)
+        {
+        case DogSize::SMALL:
+            return DEFAULT_THRUST; 
+        case DogSize::MEDIUM:
+            return DEFAULT_THRUST * 1.25f; 
+        case DogSize::LARGE:
+            return DEFAULT_THRUST * 1.5f; 
+        default:
+            CULog("ASSERTION FAILURE getThrust");
+            return DEFAULT_THRUST; 
+        }
+    }
     /**
      * Returns the current ship health.
      *
