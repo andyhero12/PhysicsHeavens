@@ -61,7 +61,7 @@ bool MenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _choice = Choice::NONE;
     _buttonset.push_back(_hostbutton = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("HostClient_HostClient_buttons_buttonhost")));
     _buttonset.push_back(_joinbutton = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("HostClient_HostClient_buttons_buttonjoin")));
-    //_buttonset.push_back(_back = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("menu_back")));
+
     _hostbutton->addListener([this](const std::string& name, bool down) {
         if (down) {  
             if(_input.getState()==InputController::State::CONTROLLER){
@@ -83,16 +83,6 @@ bool MenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
         }
     });
 
-    // _back->addListener([this](const std::string& name, bool down) {
-    //     if (down) {  
-    //         if(_input.getState()==InputController::State::CONTROLLER){
-    //             _isdown = Isdown::isBACK;
-    //         }
-    //         else{
-    //             _backclicked = true;
-    //         }
-    //     }
-    // });
     background = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("backgroundslection"), 1, 6, 5);
     background->setScale(SCENE_HEIGHT/background->getTexture()->getHeight());
     background->setPosition(0.5 * background->getSize());
@@ -152,7 +142,7 @@ void MenuScene::update(float timestep){
         _firstset = false;
     }
     timeSinceLastSwitch += timestep;
-    //std::cout << timeSinceLastSwitch << std::endl;
+
     if (timeSinceLastSwitch >= switchFreq) {
         if (_input._updown != 0) {
             if (_input._updown == 1 && _counter > 0) {

@@ -542,11 +542,12 @@ void InputController::readInput_joystick(int value)
 
         if (value >= static_cast<int>(Tutorial::CHANGEABILITYTWO))
         {
-            if (_gameContrl->isButtonPressed(RB))
+            if (_gameContrl->isButtonPressed(RB)||_gameContrl->isButtonPressed(LB))
             {
                 _didChangeMode = true;
                 _UseJoystick = true;
             }
+            
         }
 
         if (_gameContrl->isButtonPressed(B))
@@ -569,27 +570,6 @@ void InputController::readInput_joystick(int value)
         if (_gameContrl->isButtonPressed(Start))
         {
             _didPause = true;
-            _UseJoystick = true;
-        }
-        if (_gameContrl->isButtonPressed(up))
-        {
-            _updown = 1;
-            _UseJoystick = true;
-        }
-        if (_gameContrl->isButtonPressed(down))
-        {
-            _updown = -1;
-            _UseJoystick = true;
-        }
-
-        if (_gameContrl->isButtonPressed(cugl::GameController::Button::DPAD_LEFT))
-        {
-            _Leftright = -1;
-            _UseJoystick = true;
-        }
-        if (_gameContrl->isButtonPressed(cugl::GameController::Button::DPAD_RIGHT))
-        {
-            _Leftright = 1;
             _UseJoystick = true;
         }
 

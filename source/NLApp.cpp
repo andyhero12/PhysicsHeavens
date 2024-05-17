@@ -465,11 +465,11 @@ void NetApp::updateGameScene(float timestep)
     {
         _gameplay.dispose();
         _network->disconnect(); // Get rid of This?
-        _mainmenu.setActive(true);
+        _selection.setActive(true);
         _gameplay.setActive(false);
         _hostgame.endGame();
         _singlePlayer.endGame();
-        _status = MAINMENU;
+        _status = SELECTION;
     }
 }
 

@@ -1076,6 +1076,9 @@ void GameScene::updateInputController()
     {
         _pause->exitToMain();
     }
+
+    _pause->update(FIXED_TIMESTEP_S, _input._Leftright,_input.didPressConfirm());
+
 }
 
 void GameScene::initTutorialOne(){
