@@ -599,7 +599,7 @@ void Dog::setHealth(int value)
         _healTimer = HEALED_DURATION;
         _damagedTimer = 0;
     };
-    _health = std::max(0, value);
+    _health = std::min(std::max(0, value),_maxHealth);
     _uiController->setHealthBarTexture(float(_health) / _maxHealth);
 }
 
