@@ -80,7 +80,7 @@ public:
             setFriction(DEFAULT_FRICTION);
             setRestitution(DEFAULT_RESTITUTION);
             setFixedRotation(true);
-//            setLinearDamping(LINEAR_DAMPING);
+            setLinearDamping(LINEAR_DAMPING);
             
             curAction = EnemyActions::SPAWN;
             _health = m_health;
@@ -137,7 +137,6 @@ public:
         _knockbackTimer -= delta;
         if(_knockbackTimer < 0) {
             _knockbackTimer = 0;
-            setLinearDamping(0.0);
         }
 
         if(_damagedTimer > 0) {
@@ -230,7 +229,6 @@ public:
         direction.normalize();
         float velocity = KNOCKBACK_FORCE / getMass();
         velocity = velocity > KNOCKBACK_LIMIT ? KNOCKBACK_LIMIT : velocity;
-        setLinearDamping(LINEAR_DAMPING);
         setLinearVelocity(direction.x * velocity, direction.y * velocity);
         setHealth(getHealth() - dmg);
         _knockbackTimer = KNOCKBACK_TIME;

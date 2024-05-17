@@ -199,9 +199,8 @@ void MeleeEnemy::handleChase(OverWorld& overWorld) {
     if(_counter >= updateRate){
         found = setGoal(target_pos, overWorld.getWorld());
         _counter = 0;
-        goToGoal();
     }
-    CULog("VX %f, VY %f", getVX(), getVY());
+    goToGoal();
     movementDirection = dist;
     
 
