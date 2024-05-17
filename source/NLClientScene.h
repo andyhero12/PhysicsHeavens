@@ -42,13 +42,33 @@ protected:
     /** The players label (for updating) */
     std::shared_ptr<cugl::scene2::Label> _player;
 
+    std::shared_ptr<cugl::scene2::Button> _zero;
+    std::shared_ptr<cugl::scene2::Button> _one;
+    std::shared_ptr<cugl::scene2::Button> _two;
+    std::shared_ptr<cugl::scene2::Button> _three;
+    std::shared_ptr<cugl::scene2::Button> _four;
+    std::shared_ptr<cugl::scene2::Button> _five;
+    std::shared_ptr<cugl::scene2::Button> _six;
+    std::shared_ptr<cugl::scene2::Button> _seven;
+    std::shared_ptr<cugl::scene2::Button> _eight;
+    std::shared_ptr<cugl::scene2::Button> _nine;
+    
+    std::shared_ptr<cugl::scene2::Button> _player1;
+    std::shared_ptr<cugl::scene2::Button> _player2;
+
+    std::vector<std::vector<std::shared_ptr<cugl::scene2::Button>>> buttonGrid = {
+    {_zero, _one, _two},
+    {_three, _four, _five},
+    {_six, _seven, _eight},
+    {_nine, _startgame, nullptr}  // 'START' is central
+};
     InputController _input;
     
     /** The network configuration */
     cugl::net::NetcodeConfig _config;
     
     /** Whether the back button had been clicked. */
-    bool _backClicked = false;
+    bool _backClicked;
 
 public:
 #pragma mark -
@@ -59,7 +79,7 @@ public:
      * This constructor does not allocate any objects or start the game.
      * This allows us to use the object without a heap pointer.
      */
-    ClientScene() : cugl::Scene2() {}
+    ClientScene() : cugl::Scene2(), _backClicked(false){}
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.

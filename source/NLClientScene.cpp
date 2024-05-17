@@ -69,42 +69,54 @@ bool ClientScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::s
     
     // Start up the input handler
     _assets = assets;
+    _assets->loadDirectory("json/joinview.json");
     _network = network;
     _input.init();
     // Acquire the scene built by the asset loader and resize it the scene
-    std::shared_ptr<scene2::SceneNode> scene = _assets->get<scene2::SceneNode>("client");
+    std::shared_ptr<scene2::SceneNode> scene = _assets->get<scene2::SceneNode>("joinview");
     scene->setContentSize(dimen);
     scene->doLayout(); // Repositions the HUD
     
-    _startgame = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("client_center_start"));
-    _backout = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("client_back"));
-    _gameid = std::dynamic_pointer_cast<scene2::TextField>(_assets->get<scene2::SceneNode>("client_center_game_field_text"));
-    _player = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("client_center_players_field_text"));
-    
-    _backout->addListener([this](const std::string& name, bool down) {
-        if (down) {
-            _network->disconnect();
-            _backClicked = true;
-        }
-    });
+    _startgame = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("joinview_button_start"));
+    //_backout = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("client_back"));
+    //_gameid = std::dynamic_pointer_cast<scene2::TextField>(_assets->get<scene2::SceneNode>("client_center_game_field_text"));
+    //_player = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("client_center_players_field_text"));
+    _zero = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("joinview_button0"));
+    _one = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("joinview_button1"));
+    _two = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("joinview_button2"));
+    _three = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("joinview_button3"));
+    _four = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("joinview_button4"));
+    _five = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("joinview_button5"));
+    _six = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("joinview_button6"));
+    _seven = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("joinview_button7"));
+    _eight = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("joinview_button8"));
+    _nine = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("joinview_button9"));
+    _player1 = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("joinview_button_player1"));
+    _player2 = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("joinview_button_player2"));
+    // _backout->addListener([this](const std::string& name, bool down) {
+    //     if (down) {
+    //         _network->disconnect();
+    //         _backClicked = true;
+    //     }
+    // });
 
     _startgame->addListener([=](const std::string& name, bool down) {
         if (down) {
             // This will call the _gameid listener
-            _gameid->releaseFocus();
+            //_gameid->releaseFocus();
         }
     });
 
 
 
-    _gameid->addExitListener([this](const std::string& name, const std::string& value) {
-    /**
-     * TODO: Call the network controller to connect as a client (Remember to convert the string from decimal to hex)
-     */
-#pragma mark BEGIN SOLUTION
-        _network->connectAsClient(dec2hex(value));
-#pragma mark END SOLUTION
-    });
+//     _gameid->addExitListener([this](const std::string& name, const std::string& value) {
+//     /**
+//      * TODO: Call the network controller to connect as a client (Remember to convert the string from decimal to hex)
+//      */
+// #pragma mark BEGIN SOLUTION
+//         _network->connectAsClient(dec2hex(value));
+// #pragma mark END SOLUTION
+//     });
 
     
     // Create the server configuration
@@ -144,20 +156,20 @@ void ClientScene::setActive(bool value) {
          */
 #pragma mark BEGIN SOLUTION
         if (value) {
-            _gameid->activate();
-            _backout->activate();
-            _player->setText("1");
+            //_gameid->activate();
+            //_backout->activate();
+            //_player->setText("1");
             configureStartButton();
             _backClicked = false;
             // Don't reset the room id
         } else {
-            _gameid->deactivate();
+            //_gameid->deactivate();
             _startgame->deactivate();
-            _backout->deactivate();
+            //_backout->deactivate();
             //_network = nullptr;
             // If any were pressed, reset them
             _startgame->setDown(false);
-            _backout->setDown(false);
+            //_backout->setDown(false);
             
         }
 #pragma mark END SOLUTION
@@ -199,7 +211,7 @@ void ClientScene::update(float timestep) {
     }
 
     if(_input.didPressBack()){
-        _backout->setDown(true);
+        //_backout->setDown(true);
     }
 
 }
@@ -214,16 +226,16 @@ void ClientScene::configureStartButton() {
     if (_network->getStatus() == NetEventController::Status::IDLE) {
         _startgame->setDown(false);
         _startgame->activate();
-        updateText(_startgame, "Start Game");
+        //updateText(_startgame, "Start Game");
     }
     else if (_network->getStatus() == NetEventController::Status::CONNECTING) {
         _startgame->setDown(false);
         _startgame->deactivate();
-        updateText(_startgame, "Connecting");
+        //updateText(_startgame, "Connecting");
     }
     else if (_network->getStatus() == NetEventController::Status::CONNECTED) {
         _startgame->setDown(false);
         _startgame->deactivate();
-        updateText(_startgame, "Waiting");
+        //updateText(_startgame, "Waiting");
     }
 }

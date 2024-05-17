@@ -2,7 +2,7 @@
 {
     "textures": {
       "join_background": {
-          "file": "textures/joinview/join_background.png"
+          "file": "textures/joinview/host_background.png"
       },
       "zero": {
           "file": "textures/joinview/zero.png"
@@ -47,7 +47,7 @@
     "fonts": {},
     "widgets": {},
     "scene2s": {
-      "lab": {
+      "joinview": {
           "type": "Node",
           "format": {
               "type": "Anchored"
@@ -59,7 +59,7 @@
               ],
               "size": [
                   1280,
-                  720
+                  800
               ],
               "angle": 0,
               "position": [
@@ -79,7 +79,7 @@
                       ],
                       "size": [
                           1280,
-                          730
+                          800
                       ],
                       "angle": 0,
                       "position": [
@@ -742,7 +742,7 @@
                       "y_anchor": "top",
                       "absolute": false,
                       "x_offset": 0.61,
-                      "y_offset": -0.93
+                      "y_offset": -0.88
                   }
               },
               "button_player2": {
@@ -801,7 +801,7 @@
                       "y_anchor": "top",
                       "absolute": false,
                       "x_offset": 0.58,
-                      "y_offset": -0.76
+                      "y_offset": -0.71
                   }
               },
               "button_player1": {
@@ -860,7 +860,7 @@
                       "y_anchor": "top",
                       "absolute": false,
                       "x_offset": 0.58,
-                      "y_offset": -0.85
+                      "y_offset": -0.8
                   }
               }
           }
