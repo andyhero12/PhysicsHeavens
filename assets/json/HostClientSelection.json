@@ -9,10 +9,10 @@
       "file": "textures/menu_host_join.png"
     },
     "Host": {
-      "file": "textures/host_game.png"
+      "file": "textures/hostbutton.png"
     },
     "Client": {
-      "file": "textures/join_game.png"
+      "file": "textures/joinbutton.png"
     },
     "Header1": {
       "file": "textures/ModeHeader.png"
@@ -154,8 +154,8 @@
                                         1
                                     ],
                                     "size": [
-                                        409,
-                                        122
+                                        500,
+                                        135
                                     ],
                                     "angle": 0,
                                     "position": [
@@ -215,8 +215,8 @@
                                         1
                                     ],
                                     "size": [
-                                        409,
-                                        122
+                                        500,
+                                        135
                                     ],
                                     "angle": 0,
                                     "position": [
@@ -249,7 +249,7 @@
                     "x_anchor": "left",
                     "y_anchor": "top",
                     "absolute": false,
-                    "x_offset": 0.36,
+                    "x_offset": 0.32,
                     "y_offset": -0.3
                 }
             }
