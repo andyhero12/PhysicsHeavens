@@ -51,12 +51,15 @@ bool SettingScene::init(const std::shared_ptr<AssetManager> &assets)
     _assets = assets;
     _assets->loadDirectory("json/setting.json");
     std::shared_ptr<cugl::scene2::SceneNode> layer = assets->get<scene2::SceneNode>("setting");
-    layer->setContentSize(dimen);
-    layer->doLayout(); // This rearranges the children to fit the screen
     _button = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("setting_play"));
-    // _slider = std::dynamic_pointer_cast<scene2::Slider>(assets->get<scene2::SceneNode>("setting_action"));
-    // _label  = std::dynamic_pointer_cast<scene2::Label>(assets->get<scene2::SceneNode>("setting_label"));
-    // _value  = _slider->getValue();
+    _slider1 = std::dynamic_pointer_cast<scene2::Slider>(assets->get<scene2::SceneNode>("setting_slider1"));
+    _slider1->setKnob(scene2::Button::alloc(scene2::PolygonNode::allocWithTexture(_assets->get<cugl::Texture>("knob"))));
+    _slider1->getKnob()->setScale(4);
+    _slider2 = std::dynamic_pointer_cast<scene2::Slider>(assets->get<scene2::SceneNode>("setting_slider2"));
+    _slider2->setKnob(scene2::Button::alloc(scene2::PolygonNode::allocWithTexture(_assets->get<cugl::Texture>("knob"))));
+    _slider2->getKnob()->setScale(4);
+    //   _slider2->getKnob()->setScale(4);
+    _value  = _slider1->getValue();
     _button->addListener([this](const std::string &name, bool down){
         if(down) { // Check if the button is pressed down
             switch (level) { // Use the current level stored in _level
@@ -72,7 +75,7 @@ bool SettingScene::init(const std::shared_ptr<AssetManager> &assets)
                     break;
                 case 3:
                     CULog("Current Level: L3");
-                    _buttonselection = button::b3; 
+                    _buttonselection = button::b3;
                     _button->setDown(false);
                     break;
                 case 4:
@@ -85,21 +88,28 @@ bool SettingScene::init(const std::shared_ptr<AssetManager> &assets)
             }
         }
     });
-    // _slider->addListener([this](const std::string& name, float value) {
-    //     if (value != _value) {
-    //         _value = value;
-    //         _label->setText("Slider value is "+cugl::strtool::to_string(_value,1));
-    //     }
-    // });
 
-    
-    // if (_active) {
-    //     _slider->activate();
-    // }
+    _slider1->addListener([this](const std::string& name, float value) {
+        if (value != _value) {
+            _value = value;
+        }
+    });
+
+    _slider2->addListener([this](const std::string& name, float value) {
+        if (value != _value) {
+            _value = value;
+        }
+    });
+
+    _slider1->setVisible(false);
+    _slider2->setVisible(false);
     background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("setting_background"), 1, 9);
     background->setScale(4.3);
     background->setPosition(0.5 * background->getSize());
     addChild(background);
+    
+    layer->setContentSize(dimen);
+    layer->doLayout(); // This rearranges the children to fit the screen
     layer->setColor(Color4(0, 0, 0, 1));
     Application::get()->setClearColor(Color4(192, 192, 192, 255));
     addChild(layer);
@@ -118,7 +128,8 @@ void SettingScene::dispose()
     }
     _button = nullptr;
     _assets = nullptr;
-    _slider = nullptr;
+    _slider1 = nullptr;
+    _slider2 = nullptr;
 }
 
 #pragma mark -
@@ -133,12 +144,7 @@ void SettingScene::dispose()
 void SettingScene::update(float progress)
 {
     _input.update();
-    if (firsttime)
-    {
-        _button->activate();
-        _button->setVisible(false);
-        firsttime = false;
-    }
+
     
     if (curMoveAnim <= moveCooldown){
         curMoveAnim++;
@@ -162,6 +168,36 @@ void SettingScene::update(float progress)
     updatelevelscene();
     resetgochange();
     adjustFrame(level);
+
+    if (firsttime)
+    {
+        _button->activate();
+        _slider1->activate();
+        _slider2->activate();
+        _button->setVisible(false);
+        firsttime = false;
+    }
+
+    if(background->getFrame()>=3){
+        _slider1->setVisible(true);
+        _slider2->setVisible(true);
+    }
+
+    if(_input._Leftright == -1 && readyToChangeLevel()){
+        if(level==1){
+            _slider1->setValue(_slider1->getValue()-1);
+        }else if(level==2){
+            _slider2->setValue(_slider2->getValue()-1);
+        }
+    }
+
+    if(_input._Leftright == 1 && readyToChangeLevel()){
+        if(level==1){
+            _slider1->setValue(_slider1->getValue()+1);
+        }else if(level==2){
+            _slider2->setValue(_slider2->getValue()+1);
+        }
+    }
 
     if (_input.didPressConfirm() && readyToChangeLevel()){
         _button->setDown(true);
@@ -194,16 +230,18 @@ void SettingScene::setActive(bool value)
         {
             _buttonselection = button::NONE;
             _button->activate();
-            //_slider->activate();
+            _slider1->activate();
+            _slider2->activate();
             firsttime = true;
             _backClicked = false;
         }
         else
-        {   
+        {
             background->setFrame(0);
             _button->deactivate();
             _button->setDown(false);
-            //_slider->deactivate();
+            _slider1->deactivate();
+            _slider2->deactivate();
             firsttime = true;
             _backClicked = false;
             level = 1;

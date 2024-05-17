@@ -37,7 +37,7 @@ protected:
     std::shared_ptr<cugl::AssetManager> _assets;
     
     // NO CONTROLLER (ALL IN SEPARATE THREAD)
-
+    std::shared_ptr<cugl::scene2::ScrollPane> _root;
     /** The "play" button */
     std::shared_ptr<cugl::scene2::Button>    _button;
 

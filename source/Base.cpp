@@ -13,7 +13,7 @@ Base::Base(int health, cugl::Vec2 pos, std::shared_ptr<SpriteAnimationNode> draw
 :_health{health},
 _maxHealth{health}
 ,_position{pos}
-,_healVal{5}
+,_healVal{15}
 ,_drawNode{drawNode}
 ,_damagedTimer{0}
 {

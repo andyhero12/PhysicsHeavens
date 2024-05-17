@@ -22,11 +22,13 @@
 //  Version: 2/21/21
 //
 #include "CollisionController.h"
+#include <cfloat>
+#include <algorithm>
 
 /** Impulse for giving collisions a slight bounce. */
 #define COLLISION_COEFF     0.1f
 #define DEFAULT_RADIUS_COLLIDE  0.13f
-#define BUFFER  0.1f
+#define BUFFER  0.3f
 
 using namespace cugl;
 
@@ -212,6 +214,7 @@ bool CollisionController::monsterDecoyCollision(std::shared_ptr<DecoySet> decoyS
             }
         }
     }
+    
 //    auto itDec = removedDecoys.begin();
 //    auto itMon = curEnemies.begin();
 //    float decoyRadius = 0.26f;
@@ -286,8 +289,8 @@ bool CollisionController::clientDogMonsterCollision(std::shared_ptr<Dog> curDog,
                 else {
                     collision = true;
                     enemy->resetAttack();
-                    _network->pushOutEvent(ClientHealthEvent::allocClientHealthEvent(enemy->getDamage(),false));
                 }
+                _network->pushOutEvent(ClientHealthEvent::allocClientHealthEvent(enemy->getDamage(),false));
 //                curDog->setHealth(curDog->getHealth()-enemy->getDamage());
             }else{
             }
@@ -312,14 +315,12 @@ bool CollisionController::monsterDogCollision(std::shared_ptr<Dog> curDog, Monst
                     monsterController.removeEnemy(enemy);
                     collision = true;
                     it = curEnemies.erase(it);
-                    continue;
                 }
                 else {
                     collision = true;
                     enemy->resetAttack();
-                    _network->pushOutEvent(ClientHealthEvent::allocClientHealthEvent(enemy->getDamage(),true));
                 }
-//                curDog->setHealth(curDog->getHealth()-enemy->getDamage());
+                _network->pushOutEvent(ClientHealthEvent::allocClientHealthEvent(enemy->getDamage(),true));
             }else{
             }
         }
@@ -360,6 +361,7 @@ void CollisionController::resolveBiteAttack(const std::shared_ptr<ActionPolygon>
             if(enemy->getHealth() <= 0){
                 monsterController.removeEnemy(enemy);
                 enemy->executeDeath(overWorld);
+                _network->pushOutEvent(ClientHealthEvent::allocClientHealthEvent(-1,isHostAttack));
 //                overWorld.getDog()->addAbsorb((*curA)->getAbsorbValue());
                 addedAbsorb += (*curA)->getAbsorbValue();
                 
@@ -412,7 +414,6 @@ void CollisionController::hugeBlastCollisionClient(const std::shared_ptr<ActionP
     if (!action->dealDamage())
         return;
     Poly2 blastRectangle = action->getPolygon();
-    std::unordered_set<std::shared_ptr<AbstractEnemy>>& enemies = monsterController.getEnemies();
     bool hitSomething = false;
     for (auto& spawner : spawners){
         Vec2 diff = spawner->getPos() - action->getCenter();
@@ -550,6 +551,8 @@ bool CollisionController::absorbEnemMonsterCollision(MonsterController& monsterC
         bool absorbAte = false;
         const std::shared_ptr<AbsorbEnemy>& absEnemy = *itAbs;
 //        auto curAbs = itAbs;
+        float closestDistance = FLT_MAX;
+        std::shared_ptr<AbstractEnemy> closestEnemy = nullptr;
         itAbs++;
         while(itMon != monsterEnemies.end()){
             const std::shared_ptr<AbstractEnemy>& curEnemy = *itMon;
@@ -557,20 +560,31 @@ bool CollisionController::absorbEnemMonsterCollision(MonsterController& monsterC
             itMon++;
             Vec2 norm = (absEnemy)->getPosition() - (curEnemy)->getPosition();
             float distance = norm.length();
-            float impactDistance = 3.5;
-            if (distance < impactDistance){
+            float impactDistance = 1 + fmax(curEnemy->getWidth(), curEnemy->getHeight())/2 + 
+            fmax(absEnemy->getWidth(), absEnemy->getHeight())/1.4f;
+            if (distance < impactDistance && distance < closestDistance){
                 std::shared_ptr<AbsorbEnemy> isAbsorb = std::dynamic_pointer_cast<AbsorbEnemy>(curEnemy);
                 if (isAbsorb == nullptr && absEnemy->canAttack()){
-                    collision = true;
+                    closestDistance = distance;
+                    closestEnemy = curEnemy;
                     absorbAte = true;
+                    collision = true;
+                    /*
+                    collision = true;
                     absEnemy->increaseHealth(curEnemy->getHealth());
                     // SCALE ABSORB ENEMY
                     monsterController.removeEnemy(curEnemy);
                     monsterEnemies.erase(curMon);
+                    */
                 }
             }
         }
         if (absorbAte){
+            Uint64 objNum = _network->getPhysController()->getPhysicsWorld()->getObstacleId(absEnemy);
+            monsterController.removeEnemy(closestEnemy);
+            monsterEnemies.erase(closestEnemy);
+            absEnemy->increaseHealth(closestEnemy->getHealth());
+            _network->pushOutEvent(AbsorbEvent::allocAbsorbEvent(absEnemy->getDimension().width,objNum));
             absEnemy->resetAttack();
         }
     }

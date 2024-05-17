@@ -29,7 +29,7 @@ void toLowerCase(std::string& s) {
 }
 
 bool MonsterController::init(OverWorld& overWorld,
-     std::shared_ptr<cugl::scene2::SceneNode> debugNode){
+                             std::shared_ptr<cugl::scene2::SceneNode> debugNode){
     _current.clear();
     _pending.clear();
     _absorbEnem.clear();
@@ -58,7 +58,8 @@ bool MonsterController::init(OverWorld& overWorld,
 
         for(int i = 0; i < cluster.count ; i++) {
 //         Check that the Position is a Valid Spot
-            Vec2 pos = Vec2(cx + generateRandomInclusiveHighLow(-200, 200) / 100.0f, cy + generateRandomInclusiveHighLow(-200, 200) / 100.0f);
+            Vec2 pos = Vec2(cx + generateRandomInclusiveHighLow(-100, 100) / 100.0f, cy + generateRandomInclusiveHighLow(-100, 100) / 100.0f);
+//            Vec2 pos = Vec2(cx, cy);
             spawnEnemyFromString(enemyType, pos, overWorld, power);
         }
     }
@@ -137,7 +138,7 @@ void MonsterController::update(float timestep, OverWorld& overWorld){
 }
 void MonsterController::setMeleeAnimationData(std::shared_ptr<cugl::JsonValue> data,
                            std::shared_ptr<cugl::AssetManager> _assets){
-    _staticMeleeFactory = StaticMeleeFactory::alloc(data, _assets);
+    _staticMeleeFactory = StaticMeleeFactory::alloc(data, _assets, _audioController);
     _staticMeleeFactID = _network->getPhysController()->attachFactory(_staticMeleeFactory);
     _meleeFactory = MeleeFactory::alloc(data, _assets);
     _meleeFactID = _network->getPhysController()->attachFactory(_meleeFactory);
@@ -145,18 +146,18 @@ void MonsterController::setMeleeAnimationData(std::shared_ptr<cugl::JsonValue> d
 
 void MonsterController::setSpawnerAnimationData(std::shared_ptr<cugl::JsonValue> data,
                            std::shared_ptr<cugl::AssetManager> _assets){
-    _spawnerEnemyFactory = SpawnerEnemyFactory::alloc(data, _assets);
+    _spawnerEnemyFactory = SpawnerEnemyFactory::alloc(data, _assets, _audioController);
     _spawnerEnemyFactID = _network->getPhysController()->attachFactory(_spawnerEnemyFactory);
 }
 
 void MonsterController::setBombAnimationData(std::shared_ptr<cugl::JsonValue> data,
                         std::shared_ptr<cugl::AssetManager> _assets){
-    _bombEnemyFactory = BombFactory::alloc(data, _assets);
+    _bombEnemyFactory = BombFactory::alloc(data, _assets, _audioController);
     _bombEnemyFactID = _network->getPhysController()->attachFactory(_bombEnemyFactory);
 }
 void MonsterController::setAbsorbAnimationData(std::shared_ptr<cugl::JsonValue> data,
                         std::shared_ptr<cugl::AssetManager> _assets){
-    _absorbEnemyFactory = AbsorbFactory::alloc(data, _assets);
+    _absorbEnemyFactory = AbsorbFactory::alloc(data, _assets, _audioController);
     _absorbEnemyFactID = _network->getPhysController()->attachFactory(_absorbEnemyFactory);
 }
 
@@ -191,7 +192,6 @@ void MonsterController::spawnEnemyFromString(std::string enemyType, cugl::Vec2 p
 }
 
 void MonsterController::spawnAbsorbEnemy(cugl::Vec2 pos, OverWorld& overWorld, float power){
-    return;
     if (!overWorld._isHost){
         return;
     }
@@ -308,5 +308,4 @@ void MonsterController::dispose(){
     absorbAnimationData._attackTextures.clear();
     bombAnimationData._textures.clear();
     bombAnimationData._attackTextures.clear();
-    
 }

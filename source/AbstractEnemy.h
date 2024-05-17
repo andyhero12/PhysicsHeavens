@@ -10,6 +10,7 @@
 #include <cugl/cugl.h>
 #include <random>
 #include "OverWorld.h"
+#include "AudioController.h"
 #include "AnimationSceneNode.h"
 #define MAGIC_NUMBER_ENEMY_ANIMATION_FREQUENECY 4
 // Default physics values
@@ -25,14 +26,14 @@
 
 
 /** Set these to 0 to disable */
-#define CLOSE_DISTANCE 0
+#define CLOSE_DISTANCE 9
 #define STRAY_DISTANCE 1000000
 #define SAME_GOAL_DISTANCE 2
 
 #define DAMAGED_DURATION 0.5f
 
 #define KNOCKBACK_FORCE 45
-#define LINEAR_DAMPING 15.0f
+#define LINEAR_DAMPING 0.0f
 #define KNOCKBACK_TIME 0.25f
 #define KNOCKBACK_LIMIT 14
 
@@ -72,7 +73,7 @@ public:
         
         if (result){
             _counter = 0;
-            updateRate = 5;
+            updateRate = 10;
             clearSharingDirtyBits();
             setShared(true);
             setDensity(DEFAULT_DENSITY);
@@ -100,6 +101,11 @@ public:
             return true;
         }
         return false;
+    }
+
+    void setAudioController(std::shared_ptr<AudioController> m_audioController)
+    {
+        _audioController = m_audioController;
     }
 
     virtual void setVX(float value) override {
@@ -221,7 +227,8 @@ public:
     }
     void applyDamage(int dmg, Vec2 direction) {
         direction.normalize();
-        float velocity = KNOCKBACK_FORCE / getMass();
+//        float velocity = KNOCKBACK_FORCE / getMass();
+        float velocity = KNOCKBACK_FORCE / 15;
         velocity = velocity > KNOCKBACK_LIMIT ? KNOCKBACK_LIMIT : velocity;
         setLinearVelocity(direction.x * velocity, direction.y * velocity);
         setHealth(getHealth() - dmg);
@@ -238,12 +245,24 @@ public:
         const std::shared_ptr<DecoySet> decoySet = overWorld.getDecoys();
         cugl::Vec2 target_pos;
         int _targetIndex  = getTargetIndex();
-        if (_targetIndex == 0){
-            target_pos = curDog->getPosition();
-        }else if (_targetIndex <= baseSet->_bases.size()){
-            target_pos = baseSet->_bases.at(_targetIndex-1)->getPos();
+        if (overWorld.getNetwork()->getNumPlayers() == 2){
+            if (_targetIndex == 0){
+                target_pos = curDog->getPosition();
+            }else if (_targetIndex == 1){
+                target_pos = overWorld.getClientDog()->getPosition();
+            }else if (_targetIndex - 1<= baseSet->_bases.size()){
+                target_pos = baseSet->_bases.at(_targetIndex-2)->getPos();
+            }else{
+                target_pos = decoySet->getCurrentDecoys().at(_targetIndex-2-baseSet->_bases.size())->getPos();
+            }
         }else{
-            target_pos = decoySet->getCurrentDecoys().at(_targetIndex-1-baseSet->_bases.size())->getPos();
+            if (_targetIndex == 0){
+                target_pos = curDog->getPosition();
+            }else if (_targetIndex <= baseSet->_bases.size()){
+                target_pos = baseSet->_bases.at(_targetIndex-1)->getPos();
+            }else{
+                target_pos = decoySet->getCurrentDecoys().at(_targetIndex-1-baseSet->_bases.size())->getPos();
+            }
         }
         return target_pos;
     }
@@ -280,6 +299,7 @@ public:
     
     
 protected:
+    std::shared_ptr<AudioController> _audioController;
     int _maxHealth;
     int _health;
     int targetIndex;
@@ -303,6 +323,7 @@ protected:
     Vec2 movementDirection;
     /** The next step along the enemy's path */
     Vec2 _nextStep = Vec2(-1, -1);
+    float goalSpeed = 1.5f;
     
     EnemyActions curAction;
     AnimationSceneNode::Directions _prevDirection;
@@ -381,9 +402,8 @@ protected:
 //                return true;
 //            }
 //        }
-//        
+//
 //        CULogError("GOAL CHANGED! REDOING PATHFINDING");
-        
         return rawSetGoal(goal, world);
     };
 
@@ -391,15 +411,21 @@ protected:
         if(atGoal()){
             return;
         }
-        if(atTile(_nextStep)){
-            WorldSearchVertex* nextNode = _pathfinder->GetSolutionNext();
-            _nextStep.x = nextNode->x;
-            _nextStep.y = nextNode->y;
+        Vec2 goalTile = Vec2(trueGoal.x, trueGoal.y);
+        cugl::Vec2 direction;
+        if(getPosition().distanceSquared(goalTile) <= CLOSE_DISTANCE){
+            direction = goalTile - getPosition();
+        }else{
+            if(atTile(_nextStep)){
+                WorldSearchVertex* nextNode = _pathfinder->GetSolutionNext();
+                _nextStep.x = nextNode->x;
+                _nextStep.y = nextNode->y;
+            }
+            Vec2& nextTile = _nextStep;
+            direction = nextTile - getPosition();
         }
-        Vec2& nextTile = _nextStep;
-        cugl::Vec2 direction = nextTile - getPosition();
-        setVX(direction.normalize().x * 1.5);
-        setVY(direction.normalize().y * 1.5);
+        setVX(direction.normalize().x * goalSpeed);
+        setVY(direction.normalize().y * goalSpeed);
         setX(getX());
         setY(getY());
         _prevDirection =_curDirection;
@@ -543,3 +569,5 @@ protected:
 
 };
 #endif /* AbstractEnemy_h */
+
+

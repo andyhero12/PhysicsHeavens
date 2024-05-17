@@ -20,7 +20,9 @@ private:
     std::unordered_set<std::shared_ptr<AbstractSpawner>> _spawners;
     std::vector<std::shared_ptr<Base>> _bases;
     std::shared_ptr<Dog> _dog;
+    // scene graph for minimap
     std::vector<std::shared_ptr<cugl::scene2::SceneNode>> minimapObjects;
+    // scene graph for all mutable objects
     std::shared_ptr<cugl::scene2::SceneNode> mutableObj;
     cugl::Size _screenSize;
     
@@ -31,6 +33,11 @@ private:
     std::shared_ptr<cugl::Texture> spawnerTexture;
     
     std::shared_ptr<cugl::Texture> baseTexture;
+    
+    
+    std::shared_ptr<cugl::Texture> spawnerArrowTexture;
+    std::shared_ptr<cugl::Texture> baseArrowTexture;
+    
     
     void createMap();
 public:

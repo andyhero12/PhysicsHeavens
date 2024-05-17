@@ -195,12 +195,12 @@ void MeleeEnemy::handleChase(OverWorld& overWorld) {
     
     cugl::Vec2 dist = target_pos - getPosition();
     
+    bool found = false;
     if(_counter >= updateRate){
-        setGoal(target_pos, overWorld.getWorld());
+        found = setGoal(target_pos, overWorld.getWorld());
         _counter = 0;
     }
     goToGoal();
-    
     movementDirection = dist;
     
 

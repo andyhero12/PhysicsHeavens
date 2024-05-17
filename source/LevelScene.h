@@ -19,7 +19,7 @@
 #include "NLInput.h"
 #include <map>
 #include "SpriteAnimationNode.h"
-
+#define NUM_LEVELS 14
 
 /**
  * This class is a simple loading screen for asychronous asset loading.
@@ -45,8 +45,17 @@ public:
             L4,
 
             L5,
-        
-            NONE,
+            L6,
+            L7,
+            L8,
+            L9,
+            L10,
+            L11,
+            L12,
+            L13,
+            L14,
+            L15,
+            NONE
         };
     
 protected:
@@ -120,15 +129,18 @@ public:
     level(1),
     firsttime(true),
     _backClicked(false){
-    frameTargets = {
-        {1, 2},
-        {2, 8},
-        {3, 14},
-        {4, 20},
-        {5, 26}
-        // Add new levels and frames as needed
-    };
+//    frameTargets = {
+//        {1, 2},
+//        {2, 8},
+//        {3, 14},
+//        {4, 20},
+//        {5, 26}
+//        // Add new levels and frames as needed
+//    };
 
+        for (int i =0 ; i< NUM_LEVELS; i++){
+            frameTargets.insert({i+1, 2 + 6* i});
+        }
     }
     
     /**
@@ -184,36 +196,36 @@ public:
         return curMoveAnim >= moveCooldown;
     }
     
-    bool readyToChangeLevel(){
-        return finAnimLevel1() || finAnimLevel2() || finAnimLevel3()||finAnimLevel4()||finAnimLevel5();
-    }
-    bool finAnimLevel1(){
-        return level == 1 && background->getFrame() == 2;
-    }
-    bool finAnimLevel2(){
-        return level == 2 && background->getFrame() == 8;
-    }
-    bool finAnimLevel3(){
-        return level == 3 && background->getFrame() == 14;
-    }
-    bool finAnimLevel4(){
-        return level == 4 && background->getFrame() == 20;
-    }
-    bool finAnimLevel5(){
-        return level == 5 && background->getFrame() == 26;
-    }
+//    bool readyToChangeLevel(){
+//        return finAnimLevel1() || finAnimLevel2() || finAnimLevel3()||finAnimLevel4()||finAnimLevel5();
+//    }
+//    bool finAnimLevel1(){
+//        return level == 1 && background->getFrame() == 2;
+//    }
+//    bool finAnimLevel2(){
+//        return level == 2 && background->getFrame() == 8;
+//    }
+//    bool finAnimLevel3(){
+//        return level == 3 && background->getFrame() == 14;
+//    }
+//    bool finAnimLevel4(){
+//        return level == 4 && background->getFrame() == 20;
+//    }
+//    bool finAnimLevel5(){
+//        return level == 5 && background->getFrame() == 26;
+//    }
 
-    // bool readyToChangeLevel() {
-    //     return isAnimationFinishedForLevel(level);
-    // }
+     bool readyToChangeLevel() {
+         return isAnimationFinishedForLevel(level);
+     }
 
-    // bool isAnimationFinishedForLevel(int lvl) {
-    //     auto it = frameTargets.find(lvl);
-    //     if (it != frameTargets.end()) {
-    //         return background->getFrame() == it->second;
-    //     }
-    //     return false;  // Return false if level is not found
-    // }
+     bool isAnimationFinishedForLevel(int lvl) {
+         auto it = frameTargets.find(lvl);
+         if (it != frameTargets.end()) {
+             return background->getFrame() == it->second;
+         }
+         return false;  // Return false if level is not found
+     }
 
     void resetAnimCD(){
         curMoveAnim = 0;

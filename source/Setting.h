@@ -58,10 +58,12 @@ protected:
     std::shared_ptr<cugl::scene2::SceneNode>  _brand;
     /** The "play" button */
     std::shared_ptr<cugl::scene2::Button>    _button;
+    std::shared_ptr<cugl::scene2::Button>    _knob;
 
     std::shared_ptr<cugl::scene2::SpriteNode> background;
 
-    std::shared_ptr<cugl::scene2::Slider> _slider;
+    std::shared_ptr<cugl::scene2::Slider> _slider1;
+    std::shared_ptr<cugl::scene2::Slider> _slider2;
     std::shared_ptr<cugl::scene2::Label> _label;
     float _value;
 

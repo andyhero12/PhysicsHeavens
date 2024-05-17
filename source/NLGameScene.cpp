@@ -111,7 +111,11 @@ GameScene::GameScene() : cugl::Scene2(),
                          winNode(nullptr),
                          loseNode(nullptr),
                          repeatWinNode(nullptr),
-                         tutorialIndex(0)
+                         tutorialIndex(0),
+tutorialArrow(nullptr),
+gameOverLoss(false),
+gameOverWin(false),
+gameOverDelay(0)
 
 {
 }
@@ -186,8 +190,12 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
         return false;
     }
 
+    _audioController = AudioController::alloc(assets);
+    
     _isHost = isHost;
-
+    gameOverLoss = false;
+    gameOverWin = false;
+    gameOverDelay = 0;
     _network = network;
 
     // Start up the input handler
@@ -252,10 +260,10 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _network->enablePhysics(_world, linkSceneToObsFunc);
 
     addChildBackground();
-    _spawnerController.init(_level->getSpawnersPos(), assets, _network);
+    _spawnerController.init(_level->getSpawnersPos(), assets, _network, _audioController);
     _spawnerController.setRootNode(_worldnode, _isHost);
     _worldnode->addChild(_monsterSceneNode);
-    overWorld.init(assets, _level, computeActiveSize(), _network, isHost, _backgroundWrapper);
+    overWorld.init(assets, _level, computeActiveSize(), _network, isHost, _backgroundWrapper, _audioController);
     overWorld.setRootNode(_worldnode, _debugnode, _world);
     if (isHost)
     {
@@ -269,6 +277,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _uinode->addChild(overWorld.getGateUIController()->getUINode());
 
     _monsterController.setNetwork(_network);
+    _monsterController.setAudioController(_audioController);
+    
     _monsterController.setMeleeAnimationData(_constants->get("basicEnemy"), assets);
     _monsterController.setSpawnerAnimationData(_constants->get("spawnerEnemy"), assets);
     _monsterController.setBombAnimationData(_constants->get("bomb"), assets);
@@ -276,7 +286,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _monsterController.init(overWorld, _debugnode);
 
     _spawnerController.setAnimNode(_worldnode);
-    _collisionController.init(_network);
+    _collisionController.init(_network, _assets, _audioController);
 
     _active = true;
     setDebug(false);
@@ -290,6 +300,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _network->attachEventType<RecallEvent>();
     _network->attachEventType<ExplodeEvent>();
     _network->attachEventType<DashEvent>();
+    _network->attachEventType<AbsorbEvent>();
     _network->attachEventType<SizeEvent>();
     _network->attachEventType<DeathEvent>();
     _network->attachEventType<ShootEvent>();
@@ -309,8 +320,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     winNode = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("win_screen"), 1, 11, 11, 4);
     winNode->setScale(SCENE_HEIGHT/winNode->getTexture()->getHeight());
     winNode->setPosition(0.5 * winNode->getSize());
-    repeatWinNode = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("repeat_win"), 1, 7, 7, 8);
-    repeatWinNode->setScale(SCENE_HEIGHT/repeatWinNode->getTexture()->getHeight());
+    repeatWinNode = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("repeat_win"), 2, 5, 8, 8);
+    repeatWinNode->setScale(2* SCENE_HEIGHT/repeatWinNode->getTexture()->getHeight());
     repeatWinNode->setPosition(0.5 * repeatWinNode->getSize());
     _pause = std::make_shared<PauseScene>();
     _pause->init(_assets, computeActiveSize());
@@ -342,20 +353,19 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _uinode->addChild(loseNode);
     _uinode->addChild(winNode);
     _uinode->addChild(repeatWinNode);
-    _uinode->addChild(_pause);
     loseNode->setVisible(false);
     winNode->setVisible(false);
     repeatWinNode->setVisible(false);
     if (level_string == LEVEL_ONE_KEY){
         initTutorialOne();
     }
-//    else if(level_string == LEVEL_TWO_KEY){
-//        initTutorialTwo();
-//    }
-//    else if(level_string == LEVEL_THREE_KEY){
-//        initTutorialThree();
-//    }
-    
+    else if(level_string == LEVEL_TWO_KEY){
+        initTutorialTwo();
+    }
+    else if(level_string == LEVEL_THREE_KEY){
+        initTutorialThree();
+    }
+    _uinode->addChild(_pause);
     return true;
 }
 void GameScene::resetDraw()
@@ -388,6 +398,7 @@ void GameScene::dispose()
 {
     if (_active)
     {
+        _audioController = nullptr;
         _pause->dispose();
         tutorialTiles.clear();
         _world = nullptr;
@@ -496,6 +507,30 @@ void GameScene::addInitObstacle(const std::shared_ptr<physics2::Obstacle> &obj,
 void GameScene::preUpdate(float dt)
 {
     updateInputController();
+    if (gameOverLoss || gameOverWin){
+        if ( gameOverDelay < 120){
+            gameOverDelay++;
+        }
+        if (gameOverDelay >= 120 ){
+            if (gameOverWin){
+                winNode->setVisible(true);
+                _pause->setPause(true);
+                _minimap->setVisible(false);
+                /** stop all sound and play win screen sound*/
+                AudioEngine::get()->clear();
+                _audioController->playMusic(VICTORY_SCREEN, VICTORY_SCREEN);
+            }
+            if (gameOverLoss){
+                loseNode->setVisible(true);
+                _pause->setPause(true);
+                _minimap->setVisible(false);
+                AudioEngine::get()->clear();
+                _audioController->playMusic(LOSS_SCREEN, LOSS_SCREEN);
+            }
+            gameOverLoss = false;
+            gameOverWin = false;
+        }
+    }
     if (loseNode->isVisible() || winNode->isVisible() || repeatWinNode->isVisible())
     {
         return;
@@ -514,6 +549,9 @@ void GameScene::preUpdate(float dt)
     }
 
     overWorld.update(_input, computeActiveSize(), dt);
+    if (tutorialIndex < tutorialTiles.size()){
+        return;
+    }
     _spawnerController.update(_monsterController, overWorld, dt);
     _monsterController.update(dt, overWorld);
     if (!_isHost){
@@ -683,93 +721,99 @@ void GameScene::fixedUpdate()
     // Hint: You can check if ptr points to an object of class A using std::dynamic_pointer_cast<A>(ptr). You should always check isInAvailable() before popInEvent().
 
 #pragma mark BEGIN SOLUTION
-    while (_network->isInAvailable())
-    {
-        auto e = _network->popInEvent();
-        if (auto monsterHealthEvent = std::dynamic_pointer_cast<MonsterHealthEvent>(e))
-        {
-            _input.applyRumble(0, 10000, 50);
-            if (!_isHost){ // These are client health Update
-                clientProcessMonsterHealth(monsterHealthEvent);
+            while (_network->isInAvailable())
+            {
+                auto e = _network->popInEvent();
+                if (auto monsterHealthEvent = std::dynamic_pointer_cast<MonsterHealthEvent>(e))
+                {
+                    _input.applyRumble(0, 10000, 50);
+                    if (!_isHost)
+                    { // These are client health Update
+                        clientProcessMonsterHealth(monsterHealthEvent);
+                    }
+                }
+                if (auto baseHealthEvent = std::dynamic_pointer_cast<BaseHealthEvent>(e))
+                {
+                    overWorld.processBaseHealthEvent(baseHealthEvent);
+                }
+                if (auto decoyEvent = std::dynamic_pointer_cast<DecoyEvent>(e))
+                {
+                    //            CULog("Decoy Event Got");
+                    overWorld.processDecoyEvent(decoyEvent);
+                }
+                if (auto biteEvent = std::dynamic_pointer_cast<BiteEvent>(e))
+                {
+                    // shakeMagnitude = std::max(shakeMagnitude, 50.0f);
+                    _input.applyRumble(0, 10000, 50);
+                    overWorld.processBiteEvent(biteEvent);
+                }
+                if (auto recallEvent = std::dynamic_pointer_cast<RecallEvent>(e))
+                {
+                    overWorld.processRecallEvent(recallEvent);
+                }
+                if (auto explodeEvent = std::dynamic_pointer_cast<ExplodeEvent>(e))
+                {
+                    shakeMagnitude = std::max(shakeMagnitude, 40.0f);
+                    _input.applyRumble(0, 30000, 200);
+                    //            CULog("Explode Event Got");
+                    overWorld.processExplodeEvent(explodeEvent);
+                }
+                if (auto shootEvent = std::dynamic_pointer_cast<ShootEvent>(e))
+                {
+                    if (shootEvent->isHost() == _isHost)
+                    {
+                        shakeMagnitude = std::max(shakeMagnitude, 40.0f);
+                        _input.applyRumble(30000, 0, 200);
+                    }
+                    //            CULog("Explode Event Got");
+                    overWorld.processShootEvent(shootEvent);
+                }
+                if (auto dashEvent = std::dynamic_pointer_cast<DashEvent>(e))
+                {
+                    //            CULog("Explode Event Got");
+                    overWorld.processDashEvent(dashEvent);
+                }
+                if (auto sizeEvent = std::dynamic_pointer_cast<SizeEvent>(e))
+                {
+                    //            CULog("Explode Event Got");
+                    overWorld.processSizeEvent(sizeEvent);
+                }
+                if (auto deathEvent = std::dynamic_pointer_cast<DeathEvent>(e))
+                {
+                    if (!deathEvent->isGate())
+                        _spawnerController.processDeathEvent(deathEvent);
+                    if (deathEvent->isBomb())
+                    {
+                        _collisionController.enemyExplodedCollision(deathEvent->getPos(), 2 * deathEvent->getSize().width, overWorld.getDog(), _monsterController, true);
+                        _collisionController.enemyExplodedCollision(deathEvent->getPos(), 2 * deathEvent->getSize().width, overWorld.getClientDog(), _monsterController, false);
+                    }
+                }
+                if (auto winEvent = std::dynamic_pointer_cast<WinEvent>(e))
+                {
+                    gameOverWin = true;
+                }
+                if (auto loseEvent = std::dynamic_pointer_cast<LoseEvent>(e))
+                {
+                    gameOverLoss = true;
+                }
+
+                if (auto spawnerDeathEvent = std::dynamic_pointer_cast<SpawnerDeathEvent>(e))
+                {
+                    _spawnerController.processSpawnerDeathEvent(spawnerDeathEvent);
+                    _audioController->playSFX("spawnerDeath", SPAWNER_DEATH);
+                }
+                if (auto clientHealthEvent = std::dynamic_pointer_cast<ClientHealthEvent>(e))
+                {
+                    //            CULog("Got Health Event");
+                    overWorld.processClientHealthEvent(clientHealthEvent);
+                }
+                if (auto absorbEvent = std::dynamic_pointer_cast<AbsorbEvent>(e))
+                {
+                    //CULog("Got Absorb Event");
+                    processAbsorbEvent(absorbEvent);
+                    //overWorld.processClientHealthEvent(clientHealthEvent);
+                }
             }
-        }
-        if (auto baseHealthEvent = std::dynamic_pointer_cast<BaseHealthEvent>(e))
-        {
-            overWorld.processBaseHealthEvent(baseHealthEvent);
-        }
-        if (auto decoyEvent = std::dynamic_pointer_cast<DecoyEvent>(e))
-        {
-            //            CULog("Decoy Event Got");
-            overWorld.getDecoys()->addNewDecoy(Vec2(decoyEvent->getPos().x, decoyEvent->getPos().y));
-        }
-        if (auto biteEvent = std::dynamic_pointer_cast<BiteEvent>(e))
-        {
-            //shakeMagnitude = std::max(shakeMagnitude, 50.0f);
-            _input.applyRumble(0, 10000, 50);
-            overWorld.processBiteEvent(biteEvent);
-        }
-        if (auto recallEvent = std::dynamic_pointer_cast<RecallEvent>(e))
-        {
-            overWorld.processRecallEvent(recallEvent);
-        }
-        if (auto explodeEvent = std::dynamic_pointer_cast<ExplodeEvent>(e))
-        {
-            shakeMagnitude = std::max(shakeMagnitude, 40.0f);
-            _input.applyRumble(0, 30000, 200);
-            //            CULog("Explode Event Got");
-            overWorld.processExplodeEvent(explodeEvent);
-        }
-        if (auto shootEvent = std::dynamic_pointer_cast<ShootEvent>(e))
-        {
-            if (shootEvent->isHost() == _isHost){
-                shakeMagnitude = std::max(shakeMagnitude, 40.0f);
-                _input.applyRumble(30000, 0, 200);
-            }
-            //            CULog("Explode Event Got");
-            overWorld.processShootEvent(shootEvent);
-        }
-        if (auto dashEvent = std::dynamic_pointer_cast<DashEvent>(e))
-        {
-            //            CULog("Explode Event Got");
-            overWorld.processDashEvent(dashEvent);
-        }
-        if (auto sizeEvent = std::dynamic_pointer_cast<SizeEvent>(e))
-        {
-            //            CULog("Explode Event Got");
-            overWorld.processSizeEvent(sizeEvent);
-        }
-        if (auto deathEvent = std::dynamic_pointer_cast<DeathEvent>(e))
-        {
-            if(!deathEvent->isGate())
-                _spawnerController.processDeathEvent(deathEvent);
-            if(deathEvent->isBomb()) {
-                _collisionController.enemyExplodedCollision(deathEvent->getPos(), 2 * deathEvent->getSize().width, overWorld.getDog(), _monsterController, true);
-                _collisionController.enemyExplodedCollision(deathEvent->getPos(), 2 * deathEvent->getSize().width, overWorld.getClientDog(), _monsterController, false);
-            }
-        }
-        if (auto winEvent = std::dynamic_pointer_cast<WinEvent>(e))
-        {
-            winNode->setVisible(true);
-            _pause->setPause(true);
-            _minimap->setVisible(false);
-        }
-        if (auto loseEvent = std::dynamic_pointer_cast<LoseEvent>(e))
-        {
-            loseNode->setVisible(true);
-            _pause->setPause(true);
-            _minimap->setVisible(false);
-        }
-        
-        if (auto spawnerDeathEvent = std::dynamic_pointer_cast<SpawnerDeathEvent>(e))
-        {
-            _spawnerController.processSpawnerDeathEvent(spawnerDeathEvent);
-        }
-        if (auto clientHealthEvent = std::dynamic_pointer_cast<ClientHealthEvent>(e))
-        {
-//            CULog("Got Health Event");
-            overWorld.processClientHealthEvent(clientHealthEvent);
-        }
-    }
 #pragma mark END SOLUTION
 
     _world->update(FIXED_TIMESTEP_S);
@@ -839,8 +883,8 @@ void GameScene::endContact(b2Contact *contact)
  * to implement sound on contact, using the algorithms outlined in Ian Parberry's
  * "Introduction to Game Physics with Box2D".
  *
- * @param  contact  	The two bodies that collided
- * @param  oldManfold  	The collision manifold before contact
+ * @param  contact      The two bodies that collided
+ * @param  oldManfold      The collision manifold before contact
  */
 void GameScene::beforeSolve(b2Contact *contact, const b2Manifold *oldManifold)
 {
@@ -957,23 +1001,60 @@ void GameScene::updateInputController()
 //    std::cout <<overWorld.getDog()->getX() << std::endl;
     if (tutorialIndex < tutorialTiles.size())
     {
+        tutorialArrow->setVisible(true);
+        tutorialArrow->update();
+//        CULog("Tutorial Index %d Pos: %f", tutorialIndex, overWorld.getDog()->getX());
+        
         const std::shared_ptr<Tutorial>& tile = tutorialTiles.at(tutorialIndex);
         bool atLocation = tile->atArea(overWorld.getDog()->getX());
         const std::shared_ptr<scene2::SceneNode>& node = tutorialTiles.at(tutorialIndex)->getSprite();
         const std::shared_ptr<SpriteAnimationNode>& spriteNode = std::dynamic_pointer_cast<SpriteAnimationNode>(node);
+        const std::shared_ptr<SpriteAnimationNode>& spriteNodeRepeat = tutorialTiles.at(tutorialIndex)->getSpriteRepeat();
+        const std::shared_ptr<SpriteAnimationNode>& pressA = tutorialTiles.at(tutorialIndex)->getPressA();
         const std::shared_ptr<scene2::Label>& message = tutorialTiles.at(tutorialIndex)->getMessage();
         // just do tile->setVisible(tutorial) to draw stuff
         if (atLocation && !tile->didPass() && spriteNode)
         {
-            spriteNode->setVisible(true);
-            spriteNode->update();
-            message->setVisible(true);
+            if (tile->getProgress() == Tutorial::MODE::RECALLGIVE || tile->getProgress() == Tutorial::MODE::BARKGIVE || tile->getProgress() == Tutorial::MODE::BAITGIVE || tile->getProgress() == Tutorial::MODE::BOMBGIVE){
+                if (spriteNode->getFrame() != spriteNode->getSpan() -1){
+                    spriteNode->setVisible(true);
+                    spriteNode->update();
+                } else{
+                    spriteNode->setVisible(false);
+                    spriteNodeRepeat->setVisible(true);
+                    spriteNodeRepeat->update();
+                    pressA->setVisible(true);
+                    pressA->update();
+                }
+            }else{
+                spriteNode->setVisible(true);
+                spriteNode->update();
+                pressA->setVisible(true);
+                pressA->update();
+            }
+            
+//            message->setVisible(true);
         }
-        if (_input.update(tile->getProgress(), atLocation))
+        if (tutorialIndex == tutorialTiles.size() - 1){
+            if (tutorialArrow != nullptr){
+                tutorialArrow->setVisible(false);
+            }
+        }
+        
+        if (tile->getProgress() == Tutorial::MODE::RECALLGIVE || tile->getProgress() == Tutorial::MODE::BARKGIVE || tile->getProgress() == Tutorial::MODE::BAITGIVE || tile->getProgress() == Tutorial::MODE::BOMBGIVE){
+            if (_input.update(tile->getProgress(), atLocation)){
+                tile->setPass(true);
+                spriteNode->setVisible(false);
+                spriteNodeRepeat->setVisible(false);
+                pressA->setVisible(false);
+                tutorialIndex++;
+            }
+        } else if (_input.update(tile->getProgress(), atLocation))
         {
             tile->setPass(true);
             node->setVisible(false);
-            message->setVisible(false);
+            pressA->setVisible(false);
+//            message->setVisible(false);
             tutorialIndex++;
         }
         
@@ -1013,18 +1094,23 @@ void GameScene::initTutorialOne(){
     tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::GREETING, "jsafk sdflk ajsflja kfjsdlkj falksjf klajsdf kaljf klj flldfj alf asfsdf afassdafasfljsd"));
     tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::MOVEMENT, " adf as saf "));
     tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::MODE::DEFENDGATE, ""));
-    tutorialTiles.push_back(Tutorial::alloc(30, Tutorial::MODE::BITE, ""));
-    tutorialTiles.push_back(Tutorial::alloc(30, Tutorial::MODE::GROW, ""));
-    tutorialTiles.push_back(Tutorial::alloc(30, Tutorial::MODE::SPECIALSONE, ""));
-    tutorialTiles.push_back(Tutorial::alloc(31, Tutorial::MODE::CHANGEABILITYTWO, ""));
-    tutorialTiles.push_back(Tutorial::alloc(31, Tutorial::MODE::DESTROYSPAWNER, ""));
-    tutorialTiles.push_back(Tutorial::alloc(31, Tutorial::MODE::SPECIALSTWO, ""));
+    tutorialTiles.push_back(Tutorial::alloc(15, Tutorial::MODE::BITE, ""));
+    tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::GROW, ""));
+    tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::RECALLGIVE, ""));
+    tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::BARKGIVE, ""));
+    tutorialTiles.push_back(Tutorial::alloc(22, Tutorial::MODE::SPECIALSONE, ""));
+    tutorialTiles.push_back(Tutorial::alloc(24, Tutorial::MODE::CHANGEABILITYTWO, ""));
+    tutorialTiles.push_back(Tutorial::alloc(26, Tutorial::MODE::DESTROYSPAWNER, ""));
+//    tutorialTiles.push_back(Tutorial::alloc(28, Tutorial::MODE::SPECIALSTWO, ""));
 //
     std::vector<std::string> modes = {"RECALL", "SHOOT"};
     overWorld.getDog()->setAbility(modes);
-    
+    overWorld.getDog()->toggleMode();
+    overWorld.getClientDog()->setAbility(modes);
+    overWorld.getClientDog()->toggleMode();
     // each one need to write # of frames
-    std::vector<int> frame = {21, 21, 21, 21, 21, 21, 21, 21, 21};
+    std::vector<int> frame = {21, 21, 21, 21, 21, 21, 21, 21, 21,21};
+    overWorld.getDog()->addAbsorb(6);
     initTutorial(frame);
     
 }
@@ -1033,53 +1119,152 @@ void GameScene::initTutorialTwo(){
     tutorialIndex = 0;
     _tutorialnode = scene2::SceneNode::alloc();
     _uinode->addChild(_tutorialnode);
-    std::vector<std::string> modes = {"SHOOT", "BAIT"};
+    tutorialTiles = std::vector<std::shared_ptr<Tutorial>>();
+    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::BAITGIVE, ""));
+    std::vector<int> frame = {21};
+    std::vector<std::string> modes = {"SHOOT", "BAIT", "RECALL"};
     overWorld.getDog()->setAbility(modes);
+    overWorld.getDog()->toggleMode();
+    overWorld.getClientDog()->setAbility(modes);
+    overWorld.getClientDog()->toggleMode();
+    overWorld.getDog()->addAbsorb(6);
+    initTutorial(frame);
 }
 
 void GameScene::initTutorialThree(){
     tutorialIndex = 0;
     _tutorialnode = scene2::SceneNode::alloc();
     _uinode->addChild(_tutorialnode);
-    std::vector<std::string> modes = {"SHOOT", "BAIT", "BOMB"};
+    tutorialTiles = std::vector<std::shared_ptr<Tutorial>>();
+    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::BOMBGIVE, ""));
+    std::vector<int> frame = {21};
+    std::vector<std::string> modes = {"BAIT", "BOMB", "RECALL", "SHOOT"};
     overWorld.getDog()->setAbility(modes);
+    overWorld.getDog()->toggleMode();
+    overWorld.getClientDog()->setAbility(modes);
+    overWorld.getClientDog()->toggleMode();
+    overWorld.getDog()->addAbsorb(10);
+    initTutorial(frame);
 }
 
-void GameScene::initTutorial(std::vector<int> frame)
+void GameScene::initTutorial(std::vector<int>& frame)
 {
     Size screen = computeActiveSize();
     std::shared_ptr<SpriteAnimationNode> node;
     std::shared_ptr<scene2::Label> message;
     std::string str;
     
+    tutorialArrow = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("arrow"), 2, 5, 8, 8);
+    tutorialArrow->setAnchor(Vec2::ANCHOR_CENTER);
+    tutorialArrow->setScale(4);
+    tutorialArrow->setPositionX(screen.width / 2 + 320);
+    tutorialArrow->setPositionY(screen.height / 2);
+    _tutorialnode->addChild(tutorialArrow);
+    
     for (int i = 0; i < tutorialTiles.size(); i++)
     {
-        str = Tutorial::toString(tutorialTiles.at(i)->getProgress());
-        node = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>(str), 1, frame.at(i), frame.at(i), 5);
-        _tutorialnode->addChild(node);
-        node->setScale(4);
-        node->setAnchor(Vec2::ANCHOR_CENTER);
-        node->setPositionX(screen.width / 2);
-        node->setPositionY(node->getScaleY() * node->getTexture()->getHeight() / 2);
-        node->setVisible(false);
-        tutorialTiles.at(i)->setSprite(node);
         
-        Size box = Size(node->getTexture()->getWidth()/2, 2 * node->getScaleY() * node->getTexture()->getHeight());
-        
-        CULog(" width: %d    height: %f", node->getTexture()->getWidth(), node->getTexture()->getHeight() * node->getScaleY());
-        
-        message = scene2::Label::allocWithTextBox(box, tutorialTiles.at(i)->getText() ,_assets->get<Font>(PRIMARY_FONT));
-        
-        message->setHorizontalAlignment(HorizontalAlign::CENTER);
-        message->setVerticalAlignment(VerticalAlign::MIDDLE);
-        message->setWrap(true);
-        message->setScale(.25);
-        _tutorialnode->addChild(message);
-        message->setAnchor(Vec2(0.8f , 0.5f));
-        message->setPositionX(3 * screen.width / 4);
-        message->setPositionY(node->getScaleY() * node->getTexture()->getHeight() / 2);
-        message->setVisible(false);
-        tutorialTiles.at(i)->setMessage(message);
+        Tutorial::MODE mode = tutorialTiles.at(i)->getProgress();
+        if (mode == Tutorial::MODE::RECALLGIVE || mode == Tutorial::MODE::BARKGIVE || mode == Tutorial::MODE::BAITGIVE ||  mode == Tutorial::MODE::BOMBGIVE){
+            
+            std::shared_ptr<SpriteAnimationNode> init;
+            std::shared_ptr<SpriteAnimationNode> repeat;
+            std::shared_ptr<SpriteAnimationNode> pressA = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("pressA"), 1, 2, 2, 30);
+            
+            if (mode == Tutorial::MODE::RECALLGIVE){
+                init = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("recallInit"), 3, 5,  14,  2);
+                repeat = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("recallRepeat"), 4, 5, 16,  5);
+                init->setScale(3* SCENE_HEIGHT/init->getTexture()->getHeight());
+                init->setPosition(0.5 * init->getSize());
+                repeat->setScale(4*SCENE_HEIGHT/repeat->getTexture()->getHeight());
+                repeat->setPosition(0.5 * repeat->getSize());
+            }else if (mode == Tutorial::MODE::BARKGIVE){
+                init = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("barkInit"), 3, 5,  14,  2);
+                repeat = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("barkRepeat"), 1, 2, 2,  30);
+                init->setScale(3* SCENE_HEIGHT/init->getTexture()->getHeight());
+                init->setPosition(0.5 * init->getSize());
+                repeat->setScale(SCENE_HEIGHT/repeat->getTexture()->getHeight());
+                repeat->setPosition(0.5 * repeat->getSize());
+            }else if (mode == Tutorial::MODE::BAITGIVE){
+                init = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("baitInit"), 3, 5,  14,  2);
+                repeat = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("baitRepeat"), 2, 5, 9,  6);
+                init->setScale(3* SCENE_HEIGHT/init->getTexture()->getHeight());
+                init->setPosition(0.5 * init->getSize());
+                repeat->setScale(2*SCENE_HEIGHT/repeat->getTexture()->getHeight());
+                repeat->setPosition(0.5 * repeat->getSize());
+            }else if (mode == Tutorial::MODE::BOMBGIVE){
+                init = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("bombInit"), 3, 5,  14,  2);
+                repeat = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("bombRepeat"), 4, 5, 18,  3);
+                init->setScale(3* SCENE_HEIGHT/init->getTexture()->getHeight());
+                init->setPosition(0.5 * init->getSize());
+                repeat->setScale(4*SCENE_HEIGHT/repeat->getTexture()->getHeight());
+                repeat->setPosition(0.5 * repeat->getSize());
+            }
+            
+            
+            tutorialTiles.at(i)->setSprite(init);
+            tutorialTiles.at(i)->setSpriteRepeat(repeat);
+            tutorialTiles.at(i)->setPressButton(pressA);
+            
+            pressA->setAnchor(Vec2::ANCHOR_CENTER);
+            pressA->setScale(6);
+            pressA->setPosition(screen/2 - Size(0, screen.height/4));
+            
+            _tutorialnode->addChild(init);
+            _tutorialnode->addChild(repeat);
+            _tutorialnode->addChild(pressA);
+            
+            init->setVisible(false);
+            repeat->setVisible(false);
+            pressA->setVisible(false);
+            
+        }else {
+            str = Tutorial::toString(tutorialTiles.at(i)->getProgress());
+            node = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>(str), 1, frame.at(i), frame.at(i), 5);
+            _tutorialnode->addChild(node);
+            node->setScale(4);
+            node->setAnchor(Vec2::ANCHOR_CENTER);
+            node->setPositionX(screen.width / 2);
+            node->setPositionY(node->getScaleY() * node->getTexture()->getHeight() / 2);
+            node->setVisible(false);
+            
+            node->setVisible(false);
+            
+            tutorialTiles.at(i)->setSprite(node);
+            
+            Size box = Size(node->getTexture()->getWidth()/2, 2 * node->getScaleY() * node->getTexture()->getHeight());
+            
+            CULog(" width: %d    height: %f", node->getTexture()->getWidth(), node->getTexture()->getHeight() * node->getScaleY());
+            
+            message = scene2::Label::allocWithTextBox(box, tutorialTiles.at(i)->getText() ,_assets->get<Font>(PRIMARY_FONT));
+            
+            message->setHorizontalAlignment(HorizontalAlign::CENTER);
+            message->setVerticalAlignment(VerticalAlign::MIDDLE);
+            message->setWrap(true);
+            message->setScale(.25);
+            _tutorialnode->addChild(message);
+            message->setAnchor(Vec2(0.8f , 0.5f));
+            message->setPositionX(3 * screen.width / 4);
+            message->setPositionY(node->getScaleY() * node->getTexture()->getHeight() / 2);
+            message->setVisible(false);
+            tutorialTiles.at(i)->setMessage(message);
+            
+            std::shared_ptr<SpriteAnimationNode> pressA;
+            if (mode == Tutorial::MODE::GREETING || mode == Tutorial::MODE::DEFENDGATE || mode == Tutorial::MODE::GROW
+                || mode == Tutorial::MODE::BITE){
+                pressA = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("pressA"), 1, 2, 2, 30);
+            }else{
+                pressA = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("pressB"), 1, 2, 2, 30);
+            }
+            tutorialTiles.at(i)->setPressButton(pressA);
+            pressA->setAnchor(Vec2::ANCHOR_CENTER);
+            pressA->setScale(6);
+//            pressA->setPosition(screen/2);
+            pressA->setPositionX(screen.width * 0.80);
+            pressA->setPositionY(node->getScaleY() * node->getTexture()->getHeight() / 4 - 30);
+            _tutorialnode->addChild(pressA);
+            pressA->setVisible(false);
+        }
     }
 }
 
@@ -1179,6 +1364,18 @@ void GameScene::executeSlidingWindow(Vec2 dogPos)
                 }
             }
         }
+    }
+}
+
+void GameScene::processAbsorbEvent(std::shared_ptr<AbsorbEvent> absorbEvent) {
+    std::shared_ptr<cugl::physics2::Obstacle> it = _world->getObstacle(absorbEvent->getObstacleID());
+    if (it == nullptr){
+//        CULog("lagged event?");
+        return;
+    }
+    if (std::shared_ptr<AbstractEnemy> absorbEnemy = std::dynamic_pointer_cast<AbstractEnemy>(it)){
+//        CULog("Actual Enemy");
+        absorbEnemy->setDimension(Size(absorbEvent->getSize(), absorbEvent->getSize()));
     }
 }
 

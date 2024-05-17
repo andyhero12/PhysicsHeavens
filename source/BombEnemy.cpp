@@ -7,9 +7,10 @@
 #include "BombEnemy.h"
 
 #define EXPLOSION_RADIUS 1.5f
-#define CONTACT_DAMAGE 4
-#define EXPLOSION_DAMAGE 12
+#define CONTACT_DAMAGE 30
+#define EXPLOSION_DAMAGE 30
 #define SPRITE_SCALE 1.14f
+#define FRAMES 200
 #define DYNAMIC_COLOR   Color4::YELLOW
 std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode>> BombFactory::createObstacle(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex) {
     std::vector<std::shared_ptr<cugl::Texture>>& _textures = staticEnemyStruct._walkTextures;
@@ -60,6 +61,7 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
     topLevel->setScale(m_size.height / _textures.at(0)->getHeight() * SPRITE_SCALE);
     static_enemy->setShared(true);
     
+    static_enemy->setAudioController(_audioController);
 //        static_enemy->setHealthBar(_healthBar);
     return std::make_pair(static_enemy, topLevel);
 #pragma mark END SOLUTION
@@ -143,21 +145,56 @@ void BombEnemy::preUpdate(float dt, OverWorld& overWorld){
         _counter++;
     }
 
-    // Determine the action based on the state
-    if (curAction == EnemyActions::SPAWN){
-        handleSpawn();
+    cugl::Vec2 target_pos = getTargetPositionFromIndex(overWorld);
+    cugl::Vec2 dist = target_pos - getPosition();
+    if (canResetAction()){
+        float defaultLength = 4;
+        if (getTargetIndex() == 0){
+            float dogRadius = fmax(overWorld.getDog()->getWidth(), overWorld.getDog()->getHeight())/2;
+            float enemyRadius = fmax(getWidth(), getHeight())/2;
+            defaultLength = (dogRadius + enemyRadius + 1.0f) * (dogRadius + enemyRadius + 1.0f);
+        }
+        curAction = dist.lengthSquared() <= defaultLength ? EnemyActions::ATTACK : EnemyActions::CHASE;
+        if(_health < _maxHealth/3.0){
+            curAction = AbstractEnemy::EnemyActions::LOWHEALTH;
+        }
     }
-    else if (curAction == EnemyActions::WANDER){
-        handleWander(dt);
-    }
-    else if(curAction == EnemyActions::CHASE){
-        handleChase(overWorld);
-    }
-    else if(curAction == EnemyActions::LOWHEALTH){
-        handleLowHealth(overWorld);
-    }
-    else if(curAction == EnemyActions::ATTACK){
-        handleAttack(overWorld);
+    switch (curAction){
+        case EnemyActions::SPAWN:
+            handleSpawn();
+            break;
+        case EnemyActions::WANDER:
+            handleWander(dt);
+            if(_time >= FRAMES){
+                curAction = AbstractEnemy::EnemyActions::CHASE;
+                _time = 0;
+            }
+            break;
+        case EnemyActions::CHASE:
+            handleChase(overWorld);
+            break;
+        case EnemyActions::LOWHEALTH:
+            handleLowHealth(overWorld);
+            break;
+        case EnemyActions::ATTACK:
+            handleAttack(overWorld);
+            if(_time >= FRAMES){
+                curAction = AbstractEnemy::EnemyActions::STAY;
+                _time = 0;
+            }
+            break;
+        case EnemyActions::STAY:
+            handleStay(overWorld);
+            if(_time >= FRAMES){
+                curAction = AbstractEnemy::EnemyActions::WANDER;
+                _time = 0;
+            }
+            break;
+        case EnemyActions::RUNAWAY:
+            break;
+        default:
+            CULog("Case Not Handled");
+            break;
     }
 }
 void BombEnemy::executeDeath(OverWorld& overWorld){
@@ -177,23 +214,26 @@ void BombEnemy::executeDeath(OverWorld& overWorld){
 
 void BombEnemy::handleChase(OverWorld& overWorld) {
     cugl::Vec2 target_pos = getTargetPositionFromIndex(overWorld);
-    cugl::Vec2 direction = target_pos - getPosition();
-    if (overWorld._isHost && _counter >= updateRate){
-      setVX(direction.normalize().x * 0.5);
-      setVY(direction.normalize().y * 0.5);
-      setX(getX());
-      setY(getY());
-      _counter = 0;
-      _prevDirection =_curDirection;
-      _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
-        movementDirection = direction;
+    
+    cugl::Vec2 dist = target_pos - getPosition();
+    
+    bool found = false;
+    if(_counter >= updateRate){
+        found = setGoal(target_pos, overWorld.getWorld());
+        _counter = 0;
     }
+    goToGoal();
+    
+    movementDirection = dist;
+    
+
 }
 
 void BombEnemy::handleLowHealth(OverWorld& overWorld) {
 }
 
 void BombEnemy::handleAttack(OverWorld& overWorld) {
+    _audioController->playSFX(BOMB_HISS, BOMB_HISS);
 }
 
 
