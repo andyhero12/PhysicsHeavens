@@ -244,12 +244,24 @@ public:
         const std::shared_ptr<DecoySet> decoySet = overWorld.getDecoys();
         cugl::Vec2 target_pos;
         int _targetIndex  = getTargetIndex();
-        if (_targetIndex == 0){
-            target_pos = curDog->getPosition();
-        }else if (_targetIndex <= baseSet->_bases.size()){
-            target_pos = baseSet->_bases.at(_targetIndex-1)->getPos();
+        if (overWorld.getNetwork()->getNumPlayers() == 2){
+            if (_targetIndex == 0){
+                target_pos = curDog->getPosition();
+            }else if (_targetIndex == 1){
+                target_pos = overWorld.getClientDog()->getPosition();
+            }else if (_targetIndex - 1<= baseSet->_bases.size()){
+                target_pos = baseSet->_bases.at(_targetIndex-2)->getPos();
+            }else{
+                target_pos = decoySet->getCurrentDecoys().at(_targetIndex-2-baseSet->_bases.size())->getPos();
+            }
         }else{
-            target_pos = decoySet->getCurrentDecoys().at(_targetIndex-1-baseSet->_bases.size())->getPos();
+            if (_targetIndex == 0){
+                target_pos = curDog->getPosition();
+            }else if (_targetIndex <= baseSet->_bases.size()){
+                target_pos = baseSet->_bases.at(_targetIndex-1)->getPos();
+            }else{
+                target_pos = decoySet->getCurrentDecoys().at(_targetIndex-1-baseSet->_bases.size())->getPos();
+            }
         }
         return target_pos;
     }

@@ -58,7 +58,8 @@ bool MonsterController::init(OverWorld& overWorld,
 
         for(int i = 0; i < cluster.count ; i++) {
 //         Check that the Position is a Valid Spot
-            Vec2 pos = Vec2(cx + generateRandomInclusiveHighLow(-200, 200) / 100.0f, cy + generateRandomInclusiveHighLow(-200, 200) / 100.0f);
+            Vec2 pos = Vec2(cx + generateRandomInclusiveHighLow(-100, 100) / 100.0f, cy + generateRandomInclusiveHighLow(-100, 100) / 100.0f);
+//            Vec2 pos = Vec2(cx, cy);
             spawnEnemyFromString(enemyType, pos, overWorld, power);
         }
     }

@@ -45,6 +45,11 @@ void SimpleSpawner::update(MonsterController& monsterController, OverWorld& over
         }
 
         monsterController.spawnEnemyFromString(s, getPos(), overWorld, difficulty);
+        monsterController.spawnEnemyFromString(s, getPos(), overWorld, difficulty);
+        monsterController.spawnEnemyFromString(s, getPos(), overWorld, difficulty);
+        monsterController.spawnEnemyFromString(s, getPos(), overWorld, difficulty);
+        monsterController.spawnEnemyFromString(s, getPos(), overWorld, difficulty);
+        monsterController.spawnEnemyFromString(s, getPos(), overWorld, difficulty);
     }
 
     if(_damagedTimer > 0) {
