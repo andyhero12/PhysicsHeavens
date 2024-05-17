@@ -116,7 +116,7 @@ public:
 
     int getTotalTargets() const
     {
-        return 1 + (int)_bases->_bases.size() + (int)_decoys->getCurrentDecoys().size();
+        return 1 + (_network->getNumPlayers() == 2)  + (int)_bases->_bases.size() + (int)_decoys->getCurrentDecoys().size();
     }
     AttackPolygons &getAttackPolygons()
     {

@@ -101,6 +101,9 @@ public:
 
 class AbsorbEnemy : public AbstractEnemy {
 public:
+    float _defaultScale;
+    float _defaultDimension;
+    int _defaultHealth;
     
     static std::shared_ptr<AbsorbEnemy> alloc(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex) {
         std::shared_ptr<AbsorbEnemy> result = std::make_shared<AbsorbEnemy>();
@@ -125,15 +128,26 @@ public:
     
     void increaseHealth(int inc_health){
         _health += inc_health;
+
+        if(_health > _maxHealth && _health > _defaultHealth) {
+            _health = min((double)_health / _defaultHealth, 9.0) * _defaultHealth;
+            _health++;
+        }
+
         _maxHealth = max(_maxHealth,_health);
-//        float dim = (float) _health/6.0 + 1.0;
-//        cugl::Size nxtSize(dim,dim);
-//        setDimension(nxtSize);
-//        baseBlankNode->setScale(dim/64);
+
+        //CULog(("new absorb hfakjdfhasjldf " + std::to_string(_maxHealth) + " " + std::to_string(_defaultHealth)).c_str());
+
+        float ratio = sqrt((float)_maxHealth / _defaultHealth);
+        float dim = ratio * _defaultDimension;
+        cugl::Size nxtSize(dim,dim);
+        setDimension(nxtSize);
+        topLevelPlaceHolder->setScale(ratio * _defaultScale);
+        _healthBar->setProgress((float)_health/_maxHealth);
     }
     
     bool canAttack() const override{
-        return _attackCooldown >= 60;
+        return _attackCooldown >= 180;
     }
     
     virtual void resetAttack() override{

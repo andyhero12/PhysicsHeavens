@@ -57,7 +57,10 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
     static_enemy->setWalkingSceneNode(runAnimations);
     static_enemy->setAttackingSceneNode(attackAnimations);
     static_enemy->setFinalEnemy(topLevel);
-    topLevel->setScale(m_size.height / _textures.at(0)->getHeight() * SPRITE_SCALE);
+    static_enemy->_defaultScale = m_size.height / _textures.at(0)->getHeight() * SPRITE_SCALE;
+    topLevel->setScale(static_enemy->_defaultScale);
+    static_enemy->_defaultDimension = m_size.width;
+    static_enemy->_defaultHealth = m_health;
     static_enemy->setShared(true);
     static_enemy->setAudioController(_audioController);
 //        static_enemy->setHealthBar(_healthBar);
@@ -108,6 +111,7 @@ bool AbsorbEnemy::init(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_
         std::string name("Absorb Enemy");
         setName(name);
         _contactDamage = CONTACT_DAMAGE;
+        goalSpeed = 0.8f;
         return true;
     }
     return false;
@@ -116,16 +120,14 @@ bool AbsorbEnemy::init(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_
 
 void AbsorbEnemy::preUpdate(float dt, OverWorld& overWorld) {
     // Update the counter for timed actions
-    if (_attackCooldown < 60){
-        _attackCooldown++;
-    }
+    _attackCooldown++;
 
     if (_counter < updateRate){
         _counter++;
     }
 
     // Determine the action based on the state; for now it's alway in atttack but should change
-    curAction = AbstractEnemy::EnemyActions::ATTACK;
+    curAction = AbstractEnemy::EnemyActions::CHASE;
     if (curAction == EnemyActions::SPAWN){
         handleSpawn();
     }
@@ -146,17 +148,17 @@ void AbsorbEnemy::preUpdate(float dt, OverWorld& overWorld) {
 
 void AbsorbEnemy::handleChase(OverWorld& overWorld) {
     cugl::Vec2 target_pos = getTargetPositionFromIndex(overWorld);
-    cugl::Vec2 direction = target_pos - getPosition();
-    if (overWorld._isHost && _counter >= updateRate){
-        setVX(direction.normalize().x * 0.5);
-        setVY(direction.normalize().y * 0.5);
-        setX(getX());
-        setY(getY());
+    
+    cugl::Vec2 dist = target_pos - getPosition();
+    
+    bool found = false;
+    if(_counter >= updateRate){
+        found = setGoal(target_pos, overWorld.getWorld());
         _counter = 0;
-        _prevDirection =_curDirection;
-        _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
-        movementDirection = direction;
     }
+    goToGoal();
+    
+    movementDirection = dist;
 }
 
 void AbsorbEnemy::handleLowHealth(OverWorld& overWorld) {}

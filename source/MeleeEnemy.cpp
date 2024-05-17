@@ -201,7 +201,6 @@ void MeleeEnemy::handleChase(OverWorld& overWorld) {
         _counter = 0;
     }
     goToGoal();
-    
     movementDirection = dist;
     
 

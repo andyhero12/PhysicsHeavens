@@ -142,10 +142,12 @@ bool SpawnerController::init(const std::vector<LevelModel::Spawner>& startLocs, 
     _deathSpawner = assets->get<cugl::Texture>("spawnerDeath");
     _explodeTexture = assets->get<cugl::Texture>("explodingGate");
     _network = net;
+    bool twoPlayer = net->getNumPlayers();
     for (int i =0; i< startLocs.size(); i++){
         LevelModel::Spawner spawner = startLocs.at(i);
         cugl::Vec2 pos = Vec2(spawner.spawnerX, spawner.spawnerY);
         int health = spawner.hp;
+        int regDelay = twoPlayer ? spawner.regularDelay/2:spawner.regularDelay;
         std::shared_ptr<SimpleSpawner> curSpawner = std::make_shared<SimpleSpawner>(spawner.regularDelay,pos,health,spawner.initDelay,spawner.primaryEnemy, spawner.secondaryEnemy, spawner.tertiaryEnemy);
         auto drawNode = SpriteAnimationNode::allocWithSheet(assets->get<cugl::Texture>("spawner"), 1, 4, 4, 6);
         float scale = 1 / 48.0f;

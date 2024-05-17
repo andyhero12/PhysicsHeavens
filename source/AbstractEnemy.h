@@ -33,7 +33,7 @@
 #define DAMAGED_DURATION 0.5f
 
 #define KNOCKBACK_FORCE 45
-#define LINEAR_DAMPING 15.0f
+#define LINEAR_DAMPING 0.0f
 #define KNOCKBACK_TIME 0.25f
 #define KNOCKBACK_LIMIT 14
 
@@ -73,7 +73,7 @@ public:
         
         if (result){
             _counter = 0;
-            updateRate = 5;
+            updateRate = 10;
             clearSharingDirtyBits();
             setShared(true);
             setDensity(DEFAULT_DENSITY);
@@ -227,7 +227,8 @@ public:
     }
     void applyDamage(int dmg, Vec2 direction) {
         direction.normalize();
-        float velocity = KNOCKBACK_FORCE / getMass();
+//        float velocity = KNOCKBACK_FORCE / getMass();
+        float velocity = KNOCKBACK_FORCE / 15;
         velocity = velocity > KNOCKBACK_LIMIT ? KNOCKBACK_LIMIT : velocity;
         setLinearVelocity(direction.x * velocity, direction.y * velocity);
         setHealth(getHealth() - dmg);
@@ -244,12 +245,24 @@ public:
         const std::shared_ptr<DecoySet> decoySet = overWorld.getDecoys();
         cugl::Vec2 target_pos;
         int _targetIndex  = getTargetIndex();
-        if (_targetIndex == 0){
-            target_pos = curDog->getPosition();
-        }else if (_targetIndex <= baseSet->_bases.size()){
-            target_pos = baseSet->_bases.at(_targetIndex-1)->getPos();
+        if (overWorld.getNetwork()->getNumPlayers() == 2){
+            if (_targetIndex == 0){
+                target_pos = curDog->getPosition();
+            }else if (_targetIndex == 1){
+                target_pos = overWorld.getClientDog()->getPosition();
+            }else if (_targetIndex - 1<= baseSet->_bases.size()){
+                target_pos = baseSet->_bases.at(_targetIndex-2)->getPos();
+            }else{
+                target_pos = decoySet->getCurrentDecoys().at(_targetIndex-2-baseSet->_bases.size())->getPos();
+            }
         }else{
-            target_pos = decoySet->getCurrentDecoys().at(_targetIndex-1-baseSet->_bases.size())->getPos();
+            if (_targetIndex == 0){
+                target_pos = curDog->getPosition();
+            }else if (_targetIndex <= baseSet->_bases.size()){
+                target_pos = baseSet->_bases.at(_targetIndex-1)->getPos();
+            }else{
+                target_pos = decoySet->getCurrentDecoys().at(_targetIndex-1-baseSet->_bases.size())->getPos();
+            }
         }
         return target_pos;
     }
@@ -310,6 +323,7 @@ protected:
     Vec2 movementDirection;
     /** The next step along the enemy's path */
     Vec2 _nextStep = Vec2(-1, -1);
+    float goalSpeed = 1.5f;
     
     EnemyActions curAction;
     AnimationSceneNode::Directions _prevDirection;
@@ -390,7 +404,6 @@ protected:
 //        }
 //
 //        CULogError("GOAL CHANGED! REDOING PATHFINDING");
-        
         return rawSetGoal(goal, world);
     };
 
@@ -411,8 +424,8 @@ protected:
             Vec2& nextTile = _nextStep;
             direction = nextTile - getPosition();
         }
-        setVX(direction.normalize().x * 1.5);
-        setVY(direction.normalize().y * 1.5);
+        setVX(direction.normalize().x * goalSpeed);
+        setVY(direction.normalize().y * goalSpeed);
         setX(getX());
         setY(getY());
         _prevDirection =_curDirection;

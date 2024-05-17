@@ -92,7 +92,7 @@ public:
         staticEnemyStruct._framecols = _framecols;
         staticEnemyStruct._framesizeAttack = 5;
         staticEnemyStruct._framecolsAttack = 5;
-        staticEnemyStruct._freqAnimations = 8;
+        staticEnemyStruct._freqAnimations = 7;
     }
 
     /**

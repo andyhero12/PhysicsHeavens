@@ -19,6 +19,7 @@
 #include <vector>
 #include <random>
 #include "NLDeathEvent.h"
+#include "NLAbsorbEvent.h"
 struct AnimationDataStruct{
     std::vector<std::shared_ptr<cugl::Texture>> _textures;
     std::vector<std::shared_ptr<cugl::Texture>> _attackTextures;
