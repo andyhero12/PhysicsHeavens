@@ -560,7 +560,7 @@ bool CollisionController::absorbEnemMonsterCollision(MonsterController& monsterC
             Vec2 norm = (absEnemy)->getPosition() - (curEnemy)->getPosition();
             float distance = norm.length();
             float impactDistance = 1 + fmax(curEnemy->getWidth(), curEnemy->getHeight())/2 + 
-            fmax(absEnemy->getWidth(), absEnemy->getHeight())/2;
+            fmax(absEnemy->getWidth(), absEnemy->getHeight())/1.4f;
             if (distance < impactDistance && distance < closestDistance){
                 std::shared_ptr<AbsorbEnemy> isAbsorb = std::dynamic_pointer_cast<AbsorbEnemy>(curEnemy);
                 if (isAbsorb == nullptr && absEnemy->canAttack()){
