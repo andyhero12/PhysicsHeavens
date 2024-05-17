@@ -80,7 +80,7 @@ public:
             setFriction(DEFAULT_FRICTION);
             setRestitution(DEFAULT_RESTITUTION);
             setFixedRotation(true);
-            setLinearDamping(LINEAR_DAMPING);
+//            setLinearDamping(LINEAR_DAMPING);
             
             curAction = EnemyActions::SPAWN;
             _health = m_health;
@@ -137,6 +137,7 @@ public:
         _knockbackTimer -= delta;
         if(_knockbackTimer < 0) {
             _knockbackTimer = 0;
+            setLinearDamping(0.0);
         }
 
         if(_damagedTimer > 0) {
@@ -229,6 +230,7 @@ public:
         direction.normalize();
         float velocity = KNOCKBACK_FORCE / getMass();
         velocity = velocity > KNOCKBACK_LIMIT ? KNOCKBACK_LIMIT : velocity;
+        setLinearDamping(LINEAR_DAMPING);
         setLinearVelocity(direction.x * velocity, direction.y * velocity);
         setHealth(getHealth() - dmg);
         _knockbackTimer = KNOCKBACK_TIME;
@@ -403,8 +405,8 @@ protected:
 //        }
 //
 //        CULogError("GOAL CHANGED! REDOING PATHFINDING");
-        setX(getX());
-        setY(getY());
+//        setX(getX());
+//        setY(getY());
         return rawSetGoal(goal, world);
     };
 
@@ -427,8 +429,8 @@ protected:
         }
         setVX(direction.normalize().x * goalSpeed);
         setVY(direction.normalize().y * goalSpeed);
-//        setX(getX());
-//        setY(getY());
+        setX(getX());
+        setY(getY());
         _prevDirection =_curDirection;
         _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
     }
