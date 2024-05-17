@@ -227,7 +227,8 @@ public:
     }
     void applyDamage(int dmg, Vec2 direction) {
         direction.normalize();
-        float velocity = KNOCKBACK_FORCE / getMass();
+//        float velocity = KNOCKBACK_FORCE / getMass();
+        float velocity = KNOCKBACK_FORCE / 15;
         velocity = velocity > KNOCKBACK_LIMIT ? KNOCKBACK_LIMIT : velocity;
         setLinearVelocity(direction.x * velocity, direction.y * velocity);
         setHealth(getHealth() - dmg);
