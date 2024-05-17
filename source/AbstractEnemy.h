@@ -404,8 +404,6 @@ protected:
 //        }
 //
 //        CULogError("GOAL CHANGED! REDOING PATHFINDING");
-        setX(getX());
-        setY(getY());
         return rawSetGoal(goal, world);
     };
 
@@ -428,6 +426,8 @@ protected:
         }
         setVX(direction.normalize().x * goalSpeed);
         setVY(direction.normalize().y * goalSpeed);
+        setX(getX());
+        setY(getY());
         _prevDirection =_curDirection;
         _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
     }
