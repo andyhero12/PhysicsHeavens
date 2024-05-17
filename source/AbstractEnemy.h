@@ -310,6 +310,7 @@ protected:
     Vec2 movementDirection;
     /** The next step along the enemy's path */
     Vec2 _nextStep = Vec2(-1, -1);
+    float goalSpeed = 1.5f;
     
     EnemyActions curAction;
     AnimationSceneNode::Directions _prevDirection;
@@ -411,8 +412,8 @@ protected:
             Vec2& nextTile = _nextStep;
             direction = nextTile - getPosition();
         }
-        setVX(direction.normalize().x * 1.5);
-        setVY(direction.normalize().y * 1.5);
+        setVX(direction.normalize().x * goalSpeed);
+        setVY(direction.normalize().y * goalSpeed);
         setX(getX());
         setY(getY());
         _prevDirection =_curDirection;

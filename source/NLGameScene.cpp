@@ -300,6 +300,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _network->attachEventType<RecallEvent>();
     _network->attachEventType<ExplodeEvent>();
     _network->attachEventType<DashEvent>();
+    _network->attachEventType<AbsorbEvent>();
     _network->attachEventType<SizeEvent>();
     _network->attachEventType<DeathEvent>();
     _network->attachEventType<ShootEvent>();
@@ -805,6 +806,12 @@ void GameScene::fixedUpdate()
                 {
                     //            CULog("Got Health Event");
                     overWorld.processClientHealthEvent(clientHealthEvent);
+                }
+                if (auto absorbEvent = std::dynamic_pointer_cast<AbsorbEvent>(e))
+                {
+                    //CULog("Got Absorb Event");
+                    processAbsorbEvent(absorbEvent);
+                    //overWorld.processClientHealthEvent(clientHealthEvent);
                 }
             }
 #pragma mark END SOLUTION
@@ -1357,6 +1364,18 @@ void GameScene::executeSlidingWindow(Vec2 dogPos)
                 }
             }
         }
+    }
+}
+
+void GameScene::processAbsorbEvent(std::shared_ptr<AbsorbEvent> absorbEvent) {
+    std::shared_ptr<cugl::physics2::Obstacle> it = _world->getObstacle(absorbEvent->getObstacleID());
+    if (it == nullptr){
+//        CULog("lagged event?");
+        return;
+    }
+    if (std::shared_ptr<AbstractEnemy> absorbEnemy = std::dynamic_pointer_cast<AbstractEnemy>(it)){
+//        CULog("Actual Enemy");
+        absorbEnemy->setDimension(Size(absorbEvent->getSize(), absorbEvent->getSize()));
     }
 }
 

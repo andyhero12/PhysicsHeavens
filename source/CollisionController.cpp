@@ -22,6 +22,8 @@
 //  Version: 2/21/21
 //
 #include "CollisionController.h"
+#include <cfloat>
+#include <algorithm>
 
 /** Impulse for giving collisions a slight bounce. */
 #define COLLISION_COEFF     0.1f
@@ -548,6 +550,8 @@ bool CollisionController::absorbEnemMonsterCollision(MonsterController& monsterC
         bool absorbAte = false;
         const std::shared_ptr<AbsorbEnemy>& absEnemy = *itAbs;
 //        auto curAbs = itAbs;
+        float closestDistance = FLT_MAX;
+        std::shared_ptr<AbstractEnemy> closestEnemy = nullptr;
         itAbs++;
         while(itMon != monsterEnemies.end()){
             const std::shared_ptr<AbstractEnemy>& curEnemy = *itMon;
@@ -555,20 +559,31 @@ bool CollisionController::absorbEnemMonsterCollision(MonsterController& monsterC
             itMon++;
             Vec2 norm = (absEnemy)->getPosition() - (curEnemy)->getPosition();
             float distance = norm.length();
-            float impactDistance = 3.5;
-            if (distance < impactDistance){
+            float impactDistance = 1 + fmax(curEnemy->getWidth(), curEnemy->getHeight())/2 + 
+            fmax(absEnemy->getWidth(), absEnemy->getHeight())/1.4f;
+            if (distance < impactDistance && distance < closestDistance){
                 std::shared_ptr<AbsorbEnemy> isAbsorb = std::dynamic_pointer_cast<AbsorbEnemy>(curEnemy);
                 if (isAbsorb == nullptr && absEnemy->canAttack()){
-                    collision = true;
+                    closestDistance = distance;
+                    closestEnemy = curEnemy;
                     absorbAte = true;
+                    collision = true;
+                    /*
+                    collision = true;
                     absEnemy->increaseHealth(curEnemy->getHealth());
                     // SCALE ABSORB ENEMY
                     monsterController.removeEnemy(curEnemy);
                     monsterEnemies.erase(curMon);
+                    */
                 }
             }
         }
         if (absorbAte){
+            Uint64 objNum = _network->getPhysController()->getPhysicsWorld()->getObstacleId(absEnemy);
+            monsterController.removeEnemy(closestEnemy);
+            monsterEnemies.erase(closestEnemy);
+            absEnemy->increaseHealth(closestEnemy->getHealth());
+            _network->pushOutEvent(AbsorbEvent::allocAbsorbEvent(absEnemy->getDimension().width,objNum));
             absEnemy->resetAttack();
         }
     }

@@ -32,6 +32,7 @@
 #include "NLClientHealthEvent.h"
 #include "NLMonsterHealthEvent.h"
 #include "NLSizeEvent.h"
+#include "NLAbsorbEvent.h"
 #include "Constants.h"
 /**
  * Namespace of functions implementing simple game physics.
