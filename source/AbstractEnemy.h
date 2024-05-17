@@ -427,8 +427,8 @@ protected:
         }
         setVX(direction.normalize().x * goalSpeed);
         setVY(direction.normalize().y * goalSpeed);
-        setX(getX());
-        setY(getY());
+//        setX(getX());
+//        setY(getY());
         _prevDirection =_curDirection;
         _curDirection = AnimationSceneNode::convertRadiansToDirections(direction.getAngle());
     }
