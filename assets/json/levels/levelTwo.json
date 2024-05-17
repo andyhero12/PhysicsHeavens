@@ -370,8 +370,8 @@
                         {
                          "name":"enemyType",
                          "type":"string",
-                         "value":"basic"
-                        }, 
+                         "value":"staticbasic"
+                        },
                         {
                          "name":"numSpawn",
                          "type":"int",
@@ -393,8 +393,8 @@
                         {
                          "name":"enemyType",
                          "type":"string",
-                         "value":"basic"
-                        }, 
+                         "value":"staticbasic"
+                        },
                         {
                          "name":"numSpawn",
                          "type":"int",
@@ -416,8 +416,8 @@
                         {
                          "name":"enemyType",
                          "type":"string",
-                         "value":"basic"
-                        }, 
+                         "value":"staticbasic"
+                        },
                         {
                          "name":"numSpawn",
                          "type":"int",
@@ -439,8 +439,8 @@
                         {
                          "name":"enemyType",
                          "type":"string",
-                         "value":"basic"
-                        }, 
+                         "value":"staticbasic"
+                        },
                         {
                          "name":"numSpawn",
                          "type":"int",
@@ -462,8 +462,8 @@
                         {
                          "name":"enemyType",
                          "type":"string",
-                         "value":"basic"
-                        }, 
+                         "value":"staticbasic"
+                        },
                         {
                          "name":"numSpawn",
                          "type":"int",
@@ -485,7 +485,7 @@
                         {
                          "name":"enemyType",
                          "type":"string",
-                         "value":"basic"
+                         "value":"staticbasic"
                         }, 
                         {
                          "name":"numSpawn",

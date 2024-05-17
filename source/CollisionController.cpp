@@ -28,7 +28,7 @@
 /** Impulse for giving collisions a slight bounce. */
 #define COLLISION_COEFF     0.1f
 #define DEFAULT_RADIUS_COLLIDE  0.13f
-#define BUFFER  0.1f
+#define BUFFER  0.3f
 
 using namespace cugl;
 
@@ -289,8 +289,8 @@ bool CollisionController::clientDogMonsterCollision(std::shared_ptr<Dog> curDog,
                 else {
                     collision = true;
                     enemy->resetAttack();
-                    _network->pushOutEvent(ClientHealthEvent::allocClientHealthEvent(enemy->getDamage(),false));
                 }
+                _network->pushOutEvent(ClientHealthEvent::allocClientHealthEvent(enemy->getDamage(),false));
 //                curDog->setHealth(curDog->getHealth()-enemy->getDamage());
             }else{
             }
@@ -315,14 +315,12 @@ bool CollisionController::monsterDogCollision(std::shared_ptr<Dog> curDog, Monst
                     monsterController.removeEnemy(enemy);
                     collision = true;
                     it = curEnemies.erase(it);
-                    continue;
                 }
                 else {
                     collision = true;
                     enemy->resetAttack();
-                    _network->pushOutEvent(ClientHealthEvent::allocClientHealthEvent(enemy->getDamage(),true));
                 }
-//                curDog->setHealth(curDog->getHealth()-enemy->getDamage());
+                _network->pushOutEvent(ClientHealthEvent::allocClientHealthEvent(enemy->getDamage(),true));
             }else{
             }
         }
