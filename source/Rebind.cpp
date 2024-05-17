@@ -114,14 +114,13 @@ void RebindScene::update(float progress)
     _input.update();
 
     if(_input.didPressUp() && height > 0){
-        Vec2 v = _root->applyPan(0, -5);
+        _root->applyPan(0, -5);
         height -= 5;
     }
     
     else if(_input.didPressDown() && height < maxHeight){
-        Vec2 v = _root->applyPan(0, 5);
+        _root->applyPan(0, 5);
         height += 5;
-        std::cout << height << std::endl;
     }
     
     if (_input.didPressConfirm()){
@@ -154,10 +153,11 @@ bool RebindScene::isPending() const
 
 void RebindScene::setActive(bool value)
 {
-
     if (isActive() != value)
     {
         Scene2::setActive(value);
+        _root->resetPane();
+        height = 0;
         if (value)
         {
             _button->activate();
