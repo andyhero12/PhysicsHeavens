@@ -488,7 +488,8 @@ void NetApp::updateGameScene(float timestep)
         _status = MAINMENU;
         _singlePlayer.resetAutoStart();
     }
-    else if (_gameplay.getStatus() == GameScene::Choice::NEXT) {
+    else if (_gameplay.getStatus() == GameScene::Choice::NEXT || _gameplay.getStatus() == GameScene::Choice::RETRY) {
+        bool isNext = _gameplay.getStatus() == GameScene::Choice::NEXT;
         if(isSingle) {
             _gameplay.dispose();
             _network->disconnect(); // Get rid of This?
@@ -498,12 +499,14 @@ void NetApp::updateGameScene(float timestep)
             _status = SINGLEPLAYER;
 
             LevelScene::Level l = currLevel;
-            if (l == LevelScene::Level::L15) {
-                _status = MAINMENU;
-                return;
-            }
-            else {
-                l = static_cast<LevelScene::Level>(static_cast<int>(l) + 1);
+            if(isNext) {
+                if (l == LevelScene::Level::L15) {
+                    _status = MAINMENU;
+                    return;
+                }
+                else {
+                    l = static_cast<LevelScene::Level>(static_cast<int>(l) + 1);
+                }
             }
 
             _singlePlayer.setActive(true);
