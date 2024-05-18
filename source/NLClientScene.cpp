@@ -98,6 +98,7 @@ bool ClientScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::s
     _nine = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("joinview_button9"));
     _player1 = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("joinview_button_player1"));
     _player2 = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("joinview_button_player2"));
+    _delete = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("joinview_button_back"));
     // _backout->addListener([this](const std::string& name, bool down) {
     //     if (down) {
     //         _network->disconnect();
@@ -212,8 +213,32 @@ void ClientScene::update(float timestep) {
     // Do this last for button safety
     configureStartButton();
     _input.update();
+
+//     timeSinceLastSwitch += timestep;
+
+//   if (timeSinceLastSwitch >= switchFreq) {
+//     if (_input._updown != 0) {  // Handling up/down navigation
+//         buttonGrid[currentRow][currentCol]->setDown(false); // Deselect current button
+//         if (_input._updown == 1 && currentRow > 0) { // Moving up
+//             currentRow--;
+//         } else if (_input._updown == -1 && currentRow < buttonGrid.size() - 1) { // Moving down
+//             currentRow++;
+//         }
+//         buttonGrid[currentRow][currentCol]->setDown(true); // Select new button
+//     } else if (_input._Leftright != 0) {  // Handling left/right navigation
+//         buttonGrid[currentRow][currentCol]->setDown(false); // Deselect current button
+//         if (_input._Leftright == -1 && currentCol > 0) { // Moving left
+//             currentCol--;
+//         } else if (_input._Leftright == 1 && currentCol < buttonGrid[currentRow].size() - 1) { // Moving right
+//             currentCol++;
+//         }
+//         buttonGrid[currentRow][currentCol]->setDown(true); // Select new button
+//     }
+//     timeSinceLastSwitch = 0; // Reset the timer
+// }
+    
     if(_network->getStatus() == NetEventController::Status::CONNECTED || _network->getStatus() == NetEventController::Status::HANDSHAKE){
-        _player->setText(std::to_string(_network->getNumPlayers()));
+        //_player->setText(std::to_string(_network->getNumPlayers()));
     }
 
     if(_input.didPressConfirm()){
