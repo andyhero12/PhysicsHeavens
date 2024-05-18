@@ -1,5 +1,40 @@
 {
     "textures": {
+        "pause":{
+            "file": "textures/Menu/pause-menu.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "girlTalk": {
+            "file": "textures/tutorial/girl_tutorial_talk.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "textBubble": {
+            "file": "textures/tutorial/bubble.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "newTrick": {
+            "file": "textures/newAbility/new_trick.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "rightTrigger": {
+            "file": "textures/tutorial/press_rightTrigger.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "rightBumper": {
+            "file": "textures/tutorial/press_rightBumper.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "textbox": {
+            "file": "textures/tutorial/textbox.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
         "pressA": {
             "file": "textures/press_a.png",
             "minfilter": "linear",
@@ -62,66 +97,6 @@
         },
         "arrow": {
             "file": "textures/tutorial/arrow.png",
-            "minfilter": "linear",
-            "magfilter": "nearest"
-        },
-        "GREETING": {
-            "file": "textures/tutorial/greeting.png",
-            "minfilter": "linear",
-            "magfilter": "nearest"
-        },
-        "GROW": {
-            "file": "textures/tutorial/grow.png",
-            "minfilter": "linear",
-            "magfilter": "nearest"
-        },
-        "SPECIALSONE": {
-            "file": "textures/tutorial/trigger.png",
-            "minfilter": "linear",
-            "magfilter": "nearest"
-        },
-        "CHANGEABILITYTWO": {
-            "file": "textures/tutorial/swap.png",
-            "minfilter": "linear",
-            "magfilter": "nearest"
-        },
-        "SPECIALSTWO": {
-            "file": "textures/tutorial/trigger.png",
-            "minfilter": "linear",
-            "magfilter": "nearest"
-        },
-        "CHANGEABILITYTHREE": {
-            "file": "textures/tutorial/greeting.png",
-            "minfilter": "linear",
-            "magfilter": "nearest"
-        },
-        "SPECIALSTHREE": {
-            "file": "textures/tutorial/greeting.png",
-            "minfilter": "linear",
-            "magfilter": "nearest"
-        },
-        "CHANGEABILITYFOUR": {
-            "file": "textures/tutorial/greeting.png",
-            "minfilter": "linear",
-            "magfilter": "nearest"
-        },
-        "MOVEMENT": {
-            "file": "textures/tutorial/move.png",
-            "minfilter": "linear",
-            "magfilter": "nearest"
-        },
-        "BITE": {
-            "file": "textures/tutorial/bite.png",
-            "minfilter": "linear",
-            "magfilter": "nearest"
-        },
-        "DEFENDGATE": {
-            "file": "textures/tutorial/gate.png",
-            "minfilter": "linear",
-            "magfilter": "nearest"
-        },
-        "DESTROYSPAWNER": {
-            "file": "textures/tutorial/spawners.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
@@ -732,6 +707,21 @@
             "file": "sounds/Player/dogBark.wav",
             "volume": 0.4
         },
+        "smallBark": {
+            "type": "sample",
+            "file": "sounds/Player/smallBark.wav",
+            "volume": 0.8
+        },
+        "medBark": {
+            "type": "sample",
+            "file": "sounds/Player/medBark.wav",
+            "volume": 0.8
+        },
+        "bigBark": {
+            "type": "sample",
+            "file": "sounds/Player/bigBark.wav",
+            "volume": 0.8
+        },
         "dogBiteSmall": {
             "type": "sample",
             "file": "sounds/Player/dogBiteLittle.wav",
@@ -890,8 +880,8 @@
     },
     "fonts": {
         "retro": {
-            "file": "fonts/RetroGame.ttf",
-            "size": 64
+            "file": "fonts/Default.ttf",
+            "size": 108
         },
         "gyparody": {
             "file": "fonts/gyparody-hv.ttf",

@@ -276,8 +276,8 @@ void NetApp::updateMenuScene(float timestep)
     if (_menu.getBackclick())
     {
         _menu.setActive(false);
-        _mainmenu.setActive(true);
-        _status = MAINMENU;
+        _selection.setActive(true);
+        _status = SELECTION;
     }
     else
     {
@@ -494,7 +494,7 @@ void NetApp::updateGameScene(float timestep)
     {
         _gameplay.dispose();
         _network->disconnect(); // Get rid of This?
-        _mainmenu.setActive(true);
+        _selection.setActive(true);
         _gameplay.setActive(false);
         _hostgame.endGame();
         _singlePlayer.endGame();
@@ -678,7 +678,7 @@ void NetApp::updateSettingScene(float timestep)
         _mainmenu.setActive(true);
         _status = MAINMENU;
     }
-    else if (_setting.getLevel() == SettingScene::button::b4)
+    else if (_setting.getLevel() == SettingScene::button::b3)
     {
         _setting.setActive(false);
         _rebind.setActive(true);

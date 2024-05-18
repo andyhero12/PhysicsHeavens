@@ -60,8 +60,11 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     std::shared_ptr<scene2::SceneNode> layer = _assets->get<scene2::SceneNode>("lab");
     layer->setContentSize(dimen);
     layer->doLayout(); // This rearranges the children to fit the screen
-    _buttonset.push_back(_button1 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("lab_button1")));
-    _buttonset.push_back(_button3 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("lab_button2")));
+    _button1 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("lab_button1"));
+    _button3 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("lab_button2"));
+    // _button4 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("lab_button3"));
+    
+    _buttonset = {_button1, _button3};
     //_Logo = assets->get<scene2::SceneNode>("Menu_startmenu_Logo");
     // Program the buttons
     _button1->addListener([this](const std::string& name, bool down) {
@@ -96,8 +99,18 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             }
         }
     });
+    // _button4->addListener([this](const std::string& name, bool down) {
+    //     if (down) {
+    //         if(_input.getState()==InputController::State::CONTROLLER){
+    //             _isdown = Isdown::isQUIT;
+    //         }
+    //         else{
+    //             Application::get()->quit();
+    //         }
+    //     }
+    // });
 
-    _counter = 1;
+    _counter = 0;
     switchFreq = 0.2;
     _isdown = Isdown::isNONE;
     background = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("background_main"), 1, 6, 6, 8);
@@ -115,6 +128,11 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
 void MainMenuScene::dispose() {
     if (_active) {
         removeAllChildren();
+        _button1 = nullptr;
+        _button3 = nullptr;
+        // _button4 = nullptr;
+        background = nullptr;
+        _buttonset.clear();
         _active = false;
     }
 }
@@ -140,54 +158,91 @@ void MainMenuScene::setActive(bool value) {
             _isdown = Isdown::isNONE;
             _button1->activate();
             _button3->activate();
+            // _button4->activate();
             _firstset = true;
             AudioEngine::get()->play(MAIN_MENU, source, true, source->getVolume(), true);
         } else {
             _button1->deactivate();
             _button3->deactivate();
+            // _button4->deactivate();
             _button1->setDown(false);
             _button3->setDown(false);
             AudioEngine::get()->clear(MAIN_MENU);
+            // _button4->setDown(false);
         }
     }
 }
+//
+//void MainMenuScene::update(float timestep)
+//{
+//    background->update();
+//    _input.update();
+//    if(_firstset&&_input.getState()==InputController::State::CONTROLLER){
+//        _button1->setDown(true);
+//        _firstset = false;
+//    }
+//    timeSinceLastSwitch += timestep;
+//    //std::cout << timeSinceLastSwitch << std::endl;
+//    if (timeSinceLastSwitch >= switchFreq) {
+//        if (_input._updown != 0) {
+//            if (_input._updown == 1 && _counter > 0) {
+//                _buttonset.at(_counter)->setDown(false);
+//                _counter--;
+//                _buttonset.at(_counter)->setDown(true);
+//            }
+//            else if (_input._updown == -1 && _counter < _buttonset.size() - 1) {
+//                _buttonset.at(_counter)->setDown(false);
+//                _counter++;
+//                _buttonset.at(_counter)->setDown(true);
+//            }
+//            timeSinceLastSwitch = 0;
+//
+//        }
+//    }
+//    //std::cout << _input._confirm << std::endl;
+//    if (_isdown == Isdown::isSINGLE &&_input.didPressConfirm() ){
+//        _choice = Choice::SINGLE;
+//    }
+//    else if (_isdown == Isdown::isSETTING && _input.didPressConfirm()) {
+//        _choice = Choice::SETTING;
+//    }
+//    else if(_isdown == Isdown::isQUIT && _input.didPressConfirm()){
+//        Application::get()->quit();
+//    }
+//    else if (_isdown == Isdown::isNONE && _input.didPressConfirm()) {
+//    }
 
-void MainMenuScene::update(float timestep)
-{
+void MainMenuScene::update(float timestep) {
     background->update();
     _input.update();
-    if(_firstset&&_input.getState()==InputController::State::CONTROLLER){
+    if (_firstset && _input.getState() == InputController::State::CONTROLLER) {
         _button1->setDown(true);
         _firstset = false;
     }
     timeSinceLastSwitch += timestep;
-    //std::cout << timeSinceLastSwitch << std::endl;
     if (timeSinceLastSwitch >= switchFreq) {
         if (_input._updown != 0) {
             if (_input._updown == 1 && _counter > 0) {
                 _buttonset.at(_counter)->setDown(false);
-                _counter--;
+                --_counter;
                 _buttonset.at(_counter)->setDown(true);
-            }
-            else if (_input._updown == -1 && _counter < _buttonset.size() - 1) {
+            } else if (_input._updown == -1 && _counter < _buttonset.size() - 1) {
                 _buttonset.at(_counter)->setDown(false);
-                _counter++;
+                ++_counter;
                 _buttonset.at(_counter)->setDown(true);
             }
             timeSinceLastSwitch = 0;
-
         }
     }
-    //std::cout << _input._confirm << std::endl;
-    if (_isdown == Isdown::isSINGLE &&_input.didPressConfirm() ){
+    if (_isdown == Isdown::isSINGLE && _input.didPressConfirm()) {
         _choice = Choice::SINGLE;
     }
     else if (_isdown == Isdown::isSETTING && _input.didPressConfirm()) {
         
         _choice = Choice::SETTING;
-    }
-    else if (_isdown == Isdown::isNONE && _input.didPressConfirm()) {
-    }
-
+    } 
+    // else if (_isdown == Isdown::isQUIT && _input.didPressConfirm()) {
+    //     Application::get()->quit();
+    // }
 }
 

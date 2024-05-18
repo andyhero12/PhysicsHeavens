@@ -13532,7 +13532,7 @@
                                    "type": "",
                                    "visible": true,
                                    "width": 0,
-                                   "x": 1089.51406649616,
+                                   "x": 1060,
                                    "y": 470.588235294118
                             }
                      ],
@@ -13566,22 +13566,22 @@
                                           {
                                                  "name": "PrimaryEnemy",
                                                  "type": "string",
-                                                 "value": "basic"
+                                                 "value": "staticbasic"
                                           },
                                           {
                                                  "name": "RegDelay",
                                                  "type": "int",
-                                                 "value": 5
+                                                 "value": 1000
                                           },
                                           {
                                                  "name": "SecondaryEnemy",
                                                  "type": "string",
-                                                 "value": "basic"
+                                                 "value": "staticbasic"
                                           },
                                           {
                                                  "name": "TertiaryEnemy",
                                                  "type": "string",
-                                                 "value": "basic"
+                                                 "value": "staticbasic"
                                           }
                                    ],
                                    "rotation": 0,

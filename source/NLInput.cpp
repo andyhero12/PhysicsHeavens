@@ -175,12 +175,19 @@ bool InputController::readInput(Tutorial::MODE progress, bool inRange)
                 return true;
             }
         }
-        else if (progress == Tutorial::SPECIALSONE || progress == Tutorial::SPECIALSTWO || progress == Tutorial::SPECIALSTHREE || progress == Tutorial::SPECIALSFOUR)
+        else if (progress == Tutorial::SPECIALSONE || progress == Tutorial::SPECIALSTWO || progress == Tutorial::SPECIALSTHREE || progress == Tutorial::SPECIALSFOUR )
         {
             if (keys->keyPressed(KeyCode::G))
             {
                 _didSpecial = true;
                 _UseKeyboard = true;
+                return true;
+            }
+        }
+        else if(progress == Tutorial::DASH){
+            if (keys->keyPressed(KeyCode::LEFT_SHIFT))
+            {
+                _didDash = true;
                 return true;
             }
         }
@@ -417,7 +424,6 @@ bool InputController::readInput_joystick(Tutorial::MODE progress, bool inRange)
                 if (_gameContrl->isButtonPressed(buttons))
                 {
                     _didFire = true;
-                    _UseJoystick = true;
                     return true;
                 }
             }
@@ -427,7 +433,6 @@ bool InputController::readInput_joystick(Tutorial::MODE progress, bool inRange)
                 if (_gameContrl->isButtonPressed(buttons))
                 {
                     _didChangeMode = true;
-                    _UseJoystick = true;
                     return true;
                 }
             }
@@ -438,7 +443,14 @@ bool InputController::readInput_joystick(Tutorial::MODE progress, bool inRange)
                 if (_gameContrl->getAxisPosition(LT) >= 0.5 || _gameContrl->getAxisPosition(RT) >= 0.5)
                 {
                     _didSpecial = true;
-                    _UseJoystick = true;
+                    return true;
+                }
+            }
+            else if(progress == Tutorial::DASH){
+                cugl::GameController::Button X = cugl::GameController::Button::X;
+                if (_gameContrl->isButtonPressed(X))
+                {
+                    _didDash = true;
                     return true;
                 }
             }
@@ -542,11 +554,12 @@ void InputController::readInput_joystick(int value)
 
         if (value >= static_cast<int>(Tutorial::CHANGEABILITYTWO))
         {
-            if (_gameContrl->isButtonPressed(RB))
+            if (_gameContrl->isButtonPressed(RB)||_gameContrl->isButtonPressed(LB))
             {
                 _didChangeMode = true;
                 _UseJoystick = true;
             }
+            
         }
 
         if (_gameContrl->isButtonPressed(B))
@@ -557,7 +570,7 @@ void InputController::readInput_joystick(int value)
 
         if (_gameContrl->isButtonPressed(Y))
         {
-            _didHome = true;
+            //_didHome = true;
             _UseJoystick = true;
         }
 
@@ -569,27 +582,6 @@ void InputController::readInput_joystick(int value)
         if (_gameContrl->isButtonPressed(Start))
         {
             _didPause = true;
-            _UseJoystick = true;
-        }
-        if (_gameContrl->isButtonPressed(up))
-        {
-            _updown = 1;
-            _UseJoystick = true;
-        }
-        if (_gameContrl->isButtonPressed(down))
-        {
-            _updown = -1;
-            _UseJoystick = true;
-        }
-
-        if (_gameContrl->isButtonPressed(cugl::GameController::Button::DPAD_LEFT))
-        {
-            _Leftright = -1;
-            _UseJoystick = true;
-        }
-        if (_gameContrl->isButtonPressed(cugl::GameController::Button::DPAD_RIGHT))
-        {
-            _Leftright = 1;
             _UseJoystick = true;
         }
 
@@ -605,11 +597,11 @@ void InputController::readInput_joystick(int value)
                 else if (UD > 0.4) {
                     _updown = -1; //down
                 }
-                if (LR < -0.2)
+                if (LR < -0.4)
                 {
                     _Leftright = -1; // Left
                 }
-                else if (LR > 0.2)
+                else if (LR > 0.4)
                 {
                     _Leftright = 1; // Right
                 }

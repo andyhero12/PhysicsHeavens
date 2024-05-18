@@ -129,6 +129,12 @@ protected:
     float _zoom;
     std::vector<std::shared_ptr<Tutorial>> tutorialTiles;
     std::shared_ptr<SpriteAnimationNode> tutorialArrow;
+    std::shared_ptr<SpriteAnimationNode> newTrick;
+    
+    
+    std::shared_ptr<cugl::scene2::PolygonNode> textBox;
+    std::shared_ptr<SpriteAnimationNode> devilNormal;
+    std::shared_ptr<SpriteAnimationNode> devilLaugh;
     int tutorialIndex;
     
     Vec2 previousPan;
@@ -181,7 +187,7 @@ protected:
     
     
     /** Initialize tutorial */
-    void initTutorial(std::vector<int>& frame);
+    void initTutorial();
     
     void initTutorialOne();
     void initTutorialTwo();

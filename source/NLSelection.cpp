@@ -56,12 +56,12 @@ bool SelectionScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     // Acquire the scene built by the asset loader and resize it the scene
 
     _input.init();
-    _assets->loadDirectory("json/playerselection.json");
-    std::shared_ptr<scene2::SceneNode> layer = _assets->get<scene2::SceneNode>("Menu_selection");
+    _assets->loadDirectory("json/newPlayerSelection.json");
+    std::shared_ptr<scene2::SceneNode> layer = _assets->get<scene2::SceneNode>("Playerselection");
     layer->setContentSize(dimen);
     layer->doLayout(); // This rearranges the children to fit the screen
-    _buttonset.push_back(_button1 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("Menu_selection_selectionmenu_Button1")));
-    _buttonset.push_back(_button2 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("Menu_selection_selectionmenu_Button2")));
+    _buttonset.push_back(_button1 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("Playerselection_play_menu_buttons_button1")));
+    _buttonset.push_back(_button2 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("Playerselection_play_menu_buttons_button2")));
     //_buttonset.push_back(_button3 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("Menu_startmenu_button3")));
     // Program the buttons
     _button1->addListener([this](const std::string& name, bool down) {
@@ -174,7 +174,6 @@ void SelectionScene::update(float timestep)
 
     if(_input.didPressBack()){
         _backClicked = true;
-        std::cout<<"back"<<std::endl;
     }
     if (_isdown == Isdown::isPLAYER1 &&_input.didPressConfirm() ){
         _choice = Choice::PLAYER1;

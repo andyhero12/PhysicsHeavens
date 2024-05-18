@@ -63,13 +63,11 @@ public:
 protected:
     /** The asset manager for loading. */
     std::shared_ptr<cugl::AssetManager> _assets;
-    
 
     /** Flag to bypass locked levels*/
     bool _godMode = true;
 
     std::shared_ptr<AudioController> _audioController;
-
     
     // NO CONTROLLER (ALL IN SEPARATE THREAD)
     

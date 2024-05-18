@@ -1,7 +1,7 @@
 {
   "textures": {
     "background_rebind": {
-      "file": "textures/rebind_control.png"
+      "file": "textures/ShowControl.png"
     },
     "backbutton": {
       "file": "textures/Menu/play.png"

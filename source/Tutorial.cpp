@@ -7,8 +7,9 @@
 
 #include "Tutorial.h"
 
-bool Tutorial::init(int tile, MODE m_progress, std::string m_text)
+bool Tutorial::init(int tile, MODE m_progress, std::string m_text, bool val)
 {
+    laugh = val;
     tileX = tile;
     passed = false;
     progress = m_progress;
@@ -20,8 +21,14 @@ bool Tutorial::init(int tile, MODE m_progress, std::string m_text)
     return true;
 }
 
+
 bool Tutorial::atArea(int tile)
 {
-    enter = enter || tileX <= tile || progress == GREETING || progress == MOVEMENT;
+    if(progress == DEFENDGATE){
+        enter = enter || (tileX <= tile && tile <= tileX + 5);
+    }
+    else{
+        enter = enter || tileX <= tile || progress == GREETING || progress == MOVEMENT;
+    }
     return enter;
 }

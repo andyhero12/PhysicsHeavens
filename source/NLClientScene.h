@@ -16,6 +16,7 @@
 #include <vector>
 #include "GlobalConstants.h"
 #include "NLInput.h"
+#include <string>
 #include "AudioController.h"
 
 using namespace cugl::physics2::net;
@@ -28,6 +29,25 @@ using namespace cugl::physics2::net;
  * code a little more clear.
  */
 class ClientScene : public cugl::Scene2 {
+public:
+    enum number {
+            /** User has not yet made a choice */
+            zero,
+            /** User wants to host a game */
+            one,
+            /** User wants to join a game */
+            two,
+            three,
+            four,
+            five,
+            six,
+            seven,
+            eight,
+            nine,
+            back,
+            start
+     };   
+
 protected:
     /** The asset manager for this scene. */
     std::shared_ptr<cugl::AssetManager> _assets;
@@ -40,19 +60,43 @@ protected:
     /** The menu button for starting a game */
     std::shared_ptr<cugl::scene2::Button> _startgame;
     /** The back button for the menu scene */
-    std::shared_ptr<cugl::scene2::Button> _backout;
-    /** The game id label (for updating) */
-    std::shared_ptr<cugl::scene2::TextField> _gameid;
-    /** The players label (for updating) */
-    std::shared_ptr<cugl::scene2::Label> _player;
+    // std::shared_ptr<cugl::scene2::Button> _backout;
+    // /** The game id label (for updating) */
+     std::shared_ptr<cugl::scene2::TextField> _gameid;
+    // /** The players label (for updating) */
+    // std::shared_ptr<cugl::scene2::Label> _player;
 
+    std::shared_ptr<cugl::scene2::Button> _zero;
+    std::shared_ptr<cugl::scene2::Button> _one;
+    std::shared_ptr<cugl::scene2::Button> _two;
+    std::shared_ptr<cugl::scene2::Button> _three;
+    std::shared_ptr<cugl::scene2::Button> _four;
+    std::shared_ptr<cugl::scene2::Button> _five;
+    std::shared_ptr<cugl::scene2::Button> _six;
+    std::shared_ptr<cugl::scene2::Button> _seven;
+    std::shared_ptr<cugl::scene2::Button> _eight;
+    std::shared_ptr<cugl::scene2::Button> _nine;
+    std::shared_ptr<cugl::scene2::Button> _delete;
+    std::shared_ptr<cugl::scene2::Button> _player1;
+    std::shared_ptr<cugl::scene2::Button> _player2;
+
+    std::vector<std::vector<std::shared_ptr<cugl::scene2::Button>>> buttonGrid;
     InputController _input;
-    
+
+    float timeSinceLastSwitch;
+
+    float switchFreq;
+
+    int currentRow;
+    int currentCol;
+    number _number;
     /** The network configuration */
     cugl::net::NetcodeConfig _config;
     
     /** Whether the back button had been clicked. */
-    bool _backClicked = false;
+    bool _backClicked;
+
+    std::string _value;
 
 public:
 #pragma mark -
@@ -63,7 +107,7 @@ public:
      * This constructor does not allocate any objects or start the game.
      * This allows us to use the object without a heap pointer.
      */
-    ClientScene() : cugl::Scene2() {}
+    ClientScene() : cugl::Scene2(), _backClicked(false),timeSinceLastSwitch(0.0), switchFreq(0.1),currentRow(0),currentCol(0),_number(zero), _value(""){}
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.
@@ -144,6 +188,8 @@ private:
      * networking.
      */
     void configureStartButton();
+
+  
 };
 
 #endif /* __NL_GAME_SCENE_H__ */
