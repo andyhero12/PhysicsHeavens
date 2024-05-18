@@ -37,21 +37,19 @@ using namespace cugl;
  */
 bool RebindScene::init(const std::shared_ptr<AssetManager> &assets)
 {
-    // Initialize the scene to a locked width
     Size dimen = Application::get()->getDisplaySize();
-    dimen *= SCENE_SIZE/dimen.height;
+    dimen *= SCENE_SIZE / dimen.height;
     if (assets == nullptr) {
         return false;
     } else if (!Scene2::init(dimen)) {
         return false;
     }
-    
-    _root = scene2::ScrollPane::allocWithBounds(dimen*10);
-    _root->setContentSize(dimen*10);
-//    _root->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+
+    _root = scene2::ScrollPane::allocWithBounds(dimen);
+    _root->setContentSize(dimen);
+    _root->setAnchor(Vec2::ANCHOR_TOP_LEFT);
 
     addChild(_root);
-    //_input.init_withlistener();
     _input.init();
     // IMMEDIATELY load the splash screen assets
     _assets = assets;
@@ -61,24 +59,31 @@ bool RebindScene::init(const std::shared_ptr<AssetManager> &assets)
     layer->doLayout(); // This rearranges the children to fit the screen
     _button = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("Rebind_button1"));
     _button->addListener([this](const std::string &name, bool down){
-    if(down) { // Check if the button is pressed down
-    }
+        if (down) { // Check if the button is pressed down
+            // Handle button press
+        }
     });
     background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("background_rebind"), 1, 1);
-//    std::cout << "height of level scene "<< background->getTexture()->getHeight()<<std::endl;
-    background->setScale(20);
-    background->setPosition(0.5 *dimen);
-    addChild(background);
+
+    float scale = dimen.width / background->getTexture()->getWidth();
+    
+    background->setScale(scale);
+    
+    
+    background->setPosition(dimen.width / 2.0f, dimen.height / 2.0f);  // Center the background
+    background->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    _root->addChild(background);
+
     layer->setColor(Color4(0, 0, 0, 1));
     Application::get()->setClearColor(Color4(192, 192, 192, 255));
-    _root->addChild(layer);
 
+    _root->setPosition(0, background->getTexture()->getHeight()/2);
     
-    
-    setActive(false);
-    
+    maxHeight = background->getTexture()->getHeight();
 
+    height = 0;
     return true;
+
 }
 
 /**
@@ -108,10 +113,14 @@ void RebindScene::update(float progress)
 {
     _input.update();
 
-    if(_input.didPressUp()){
-        _root->applyZoom(1.5);
-        _root->applyPan(1, 1);
-        CULog("fadjsfa f");
+    if(_input.didPressUp() && height > 0){
+        _root->applyPan(0, -5);
+        height -= 5;
+    }
+    
+    else if(_input.didPressDown() && height < maxHeight){
+        _root->applyPan(0, 5);
+        height += 5;
     }
     
     if (_input.didPressConfirm()){
@@ -144,10 +153,11 @@ bool RebindScene::isPending() const
 
 void RebindScene::setActive(bool value)
 {
-
     if (isActive() != value)
     {
         Scene2::setActive(value);
+        _root->resetPane();
+        height = 0;
         if (value)
         {
             _button->activate();
