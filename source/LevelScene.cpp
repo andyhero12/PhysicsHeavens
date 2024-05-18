@@ -146,9 +146,14 @@ bool LevelScene::init(const std::shared_ptr<AssetManager> &assets)
     background = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("LongBackground"), 3, 27, 81, 5);
     background->setScale(4.3);
     background->setPosition(0.5 * background->getSize());
+    autoBackground = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("repeat_win"), 2, 5, 8, 8);
+    autoBackground->setScale(2* 800/autoBackground->getTexture()->getHeight());
+    autoBackground->setPosition(0.5 * autoBackground->getSize());
     
     addChild(_uinode);
     _uinode->addChild(background);
+    _uinode->addChild(autoBackground);
+    autoBackground->setVisible(false);
     layer->setColor(Color4(0, 0, 0, 1));
     Application::get()->setClearColor(Color4(192, 192, 192, 255));
     addChild(layer);
@@ -272,4 +277,14 @@ void LevelScene::adjustFrame(int level){
 void LevelScene::autoStartGame(LevelScene::Level level){
     autoStart = true;
     _level = level;
+    setAutoVisible(true);
+}
+
+void LevelScene::resetAutoStart() {
+    autoStart = false;
+}
+
+
+void LevelScene::setAutoVisible(bool b){
+    autoBackground->setVisible(b);
 }

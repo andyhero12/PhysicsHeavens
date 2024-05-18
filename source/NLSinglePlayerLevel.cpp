@@ -118,9 +118,14 @@ bool SinglePlayerLevelScene::init(const std::shared_ptr<AssetManager> &assets, s
     background = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("BackgroundLevelSingle"), 3, 27, 81, 5);
     background->setScale(4.3);
     background->setPosition(0.5 * background->getSize());
+    autoBackground = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("repeat_win"), 2, 5, 8, 8);
+    autoBackground->setScale(2* 800/autoBackground->getTexture()->getHeight());
+    autoBackground->setPosition(0.5 * autoBackground->getSize());
     
     addChild(_uinode);
     _uinode->addChild(background);
+    _uinode->addChild(autoBackground);
+    autoBackground->setVisible(false);
     
     layer->setColor(Color4(0, 0, 0, 1));
     Application::get()->setClearColor(Color4(192, 192, 192, 255));

@@ -486,6 +486,7 @@ void NetApp::updateGameScene(float timestep)
         _hostgame.endGame();
         _singlePlayer.endGame();
         _status = MAINMENU;
+        _singlePlayer.resetAutoStart();
     }
     else if (_gameplay.getStatus() == GameScene::Choice::NEXT) {
         if(isSingle) {
@@ -671,6 +672,8 @@ void NetApp::updateSinglePlayerLevelScene(float timestep)
     }
     else if (_network->getStatus() == NetEventController::Status::INGAME)
     {
+        _singlePlayer.setAutoVisible(false);
+        _singlePlayer.resetAutoStart();
         _singlePlayer.setActive(false);
         _gameplay.setActive(true);
         _status = GAME;

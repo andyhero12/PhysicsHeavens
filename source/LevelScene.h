@@ -77,6 +77,8 @@ protected:
 
     std::shared_ptr<cugl::scene2::SpriteNode> background;
 
+    std::shared_ptr<cugl::scene2::SpriteNode> autoBackground;
+
     Level _level;
     InputController _input;
 
@@ -238,7 +240,7 @@ public:
         curMoveAnim = 0;
     }
     void resetLevel(){
-        _level = Level::NONE;
+        //_level = Level::NONE;
     }
     void resetgochange(){
         _goleft = false;
@@ -265,6 +267,10 @@ public:
     }    
 
     void autoStartGame(LevelScene::Level level);
+
+    void setAutoVisible(bool b);
+
+    void resetAutoStart();
 };
 
 
