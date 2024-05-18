@@ -167,7 +167,6 @@ bool ClientScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::s
         if (down) {
              // This will call the _gameid listener
              _gameid->releaseFocus();
-            _player2->setColor(Color4::GREEN);
         }
     });
 
@@ -307,7 +306,11 @@ void ClientScene::update(float timestep) {
     // Do this last for button safety
     configureStartButton();
     _input.update();
-
+    if(_network->getStatus() == NetEventController::Status::CONNECTED || _network->getStatus() == NetEventController::Status::HANDSHAKE){
+        if(_network->getNumPlayers()==2){
+            _player2->setColor(Color4::GREEN);
+        }
+    } 
     timeSinceLastSwitch += timestep;
 
     if (timeSinceLastSwitch >= switchFreq) {
@@ -347,6 +350,7 @@ void ClientScene::update(float timestep) {
         
     _gameid->setText(_value);
     if(_input.didPressBack()){
+        _network->disconnect();
         _backClicked = true;
     }
 

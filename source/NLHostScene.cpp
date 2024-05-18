@@ -215,6 +215,7 @@ void HostScene::update(float timestep) {
     if(_network->getStatus() == NetEventController::Status::CONNECTED){
         if (!_startGameClicked) {
             _player1->setColor(Color4::GREEN);
+            std::cout<<_network->getNumPlayers() <<std::endl;
             if(_network->getNumPlayers() == 2){
                 _startgame->setColor(Color4::GREEN);
                 _player2->setColor(Color4::GREEN);
