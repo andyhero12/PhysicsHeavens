@@ -1,5 +1,10 @@
 {
     "textures": {
+        "newTrick":{
+            "file": "textures/newAbility/new_trick.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
         "rightTrigger":{
             "file": "textures/tutorial/press_rightTrigger.png",
             "minfilter": "linear",

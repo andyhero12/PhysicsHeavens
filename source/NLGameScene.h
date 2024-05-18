@@ -124,6 +124,7 @@ protected:
     float _zoom;
     std::vector<std::shared_ptr<Tutorial>> tutorialTiles;
     std::shared_ptr<SpriteAnimationNode> tutorialArrow;
+    std::shared_ptr<SpriteAnimationNode> newTrick;
     int tutorialIndex;
     
     Vec2 previousPan;

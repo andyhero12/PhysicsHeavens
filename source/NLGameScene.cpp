@@ -976,6 +976,16 @@ void GameScene::updateInputController()
         if (atLocation && !tile->didPass() && spriteNode)
         {
             if (tile->getProgress() == Tutorial::MODE::RECALLGIVE || tile->getProgress() == Tutorial::MODE::BARKGIVE || tile->getProgress() == Tutorial::MODE::BAITGIVE || tile->getProgress() == Tutorial::MODE::BOMBGIVE){
+                newTrick->setVisible(true);
+                
+                if(newTrick->getFrame() != newTrick->getSpan()-1){
+                    newTrick->update();
+                    return;
+                }
+                else{
+                    newTrick->setVisible(false);
+                }
+                
                 if (spriteNode->getFrame() != spriteNode->getSpan() -1){
                     spriteNode->setVisible(true);
                     spriteNode->update();
@@ -1012,6 +1022,7 @@ void GameScene::updateInputController()
                 spriteNodeRepeat->setVisible(false);
                 pressA->setVisible(false);
                 tutorialIndex++;
+                newTrick->setFrame(0);
             }
         } else if (_input.update(tile->getProgress(), atLocation))
         {
@@ -1121,6 +1132,14 @@ void GameScene::initTutorial()
     tutorialArrow->setPositionX(screen.width / 2 + 320);
     tutorialArrow->setPositionY(screen.height / 2);
     _tutorialnode->addChild(tutorialArrow);
+    
+    newTrick = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("newTrick"), 7, 5, 35, 2);
+    newTrick->setAnchor(Vec2::ANCHOR_CENTER);
+    
+    newTrick->setScale(8*SCENE_HEIGHT/newTrick->getTexture()->getHeight());
+    newTrick->setPosition(0.5 * newTrick->getSize());
+    newTrick->setVisible(false);
+    _tutorialnode->addChild(newTrick);
     
     for (int i = 0; i < tutorialTiles.size(); i++)
     {
