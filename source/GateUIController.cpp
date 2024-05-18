@@ -63,7 +63,7 @@ void GateUIController::setGateBarTexture(std::shared_ptr<SubTextureNode> fill, f
     // The percentage of the size bar that is empty space, needed to adjust how fast the health bar decreases
     GLfloat emptyPercent = 0;
     
-    GLfloat minS = emptyPercent + (1.0 - emptyPercent) * (1.0-percentage);
+    GLfloat minS = emptyPercent + (1.0 - emptyPercent) * (1.0 - percentage);
     GLfloat maxS = 1;
     GLfloat minT = 0;
     GLfloat maxT = 1;
@@ -79,12 +79,16 @@ void GateUIController::setGateBarTexture(std::shared_ptr<SubTextureNode> fill, f
 }
 
 void GateUIController::updateHealthTexture(){
+    
+    
     std::shared_ptr<Base> firstGate = _gates->getBases().at(0);
     setGateBarTexture(_gatefill, fmax(0.0,static_cast<double>(firstGate->getHealth())/firstGate->getMaxHealth()));
+    CULog("Gate 1 Health: %d", firstGate->getHealth());
     
     if(_gates->getBases().size() == 2){
-        std::shared_ptr<Base> secondGate = _gates->getBases().at(0);
+        std::shared_ptr<Base> secondGate = _gates->getBases().at(1);
         setGateBarTexture(_gatefill2, fmax(0.0,static_cast<double>(secondGate->getHealth())/secondGate->getMaxHealth()));
+        CULog("Gate 2 Health: %d", secondGate->getHealth());
     }
 };
 

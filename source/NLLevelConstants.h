@@ -79,4 +79,24 @@
 /** The key for our loaded level */
 #define LEVEL_SIX_KEY       "level6"
 
+/** The source for our level file */
+#define LEVEL_SEVEN_FILE      "json/levels/level3.json"
+/** The key for our loaded level */
+#define LEVEL_SEVEN_KEY       "level7"
+
+/** The source for our level file */
+#define LEVEL_EIGHT_FILE      "json/levels/levelNine.json"
+/** The key for our loaded level */
+#define LEVEL_EIGHT_KEY       "level8"
+
+/** The source for our level file */
+#define LEVEL_NINE_FILE      "json/levels/level_May4.json"
+/** The key for our loaded level */
+#define LEVEL_NINE_KEY       "level9"
+
+/** The source for our level file */
+#define LEVEL_TEN_FILE      "json/levels/levelTwo_TwoGates.json"
+/** The key for our loaded level */
+#define LEVEL_TEN_KEY       "level10"
+
 #endif /* defined(__TD_LEVEL_CONSTANTS_H__) */
