@@ -183,6 +183,9 @@ void SinglePlayerLevelScene::update(float progress)
             if (_input.didPressConfirm()){
                 _button->setDown(true);
             }
+            if(autoStart) {
+                startGame();
+            }
         }else{
             _button->deactivate();
         }
@@ -200,7 +203,7 @@ void SinglePlayerLevelScene::setActive(bool value)
         Scene2::setActive(value);
         if (value)
         {
-            _level = Level::NONE;
+            //_level = Level::NONE;
             firsttime = true;
             _network->disconnect();
             _network->connectAsHost();
@@ -232,4 +235,9 @@ void SinglePlayerLevelScene::startGame(){
 
 void SinglePlayerLevelScene::endGame(){
     _startGameClicked = false;
+}
+
+void SinglePlayerLevelScene::autoStartGame(LevelScene::Level level){
+    autoStart = true;
+    _level = level;
 }
