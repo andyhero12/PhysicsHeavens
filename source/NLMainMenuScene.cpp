@@ -149,6 +149,9 @@ void MainMenuScene::setActive(bool value) {
             _button1->activate();
             _button3->activate();
             _button4->activate();
+            _button1->setDown(true);
+            _button3->setDown(false);
+            _button4->setDown(false);
             _firstset = true;
         } else {
             _button1->deactivate();
