@@ -1,5 +1,15 @@
 {
     "textures": {
+        "rightTrigger":{
+            "file": "textures/tutorial/press_rightTrigger.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "rightBumper":{
+            "file": "textures/tutorial/press_rightBumper.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
         "textbox":{
             "file": "textures/tutorial/textbox.png",
             "minfilter": "linear",

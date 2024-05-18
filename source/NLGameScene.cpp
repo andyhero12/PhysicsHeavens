@@ -1029,9 +1029,14 @@ void GameScene::updateInputController()
             }else{
                 spriteNode->setVisible(true);
                 spriteNode->update();
-                pressA->setVisible(true);
-                pressA->update();
                 message->setVisible(true);
+                if(tile->getProgress() == Tutorial::MODE::MOVEMENT){
+                    pressA->setVisible(false);
+                }
+                else{
+                    pressA->setVisible(true);
+                    pressA->update();
+                }
             }
             
 //            message->setVisible(true);
@@ -1092,16 +1097,16 @@ void GameScene::initTutorialOne(){
     _uinode->addChild(_tutorialnode);
     tutorialTiles = std::vector<std::shared_ptr<Tutorial>>();
     
-    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::GREETING, "jsafk sdflk ajsflja kfjsdlkj falksjf klajsdf kaljf klj flldfj alf asfsdf afassdafasfljsd"));
-    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::MOVEMENT, " adf as saf "));
-    tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::MODE::DEFENDGATE, "a fdsaf asdf af adsf f "));
-    tutorialTiles.push_back(Tutorial::alloc(15, Tutorial::MODE::BITE, " adf adsf"));
-    tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::GROW, " adf af "));
-    tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::RECALLGIVE, "fagdga f"));
-    tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::BARKGIVE, " adf asf "));
-    tutorialTiles.push_back(Tutorial::alloc(22, Tutorial::MODE::SPECIALSONE, " adf asf a"));
-    tutorialTiles.push_back(Tutorial::alloc(24, Tutorial::MODE::CHANGEABILITYTWO, " adf asdf "));
-    tutorialTiles.push_back(Tutorial::alloc(26, Tutorial::MODE::DESTROYSPAWNER, "afd asf af fdasf"));
+    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::GREETING, "GREETINGS jsafk sdflk ajsflja kfjsdlkj falksjf klajsd ad ds fa dasf asadsfasfasdfasfsfdsfsfafsfdsfs fsd f kaljf klj flldfj alf asfsdf afassdafasfljsd"));
+    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::MOVEMENT, " movement adf as saf "));
+    tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::MODE::DEFENDGATE, "DEFENDGATE a fdsaf asdf af adsf f "));
+    tutorialTiles.push_back(Tutorial::alloc(15, Tutorial::MODE::BITE, " BTE adf adsf"));
+    tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::GROW, " GROW adf af "));
+    tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::RECALLGIVE, "RECALL fagdga f"));
+    tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::BARKGIVE, "BARKGIVE  adf asf "));
+    tutorialTiles.push_back(Tutorial::alloc(22, Tutorial::MODE::SPECIALSONE, "SPECIAL adf asf a"));
+    tutorialTiles.push_back(Tutorial::alloc(24, Tutorial::MODE::CHANGEABILITYTWO, "CHANGE adf asdf "));
+    tutorialTiles.push_back(Tutorial::alloc(26, Tutorial::MODE::DESTROYSPAWNER, "DESOTRY afd asf af fdasf"));
 //    tutorialTiles.push_back(Tutorial::alloc(28, Tutorial::MODE::SPECIALSTWO, ""));
 //
     std::vector<std::string> modes = {"RECALL", "SHOOT"};
@@ -1170,7 +1175,7 @@ void GameScene::initTutorial()
             
             std::shared_ptr<SpriteAnimationNode> init;
             std::shared_ptr<SpriteAnimationNode> repeat;
-            std::shared_ptr<SpriteAnimationNode> pressA = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("pressA"), 1, 2, 2, 30);
+            std::shared_ptr<SpriteAnimationNode> pressA = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("rightTrigger"), 1, 2, 2, 30);
             
             if (mode == Tutorial::MODE::RECALLGIVE){
                 init = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("recallInit"), 3, 5,  14,  2);
@@ -1235,7 +1240,6 @@ void GameScene::initTutorial()
             
             Size box = Size(node->getTexture()->getWidth()/2, 2 * node->getScaleY() * node->getTexture()->getHeight());
             
-            CULog(" width: %d    height: %f", node->getTexture()->getWidth(), node->getTexture()->getHeight() * node->getScaleY());
             
             message = scene2::Label::allocWithTextBox(box, tutorialTiles.at(i)->getText() ,_assets->get<Font>(PRIMARY_FONT));
             
@@ -1254,7 +1258,14 @@ void GameScene::initTutorial()
             if (mode == Tutorial::MODE::GREETING || mode == Tutorial::MODE::DEFENDGATE || mode == Tutorial::MODE::GROW
                 || mode == Tutorial::MODE::BITE){
                 pressA = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("pressA"), 1, 2, 2, 30);
-            }else{
+            }
+            else if (mode == Tutorial::SPECIALSONE || mode == Tutorial::SPECIALSTWO || mode == Tutorial::SPECIALSTHREE || mode == Tutorial::SPECIALSFOUR){
+                pressA = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("rightTrigger"), 1, 2, 2, 30);
+            }
+            else if(mode == Tutorial::MODE::CHANGEABILITYTWO || mode == Tutorial::MODE::CHANGEABILITYTHREE || mode == Tutorial::MODE::CHANGEABILITYFOUR){
+                pressA = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("rightBumper"), 1, 2, 2, 30);
+            }
+            else{
                 pressA = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("pressB"), 1, 2, 2, 30);
             }
             tutorialTiles.at(i)->setPressButton(pressA);
