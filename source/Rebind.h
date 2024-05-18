@@ -60,6 +60,10 @@ protected:
      * ratios
      */
     cugl::Size computeActiveSize() const;
+    
+    float height;
+    
+    float maxHeight;
         
 public:
 #pragma mark -

@@ -52,15 +52,16 @@ bool MenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     
     // Start up the input handler
     _assets = assets;
+    _assets->loadDirectory("json/HostClientSelection.json");
     _input.init();
     // Acquire the scene built by the asset loader and resize it the scene
-    std::shared_ptr<scene2::SceneNode> scene = _assets->get<scene2::SceneNode>("menu");
+    std::shared_ptr<scene2::SceneNode> scene = _assets->get<scene2::SceneNode>("HostClient");
     scene->setContentSize(dimen);
     scene->doLayout(); // Repositions the HUD
     _choice = Choice::NONE;
-    _buttonset.push_back(_hostbutton = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("menu_host")));
-    _buttonset.push_back(_joinbutton = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("menu_join")));
-    _buttonset.push_back(_back = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("menu_back")));
+    _buttonset.push_back(_hostbutton = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("HostClient_HostClient_buttons_buttonhost")));
+    _buttonset.push_back(_joinbutton = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("HostClient_HostClient_buttons_buttonjoin")));
+
     _hostbutton->addListener([this](const std::string& name, bool down) {
         if (down) {  
             if(_input.getState()==InputController::State::CONTROLLER){
@@ -82,19 +83,13 @@ bool MenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
         }
     });
 
-    _back->addListener([this](const std::string& name, bool down) {
-        if (down) {  
-            if(_input.getState()==InputController::State::CONTROLLER){
-                _isdown = Isdown::isBACK;
-            }
-            else{
-                _backclicked = true;
-            }
-        }
-    });
+    background = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("backgroundslection"), 1, 6, 5);
+    background->setScale(SCENE_HEIGHT/background->getTexture()->getHeight());
+    background->setPosition(0.5 * background->getSize());
+    addChild(background);
 
-    _backclicked = false;
     addChild(scene);
+    _backclicked = false;
     setActive(false);
     return true;
 }
@@ -126,30 +121,28 @@ void MenuScene::setActive(bool value) {
             _choice = NONE;
             _hostbutton->activate();
             _joinbutton->activate();
-            _back->activate();
             _backclicked = false;
             _firstset = true;
             _counter = 0;
         } else {
             _hostbutton->deactivate();
             _joinbutton->deactivate();
-            _back->deactivate();
             // If any were pressed, reset them
             _hostbutton->setDown(false);
             _joinbutton->setDown(false);
-            _back->setDown(false);
         }
     }
 }
 
 void MenuScene::update(float timestep){
     _input.update();
+    background->update();
     if(_firstset&&_input.getState()==InputController::State::CONTROLLER){
         _hostbutton->setDown(true);
         _firstset = false;
     }
     timeSinceLastSwitch += timestep;
-    //std::cout << timeSinceLastSwitch << std::endl;
+
     if (timeSinceLastSwitch >= switchFreq) {
         if (_input._updown != 0) {
             if (_input._updown == 1 && _counter > 0) {
@@ -166,15 +159,16 @@ void MenuScene::update(float timestep){
 
         }
     }
+
+    if (_input.didPressBack()) {
+        _backclicked = true;
+    }
     //std::cout << _input._confirm << std::endl;
     if (_isdown == Isdown::isHOST &&_input.didPressConfirm() ){
         _choice = Choice::HOST;
     }
     else if(_isdown == Isdown::isJOIN && _input.didPressConfirm()){
         _choice = Choice::JOIN;
-    }
-    else if (_isdown == Isdown::isBACK && _input.didPressConfirm()) {
-        _backclicked = true;
     }
     else if (_isdown == Isdown::isNONE && _input.didPressConfirm()) {
     }

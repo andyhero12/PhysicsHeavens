@@ -46,8 +46,10 @@ protected:
     std::shared_ptr<cugl::scene2::Button> _backout;
     /** The game id label (for updating) */
     std::shared_ptr<cugl::scene2::Label> _gameid;
-    /** The players label (for updating) */
-    std::shared_ptr<cugl::scene2::Label> _player;
+
+    std::shared_ptr<cugl::scene2::Button> _player1;
+
+    std::shared_ptr<cugl::scene2::Button> _player2;
 
     InputController _input;
 

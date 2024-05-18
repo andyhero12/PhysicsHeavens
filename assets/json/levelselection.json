@@ -1,7 +1,7 @@
 {
 	"textures": {
         "LongBackground":{
-            "file":      "textures/15_levels.png",
+            "file":      "textures/level15.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
