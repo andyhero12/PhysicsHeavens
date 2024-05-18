@@ -14,6 +14,7 @@ AudioController::AudioController() {
 
 
 bool AudioController::init(std::shared_ptr<cugl::AssetManager> assets){
+    enemySounds = 0;
     if(assets == nullptr){
         return false;
     }
@@ -25,6 +26,12 @@ bool AudioController::init(std::shared_ptr<cugl::AssetManager> assets){
         if(normalTermination && sounds != nullptr){
             this->sounds->erase(key);
         }
+        
+        if(isEnemySound(key)){
+            enemySounds--;
+            //CULog("Decremented enemy sounds to %d", enemySounds);
+        }
+        
         std::cout << key << " stopped playing sound " <<std::endl;
     });
     
@@ -36,6 +43,17 @@ void AudioController::playSFX(std::string key, std::string sound){
     if(_assets == nullptr){
         return;
     }
+    
+    if(isEnemySound(key) && enemySounds >= MAX_SOUNDS){
+        //CULog("TOO MANY ENEMY SOUNDS, NOT PLAYING %s", key.c_str());
+        return;
+    }
+    
+    if(isEnemySound(key)){
+        enemySounds++;
+        //CULog("%s played, incrementing enemySounds to %d", key.c_str(), enemySounds);
+    }
+    
     auto source = _assets->get<cugl::Sound>(sound);
     cugl::AudioEngine::get()->play(key, source, false, source->getVolume(), true);
 }

@@ -742,12 +742,12 @@
             "file": "sounds/Player/dummyGatePlacement.wav",
             "volume": 0.4
         },
-        "absorbEnemyAbsoring": {
+        "absorbEnemyAbsorbing": {
             "type": "sample",
             "file": "sounds/Enemies/absorbEnemyAbsorbing.wav",
             "volume": 0.4
         },
-        "bombHiss": {
+        "enemyBombHiss": {
             "type": "sample",
             "file": "sounds/Enemies/bombHiss.wav",
             "volume": 0.4
@@ -767,7 +767,7 @@
             "file": "sounds/Enemies/spawnerHit.wav",
             "volume": 0.4
         },
-        "spawning": {
+        "enemySpawning": {
             "type": "sample",
             "file": "sounds/Enemies/spawning.wav",
             "volume": 0.4

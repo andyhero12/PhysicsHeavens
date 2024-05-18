@@ -28,8 +28,8 @@
 
 #define ENEMY_DEATH "enemyDeath"
 #define SPAWNER_DEATH "spawnerDeath"
-#define BOMB_HISS "bombHiss"
-#define ABSORB_SOUND "absorbEnemyAbsoring"
+#define BOMB_HISS "enemyBombHiss"
+#define ABSORB_SOUND "absorbEnemyAbsorbing"
 #define SIZE_BAR_MAX "sizeBarMax"
 
 #define LOSS_STAMP "stampHitting"
@@ -39,7 +39,7 @@
 
 
 #define SPAWNER_HIT "spawnerHit"
-#define SPAWNING "spawning"
+#define SPAWNING "enemySpawning"
 #define GATE_TAKES_DAMAGE "gateTakesDamage"
 
 

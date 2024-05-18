@@ -66,7 +66,7 @@ protected:
     
 
     /** Flag to bypass locked levels*/
-    bool _godMode = false;
+    bool _godMode = true;
 
     std::shared_ptr<AudioController> _audioController;
 

@@ -12,6 +12,9 @@
 #include <cugl/cugl.h>
 #include "Constants.h"
 
+// Maximum number of enemy sounds to be played
+#define MAX_SOUNDS 10
+
 class AudioController
 {
 protected:
@@ -20,6 +23,12 @@ protected:
     
     /** set of all active sounds */
     std::shared_ptr<std::unordered_set<std::string>> sounds;
+    
+    bool isEnemySound(std::string key){
+        return key.find("nemy") != std::string::npos;
+    };
+    
+    int enemySounds;
 
 public:
     /**
@@ -34,6 +43,7 @@ public:
     ~AudioController() {
         dispose();
     }
+    
     
     static std::shared_ptr<AudioController> alloc(std::shared_ptr<cugl::AssetManager> assets) {
         std::shared_ptr<AudioController> controller = std::make_shared<AudioController>();
