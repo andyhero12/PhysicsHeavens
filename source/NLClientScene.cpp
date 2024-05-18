@@ -165,21 +165,22 @@ bool ClientScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::s
 
     _startgame->addListener([this](const std::string& name, bool down){
         if (down) {
+
              // This will call the _gameid listener
-             _gameid->releaseFocus();
+             _network->connectAsClient(dec2hex(_value));
         }
     });
 
-    _gameid->addExitListener([this](const std::string& name, const std::string& value) {
-     /**
-      * TODO: Call the network controller to connect as a client (Remember to convert the string from decimal to hex)
-      */
- #pragma mark BEGIN SOLUTION
-        if(!value.empty()){
-            _network->connectAsClient(dec2hex(value));
-        }
- #pragma mark END SOLUTION
-     });
+//     _gameid->addExitListener([this](const std::string& name, const std::string& value) {
+//      /**
+//       * TODO: Call the network controller to connect as a client (Remember to convert the string from decimal to hex)
+//       */
+//  #pragma mark BEGIN SOLUTION
+//             std::cout<<value<<std::endl;
+//             _network->connectAsClient(dec2hex(value));
+    
+//  #pragma mark END SOLUTION
+//      });
 
     
     // Create the server configuration
@@ -226,7 +227,7 @@ void ClientScene::setActive(bool value) {
          */
 #pragma mark BEGIN SOLUTION
         if (value) {
-            _gameid->activate();
+            _gameid->deactivate();
             _gameid->setText("");
             configureStartButton();
             _backClicked = false;
