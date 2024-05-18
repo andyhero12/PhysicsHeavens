@@ -552,7 +552,7 @@ void GameScene::preUpdate(float dt)
     {
         return;
     }
-    if (_isHost)s
+    if (_isHost)
     {
         float zoom = _zoom - (ROOT_NODE_SCALE - 0.5f * (float)overWorld.getDog()->getAbsorb() / (float)overWorld.getDog()->getMaxAbsorb());
         _zoom -= fmin(zoom, 0.01f) * (zoom < 0 ? 0.12f : 0.3f);
