@@ -83,7 +83,7 @@ bool ClientScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::s
     
     _startgame = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("joinview_button_start"));
     //_backout = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("client_back"));
-    _gameid = scene2::TextField::allocWithText("999999", _assets->get<Font>(PRIMARY_FONT));
+    _gameid = scene2::TextField::allocWithText("9999999", _assets->get<Font>(PRIMARY_FONT));
 //    std::dynamic_pointer_cast<scene2::TextField>(_assets->get<scene2::SceneNode>("client_center_game_field_text"));
     //_player = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("client_center_players_field_text"));
     _zero = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("joinview_button0"));
@@ -175,7 +175,9 @@ bool ClientScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::s
       * TODO: Call the network controller to connect as a client (Remember to convert the string from decimal to hex)
       */
  #pragma mark BEGIN SOLUTION
-         _network->connectAsClient(dec2hex(value));
+        if(!value.empty()){
+            _network->connectAsClient(dec2hex(value));
+        }
  #pragma mark END SOLUTION
      });
 
@@ -246,7 +248,7 @@ void ClientScene::setActive(bool value) {
         } else {
             _gameid->deactivate();
             _startgame->deactivate();
-            _network = nullptr;
+//            _network = nullptr;
             _value = "";
             // If any were pressed, reset them
             _startgame->setDown(false);
@@ -376,10 +378,10 @@ void ClientScene::update(float timestep) {
                     _player2->setColor(Color4::GREEN);
                     break;
             }
+        _gameid->setText(_value);
     }
     
         
-    _gameid->setText(_value);
 
     if(_input.didPressBack()){
         _backClicked = true;
@@ -395,18 +397,18 @@ void ClientScene::update(float timestep) {
  */
 void ClientScene::configureStartButton() {
     if (_network->getStatus() == NetEventController::Status::IDLE) {
-        // _startgame->setDown(false);
-        // _startgame->activate();
+         _startgame->setDown(false);
+         _startgame->activate();
         //updateText(_startgame, "Start Game");
     }
     else if (_network->getStatus() == NetEventController::Status::CONNECTING) {
-        // _startgame->setDown(false);
-        // _startgame->deactivate();
+         _startgame->setDown(false);
+         _startgame->deactivate();
         //updateText(_startgame, "Connecting");
     }
     else if (_network->getStatus() == NetEventController::Status::CONNECTED) {
-        // _startgame->setDown(false);
-        // _startgame->deactivate();
+         _startgame->setDown(false);
+         _startgame->deactivate();
         //updateText(_startgame, "Waiting");
     }
 }
