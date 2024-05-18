@@ -50,7 +50,8 @@ void SimpleSpawner::update(MonsterController& monsterController, OverWorld& over
         else {
             s = spawnType3;
         }
-        for (int i =0 ; i< 6 ;i++){
+        int cluster = generateRandomInclusiveHighLowNew(1, 4);
+        for (int i =0 ; i< cluster ;i++){
             Vec2 pos = getPos() + Vec2(generateRandomInclusiveHighLowNew(-30, 30) / 100.0f, generateRandomInclusiveHighLowNew(-30, 30) / 100.0f);
             monsterController.spawnEnemyFromString(s, pos, overWorld, difficulty);
         }
