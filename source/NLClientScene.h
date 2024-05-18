@@ -38,7 +38,7 @@ protected:
     /** The back button for the menu scene */
     // std::shared_ptr<cugl::scene2::Button> _backout;
     // /** The game id label (for updating) */
-    // std::shared_ptr<cugl::scene2::TextField> _gameid;
+     std::shared_ptr<cugl::scene2::TextField> _gameid;
     // /** The players label (for updating) */
     // std::shared_ptr<cugl::scene2::Label> _player;
 

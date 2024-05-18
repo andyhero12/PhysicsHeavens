@@ -83,7 +83,7 @@ bool ClientScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::s
     
     _startgame = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("joinview_button_start"));
     //_backout = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("client_back"));
-    _gameid = scene2::TextField::allocWithText("0123012", _assets->get<Font>(PRIMARY_FONT));
+    _gameid = scene2::TextField::allocWithText("999999", _assets->get<Font>(PRIMARY_FONT));
 //    std::dynamic_pointer_cast<scene2::TextField>(_assets->get<scene2::SceneNode>("client_center_game_field_text"));
     //_player = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("client_center_players_field_text"));
     _zero = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("joinview_button0"));
@@ -129,6 +129,7 @@ bool ClientScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::s
     auto json = _assets->get<JsonValue>("server");
     _config.set(json);
     
+    _gameid->setText("");
     _gameid->setScale(0.75f);
     cugl::Size size = 0.5 * (dimen - _gameid->getSize());
     _gameid->setPosition(size.width, size.height + _gameid->getSize().height/10);
