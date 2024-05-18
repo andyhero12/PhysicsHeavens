@@ -189,9 +189,9 @@ bool ClientScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::s
     _player1->setColor(Color4::GREEN);
     _player2->setColor(Color4::ORANGE);
     _gameid->setText("");
-    _gameid->setScale(0.75f);
+    _gameid->setScale(0.65f);
     cugl::Size size = 0.5 * (dimen - _gameid->getSize());
-    _gameid->setPosition(size.width, size.height + _gameid->getSize().height/10);
+    _gameid->setPosition(size.width  + 20, size.height + _gameid->getSize().height/10);
     scene->addChild(_gameid);
     addChild(scene);
 //    addChild(_gameid);
