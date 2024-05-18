@@ -232,7 +232,7 @@ bool LevelScene::isPending() const
 
 void LevelScene::setActive(bool value)
 {
-
+    auto source = _assets->get<Sound>(SUBWAY);
     if (isActive() != value)
     {
         Scene2::setActive(value);
@@ -242,6 +242,7 @@ void LevelScene::setActive(bool value)
             _button->activate();
             firsttime = true;
             _backClicked = false;
+            AudioEngine::get()->play(SUBWAY, source, true, source->getVolume(), true);
         }
         else
         {
@@ -249,6 +250,7 @@ void LevelScene::setActive(bool value)
             _button->setDown(false);
             firsttime = true;
             _backClicked = false;
+            AudioEngine::get()->clear(SUBWAY);
         }
     }
 }
