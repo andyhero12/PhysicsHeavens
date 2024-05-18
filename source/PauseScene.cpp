@@ -20,9 +20,13 @@ bool PauseScene::init(){
     if (!cugl::scene2::SceneNode::init()){
         return false;
     }
+<<<<<<< HEAD
     background =cugl::scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("pause"));
     background->setScale(_screenSize.width/background->getTexture()->getWidth());
     background->setPosition(0.5*_screenSize);
+=======
+    _input.init();
+>>>>>>> e3a04f2a4e061fd4dc5d6f6a3d3267404cd977ba
     
     std::shared_ptr<cugl::scene2::SceneNode> resume =cugl::scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("resume"));
 
@@ -30,19 +34,32 @@ bool PauseScene::init(){
     
     resumeButton = cugl::scene2::Button::alloc(resume, Color4::GRAY);
     exitButton = cugl::scene2::Button::alloc(exit, Color4::GRAY);
-    
+    _buttonset.push_back(resumeButton);
+    _buttonset.push_back(exitButton);
     resumeButton->setScale(PAUSE_SCALE);
     exitButton->setScale(PAUSE_SCALE);
     
     resumeButton->addListener([=](const std::string& name, bool down){
-        if(getPause()){
-            setPause(false);
+        if(down){
+            if(_input.getState()==InputController::State::CONTROLLER){
+                if(getPause()){
+                    constatus = ContorllerChoice::isGAME;
+                }
+            }else if(getPause()){
+                setPause(false);
+            }
         }
     });
     
     exitButton->addListener([=](const std::string& name, bool down) {
-        if(getPause()){
-            status = Choice::EXIT;
+        if(down){
+            if(_input.getState()==InputController::State::CONTROLLER){
+                if(getPause()){
+                    constatus = ContorllerChoice::isEXIT;
+                }
+            }else if(getPause()){
+                status = Choice::EXIT;
+            }
         }
     });
     
@@ -64,6 +81,7 @@ bool PauseScene::init(){
 
     setPause(false);
     status = Choice::GAME;
+    constatus = ContorllerChoice::isNONE;
     return true;
 }
 
@@ -95,4 +113,36 @@ void PauseScene::dispose(){
 void PauseScene::exitToMain(){
     exitButton->setDown(true);
     exitButton->setDown(false);
+    status = Choice::EXIT;
+}
+
+void PauseScene::update(float timestep, int leftright, bool confirm){
+    
+    timeSinceLastSwitch += timestep;
+
+    if (timeSinceLastSwitch >= switchFreq) {
+        //std::cout<<_input._updown<<std::endl;
+        if (leftright != 0) {
+            if (leftright== -1 && _counter > 0) {
+                _buttonset.at(_counter)->setDown(false);
+                _counter--;
+                _buttonset.at(_counter)->setDown(true);
+            }
+            else if (leftright == 1 && _counter < _buttonset.size() - 1) {
+                _buttonset.at(_counter)->setDown(false);
+                _counter++;
+                _buttonset.at(_counter)->setDown(true);
+            }
+            timeSinceLastSwitch = 0;
+
+        }
+    }
+
+    if(getControlStatus()==ContorllerChoice::isGAME && confirm){
+        setPause(false);
+    }else if(getControlStatus()==ContorllerChoice::isEXIT && confirm){
+        status = Choice::EXIT;
+    }
+
+
 }

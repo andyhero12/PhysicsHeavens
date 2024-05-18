@@ -76,7 +76,7 @@ public:
      * @return true if the controller is initialized properly, false otherwise.
      */
     virtual bool init(const std::shared_ptr<cugl::AssetManager>& assets, std::shared_ptr<cugl::physics2::net::NetEventController> network);
-
+    
     void setAudioController(std::shared_ptr<AudioController> audioController)
     {
         _audioController = audioController;
@@ -89,8 +89,6 @@ public:
     virtual void setActive(bool value) override;
     void startGame();
     void endGame();
-
-
 };
 
 

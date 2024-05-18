@@ -9,6 +9,7 @@
 #define PauseScene_h
 #include <cugl/cugl.h>
 #include "GlobalConstants.h"
+#include "NLInput.h"
 
 
 #define PAUSE_SCALE 6
@@ -31,10 +32,20 @@ public:
         /** User wants to join a game */
         EXIT
     };
+
+    enum ContorllerChoice {
+        /** User wants to host a game */
+        isGAME,
+        /** User wants to join a game */
+        isEXIT,
+
+        isNONE
+    };
 private:
     
     Choice status;
-    
+    ContorllerChoice constatus;
+
     bool _paused;
     
 
@@ -44,10 +55,15 @@ private:
     std::shared_ptr<cugl::scene2::Button>  exitButton;
     std::shared_ptr<cugl::AssetManager> _assets;
     cugl::Size _screenSize;
+    std::vector<std::shared_ptr<cugl::scene2::Button>> _buttonset;
+    InputController _input;
+    float timeSinceLastSwitch;
+    float switchFreq;
+    int _counter;
     
 public:
     
-    PauseScene(){};
+    PauseScene(): _counter(1), timeSinceLastSwitch(0.0),switchFreq(0.20),_buttonset(){};
     
     bool init(std::shared_ptr<cugl::AssetManager> &assets, cugl::Size screenSize);
     bool init() override;
@@ -70,6 +86,10 @@ public:
     void setPause(bool value);
     
     Choice getStatus(){return status;}
+
+    ContorllerChoice getControlStatus(){return constatus;}
+
+    void update(float timestep, int leftright, bool comfirm);
     
     
 };

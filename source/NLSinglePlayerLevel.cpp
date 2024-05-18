@@ -116,23 +116,12 @@ bool SinglePlayerLevelScene::init(const std::shared_ptr<AssetManager> &assets, s
     _config.set(json);
     
     auto _uinode = scene2::SceneNode::alloc();
-    background = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("BackgroundLevelSingle"), 3, 27, 81, 5);
+    background = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("BackgroundLevelSingle"), 15, 6, 80, 5);
     background->setScale(4.3);
     background->setPosition(0.5 * background->getSize());
-    winBackground = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("repeat_win"), 2, 5, 8, 8);
-    winBackground->setScale(2* 800/winBackground->getTexture()->getHeight());
-    winBackground->setPosition(0.5 * winBackground->getSize());
-    loseBackground = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("lose_screen"), 4, 5, 18, 4);
-    loseBackground->setFrame(loseBackground->getSpan() - 1);
-    loseBackground->setScale(4* 800/loseBackground->getTexture()->getHeight());
-    loseBackground->setPosition(0.5 * loseBackground->getSize());
     
     addChild(_uinode);
     _uinode->addChild(background);
-    _uinode->addChild(winBackground);
-    _uinode->addChild(loseBackground);
-    winBackground->setVisible(false);
-    loseBackground->setVisible(false);
     
     layer->setColor(Color4(0, 0, 0, 1));
     Application::get()->setClearColor(Color4(192, 192, 192, 255));
@@ -195,9 +184,6 @@ void SinglePlayerLevelScene::update(float progress)
             if (_input.didPressConfirm()){
                 _button->setDown(true);
             }
-            if(autoStart) {
-                startGame();
-            }
         }else{
             _button->deactivate();
         }
@@ -220,7 +206,7 @@ void SinglePlayerLevelScene::setActive(bool value)
         Scene2::setActive(value);
         if (value)
         {
-            //_level = Level::NONE;
+            _level = Level::NONE;
             firsttime = true;
             _network->disconnect();
             _network->connectAsHost();

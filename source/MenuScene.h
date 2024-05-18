@@ -65,7 +65,7 @@ protected:
     /** The menu button for joining a game */
     std::shared_ptr<cugl::scene2::Button> _joinbutton;
     /** The player menu choice */
-    std::shared_ptr<cugl::scene2::Button> _back;
+    //std::shared_ptr<cugl::scene2::Button> _back;
     Choice _choice;
     Isdown _isdown;
 
@@ -81,8 +81,7 @@ protected:
     bool _firstset;
 
     std::vector<std::shared_ptr<cugl::scene2::Button>> _buttonset;
-    
-
+    std::shared_ptr<SpriteAnimationNode> background;
     
 public:
 #pragma mark -
@@ -93,7 +92,7 @@ public:
      * This constructor does not allocate any objects or start the game.
      * This allows us to use the object without a heap pointer.
      */
-    MenuScene() : cugl::Scene2(),_isdown(isNONE),_choice(NONE), _counter(0), timeSinceLastSwitch(0.0),switchFreq(0.20),_buttonset(),_firstset(true) {}
+    MenuScene() : cugl::Scene2(),_isdown(isNONE),_choice(NONE), _counter(0), timeSinceLastSwitch(0.0),switchFreq(0.20),_buttonset(),_firstset(true){}
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.
