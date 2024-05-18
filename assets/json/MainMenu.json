@@ -9,6 +9,9 @@
     "settingbutton": {
         "file": "textures/Menu/setting.png"
       },
+    "quitbutton": {
+        "file": "textures/Menu/quit.png"
+      },
     "heavens_devils_logo": {
       "file": "textures/Menu/Title.png"
     }
@@ -99,14 +102,14 @@
                     "y_anchor": "bottom",
                     "absolute": false,
                     "x_offset": -0.06,
-                    "y_offset": 0.17
+                    "y_offset": 0.29
                 }
             },
             "button2": {
                 "type": "Button",
                 "format": {
                     "type": "Anchored"
-                },
+                },  
                 "data": {
                     "anchor": [
                         1,
@@ -129,6 +132,65 @@
                         "type": "Image",
                         "data": {
                             "texture": "settingbutton",
+                            "anchor": [
+                                0,
+                                0
+                            ],
+                            "size": [
+                                290.61,
+                                84.44
+                            ],
+                            "angle": 0,
+                            "position": [
+                                0,
+                                -16.45
+                            ],
+                            "visible": true
+                        },
+                        "layout": {
+                            "x_anchor": "left",
+                            "y_anchor": "bottom",
+                            "absolute": false,
+                            "x_offset": 0,
+                            "y_offset": -0.28
+                        }
+                    }
+                },
+                "layout": {
+                    "x_anchor": "right",
+                    "y_anchor": "bottom",
+                    "absolute": false,
+                    "x_offset": -0.06,
+                    "y_offset": 0.17
+                }
+            },
+            "button3": {
+                "type": "Button",
+                "format": {
+                    "type": "Anchored"
+                },
+                "data": {
+                    "anchor": [
+                        1,
+                        0
+                    ],
+                    "size": [
+                        242,
+                        93
+                    ],
+                    "angle": 0,
+                    "position": [
+                        894,
+                        83
+                    ],
+                    "visible": true,
+                    "upnode": "quitbutton"
+                },
+                "children": {
+                    "purplebutton": {
+                        "type": "Image",
+                        "data": {
+                            "texture": "quitbutton",
                             "anchor": [
                                 0,
                                 0

@@ -48,6 +48,8 @@ public:
 
         isSETTING,
 
+        isQUIT,
+
         isNONE
     };
 
@@ -74,6 +76,7 @@ protected:
     /** The "play" button */
     std::shared_ptr<cugl::scene2::Button>    _button1;
     std::shared_ptr<cugl::scene2::Button>    _button3;
+    std::shared_ptr<cugl::scene2::Button>    _button4;
     std::vector<std::shared_ptr<cugl::scene2::Button>> _buttonset;
     std::shared_ptr<SpriteAnimationNode> background;
 
