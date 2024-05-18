@@ -103,6 +103,8 @@ protected:
     bool _goleft;
     bool firsttime;
     bool _backClicked;
+
+    bool autoStart;
     /**
      * Returns the active screen size of this scene.
      *
@@ -261,6 +263,8 @@ public:
     {
         _audioController = audioController;
     }    
+
+    void autoStartGame(LevelScene::Level level);
 };
 
 

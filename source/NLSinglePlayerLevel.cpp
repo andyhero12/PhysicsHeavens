@@ -236,8 +236,3 @@ void SinglePlayerLevelScene::startGame(){
 void SinglePlayerLevelScene::endGame(){
     _startGameClicked = false;
 }
-
-void SinglePlayerLevelScene::autoStartGame(LevelScene::Level level){
-    autoStart = true;
-    _level = level;
-}

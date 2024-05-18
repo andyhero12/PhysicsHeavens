@@ -40,7 +40,6 @@ protected:
     
     /** The network configuration */
     cugl::net::NetcodeConfig _config;
-    bool autoStart;
 public:
 #pragma mark -
 #pragma mark Constructors
@@ -91,7 +90,7 @@ public:
     void startGame();
     void endGame();
 
-    void autoStartGame(LevelScene::Level level);
+
 };
 
 

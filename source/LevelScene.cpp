@@ -268,3 +268,8 @@ void LevelScene::adjustFrame(int level){
             }
     }
 }
+
+void LevelScene::autoStartGame(LevelScene::Level level){
+    autoStart = true;
+    _level = level;
+}
