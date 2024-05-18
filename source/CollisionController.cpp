@@ -321,12 +321,15 @@ bool CollisionController::monsterDogCollision(std::shared_ptr<Dog> curDog, Monst
                 else {
                     collision = true;
                     enemy->resetAttack();
+                    ++it;
                 }
                 _network->pushOutEvent(ClientHealthEvent::allocClientHealthEvent(enemy->getDamage(),true));
             }else{
+                ++it;
             }
+        }else{
+            ++it;
         }
-        ++it;
     }
     return collision;
 }
