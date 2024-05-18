@@ -653,49 +653,6 @@
          "objects":[
                 {
                  "height":0,
-                 "id":16,
-                 "name":"Spawner",
-                 "point":true,
-                 "properties":[
-                        {
-                         "name":"HP",
-                         "type":"int",
-                         "value":150
-                        }, 
-                        {
-                         "name":"InitDelay",
-                         "type":"int",
-                         "value":1
-                        }, 
-                        {
-                         "name":"PrimaryEnemy",
-                         "type":"string",
-                         "value":"bomb"
-                        }, 
-                        {
-                         "name":"RegDelay",
-                         "type":"int",
-                         "value":5
-                        }, 
-                        {
-                         "name":"SecondaryEnemy",
-                         "type":"string",
-                         "value":"bomb"
-                        }, 
-                        {
-                         "name":"TertiaryEnemy",
-                         "type":"string",
-                         "value":"Basic"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":863.52606635071,
-                 "y":831.810426540284
-                }, 
-                {
-                 "height":0,
                  "id":19,
                  "name":"Spawner",
                  "point":true,
