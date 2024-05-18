@@ -555,7 +555,7 @@
          "name":"Boundaries",
          "opacity":1,
          "type":"tilelayer",
-         "visible":true,
+         "visible":false,
          "width":62,
          "x":0,
          "y":0
@@ -693,7 +693,7 @@
                         {
                          "name":"RegDelay",
                          "type":"int",
-                         "value":5
+                         "value":15
                         }, 
                         {
                          "name":"SecondaryEnemy",
@@ -822,7 +822,7 @@
                         {
                          "name":"RegDelay",
                          "type":"int",
-                         "value":10
+                         "value":15
                         }, 
                         {
                          "name":"SecondaryEnemy",
@@ -865,7 +865,7 @@
                         {
                          "name":"RegDelay",
                          "type":"int",
-                         "value":5
+                         "value":25
                         }, 
                         {
                          "name":"SecondaryEnemy",

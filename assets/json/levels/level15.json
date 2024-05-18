@@ -375,8 +375,26 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":1284.45648348633,
-                 "y":611.964253059437
+                 "x":1131.16774324107,
+                 "y":627.293127083963
+                }, 
+                {
+                 "height":0,
+                 "id":30,
+                 "name":"Base",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"HP",
+                         "type":"int",
+                         "value":500
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":1445.09476031215,
+                 "y":629.877369007804
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -398,8 +416,8 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":1274.01284111483,
-                 "y":702.836659815489
+                 "x":1304.67058916388,
+                 "y":712.591397831096
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -423,49 +441,6 @@
          "id":12,
          "name":"SpawnerLocs",
          "objects":[
-                {
-                 "height":0,
-                 "id":15,
-                 "name":"Spawner",
-                 "point":true,
-                 "properties":[
-                        {
-                         "name":"HP",
-                         "type":"int",
-                         "value":100
-                        }, 
-                        {
-                         "name":"InitDelay",
-                         "type":"int",
-                         "value":1
-                        }, 
-                        {
-                         "name":"PrimaryEnemy",
-                         "type":"string",
-                         "value":"Basic"
-                        }, 
-                        {
-                         "name":"RegDelay",
-                         "type":"int",
-                         "value":20
-                        }, 
-                        {
-                         "name":"SecondaryEnemy",
-                         "type":"string",
-                         "value":"Basic"
-                        }, 
-                        {
-                         "name":"TertiaryEnemy",
-                         "type":"string",
-                         "value":"Basic"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":326.511462606483,
-                 "y":650.991316634053
-                }, 
                 {
                  "height":0,
                  "id":16,
@@ -508,49 +483,6 @@
                  "width":0,
                  "x":867.930273026521,
                  "y":932.448743869959
-                }, 
-                {
-                 "height":0,
-                 "id":17,
-                 "name":"Spawner",
-                 "point":true,
-                 "properties":[
-                        {
-                         "name":"HP",
-                         "type":"int",
-                         "value":200
-                        }, 
-                        {
-                         "name":"InitDelay",
-                         "type":"int",
-                         "value":1
-                        }, 
-                        {
-                         "name":"PrimaryEnemy",
-                         "type":"string",
-                         "value":"spawner"
-                        }, 
-                        {
-                         "name":"RegDelay",
-                         "type":"int",
-                         "value":20
-                        }, 
-                        {
-                         "name":"SecondaryEnemy",
-                         "type":"string",
-                         "value":"eating"
-                        }, 
-                        {
-                         "name":"TertiaryEnemy",
-                         "type":"string",
-                         "value":"Basic"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":2246.44549763033,
-                 "y":632.701421800948
                 }, 
                 {
                  "height":0,
@@ -726,178 +658,6 @@
                 }, 
                 {
                  "height":0,
-                 "id":23,
-                 "name":"Spawner",
-                 "point":true,
-                 "properties":[
-                        {
-                         "name":"HP",
-                         "type":"int",
-                         "value":100
-                        }, 
-                        {
-                         "name":"InitDelay",
-                         "type":"int",
-                         "value":1
-                        }, 
-                        {
-                         "name":"PrimaryEnemy",
-                         "type":"string",
-                         "value":"Basic"
-                        }, 
-                        {
-                         "name":"RegDelay",
-                         "type":"int",
-                         "value":20
-                        }, 
-                        {
-                         "name":"SecondaryEnemy",
-                         "type":"string",
-                         "value":"Basic"
-                        }, 
-                        {
-                         "name":"TertiaryEnemy",
-                         "type":"string",
-                         "value":"Basic"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":717.87837219936,
-                 "y":374.942844078647
-                }, 
-                {
-                 "height":0,
-                 "id":24,
-                 "name":"Spawner",
-                 "point":true,
-                 "properties":[
-                        {
-                         "name":"HP",
-                         "type":"int",
-                         "value":150
-                        }, 
-                        {
-                         "name":"InitDelay",
-                         "type":"int",
-                         "value":1
-                        }, 
-                        {
-                         "name":"PrimaryEnemy",
-                         "type":"string",
-                         "value":"bomb"
-                        }, 
-                        {
-                         "name":"RegDelay",
-                         "type":"int",
-                         "value":20
-                        }, 
-                        {
-                         "name":"SecondaryEnemy",
-                         "type":"string",
-                         "value":"bomb"
-                        }, 
-                        {
-                         "name":"TertiaryEnemy",
-                         "type":"string",
-                         "value":"Basic"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":1161.40832190215,
-                 "y":923.639689071788
-                }, 
-                {
-                 "height":0,
-                 "id":25,
-                 "name":"Spawner",
-                 "point":true,
-                 "properties":[
-                        {
-                         "name":"HP",
-                         "type":"int",
-                         "value":100
-                        }, 
-                        {
-                         "name":"InitDelay",
-                         "type":"int",
-                         "value":1
-                        }, 
-                        {
-                         "name":"PrimaryEnemy",
-                         "type":"string",
-                         "value":"Basic"
-                        }, 
-                        {
-                         "name":"RegDelay",
-                         "type":"int",
-                         "value":20
-                        }, 
-                        {
-                         "name":"SecondaryEnemy",
-                         "type":"string",
-                         "value":"Basic"
-                        }, 
-                        {
-                         "name":"TertiaryEnemy",
-                         "type":"string",
-                         "value":"Basic"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":608.139003200732,
-                 "y":864.197530864198
-                }, 
-                {
-                 "height":0,
-                 "id":26,
-                 "name":"Spawner",
-                 "point":true,
-                 "properties":[
-                        {
-                         "name":"HP",
-                         "type":"int",
-                         "value":100
-                        }, 
-                        {
-                         "name":"InitDelay",
-                         "type":"int",
-                         "value":1
-                        }, 
-                        {
-                         "name":"PrimaryEnemy",
-                         "type":"string",
-                         "value":"Basic"
-                        }, 
-                        {
-                         "name":"RegDelay",
-                         "type":"int",
-                         "value":20
-                        }, 
-                        {
-                         "name":"SecondaryEnemy",
-                         "type":"string",
-                         "value":"Basic"
-                        }, 
-                        {
-                         "name":"TertiaryEnemy",
-                         "type":"string",
-                         "value":"Basic"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":1783.26474622771,
-                 "y":909.922267946959
-                }, 
-                {
-                 "height":0,
                  "id":27,
                  "name":"Spawner",
                  "point":true,
@@ -938,49 +698,6 @@
                  "width":0,
                  "x":2075.90306355738,
                  "y":827.617741197988
-                }, 
-                {
-                 "height":0,
-                 "id":28,
-                 "name":"Spawner",
-                 "point":true,
-                 "properties":[
-                        {
-                         "name":"HP",
-                         "type":"int",
-                         "value":100
-                        }, 
-                        {
-                         "name":"InitDelay",
-                         "type":"int",
-                         "value":1
-                        }, 
-                        {
-                         "name":"PrimaryEnemy",
-                         "type":"string",
-                         "value":"Basic"
-                        }, 
-                        {
-                         "name":"RegDelay",
-                         "type":"int",
-                         "value":20
-                        }, 
-                        {
-                         "name":"SecondaryEnemy",
-                         "type":"string",
-                         "value":"Basic"
-                        }, 
-                        {
-                         "name":"TertiaryEnemy",
-                         "type":"string",
-                         "value":"Basic"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":1783.26474622771,
-                 "y":384.087791495199
                 }, 
                 {
                  "height":0,
@@ -1043,7 +760,7 @@
          "y":0
         }],
  "nextlayerid":16,
- "nextobjectid":30,
+ "nextobjectid":31,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.2",
