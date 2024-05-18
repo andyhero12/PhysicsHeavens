@@ -109,7 +109,6 @@ bool ClientScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::s
 
     _zero->addListener([this](const std::string& name, bool down){
         if (down) {
-            std::cout << "zeor is pressed \n";
             _value+="0";
         }
     });
@@ -125,37 +124,37 @@ bool ClientScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::s
     });
     _three->addListener([this](const std::string& name, bool down){
         if (down) {
-            _number = number::three;
+            _value+="3";
         }
     });
     _four->addListener([this](const std::string& name, bool down){
         if (down) {
-            _number = number::four;
+            _value+="4";
         }
     });
     _five->addListener([this](const std::string& name, bool down){
         if (down) {
-            _number = number::five;
+            _value+="5";
         }
     });
     _six->addListener([this](const std::string& name, bool down){
         if (down) {
-            _number = number::six;
+            _value+="6";
         }
     });
     _seven->addListener([this](const std::string& name, bool down){
         if (down) {
-            _number = number::seven;
+            _value+="7";
         }
     });
     _eight->addListener([this](const std::string& name, bool down){
         if (down) {
-            _number = number::eight;
+            _value+="8";
         }
     });
     _nine->addListener([this](const std::string& name, bool down){
         if (down) {
-            _number = number::nine;
+            _value+="9";
         }
     });
     _delete->addListener([this](const std::string& name, bool down){
@@ -312,7 +311,7 @@ void ClientScene::update(float timestep) {
 
     if (timeSinceLastSwitch >= switchFreq) {
         if (_input._updown != 0 || _input._Leftright != 0) {
-            buttonGrid[currentRow][currentCol]->setDown(false);
+            buttonGrid[currentRow][currentCol]->setColor(Color4::WHITE);
 
             // Handle vertical movement
             if (_input._updown == 1 && currentRow > 0) {
@@ -334,7 +333,7 @@ void ClientScene::update(float timestep) {
                 currentCol--;
             }
 
-            buttonGrid[currentRow][currentCol]->setToggle(true);
+            buttonGrid[currentRow][currentCol]->setColor(Color4::GRAY);
             timeSinceLastSwitch = 0;
         }
 
@@ -342,35 +341,35 @@ void ClientScene::update(float timestep) {
     if(_input.didPressConfirm()){
         switch(_number){
                 case ClientScene::number::zero:
-                    _one->setDown(true);
+                    _zero->setDown(true);
                     break;
                 case ClientScene::number::one:
-                    _value+="1";
+                    _one->setDown(true);
                     break;
                 case ClientScene::number::two:
-                    _value+="2";
+                    _two->setDown(true);
                     break;
                 case ClientScene::number::three:
-                    _value+="3";
+                    _three->setDown(true);
                     break;
                 case ClientScene::number::four:
-                    _value+="4";
+                    _four->setDown(true);
                     break;
                 case ClientScene::number::five:
-                    _value+="5";
+                    _five->setDown(true);
                     break;
                 case ClientScene::number::six:
-                    _value+="6";
+                    _six->setDown(true);
                     break;
                 case ClientScene::number::seven:
-                    _value+="7";
+                    _seven->setDown(true);
                     break;
                 case ClientScene::number::eight:
-                    _value+="8";
+                    _eight->setDown(true);
                     break;
                 case ClientScene::number::nine:
-                    _value+="9";
-                    break; 
+                    _nine->setDown(true);
+                    break;
                 case ClientScene::number::back:
                     _value.pop_back();
                     break;
