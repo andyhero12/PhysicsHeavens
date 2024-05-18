@@ -1143,15 +1143,15 @@ void GameScene::initTutorialOne(){
     
     tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::GREETING, "Ready to go on our first day on the job, boy? We'd better go over your abilities again, just in case."));
     tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::MOVEMENT, "MOVE with (joystick)."));
-    tutorialTiles.push_back(Tutorial::alloc(27, Tutorial::MODE::BITE, "Look, boy, our first threat! Let's get 'em! BITE with (A)."));
+    tutorialTiles.push_back(Tutorial::alloc(15, Tutorial::MODE::DASH, "Dash with (x)"));
+    tutorialTiles.push_back(Tutorial::alloc(25, Tutorial::MODE::BITE, "Look, boy, our first threat! Let's get 'em! BITE with (A)."));
     tutorialTiles.push_back(Tutorial::alloc(35, Tutorial::MODE::GROW, "Whenever you eat an enemy, you ABSORB its power. You can store power up to a certain point. Remember, as you eat, you'll gain size, and become stronger. But don't overeat!"));
-    tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::DASH, "Dash with (x)"));
     tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::RECALLGIVE, ""));
     tutorialTiles.push_back(Tutorial::alloc(22, Tutorial::MODE::SPECIALSONE, "Let's try using a power. We passed the job interview so quick, I couldn't teach you everything in our arsenal yet. "));
     tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::MODE::DEFENDGATE, "Here we are, at the most important thing of our lives!"));
     tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::MODE::DEFENDGATE, "These gates are what lead to Heaven. We gotta protect these, boy- our paycheck depends on it!"));
     tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::MODE::DEFENDGATE, "But protecting these gates are only one part of the job- the other essential part is to ensure these guys can't ever come back. That is, to finish a shift successfully, we gotta destroy the sources they spawn from."));
-    tutorialTiles.push_back(Tutorial::alloc(24, Tutorial::MODE::CHANGEABILITYTWO, "SWITCH ABILITIES with (trigger). ACTIVATE YOUR ABILITY with (bumper). Let's try switching abilities now, boy."));
+    tutorialTiles.push_back(Tutorial::alloc(24, Tutorial::MODE::CHANGEABILITYTWO, "SWITCH ABILITIES with (bumper). ACTIVATE YOUR ABILITY with (trigger). Let's try switching abilities now, boy."));
     tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::BARKGIVE, ""));
     tutorialTiles.push_back(Tutorial::alloc(22, Tutorial::MODE::SPECIALSTWO, "Good job, boy! Next, let’s try using that power to take down some bad guys. Your BARK is stronger than your BITE. Remember, switch abilities first, and then unleash your power!"));
     tutorialTiles.push_back(Tutorial::alloc(50, Tutorial::MODE::DESTROYSPAWNER, "I think that's all we can discuss right now, 'cuz I see a bunch of angry things coming at us now! Get 'em, boy!"));
@@ -1174,10 +1174,10 @@ void GameScene::initTutorialTwo(){
     _uinode->addChild(_tutorialnode);
     tutorialTiles = std::vector<std::shared_ptr<Tutorial>>();
     tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::CHANGEABILITYTWO, "Day two, boy! Good work yesterday. Since we got a bit of time again, let's go over how to set up a BAIT gate."));
-    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::BOMBGIVE, ""));
+    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::BAITGIVE, ""));
     tutorialTiles.push_back(Tutorial::alloc(22, Tutorial::MODE::SPECIALSTHREE, "You can use energy to set up fake gates that will fool the baddies. They disappear after a while, so don’t try to rely on them forever. Let’s try it now!"));
     std::vector<int> frame = {21};
-    std::vector<std::string> modes = {"SHOOT", "RECALL", "BOMB"};
+    std::vector<std::string> modes = {"SHOOT", "RECALL", "BAIT"};
     overWorld.getDog()->setAbility(modes);
     overWorld.getDog()->toggleMode();
     overWorld.getClientDog()->setAbility(modes);
@@ -1192,10 +1192,10 @@ void GameScene::initTutorialThree(){
     _uinode->addChild(_tutorialnode);
     tutorialTiles = std::vector<std::shared_ptr<Tutorial>>();
     tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::CHANGEABILITYFOUR, "Good job! The final ability is BOMB. You can use your stored power to BOMB an area. This is great for a concentrated burst of power around you if you find yourself surrounded. Let’s try it now!"));
-    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::BAITGIVE, ""));
+    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::BOMBGIVE, ""));
     tutorialTiles.push_back(Tutorial::alloc(22, Tutorial::MODE::SPECIALSFOUR, "Attaboy! That’s all we got- but it’s more than enough to take down these lil devils. Let’s get them!"));
     std::vector<int> frame = {21};
-    std::vector<std::string> modes = {"BAIT", "BOMB", "RECALL", "SHOOT"};
+    std::vector<std::string> modes = {"BOMB", "BAIT", "RECALL", "SHOOT"};
     overWorld.getDog()->setAbility(modes);
     overWorld.getDog()->toggleMode();
     overWorld.getClientDog()->setAbility(modes);
@@ -1320,9 +1320,9 @@ void GameScene::initTutorial()
             tutorialTiles.at(i)->setMessage(message);
             
             std::shared_ptr<SpriteAnimationNode> pressA;
-            if (mode == Tutorial::MODE::GREETING || mode == Tutorial::MODE::DEFENDGATE || mode == Tutorial::MODE::GROW
-                || mode == Tutorial::MODE::BITE){
-                pressA = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("pressA"), 1, 2, 2, 30);
+            if (mode == Tutorial::MODE::DASH){
+                // should make this press X
+                pressA = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("pressB"), 1, 2, 2, 30);
             }
             else if (mode == Tutorial::SPECIALSONE || mode == Tutorial::SPECIALSTWO || mode == Tutorial::SPECIALSTHREE || mode == Tutorial::SPECIALSFOUR){
                 pressA = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("rightTrigger"), 1, 2, 2, 30);
@@ -1331,7 +1331,7 @@ void GameScene::initTutorial()
                 pressA = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("rightBumper"), 1, 2, 2, 30);
             }
             else{
-                pressA = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("pressB"), 1, 2, 2, 30);
+                pressA = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("pressA"), 1, 2, 2, 30);
             }
             tutorialTiles.at(i)->setPressButton(pressA);
             pressA->setAnchor(Vec2::ANCHOR_CENTER);
