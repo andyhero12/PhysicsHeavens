@@ -165,7 +165,7 @@ bool ClientScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::s
 
     _startgame->addListener([this](const std::string& name, bool down){
         if (down && !_value.empty()) {
-
+            std::cout << "fdajfadks;fl " << std::endl;
              // This will call the _gameid listener
              _network->connectAsClient(dec2hex(_value));
         }
@@ -227,6 +227,7 @@ void ClientScene::setActive(bool value) {
          */
 #pragma mark BEGIN SOLUTION
         if (value) {
+            _startgame->activate();
             _gameid->deactivate();
             _gameid->setText("");
             configureStartButton();

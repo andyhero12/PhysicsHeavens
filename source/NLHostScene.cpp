@@ -159,6 +159,7 @@ void HostScene::setActive(bool value) {
          */
 #pragma mark BEGIN SOLUTION
         if (value) {
+            _startgame->activate();
             _backout->activate();
             _network->disconnect();
             _network->connectAsHost();
