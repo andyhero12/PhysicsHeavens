@@ -37,6 +37,9 @@
       "start": {
           "file": "textures/joinview/start.png"
       },
+      "delete": {
+        "file": "textures/joinview/back.png"
+      },
       "green": {
           "file": "textures/joinview/green.png"
       },
@@ -745,6 +748,65 @@
                       "y_offset": -0.88
                   }
               },
+              "button_back": {
+                "type": "Button",
+                "format": {
+                    "type": "Anchored"
+                },
+                "data": {
+                    "anchor": [
+                        0,
+                        1
+                    ],
+                    "size": [
+                        119,
+                        41
+                    ],
+                    "angle": 0,
+                    "position": [
+                        775,
+                        8
+                    ],
+                    "visible": true,
+                    "upnode": "delete"
+                },
+                "children": {
+                    "start": {
+                        "type": "Image",
+                        "data": {
+                            "texture": "delete",
+                            "anchor": [
+                                0,
+                                1
+                            ],
+                            "size": [
+                                75,
+                                44
+                            ],
+                            "angle": 0,
+                            "position": [
+                                0,
+                                0
+                            ],
+                            "visible": true
+                        },
+                        "layout": {
+                            "x_anchor": "left",
+                            "y_anchor": "top",
+                            "absolute": false,
+                            "x_offset": 0,
+                            "y_offset": 0
+                        }
+                    }
+                },
+                "layout": {
+                    "x_anchor": "left",
+                    "y_anchor": "top",
+                    "absolute": false,
+                    "x_offset": 0.45,
+                    "y_offset": -0.92
+                }
+            },
               "button_player2": {
                   "type": "Button",
                   "format": {

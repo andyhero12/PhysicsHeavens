@@ -36,11 +36,11 @@ protected:
     /** The menu button for starting a game */
     std::shared_ptr<cugl::scene2::Button> _startgame;
     /** The back button for the menu scene */
-    std::shared_ptr<cugl::scene2::Button> _backout;
-    /** The game id label (for updating) */
-    std::shared_ptr<cugl::scene2::TextField> _gameid;
-    /** The players label (for updating) */
-    std::shared_ptr<cugl::scene2::Label> _player;
+    // std::shared_ptr<cugl::scene2::Button> _backout;
+    // /** The game id label (for updating) */
+    // std::shared_ptr<cugl::scene2::TextField> _gameid;
+    // /** The players label (for updating) */
+    // std::shared_ptr<cugl::scene2::Label> _player;
 
     std::shared_ptr<cugl::scene2::Button> _zero;
     std::shared_ptr<cugl::scene2::Button> _one;
@@ -52,7 +52,7 @@ protected:
     std::shared_ptr<cugl::scene2::Button> _seven;
     std::shared_ptr<cugl::scene2::Button> _eight;
     std::shared_ptr<cugl::scene2::Button> _nine;
-    
+    std::shared_ptr<cugl::scene2::Button> _delete;
     std::shared_ptr<cugl::scene2::Button> _player1;
     std::shared_ptr<cugl::scene2::Button> _player2;
 
@@ -60,9 +60,16 @@ protected:
     {_zero, _one, _two},
     {_three, _four, _five},
     {_six, _seven, _eight},
-    {_nine, _startgame, nullptr}  // 'START' is central
+    {_nine, _delete, _startgame}   // 'START' is central
 };
     InputController _input;
+
+    float timeSinceLastSwitch;
+
+    float switchFreq;
+
+    int currentRow;
+    int currentCol;
     
     /** The network configuration */
     cugl::net::NetcodeConfig _config;
@@ -79,7 +86,7 @@ public:
      * This constructor does not allocate any objects or start the game.
      * This allows us to use the object without a heap pointer.
      */
-    ClientScene() : cugl::Scene2(), _backClicked(false){}
+    ClientScene() : cugl::Scene2(), _backClicked(false),timeSinceLastSwitch(0.0), switchFreq(0.20),currentRow(0),currentCol(0){}
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.
