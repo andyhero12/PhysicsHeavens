@@ -143,7 +143,7 @@ bool LevelScene::init(const std::shared_ptr<AssetManager> &assets)
 });
     
     auto _uinode = scene2::SceneNode::alloc();
-    background = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("LongBackground"), 3, 27, 81, 5);
+    background = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("LongBackground"), 15, 6, 80, 5);
     background->setScale(4.3);
     background->setPosition(0.5 * background->getSize());
     

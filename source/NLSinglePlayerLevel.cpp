@@ -114,7 +114,7 @@ bool SinglePlayerLevelScene::init(const std::shared_ptr<AssetManager> &assets, s
     _config.set(json);
     
     auto _uinode = scene2::SceneNode::alloc();
-    background = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("BackgroundLevelSingle"), 3, 27, 81, 5);
+    background = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("BackgroundLevelSingle"), 15, 6, 80, 5);
     background->setScale(4.3);
     background->setPosition(0.5 * background->getSize());
     
