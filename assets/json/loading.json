@@ -1,7 +1,7 @@
 {
 	"textures": {
         "backgroundl":{
-            "file":      "textures/Menu/title-screen.png",
+            "file":      "textures/loading.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },

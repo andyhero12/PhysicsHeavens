@@ -40,6 +40,13 @@ void AudioController::playSFX(std::string key, std::string sound){
     cugl::AudioEngine::get()->play(key, source, false, source->getVolume(), true);
 }
 
+void AudioController::stopSFX(std::string key){
+    if(_assets == nullptr){
+        return;
+    }
+    cugl::AudioEngine::get()->clear(key);
+}
+
 void AudioController::playMusic(std::string key, std::string sound){
     if(_assets == nullptr){
         return;

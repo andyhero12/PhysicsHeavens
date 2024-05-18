@@ -15,6 +15,7 @@
 //  Version: 1/10/17
 //
 #include "LevelScene.h"
+#include "SaveManager.h"
 
 using namespace cugl;
 
@@ -48,6 +49,15 @@ cugl::Size LevelScene::computeActiveSize() const
     }
     return dimen;
 }
+
+//void LevelScene::writeSaveFile(){
+//    
+//}
+//
+//void LevelScene::readSaveFile(std::string key){
+//    
+//}
+
 /**
  * Initializes the controller contents, making it ready for loading
  *
@@ -61,6 +71,7 @@ cugl::Size LevelScene::computeActiveSize() const
  */
 bool LevelScene::init(const std::shared_ptr<AssetManager> &assets)
 {
+    
     // Initialize the scene to a locked width
     Size dimen = computeActiveSize();
 
@@ -245,7 +256,12 @@ bool LevelScene::isPending() const
 
 void LevelScene::setActive(bool value)
 {
+    std::shared_ptr<SaveManager> saveFile = std::make_shared<SaveManager>();
+    std::shared_ptr<JsonValue> json_root = saveFile->read();
+    unlockedLevels = json_root->getInt("unlocked", 1);
+    
     auto source = _assets->get<Sound>(SUBWAY);
+    
     if (isActive() != value)
     {
         Scene2::setActive(value);
@@ -265,6 +281,14 @@ void LevelScene::setActive(bool value)
             _backClicked = false;
             AudioEngine::get()->clear(SUBWAY);
         }
+    }
+}
+
+void LevelScene::updatelevelscene(){
+   if (_goright && ((_godMode && level < frameTargets.size()) || level < unlockedLevels)) {
+    level += 1;
+    } else if (_goleft && level > 1) {
+        level -= 1;
     }
 }
 

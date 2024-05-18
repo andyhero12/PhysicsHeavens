@@ -11,6 +11,7 @@
 //  Version: 1/10/17
 //
 #include "NLApp.h"
+#include "SaveManager.h"
 
 using namespace cugl;
 
@@ -31,6 +32,10 @@ void NetApp::onStartup()
 {
     _assets = AssetManager::alloc();
     _batch = SpriteBatch::alloc();
+    
+    // Initialize save file
+    std::shared_ptr<SaveManager> saveFile = make_shared<SaveManager>();
+    saveFile->init();
 
     // Start-up basic input
 #ifdef CU_TOUCH_SCREEN
@@ -313,49 +318,49 @@ void NetApp::updateHostScene(float timestep)
         switch (_level.getLevel())
         {
         case LevelScene::Level::L1:
-            _gameplay.init(_assets, _network, true, LEVEL_ONE_KEY);
+            _gameplay.init(_assets, _network, true, LEVEL_ONE_KEY, 1);
             break;
         case LevelScene::Level::L2:
-            _gameplay.init(_assets, _network, true, LEVEL_TWO_KEY);
+            _gameplay.init(_assets, _network, true, LEVEL_TWO_KEY, 2);
             break;
         case LevelScene::Level::L3:
-            _gameplay.init(_assets, _network, true, LEVEL_THREE_KEY);
+            _gameplay.init(_assets, _network, true, LEVEL_THREE_KEY, 3);
             break;
         case LevelScene::Level::L4:
-            _gameplay.init(_assets, _network, true, LEVEL_FOUR_KEY);
+            _gameplay.init(_assets, _network, true, LEVEL_FOUR_KEY, 4);
             break;
         case LevelScene::Level::L5:
-            _gameplay.init(_assets, _network, true, LEVEL_FIVE_KEY);
+            _gameplay.init(_assets, _network, true, LEVEL_FIVE_KEY, 5);
             break;
         case LevelScene::Level::L6:
-            _gameplay.init(_assets, _network, true, LEVEL_ONE_KEY);
+            _gameplay.init(_assets, _network, true, LEVEL_ONE_KEY, 6);
             break;
         case LevelScene::Level::L7:
-            _gameplay.init(_assets, _network, true, LEVEL_TWO_KEY);
+            _gameplay.init(_assets, _network, true, LEVEL_TWO_KEY, 7);
             break;
         case LevelScene::Level::L8:
-            _gameplay.init(_assets, _network, true, LEVEL_THREE_KEY);
+            _gameplay.init(_assets, _network, true, LEVEL_THREE_KEY, 8);
             break;
         case LevelScene::Level::L9:
-            _gameplay.init(_assets, _network, true, LEVEL_FOUR_KEY);
+            _gameplay.init(_assets, _network, true, LEVEL_FOUR_KEY, 9);
             break;
         case LevelScene::Level::L10:
-            _gameplay.init(_assets, _network, true, LEVEL_FIVE_KEY);
+            _gameplay.init(_assets, _network, true, LEVEL_FIVE_KEY, 10);
             break;
         case LevelScene::Level::L11:
-            _gameplay.init(_assets, _network, true, LEVEL_ONE_KEY);
+            _gameplay.init(_assets, _network, true, LEVEL_ONE_KEY, 11);
             break;
         case LevelScene::Level::L12:
-            _gameplay.init(_assets, _network, true, LEVEL_TWO_KEY);
+            _gameplay.init(_assets, _network, true, LEVEL_TWO_KEY, 12);
             break;
         case LevelScene::Level::L13:
-            _gameplay.init(_assets, _network, true, LEVEL_THREE_KEY);
+            _gameplay.init(_assets, _network, true, LEVEL_THREE_KEY, 13);
             break;
         case LevelScene::Level::L14:
-            _gameplay.init(_assets, _network, true, LEVEL_FOUR_KEY);
+            _gameplay.init(_assets, _network, true, LEVEL_FOUR_KEY, 14);
             break;
         case LevelScene::Level::L15:
-            _gameplay.init(_assets, _network, true, LEVEL_FIVE_KEY);
+            _gameplay.init(_assets, _network, true, LEVEL_FIVE_KEY, 15);
             break;
         default:
             CUAssertLog(false, "bad level");
@@ -406,49 +411,49 @@ void NetApp::updateClientScene(float timestep)
         switch (_level.getLevel())
         {
         case LevelScene::Level::L1:
-            _gameplay.init(_assets, _network, false, LEVEL_ONE_KEY);
+            _gameplay.init(_assets, _network, false, LEVEL_ONE_KEY, 1);
             break;
         case LevelScene::Level::L2:
-            _gameplay.init(_assets, _network, false, LEVEL_TWO_KEY);
+            _gameplay.init(_assets, _network, false, LEVEL_TWO_KEY, 2);
             break;
         case LevelScene::Level::L3:
-            _gameplay.init(_assets, _network, false, LEVEL_THREE_KEY);
+            _gameplay.init(_assets, _network, false, LEVEL_THREE_KEY, 3);
             break;
         case LevelScene::Level::L4:
-            _gameplay.init(_assets, _network, false, LEVEL_FOUR_KEY);
+            _gameplay.init(_assets, _network, false, LEVEL_FOUR_KEY, 4);
             break;
         case LevelScene::Level::L5:
-            _gameplay.init(_assets, _network, false, LEVEL_FIVE_KEY);
+            _gameplay.init(_assets, _network, false, LEVEL_FIVE_KEY, 5);
             break;
         case LevelScene::Level::L6:
-            _gameplay.init(_assets, _network, false, LEVEL_ONE_KEY);
+            _gameplay.init(_assets, _network, false, LEVEL_ONE_KEY, 6);
             break;
         case LevelScene::Level::L7:
-            _gameplay.init(_assets, _network, false, LEVEL_TWO_KEY);
+            _gameplay.init(_assets, _network, false, LEVEL_TWO_KEY, 7);
             break;
         case LevelScene::Level::L8:
-            _gameplay.init(_assets, _network, false, LEVEL_THREE_KEY);
+            _gameplay.init(_assets, _network, false, LEVEL_THREE_KEY, 8);
             break;
         case LevelScene::Level::L9:
-            _gameplay.init(_assets, _network, false, LEVEL_FOUR_KEY);
+            _gameplay.init(_assets, _network, false, LEVEL_FOUR_KEY, 9);
             break;
         case LevelScene::Level::L10:
-            _gameplay.init(_assets, _network, false, LEVEL_FIVE_KEY);
+            _gameplay.init(_assets, _network, false, LEVEL_FIVE_KEY, 10);
             break;
         case LevelScene::Level::L11:
-            _gameplay.init(_assets, _network, false, LEVEL_ONE_KEY);
+            _gameplay.init(_assets, _network, false, LEVEL_ONE_KEY, 11);
             break;
         case LevelScene::Level::L12:
-            _gameplay.init(_assets, _network, false, LEVEL_TWO_KEY);
+            _gameplay.init(_assets, _network, false, LEVEL_TWO_KEY, 12);
             break;
         case LevelScene::Level::L13:
-            _gameplay.init(_assets, _network, false, LEVEL_THREE_KEY);
+            _gameplay.init(_assets, _network, false, LEVEL_THREE_KEY, 13);
             break;
         case LevelScene::Level::L14:
-            _gameplay.init(_assets, _network, false, LEVEL_FOUR_KEY);
+            _gameplay.init(_assets, _network, false, LEVEL_FOUR_KEY, 14);
             break;
         case LevelScene::Level::L15:
-            _gameplay.init(_assets, _network, false, LEVEL_FIVE_KEY);
+            _gameplay.init(_assets, _network, false, LEVEL_FIVE_KEY, 15);
             break;
         default:
             CUAssertLog(false, "bad level");
@@ -623,49 +628,49 @@ void NetApp::updateSinglePlayerLevelScene(float timestep)
         switch (_singlePlayer.getLevel())
         {
         case LevelScene::Level::L1:
-            _gameplay.init(_assets, _network, true, LEVEL_ONE_KEY);
+            _gameplay.init(_assets, _network, true, LEVEL_ONE_KEY, 1);
             break;
         case LevelScene::Level::L2:
-            _gameplay.init(_assets, _network, true, LEVEL_TWO_KEY);
+            _gameplay.init(_assets, _network, true, LEVEL_TWO_KEY, 2);
             break;
         case LevelScene::Level::L3:
-            _gameplay.init(_assets, _network, true, LEVEL_THREE_KEY);
+            _gameplay.init(_assets, _network, true, LEVEL_THREE_KEY, 3);
             break;
         case LevelScene::Level::L4:
-            _gameplay.init(_assets, _network, true, LEVEL_FOUR_KEY);
+            _gameplay.init(_assets, _network, true, LEVEL_FOUR_KEY, 4);
             break;
         case LevelScene::Level::L5:
-            _gameplay.init(_assets, _network, true, LEVEL_FIVE_KEY);
+            _gameplay.init(_assets, _network, true, LEVEL_FIVE_KEY, 5);
             break;
         case LevelScene::Level::L6:
-            _gameplay.init(_assets, _network, true, LEVEL_ONE_KEY);
+            _gameplay.init(_assets, _network, true, LEVEL_ONE_KEY, 6);
             break;
         case LevelScene::Level::L7:
-            _gameplay.init(_assets, _network, true, LEVEL_TWO_KEY);
+            _gameplay.init(_assets, _network, true, LEVEL_TWO_KEY, 7);
             break;
         case LevelScene::Level::L8:
-            _gameplay.init(_assets, _network, true, LEVEL_THREE_KEY);
+            _gameplay.init(_assets, _network, true, LEVEL_THREE_KEY, 8);
             break;
         case LevelScene::Level::L9:
-            _gameplay.init(_assets, _network, true, LEVEL_FOUR_KEY);
+            _gameplay.init(_assets, _network, true, LEVEL_FOUR_KEY, 9);
             break;
         case LevelScene::Level::L10:
-            _gameplay.init(_assets, _network, true, LEVEL_FIVE_KEY);
+            _gameplay.init(_assets, _network, true, LEVEL_FIVE_KEY, 10);
             break;
         case LevelScene::Level::L11:
-            _gameplay.init(_assets, _network, true, LEVEL_ONE_KEY);
+            _gameplay.init(_assets, _network, true, LEVEL_ONE_KEY, 11);
             break;
         case LevelScene::Level::L12:
-            _gameplay.init(_assets, _network, true, LEVEL_TWO_KEY);
+            _gameplay.init(_assets, _network, true, LEVEL_TWO_KEY, 12);
             break;
         case LevelScene::Level::L13:
-            _gameplay.init(_assets, _network, true, LEVEL_THREE_KEY);
+            _gameplay.init(_assets, _network, true, LEVEL_THREE_KEY, 13);
             break;
         case LevelScene::Level::L14:
-            _gameplay.init(_assets, _network, true, LEVEL_FOUR_KEY);
+            _gameplay.init(_assets, _network, true, LEVEL_FOUR_KEY, 14);
             break;
         case LevelScene::Level::L15:
-            _gameplay.init(_assets, _network, true, LEVEL_FIVE_KEY);
+            _gameplay.init(_assets, _network, true, LEVEL_FIVE_KEY, 15);
             break;
         default:
             CULog("sad %d", _singlePlayer.getLevel());

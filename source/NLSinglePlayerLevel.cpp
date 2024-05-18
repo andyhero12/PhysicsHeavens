@@ -6,6 +6,7 @@
 //
 
 #include "NLSinglePlayerLevel.h"
+#include "SaveManager.h"
 
 using namespace cugl;
 
@@ -208,7 +209,12 @@ void SinglePlayerLevelScene::update(float progress)
 
 void SinglePlayerLevelScene::setActive(bool value)
 {
+    std::shared_ptr<SaveManager> saveFile = std::make_shared<SaveManager>();
+    std::shared_ptr<JsonValue> json_root = saveFile->read();
+    unlockedLevels = json_root->getInt("unlocked", 1);
+    
     auto source = _assets->get<Sound>(SUBWAY);
+
     if (isActive() != value)
     {
         Scene2::setActive(value);

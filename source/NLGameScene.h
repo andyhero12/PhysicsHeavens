@@ -119,15 +119,26 @@ protected:
     bool gameOverLoss;
     int gameOverDelay;
     bool _todoReset;
+    
     /** Whether or not debug mode is active */
     bool _debug;
     Vec2 olddogPos;
     std::shared_ptr<NetEventController> _network;
     cugl::Affine2 _transform;
 
+    
+    /** The current level */
+    int _levelNum;
+    
     float _zoom;
     std::vector<std::shared_ptr<Tutorial>> tutorialTiles;
     std::shared_ptr<SpriteAnimationNode> tutorialArrow;
+    std::shared_ptr<SpriteAnimationNode> newTrick;
+    
+    
+    std::shared_ptr<cugl::scene2::PolygonNode> textBox;
+    std::shared_ptr<SpriteAnimationNode> devilNormal;
+    std::shared_ptr<SpriteAnimationNode> devilLaugh;
     int tutorialIndex;
     
     Vec2 previousPan;
@@ -180,7 +191,7 @@ protected:
     
     
     /** Initialize tutorial */
-    void initTutorial(std::vector<int>& frame);
+    void initTutorial();
     
     void initTutorialOne();
     void initTutorialTwo();
@@ -254,7 +265,7 @@ public:
      *
      * @return true if the controller is initialized properly, false otherwise.
      */
-    bool init(const std::shared_ptr<cugl::AssetManager> &assets, const std::shared_ptr<NetEventController> network, bool isHost, std::string level);
+    bool init(const std::shared_ptr<cugl::AssetManager> &assets, const std::shared_ptr<NetEventController> network, bool isHost, std::string level, int levelNum);
 
     /**
      * Initializes the controller contents, and starts the game
@@ -272,7 +283,7 @@ public:
      *
      * @return  true if the controller is initialized properly, false otherwise.
      */
-    bool init(const std::shared_ptr<cugl::AssetManager> &assets, const cugl::Rect rect, const std::shared_ptr<NetEventController> network, bool isHost, std::string level);
+    bool init(const std::shared_ptr<cugl::AssetManager> &assets, const cugl::Rect rect, const std::shared_ptr<NetEventController> network, bool isHost, std::string level, int levelNum);
 
     /**
      * Initializes the controller contents, and starts the game
@@ -291,8 +302,9 @@ public:
      *
      * @return  true if the controller is initialized properly, false otherwise.
      */
-    bool init(const std::shared_ptr<cugl::AssetManager> &assets, const cugl::Rect rect, const cugl::Vec2 gravity, const std::shared_ptr<NetEventController> network, bool isHost, std::string level_string);
-    
+
+    bool init(const std::shared_ptr<cugl::AssetManager> &assets, const cugl::Rect rect, const cugl::Vec2 gravity, const std::shared_ptr<NetEventController> network, bool isHost, std::string level_string, int levelNum);
+
     void setAudioController(std::shared_ptr<AudioController> audioController)
     {
         _audioController = audioController;
