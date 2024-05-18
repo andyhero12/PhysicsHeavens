@@ -678,15 +678,47 @@ void GameScene::postUpdate(float dt)
 //    }
 
     Vec2 delta;
-
+    std::shared_ptr<scene2::SceneNode> dogNode;
     if (_isHost)
     {
-        delta = overWorld.getDog()->getDogNode()->getWorldPosition();
+        dogNode = overWorld.getDog()->getDogNode();
     }
     else
     {
-        delta = overWorld.getClientDog()->getDogNode()->getWorldPosition();
+        dogNode = overWorld.getClientDog()->getDogNode();
     }
+    //delta = dogNode->getWorldPosition();
+
+
+    float h = CANVAS_TILE_HEIGHT / 2.0f / _zoom;
+    float w = h * computeActiveSize().width / computeActiveSize().height;
+
+    float bottom = dogNode->getPosition().y - h;
+    float left = dogNode->getPosition().x - w;
+    float top = dogNode->getPosition().y + h;
+    float right = dogNode->getPosition().x + w;
+
+    //this is horrible XD
+    Vec2 positionCache = dogNode->getPosition();
+
+
+    if(left < 1) {
+        dogNode->setPosition(Vec2(w + 1, dogNode->getPosition().y));
+    }
+    if(bottom < 1) {
+        dogNode->setPosition(Vec2(dogNode->getPosition().x, h + 1));
+    }
+    if(right > _backgroundWrapper->getCols() - 2) {
+        dogNode->setPosition(Vec2(_backgroundWrapper->getCols() - w - 2, dogNode->getPosition().y));
+    }
+    if(top > _backgroundWrapper->getRows() - 2) {
+        dogNode->setPosition(Vec2(dogNode->getPosition().x, _backgroundWrapper->getRows() - 2 - h));
+    }
+
+    delta = dogNode->getWorldPosition();
+    dogNode->setPosition(positionCache);
+    
+
     delta -= (computeActiveSize() / 2);
     Vec2 curr = - delta / _zoom;
     Vec2 pan;
