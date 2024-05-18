@@ -269,7 +269,7 @@ void LevelScene::setActive(bool value)
 }
 
 void LevelScene::updatelevelscene(){
-   if (_goright && level < unlockedLevels) {
+   if (_goright && ((_godMode && level < frameTargets.size()) || level < unlockedLevels)) {
     level += 1;
     } else if (_goleft && level > 1) {
         level -= 1;

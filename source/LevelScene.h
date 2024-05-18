@@ -62,6 +62,9 @@ protected:
     /** The asset manager for loading. */
     std::shared_ptr<cugl::AssetManager> _assets;
     
+    /** Flag to bypass locked levels*/
+    bool _godMode = false;
+    
     // NO CONTROLLER (ALL IN SEPARATE THREAD)
     
     // VIEW
