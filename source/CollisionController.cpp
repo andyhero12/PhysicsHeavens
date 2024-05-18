@@ -362,7 +362,8 @@ void CollisionController::resolveBiteAttack(const std::shared_ptr<ActionPolygon>
             collided = true;
             if(enemy->getHealth() <= 0){
                 monsterController.removeEnemy(enemy);
-                monsterController.getAudioController()->playSFX(ENEMY_DEATH, ENEMY_DEATH);
+                enemDeathCnt++;
+                monsterController.getAudioController()->playSFX(ENEMY_DEATH + std::to_string(enemDeathCnt), ENEMY_DEATH);
 //                monsterController.getAudioController()->playSFX(ENEMY_DEATH + std::to_string(dist), ENEMY_DEATH);
                 enemy->executeDeath(overWorld);
                 _network->pushOutEvent(ClientHealthEvent::allocClientHealthEvent(-1,isHostAttack));
@@ -500,7 +501,8 @@ void CollisionController::hugeBlastCollision(const std::shared_ptr<ActionPolygon
         if (withinAngle(action->getAngle()-45.0f, result, 90.0f) && dist <= 5.5f * action->getScale()*1.2){
             hitSomething = true;
             monsterController.removeEnemy(enemy);
-            monsterController.getAudioController()->playSFX(ENEMY_DEATH, ENEMY_DEATH);
+            enemDeathCnt++;
+            monsterController.getAudioController()->playSFX(ENEMY_DEATH + std::to_string(enemDeathCnt), ENEMY_DEATH);
 //            monsterController.getAudioController()->playSFX(ENEMY_DEATH + std::to_string(dist), ENEMY_DEATH);
             enemies.erase(curA);
         }
@@ -536,7 +538,8 @@ void CollisionController::resolveBlowup(const std::shared_ptr<ActionPolygon>& ac
         float dist = diff.length();
         if (dist <= 3.4f * action->getScale()){
             monsterController.removeEnemy(enemy);
-            monsterController.getAudioController()->playSFX(ENEMY_DEATH, ENEMY_DEATH);
+            enemDeathCnt++;
+            monsterController.getAudioController()->playSFX(ENEMY_DEATH + std::to_string(enemDeathCnt), ENEMY_DEATH);
 //            monsterController.getAudioController()->playSFX(ENEMY_DEATH + std::to_string(dist), ENEMY_DEATH);
             monsterEnemies.erase(curA);
         }
@@ -626,7 +629,8 @@ bool CollisionController::enemyExplodedCollision(Vec2 pos, float radius, std::sh
         if (distance < impactDistance){ // need noise
             collide = true;
             monsterController.removeEnemy(enemy);
-            monsterController.getAudioController()->playSFX(ENEMY_DEATH, ENEMY_DEATH);
+            enemDeathCnt++;
+            monsterController.getAudioController()->playSFX(ENEMY_DEATH + std::to_string(enemDeathCnt), ENEMY_DEATH);
 //            monsterController.getAudioController()->playSFX(ENEMY_DEATH + std::to_string(distance), ENEMY_DEATH);
             curEnemies.erase(curMon);
         }

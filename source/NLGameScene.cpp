@@ -819,7 +819,7 @@ void GameScene::fixedUpdate()
                 if (auto spawnerDeathEvent = std::dynamic_pointer_cast<SpawnerDeathEvent>(e))
                 {
                     _spawnerController.processSpawnerDeathEvent(spawnerDeathEvent);
-                    _audioController->playSFX("spawnerDeath", SPAWNER_DEATH);
+                    _audioController->playSFX(SPAWNER_DEATH, SPAWNER_DEATH);
                 }
                 if (auto clientHealthEvent = std::dynamic_pointer_cast<ClientHealthEvent>(e))
                 {

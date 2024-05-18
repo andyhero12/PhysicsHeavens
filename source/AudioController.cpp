@@ -45,7 +45,7 @@ void AudioController::playSFX(std::string key, std::string sound){
     }
     
     if(isEnemySound(key) && enemySounds >= MAX_SOUNDS){
-        //CULog("TOO MANY ENEMY SOUNDS, NOT PLAYING %s", key.c_str());
+        CULog("TOO MANY ENEMY SOUNDS, NOT PLAYING %s", key.c_str());
         return;
     }
     
