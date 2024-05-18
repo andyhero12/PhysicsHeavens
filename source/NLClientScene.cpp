@@ -109,17 +109,18 @@ bool ClientScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::s
 
     _zero->addListener([this](const std::string& name, bool down){
         if (down) {
-            _number = number::zero;
+            std::cout << "zeor is pressed \n";
+            _value+="0";
         }
     });
     _one->addListener([this](const std::string& name, bool down){
         if (down) {
-            _number = number::one;
+            _value+="1";
         }
     });
     _two->addListener([this](const std::string& name, bool down){
         if (down) {
-            _number = number::two;
+            _value+="2";
         }
     });
     _three->addListener([this](const std::string& name, bool down){
@@ -333,7 +334,7 @@ void ClientScene::update(float timestep) {
                 currentCol--;
             }
 
-            buttonGrid[currentRow][currentCol]->setDown(true);
+            buttonGrid[currentRow][currentCol]->setToggle(true);
             timeSinceLastSwitch = 0;
         }
 
@@ -341,7 +342,7 @@ void ClientScene::update(float timestep) {
     if(_input.didPressConfirm()){
         switch(_number){
                 case ClientScene::number::zero:
-                    _value+="0";
+                    _one->setDown(true);
                     break;
                 case ClientScene::number::one:
                     _value+="1";
@@ -378,11 +379,10 @@ void ClientScene::update(float timestep) {
                     _player2->setColor(Color4::GREEN);
                     break;
             }
-        _gameid->setText(_value);
     }
     
         
-
+    _gameid->setText(_value);
     if(_input.didPressBack()){
         _backClicked = true;
     }
