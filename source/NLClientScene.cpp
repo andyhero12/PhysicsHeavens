@@ -359,6 +359,7 @@ void ClientScene::update(float timestep) {
  * networking.
  */
 void ClientScene::configureStartButton() {
+    return;
     if (_network->getStatus() == NetEventController::Status::IDLE) {
          _startgame->setDown(false);
          _startgame->activate();
