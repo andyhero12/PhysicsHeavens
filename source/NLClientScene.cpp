@@ -339,27 +339,68 @@ void ClientScene::update(float timestep) {
                     switch(currentCol){
                         case 0: 
                             _number = ClientScene::number::zero;
+                            break;
                         case 1:
+                            _number = ClientScene::number::one;
+                            break;
                         case 2:
+                            _number = ClientScene::number::two;
+                            break;
+                        default:
+                            _number = ClientScene::number::zero;
+                            break;
                     }
                 case 1:
                     switch(currentCol){
                         case 0: 
+                            _number = ClientScene::number::three;
+                            break;
                         case 1:
+                            _number = ClientScene::number::four;
+                            break;
                         case 2:
+                            _number = ClientScene::number::five;
+                            break;
+                        default:
+                            _number = ClientScene::number::zero;
+                            break;
                     }
                 case 2:
                     switch(currentCol){
-                        case 0: 
+                        case 0:
+                            _number = ClientScene::number::six;
+                            break;
                         case 1:
+                            _number = ClientScene::number::seven;
+                            break;
                         case 2:
+                            _number = ClientScene::number::eight;
+                            break;
+                        default:
+                            _number = ClientScene::number::zero;
+                            break;
                     }
                 case 3:
                     switch(currentCol){
-                        case 0: 
+                        case 0:
+                            _number = ClientScene::number::nine;
+                            break;
                         case 1:
+                            _number = ClientScene::number::nine;
+                            break;
                         case 2:
+                            _number = ClientScene::number::back;
+                            break;
                         case 3:
+                            _number = ClientScene::number::start;
+                            break;
+                        default:
+                            _number = ClientScene::number::zero;
+                            break;
+                    }
+                default:
+                    _number = ClientScene::number::zero;
+                    break;
                 
             }
             timeSinceLastSwitch = 0;
