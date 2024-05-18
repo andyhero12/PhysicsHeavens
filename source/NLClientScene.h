@@ -90,7 +90,7 @@ protected:
     /** Whether the back button had been clicked. */
     bool _backClicked;
 
-    std::vector<std::string> _value;
+    std::string _value;
 
 public:
 #pragma mark -

@@ -100,6 +100,8 @@ bool ClientScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::s
     _player2 = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("joinview_button_player2"));
     _delete = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("joinview_button_back"));
 
+    _player1->setColor(Color4::GREEN);
+    _player2->setColor(Color4::GREEN);
     buttonGrid = {
         {_zero, _one, _two},
         {_three, _four, _five},
@@ -312,6 +314,8 @@ void ClientScene::update(float timestep) {
 
             buttonGrid[currentRow][currentCol]->setDown(true);
 
+           
+
             timeSinceLastSwitch = 0;
         }
 
@@ -319,37 +323,39 @@ void ClientScene::update(float timestep) {
 
     switch(_number){
         case ClientScene::number::zero:
-            _value.push_back("0");
+            _value+="0";
             break;
         case ClientScene::number::one:
-            _value.push_back("1");
+            _value+="1";
             break;
         case ClientScene::number::two:
-            _value.push_back("2");
+            _value+="2";
             break;
         case ClientScene::number::three:
-            _value.push_back("3");
+            _value+="3";
             break;
         case ClientScene::number::four:
-            _value.push_back("4");
+            _value+="4";
             break;
         case ClientScene::number::five:
-            _value.push_back("5");
+            _value+="5";
             break;
         case ClientScene::number::six:
-            _value.push_back("6");
+            _value+="6";
             break;
         case ClientScene::number::seven:
-            _value.push_back("7");
+            _value+="7";
             break;
         case ClientScene::number::eight:
-            _value.push_back("8");
+            _value+="8";
             break;
         case ClientScene::number::nine:
-            _value.push_back("9");
+            _value+="9";
             break; 
     }
         
+    // _gameid->setText(_value);
+    updateText(_value);
 
     if(_network->getStatus() == NetEventController::Status::CONNECTED || _network->getStatus() == NetEventController::Status::HANDSHAKE){
         //_player->setText(std::to_string(_network->getNumPlayers()));
