@@ -60,9 +60,13 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     std::shared_ptr<scene2::SceneNode> layer = _assets->get<scene2::SceneNode>("lab");
     layer->setContentSize(dimen);
     layer->doLayout(); // This rearranges the children to fit the screen
-    _buttonset.push_back(_button1 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("lab_button1")));
-    _buttonset.push_back(_button3 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("lab_button2")));
-    _buttonset.push_back(_button4 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("lab_button3")));
+    _button1 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("lab_button1"));
+    _button3 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("lab_button2"));
+    _button4 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("lab_button3"));
+    
+    _buttonset.push_back(_button1);
+    _buttonset.push_back(_button3);
+    _buttonset.push_back(_button4);
     //_Logo = assets->get<scene2::SceneNode>("Menu_startmenu_Logo");
     // Program the buttons
     _button1->addListener([this](const std::string& name, bool down) {
@@ -115,6 +119,11 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
 void MainMenuScene::dispose() {
     if (_active) {
         removeAllChildren();
+        _button1 = nullptr;
+        _button3 = nullptr;
+        _button4 = nullptr;
+        background = nullptr;
+        _buttonset.clear();
         _active = false;
     }
 }
