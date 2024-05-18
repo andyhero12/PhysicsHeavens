@@ -1031,6 +1031,7 @@ void GameScene::updateInputController()
                 spriteNode->update();
                 pressA->setVisible(true);
                 pressA->update();
+                message->setVisible(true);
             }
             
 //            message->setVisible(true);
@@ -1054,7 +1055,7 @@ void GameScene::updateInputController()
             tile->setPass(true);
             node->setVisible(false);
             pressA->setVisible(false);
-//            message->setVisible(false);
+            message->setVisible(false);
             tutorialIndex++;
         }
         
@@ -1093,14 +1094,14 @@ void GameScene::initTutorialOne(){
     
     tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::GREETING, "jsafk sdflk ajsflja kfjsdlkj falksjf klajsdf kaljf klj flldfj alf asfsdf afassdafasfljsd"));
     tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::MOVEMENT, " adf as saf "));
-    tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::MODE::DEFENDGATE, ""));
-    tutorialTiles.push_back(Tutorial::alloc(15, Tutorial::MODE::BITE, ""));
-    tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::GROW, ""));
-    tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::RECALLGIVE, ""));
-    tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::BARKGIVE, ""));
-    tutorialTiles.push_back(Tutorial::alloc(22, Tutorial::MODE::SPECIALSONE, ""));
-    tutorialTiles.push_back(Tutorial::alloc(24, Tutorial::MODE::CHANGEABILITYTWO, ""));
-    tutorialTiles.push_back(Tutorial::alloc(26, Tutorial::MODE::DESTROYSPAWNER, ""));
+    tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::MODE::DEFENDGATE, "a fdsaf asdf af adsf f "));
+    tutorialTiles.push_back(Tutorial::alloc(15, Tutorial::MODE::BITE, " adf adsf"));
+    tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::GROW, " adf af "));
+    tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::RECALLGIVE, "fagdga f"));
+    tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::BARKGIVE, " adf asf "));
+    tutorialTiles.push_back(Tutorial::alloc(22, Tutorial::MODE::SPECIALSONE, " adf asf a"));
+    tutorialTiles.push_back(Tutorial::alloc(24, Tutorial::MODE::CHANGEABILITYTWO, " adf asdf "));
+    tutorialTiles.push_back(Tutorial::alloc(26, Tutorial::MODE::DESTROYSPAWNER, "afd asf af fdasf"));
 //    tutorialTiles.push_back(Tutorial::alloc(28, Tutorial::MODE::SPECIALSTWO, ""));
 //
     std::vector<std::string> modes = {"RECALL", "SHOOT"};
@@ -1109,9 +1110,9 @@ void GameScene::initTutorialOne(){
     overWorld.getClientDog()->setAbility(modes);
     overWorld.getClientDog()->toggleMode();
     // each one need to write # of frames
-    std::vector<int> frame = {21, 21, 21, 21, 21, 21, 21, 21, 21,21};
+
     overWorld.getDog()->addAbsorb(6);
-    initTutorial(frame);
+    initTutorial();
     
 }
 
@@ -1128,7 +1129,7 @@ void GameScene::initTutorialTwo(){
     overWorld.getClientDog()->setAbility(modes);
     overWorld.getClientDog()->toggleMode();
     overWorld.getDog()->addAbsorb(6);
-    initTutorial(frame);
+    initTutorial();
 }
 
 void GameScene::initTutorialThree(){
@@ -1144,10 +1145,10 @@ void GameScene::initTutorialThree(){
     overWorld.getClientDog()->setAbility(modes);
     overWorld.getClientDog()->toggleMode();
     overWorld.getDog()->addAbsorb(10);
-    initTutorial(frame);
+    initTutorial();
 }
 
-void GameScene::initTutorial(std::vector<int>& frame)
+void GameScene::initTutorial()
 {
     Size screen = computeActiveSize();
     std::shared_ptr<SpriteAnimationNode> node;
@@ -1220,7 +1221,7 @@ void GameScene::initTutorial(std::vector<int>& frame)
             
         }else {
             str = Tutorial::toString(tutorialTiles.at(i)->getProgress());
-            node = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>(str), 1, frame.at(i), frame.at(i), 5);
+            node = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("textbox"), 1, 21, 21, 5);
             _tutorialnode->addChild(node);
             node->setScale(4);
             node->setAnchor(Vec2::ANCHOR_CENTER);

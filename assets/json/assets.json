@@ -1,5 +1,10 @@
 {
     "textures": {
+        "textbox":{
+            "file": "textures/tutorial/textbox.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
         "pressA": {
             "file": "textures/press_a.png",
             "minfilter": "linear",
