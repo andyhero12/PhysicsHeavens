@@ -365,7 +365,8 @@ bool OverWorld::initDogModel()
     _dog->setRecallAnimation(recall);
     _dog->setBelowPenta(belowPenta);
     _dog->setFinalDog(placeHolderDrawOver);
-    placeHolderDrawOver->setScale(DOG_SIZE.y / textures.at(0)->getHeight());
+    //placeHolderDrawOver->setScale(DOG_SIZE.y / textures.at(0)->getHeight());
+    _dog->updateDogSize(_dog->getAbsorb());
     // placeHolderDrawOver->setAnchor(Vec2::ANCHOR_CENTER);
 
     std::shared_ptr<scene2::SceneNode> _uinode = scene2::SceneNode::alloc();
@@ -394,7 +395,8 @@ bool OverWorld::initDogModel()
     _dogClient->setRecallAnimation(recallClient);
     _dogClient->setBelowPenta(belowPentaClient);
     _dogClient->setFinalDog(clientPlaceHolderDrawOver);
-    clientPlaceHolderDrawOver->setScale(DOG_SIZE.y / textures.at(0)->getHeight());
+    //clientPlaceHolderDrawOver->setScale(DOG_SIZE.y / textures.at(0)->getHeight());
+    _dogClient->updateDogSize(_dog->getAbsorb());
 
     std::shared_ptr<scene2::SceneNode> _clientUINode = scene2::SceneNode::alloc();
     _uinode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);

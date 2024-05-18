@@ -55,7 +55,7 @@ using namespace cugl;
 #define DEFAULT_RESTITUTION 0
 
 #define DAMAGED_DURATION 0.4f
-#define HEALED_DURATION 0.8f
+#define HEALED_DURATION 0.6f
 
 #define FIRE_RATE 25
 #define HEAL_RATE 50
@@ -451,10 +451,9 @@ void Dog::update(float delta)
     {
         _damagedTimer -= delta;
     }
-    if (_damagedTimer < 0)
+    if (_damagedTimer <= 0)
     {
         _damagedTimer = 0;
-        // tints may be expensive, so separating out this special case may be worthwhile
         baseBlankNode->setColor(cugl::Color4(255, 255, 255));
     }
     if (_damagedTimer > 0)
@@ -471,13 +470,14 @@ void Dog::update(float delta)
     {
         _healTimer = 0;
         // tints may be expensive, so separating out this special case may be worthwhile
-        baseBlankNode->setColor(cugl::Color4(255, 255, 255));
+        _healthBar->setColor(cugl::Color4(255, 255, 255));
     }
     if (_healTimer > 0)
     {
         float ratio = (HEALED_DURATION - _healTimer) / HEALED_DURATION;
+        ratio *= ratio;
         float brightness = 255 * (0.55f + ratio * 0.45f);
-        baseBlankNode->setColor(cugl::Color4(brightness, 255, brightness));
+        _healthBar->setColor(cugl::Color4(brightness, 255, brightness));
     }
 }
 
