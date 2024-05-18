@@ -63,10 +63,10 @@ bool GateUIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const
 
 void GateUIController::setGateBarTexture(std::shared_ptr<SubTextureNode> fill, float percentage){
     CUAssert(0 <= percentage <= 1);
-    // The percentage of the size bar that is empty space, needed to adjust how fast the health bar decreases
-    GLfloat emptyPercent = 0;
+    // im changing this
+    GLfloat emptyPercent = 0.2;
     
-    GLfloat minS = emptyPercent + (1.0 - emptyPercent) * (1.0-percentage);
+    GLfloat minS = (1.0 - emptyPercent) * (1.0-percentage);
     GLfloat maxS = 1;
     GLfloat minT = 0;
     GLfloat maxT = 1;
