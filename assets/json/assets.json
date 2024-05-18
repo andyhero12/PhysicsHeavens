@@ -851,7 +851,7 @@
     "fonts": {
         "retro": {
             "file": "fonts/Default.ttf",
-            "size": 132
+            "size": 108
         },
         "gyparody": {
             "file": "fonts/gyparody-hv.ttf",
