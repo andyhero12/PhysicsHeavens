@@ -65,7 +65,7 @@ void GateUIController::setGateBarTexture(std::shared_ptr<SubTextureNode> fill, f
     CUAssert(0 <= percentage <= 1);
     // im changing this
     GLfloat emptyPercent = 0.2;
-    GLfloat minS = emptyPercent + (1.0 - emptyPercent) * (1.0 - percentage);
+    GLfloat minS = (1.0 - emptyPercent) * (1.0 - percentage);
     GLfloat maxS = 1;
     GLfloat minT = 0;
     GLfloat maxT = 1;

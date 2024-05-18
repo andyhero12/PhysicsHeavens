@@ -609,6 +609,7 @@ void Dog::setHealth(int value)
     };
     _health = std::min(std::max(0, value),_maxHealth);
     _healthBar->setProgress((float)_health/_maxHealth);
+    //CULog("hp %d %d %f", _health, _maxHealth, (float)_health/_maxHealth);
     _uiController->setHealthBarTexture(float(_health) / _maxHealth);
 }
 
