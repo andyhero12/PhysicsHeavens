@@ -330,6 +330,11 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 
     _pause->setContentSize(dimen);
     _pause->doLayout();
+    _win = std::make_shared<WinScene>();
+    _win->init(_assets, computeActiveSize());
+
+    _win->setContentSize(dimen);
+    _win->doLayout();
 
     _zoom = ROOT_NODE_SCALE;
     
@@ -374,6 +379,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
         initTutorialThree();
     }
     _uinode->addChild(_pause);
+    _uinode->addChild(_win);
     return true;
 }
 void GameScene::resetDraw()
@@ -408,6 +414,7 @@ void GameScene::dispose()
     {
         _audioController = nullptr;
         _pause->dispose();
+        _win->dispose();
         tutorialTiles.clear();
         _world = nullptr;
         _worldnode = nullptr;
@@ -417,6 +424,7 @@ void GameScene::dispose()
         _decorToHide.clear();
         _transparentRects.clear();
         _pause = nullptr;
+        _win = nullptr;
         _level = nullptr;
         winNode = nullptr;
         loseNode = nullptr;
@@ -522,7 +530,7 @@ void GameScene::preUpdate(float dt)
         if (gameOverDelay >= 120 ){
             if (gameOverWin){
                 winNode->setVisible(true);
-                _pause->setPause(true);
+                _win->setActive(true);
                 _minimap->setVisible(false);
                 /** stop all sound and play win screen sound*/
                 AudioEngine::get()->clear();

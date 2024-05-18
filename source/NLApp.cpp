@@ -474,8 +474,9 @@ void NetApp::updateClientScene(float timestep)
 void NetApp::updateGameScene(float timestep)
 {
     _gameplay.preUpdate(timestep);
-    if (_gameplay.getStatus() == PauseScene::EXIT)
+    if (_gameplay.getStatus() == GameScene::Choice::EXIT)
     {
+        //CULog("killing myself");
         _gameplay.dispose();
         _network->disconnect(); // Get rid of This?
         _mainmenu.setActive(true);
