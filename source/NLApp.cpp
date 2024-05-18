@@ -496,16 +496,18 @@ void NetApp::updateGameScene(float timestep)
             _singlePlayer.endGame();
             _status = SINGLEPLAYER;
 
-            _singlePlayer.setActive(true);
-            _status = SINGLEPLAYER;
-            _singlePlayer.resetLevel();
             LevelScene::Level l = currLevel;
             if (l == LevelScene::Level::L15) {
-
+                _status = MAINMENU;
+                return;
             }
             else {
                 l = static_cast<LevelScene::Level>(static_cast<int>(l) + 1);
             }
+
+            _singlePlayer.setActive(true);
+            _status = SINGLEPLAYER;
+            _singlePlayer.resetLevel();
             _singlePlayer.autoStartGame(l);
             isHosting = true;
         }
