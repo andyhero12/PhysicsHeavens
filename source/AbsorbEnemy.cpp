@@ -13,6 +13,7 @@
 #define SPRITE_SCALE 1.14f
 std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode>> AbsorbFactory::createObstacle(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_targetIndex) {
     std::vector<std::shared_ptr<cugl::Texture>>& _textures = staticEnemyStruct._walkTextures;
+    std::vector<std::shared_ptr<cugl::Texture>>& _attackTextures = staticEnemyStruct._attackTextures;
     if (_textures.size() == 0){
         CULog("EMPTY TEXTURES");
     }
@@ -50,7 +51,9 @@ std::pair<std::shared_ptr<physics2::Obstacle>, std::shared_ptr<scene2::SceneNode
     runAnimations->setContentSize(m_size);
     // Temp PlaceHolder
     runAnimations->setAnchor(Vec2::ANCHOR_CENTER);
-    std::shared_ptr<AnimationSceneNode> attackAnimations = AnimationSceneNode::allocWithTextures(_textures, rows,_framecols, _framesize, _freqAnims);
+    int _attackframesize = staticEnemyStruct._attackframesize;
+    int _attackframecols = staticEnemyStruct._attackframecols;
+    std::shared_ptr<AnimationSceneNode> attackAnimations = AnimationSceneNode::allocWithTextures(_attackTextures, rows,_attackframecols, _attackframesize, _freqAnims);
     attackAnimations->setAnchor(Vec2::ANCHOR_CENTER);
     attackAnimations->setContentSize(m_size);
     topLevel->setPosition(m_pos);
@@ -112,6 +115,7 @@ bool AbsorbEnemy::init(cugl::Vec2 m_pos, cugl::Size m_size, int m_health, int m_
         setName(name);
         _contactDamage = CONTACT_DAMAGE;
         goalSpeed = 0.8f;
+        curAction = AbstractEnemy::EnemyActions::CHASE;
         return true;
     }
     return false;
@@ -127,7 +131,7 @@ void AbsorbEnemy::preUpdate(float dt, OverWorld& overWorld) {
     }
 
     // Determine the action based on the state; for now it's alway in atttack but should change
-    curAction = AbstractEnemy::EnemyActions::CHASE;
+    //curAction = AbstractEnemy::EnemyActions::CHASE;
     if (curAction == EnemyActions::SPAWN){
         handleSpawn();
     }
@@ -162,6 +166,10 @@ void AbsorbEnemy::handleChase(OverWorld& overWorld) {
 }
 
 void AbsorbEnemy::handleLowHealth(OverWorld& overWorld) {}
-void AbsorbEnemy::handleAttack(OverWorld& overWorld) {}
+void AbsorbEnemy::handleAttack(OverWorld& overWorld) {
+    if(attackAnimations->getFrame() == attackAnimations->getSize() - 1) {
+        curAction = AbstractEnemy::EnemyActions::CHASE;
+    }
+}
 void AbsorbEnemy::handleStay(OverWorld& overWorld) {}
 void AbsorbEnemy::handleRunaway(OverWorld& overWorld){}

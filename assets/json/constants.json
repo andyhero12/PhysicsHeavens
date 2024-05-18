@@ -51,7 +51,9 @@
     },
     "absorbEnemy": {
         "sprite cols": 8,
-        "sprite size": 8
+        "sprite size": 8,
+        "sprite cols lick": 11,
+        "sprite size lick": 11
     },
     "spawnerEnemy": {
         "sprite cols": 4,
