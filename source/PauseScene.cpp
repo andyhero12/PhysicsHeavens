@@ -92,6 +92,19 @@ void PauseScene::setPause(bool value) {
     }
     setVisible(getPause());
 }
+
+void PauseScene::setFinGame(bool value, bool isTwoPlayer) {
+    _paused = value;
+    if(value){
+        status = Choice::GAME;
+    }
+    background->setVisible(false);
+    if (isTwoPlayer){
+        resumeButton->setVisible(false);
+    }
+    setVisible(_paused);
+}
+
 void PauseScene::togglePause() {
     _paused = !_paused;
     if(_paused){

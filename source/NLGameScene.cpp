@@ -526,7 +526,7 @@ void GameScene::preUpdate(float dt)
             if (gameOverWin){
                 
                 winNode->setVisible(true);
-                _pause->setPause(true);
+                _pause->setFinGame(true, _network->getNumPlayers() == 2);
                 _minimap->setVisible(false);
                 
                 
@@ -538,7 +538,7 @@ void GameScene::preUpdate(float dt)
             }
             if (gameOverLoss){
                 loseNode->setVisible(true);
-                _pause->setPause(true);
+                _pause->setFinGame(true, _network->getNumPlayers() == 2);
                 _minimap->setVisible(false);
                 AudioEngine::get()->clear();
                 _audioController->playSFX(LOSS_STAMP, LOSS_STAMP);
@@ -552,7 +552,7 @@ void GameScene::preUpdate(float dt)
     {
         return;
     }
-    if (_isHost)
+    if (_isHost)s
     {
         float zoom = _zoom - (ROOT_NODE_SCALE - 0.5f * (float)overWorld.getDog()->getAbsorb() / (float)overWorld.getDog()->getMaxAbsorb());
         _zoom -= fmin(zoom, 0.01f) * (zoom < 0 ? 0.12f : 0.3f);

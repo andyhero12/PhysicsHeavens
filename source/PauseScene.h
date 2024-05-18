@@ -77,7 +77,7 @@ public:
     bool getPause() const { return _paused; }
     void togglePause();
     void exitToMain();
-
+    void setFinGame(bool value, bool isTwoPlayer);
     /**
      * Returns true if the gameplay controller is currently active
      *

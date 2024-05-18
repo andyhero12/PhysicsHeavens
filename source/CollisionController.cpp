@@ -365,7 +365,7 @@ void CollisionController::resolveBiteAttack(const std::shared_ptr<ActionPolygon>
                 monsterController.getAudioController()->playSFX(ENEMY_DEATH, ENEMY_DEATH);
 //                monsterController.getAudioController()->playSFX(ENEMY_DEATH + std::to_string(dist), ENEMY_DEATH);
                 enemy->executeDeath(overWorld);
-                _network->pushOutEvent(ClientHealthEvent::allocClientHealthEvent(-1,isHostAttack));
+                _network->pushOutEvent(ClientHealthEvent::allocClientHealthEvent(-2,isHostAttack));
 //                overWorld.getDog()->addAbsorb((*curA)->getAbsorbValue());
                 addedAbsorb += (*curA)->getAbsorbValue();
                 
@@ -376,7 +376,9 @@ void CollisionController::resolveBiteAttack(const std::shared_ptr<ActionPolygon>
     if (addedAbsorb != 0){
         _network->pushOutEvent(SizeEvent::allocSizeEvent(addedAbsorb, isHostAttack));
     }
-
+    if (collided){
+        _network->pushOutEvent(SizeEvent::allocSizeEvent(1, isHostAttack));
+    }
     for (auto& spawner : spawners){
         Vec2 diff = spawner->getPos() - action->getCenter();
         float ang = diff.getAngle();
