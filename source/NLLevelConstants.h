@@ -99,4 +99,29 @@
 /** The key for our loaded level */
 #define LEVEL_TEN_KEY       "level10"
 
+/** The source for our level file */
+#define LEVEL_ELEVEN_FILE      "json/levels/crossHard.json"
+/** The key for our loaded level */
+#define LEVEL_ELEVEN_KEY       "level11"
+
+/** The source for our level file */
+#define LEVEL_TWELVE_FILE      "json/levels/crossMed.json"
+/** The key for our loaded level */
+#define LEVEL_TWELVE_KEY       "level12"
+
+/** The source for our level file */
+#define LEVEL_THIRTEEN_FILE      "json/levels/level15.json"
+/** The key for our loaded level */
+#define LEVEL_THIRTEEN_KEY       "level13"
+
+/** The source for our level file */
+#define LEVEL_FOURTEEN_FILE      "json/levels/levelTen.json"
+/** The key for our loaded level */
+#define LEVEL_FOURTEEN_KEY       "level14"
+
+/** The source for our level file */
+#define LEVEL_FIFTEEN_FILE      "json/levels/levelTwo_TwoGates.json"
+/** The key for our loaded level */
+#define LEVEL_FIFTEEN_KEY       "level15"
+
 #endif /* defined(__TD_LEVEL_CONSTANTS_H__) */
