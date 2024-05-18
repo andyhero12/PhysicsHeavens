@@ -346,6 +346,21 @@ bool OverWorld::initDogModel()
 
     std::shared_ptr<cugl::scene2::OrderedNode> placeHolderDrawOver = cugl::scene2::OrderedNode::allocWithOrder(cugl::scene2::OrderedNode::Order::PRE_ORDER, DOG_SIZE);
     // MORE MAGIC NUMBER ALERT
+    std::shared_ptr<cugl::Texture> barImage = _assets->get<cugl::Texture>("progress_dog");
+    
+    float textureWidth = barImage->getWidth();
+    float textureHeight = barImage->getHeight();
+    
+    std::shared_ptr<cugl::Texture> bg = barImage->getSubTexture(0/textureWidth, 320/textureWidth, 0/textureHeight, 45/textureHeight);
+    std::shared_ptr<cugl::Texture> fg = barImage->getSubTexture(24/textureWidth, 296/textureWidth, 45/textureHeight, 90/textureHeight);
+    std::shared_ptr<cugl::Texture> left_cap = barImage->getSubTexture(0/textureWidth, 24/textureWidth, 45/textureHeight, 90/textureHeight);
+    std::shared_ptr<cugl::Texture> right_cap = barImage->getSubTexture(296/textureWidth, 320/textureWidth, 45/textureHeight, 90/textureHeight);
+    
+    std::shared_ptr<cugl::scene2::ProgressBar> _bar = cugl::scene2::ProgressBar::allocWithCaps(bg, fg, left_cap, right_cap);
+    _bar->setProgress(1.0f);
+    _bar->setPosition(-32, 44);
+    //placeHolderDrawOver->addChild(_bar);
+    _dog->setHealthBar(_bar);
     
     _dog->setRecallAnimation(recall);
     _dog->setBelowPenta(belowPenta);
@@ -369,6 +384,13 @@ bool OverWorld::initDogModel()
 
     std::shared_ptr<cugl::scene2::OrderedNode> clientPlaceHolderDrawOver = cugl::scene2::OrderedNode::allocWithOrder(cugl::scene2::OrderedNode::Order::PRE_ORDER, DOG_SIZE);
     // MORE MAGIC NUMBER ALERT
+
+    std::shared_ptr<cugl::scene2::ProgressBar> _barClient = cugl::scene2::ProgressBar::allocWithCaps(bg, fg, left_cap, right_cap);
+    _barClient->setProgress(1.0f);
+    _barClient->setPosition(-32, 44);
+    //placeHolderDrawOver->addChild(_bar);
+    _dogClient->setHealthBar(_barClient);
+
     _dogClient->setRecallAnimation(recallClient);
     _dogClient->setBelowPenta(belowPentaClient);
     _dogClient->setFinalDog(clientPlaceHolderDrawOver);

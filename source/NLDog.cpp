@@ -579,6 +579,7 @@ void Dog::updateLocalAnimations(DogSize size)
     {
         baseBlankNode->addChild(frontEffectsNode);
     }
+    baseBlankNode->addChild(_healthBar);
 }
 
 void Dog::resetCurrentAnimations(DogSize size)
@@ -586,6 +587,12 @@ void Dog::resetCurrentAnimations(DogSize size)
     //    _sendSize = true;
     updateLocalAnimations(size);
 }
+
+void Dog::setHealthBar(std::shared_ptr<cugl::scene2::ProgressBar> bar){
+        _healthBar = bar;
+        _healthBar->setScale(0.2);
+        _healthBar->setAnchor(Vec2::ANCHOR_CENTER);
+    }
 
 void Dog::setHealth(int value)
 {
@@ -600,6 +607,7 @@ void Dog::setHealth(int value)
         _damagedTimer = 0;
     };
     _health = std::min(std::max(0, value),_maxHealth);
+    _healthBar->setProgress((float)_health/_maxHealth);
     _uiController->setHealthBarTexture(float(_health) / _maxHealth);
 }
 
