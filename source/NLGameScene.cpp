@@ -332,16 +332,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 
     _pause->setContentSize(dimen);
     _pause->doLayout();
-    _win = std::make_shared<WinScene>();
-    _win->init(_assets, computeActiveSize());
-
-    _win->setContentSize(dimen);
-    _win->doLayout();
-    _lose = std::make_shared<LoseScene>();
-    _lose->init(_assets, computeActiveSize());
-
-    _lose->setContentSize(dimen);
-    _lose->doLayout();
 
     _zoom = ROOT_NODE_SCALE;
     
@@ -386,8 +376,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
         initTutorialThree();
     }
     _uinode->addChild(_pause);
-    _uinode->addChild(_win);
-    _uinode->addChild(_lose);
     return true;
 }
 void GameScene::resetDraw()
@@ -422,8 +410,6 @@ void GameScene::dispose()
     {
         _audioController = nullptr;
         _pause->dispose();
-        _win->dispose();
-        _lose->dispose();
         tutorialTiles.clear();
         _world = nullptr;
         _worldnode = nullptr;
@@ -433,8 +419,6 @@ void GameScene::dispose()
         _decorToHide.clear();
         _transparentRects.clear();
         _pause = nullptr;
-        _win = nullptr;
-        _lose = nullptr;
         _level = nullptr;
         winNode = nullptr;
         loseNode = nullptr;
@@ -542,7 +526,7 @@ void GameScene::preUpdate(float dt)
             if (gameOverWin){
                 
                 winNode->setVisible(true);
-                _win->setActive(true);
+                _pause->setPause(true);
                 _minimap->setVisible(false);
                 
                 
@@ -554,7 +538,7 @@ void GameScene::preUpdate(float dt)
             }
             if (gameOverLoss){
                 loseNode->setVisible(true);
-                _lose->setActive(true);
+                _pause->setPause(true);
                 _minimap->setVisible(false);
                 AudioEngine::get()->clear();
                 _audioController->playSFX(LOSS_STAMP, LOSS_STAMP);
@@ -1156,23 +1140,23 @@ void GameScene::initTutorialOne(){
     _tutorialnode = scene2::SceneNode::alloc();
     _uinode->addChild(_tutorialnode);
     tutorialTiles = std::vector<std::shared_ptr<Tutorial>>();
-    
-    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::GREETING, "Ready to go on our first day on the job, boy? We'd better go over your abilities again, just in case."));
-    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::MOVEMENT, "MOVE with (joystick)."));
-    tutorialTiles.push_back(Tutorial::alloc(15, Tutorial::MODE::DASH, "Dash with (x)"));
-    tutorialTiles.push_back(Tutorial::alloc(25, Tutorial::MODE::BITE, "Look, boy, our first threat! Let's get 'em! BITE with (A)."));
-    tutorialTiles.push_back(Tutorial::alloc(35, Tutorial::MODE::GROW, "Whenever you eat an enemy, you ABSORB its power. You can store power up to a certain point. Remember, as you eat, you'll gain size, and become stronger. But don't overeat!"));
-    tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::RECALLGIVE, ""));
-    tutorialTiles.push_back(Tutorial::alloc(22, Tutorial::MODE::SPECIALSONE, "Let's try using a power. We passed the job interview so quick, I couldn't teach you everything in our arsenal yet. "));
-    tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::MODE::DEFENDGATE, "Frankly, I didn't even expect to pass that interview... anyway! ", true));
-    tutorialTiles.push_back(Tutorial::alloc(12, Tutorial::MODE::DEFENDGATE, "Here we are, at the most important thing of our lives!"));
-    tutorialTiles.push_back(Tutorial::alloc(12, Tutorial::MODE::DEFENDGATE, "Well, from 9 to 5, at least. ", true));
-    tutorialTiles.push_back(Tutorial::alloc(12, Tutorial::MODE::DEFENDGATE, "These gates are what lead to Heaven. We gotta protect these, boy- our paycheck depends on it!"));
-    tutorialTiles.push_back(Tutorial::alloc(12, Tutorial::MODE::DEFENDGATE, "But protecting these gates are only one part of the job- the other essential part is to ensure these guys can't ever come back. That is, to finish a shift successfully, we gotta destroy the sources they spawn from."));
-    tutorialTiles.push_back(Tutorial::alloc(24, Tutorial::MODE::CHANGEABILITYTWO, "SWITCH ABILITIES with (bumper). ACTIVATE YOUR ABILITY with (trigger). Let's try switching abilities now, boy."));
-    tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::BARKGIVE, ""));
-    tutorialTiles.push_back(Tutorial::alloc(22, Tutorial::MODE::SPECIALSTWO, "Good job, boy! Next, let’s try using that power to take down some bad guys. Your BARK is stronger than your BITE. Remember, switch abilities first, and then unleash your power!"));
-    tutorialTiles.push_back(Tutorial::alloc(50, Tutorial::MODE::DESTROYSPAWNER, "I think that's all we can discuss right now, 'cuz I see a bunch of angry things coming at us now! Get 'em, boy!"));
+
+    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::GREETING, "Ready for our first day? Let's review your abilities."));
+     tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::MOVEMENT, "MOVE with (joystick)."));
+     tutorialTiles.push_back(Tutorial::alloc(15, Tutorial::MODE::DASH, "Dash with (x)"));
+     tutorialTiles.push_back(Tutorial::alloc(25, Tutorial::MODE::BITE, "First threat! BITE with (A)."));
+     tutorialTiles.push_back(Tutorial::alloc(35, Tutorial::MODE::GROW, "Eat enemies to ABSORB power, grow, and get stronger. But don't overeat!"));
+     tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::RECALLGIVE, ""));
+     tutorialTiles.push_back(Tutorial::alloc(22, Tutorial::MODE::SPECIALSONE, "Try using a power. Let's cover more arsenal."));
+     tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::MODE::DEFENDGATE, "Didn't expect to pass the interview... anyway!", true));
+     tutorialTiles.push_back(Tutorial::alloc(12, Tutorial::MODE::DEFENDGATE, "We're at the most important part of our job!"));
+     tutorialTiles.push_back(Tutorial::alloc(12, Tutorial::MODE::DEFENDGATE, "Well, at least from 9 to 5.", true));
+     tutorialTiles.push_back(Tutorial::alloc(12, Tutorial::MODE::DEFENDGATE, "These gates lead to Heaven. Protect them!"));
+     tutorialTiles.push_back(Tutorial::alloc(12, Tutorial::MODE::DEFENDGATE, "Destroy spawn sources to finish a shift successfully."));
+     tutorialTiles.push_back(Tutorial::alloc(24, Tutorial::MODE::CHANGEABILITYTWO, "SWITCH ABILITIES with (bumper). ACTIVATE ABILITY with (trigger). Let's switch abilities."));
+     tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::BARKGIVE, ""));
+     tutorialTiles.push_back(Tutorial::alloc(22, Tutorial::MODE::SPECIALSTWO, "Good job! Use BARK to take down enemies. Switch abilities first!"));
+     tutorialTiles.push_back(Tutorial::alloc(50, Tutorial::MODE::DESTROYSPAWNER, "Here they come! Get 'em!"));
 
     std::vector<std::string> modes = {"SHOOT", "RECALL"};
     overWorld.getDog()->setAbility(modes);
@@ -1191,9 +1175,9 @@ void GameScene::initTutorialTwo(){
     _tutorialnode = scene2::SceneNode::alloc();
     _uinode->addChild(_tutorialnode);
     tutorialTiles = std::vector<std::shared_ptr<Tutorial>>();
-    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::CHANGEABILITYTWO, "Day two, boy! Good work yesterday. Since we got a bit of time again, let's go over how to set up a BAIT gate."));
+    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::CHANGEABILITYTWO, "Day two! Great work yesterday. Let's set up a BAIT gate."));
     tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::BAITGIVE, ""));
-    tutorialTiles.push_back(Tutorial::alloc(22, Tutorial::MODE::SPECIALSTHREE, "You can use energy to set up fake gates that will fool the baddies. They disappear after a while, so don’t try to rely on them forever. Let’s try it now!"));
+    tutorialTiles.push_back(Tutorial::alloc(22, Tutorial::MODE::SPECIALSTHREE, "Use energy to set up fake gates. They vanish after a while, so don't rely on them forever. Let's try it!"));
     std::vector<int> frame = {21};
     std::vector<std::string> modes = {"SHOOT", "RECALL", "BAIT"};
     overWorld.getDog()->setAbility(modes);
@@ -1209,9 +1193,10 @@ void GameScene::initTutorialThree(){
     _tutorialnode = scene2::SceneNode::alloc();
     _uinode->addChild(_tutorialnode);
     tutorialTiles = std::vector<std::shared_ptr<Tutorial>>();
-    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::CHANGEABILITYFOUR, "Good job! The final ability is BOMB. You can use your stored power to BOMB an area. This is great for a concentrated burst of power around you if you find yourself surrounded. Let’s try it now!"));
+    
+    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::CHANGEABILITYFOUR, "Good job! The final ability is BOMB. Use stored power to BOMB an area when surrounded. Let's try it!"));
     tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::BOMBGIVE, ""));
-    tutorialTiles.push_back(Tutorial::alloc(22, Tutorial::MODE::SPECIALSFOUR, "Attaboy! That’s all we got- but it’s more than enough to take down these lil devils. Let’s get them!"));
+    tutorialTiles.push_back(Tutorial::alloc(22, Tutorial::MODE::SPECIALSFOUR,  "Attaboy! That's all we've got. More than enough to take down these devils. Let's get them!"));
     std::vector<int> frame = {21};
     std::vector<std::string> modes = {"BOMB", "BAIT", "RECALL", "SHOOT"};
     overWorld.getDog()->setAbility(modes);

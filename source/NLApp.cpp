@@ -315,7 +315,6 @@ void NetApp::updateHostScene(float timestep)
     }
     else if (_network->getStatus() == NetEventController::Status::HANDSHAKE && _network->getShortUID())
     {
-        isSingle = false;
         switch (_level.getLevel())
         {
         case LevelScene::Level::L1:
@@ -407,8 +406,6 @@ void NetApp::updateClientScene(float timestep)
     }
     else if (_network->getStatus() == NetEventController::Status::HANDSHAKE && _network->getShortUID())
     {
-        currLevel = _level.getLevel();
-        isSingle = false;
         switch (_level.getLevel())
         {
         case LevelScene::Level::L1:
@@ -482,9 +479,8 @@ void NetApp::updateClientScene(float timestep)
 void NetApp::updateGameScene(float timestep)
 {
     _gameplay.preUpdate(timestep);
-    if (_gameplay.getStatus() == GameScene::Choice::EXIT)
+    if (_gameplay.getStatus() == PauseScene::EXIT)
     {
-        //CULog("killing myself");
         _gameplay.dispose();
         _network->disconnect(); // Get rid of This?
         _selection.setActive(true);
@@ -492,36 +488,6 @@ void NetApp::updateGameScene(float timestep)
         _hostgame.endGame();
         _singlePlayer.endGame();
         _status = MAINMENU;
-        _singlePlayer.resetAutoStart();
-    }
-    else if (_gameplay.getStatus() == GameScene::Choice::NEXT || _gameplay.getStatus() == GameScene::Choice::RETRY) {
-        bool isNext = _gameplay.getStatus() == GameScene::Choice::NEXT;
-        if(isSingle) {
-            _gameplay.dispose();
-            _network->disconnect(); // Get rid of This?
-            _gameplay.setActive(false);
-            _hostgame.endGame();
-            _singlePlayer.endGame();
-            _status = SINGLEPLAYER;
-
-            LevelScene::Level l = currLevel;
-            if(isNext) {
-                if (l == LevelScene::Level::L15) {
-                    _status = MAINMENU;
-                    return;
-                }
-                else {
-                    l = static_cast<LevelScene::Level>(static_cast<int>(l) + 1);
-                }
-            }
-
-            _singlePlayer.setActive(true);
-            _status = SINGLEPLAYER;
-            _singlePlayer.resetLevel();
-            _singlePlayer.autoStartGame(l);
-            _singlePlayer.setAutoVisible(isNext);
-            isHosting = true;
-        }
     }
 }
 
@@ -624,8 +590,6 @@ void NetApp::updateSinglePlayerLevelScene(float timestep)
     }
     else if (_network->getStatus() == NetEventController::Status::HANDSHAKE && _network->getShortUID())
     {
-        currLevel = _singlePlayer.getLevel();
-        isSingle = true;
         switch (_singlePlayer.getLevel())
         {
         case LevelScene::Level::L1:
@@ -674,7 +638,6 @@ void NetApp::updateSinglePlayerLevelScene(float timestep)
             _gameplay.init(_assets, _network, true, LEVEL_FIVE_KEY, 15);
             break;
         default:
-            CULog("sad %d", _singlePlayer.getLevel());
             CUAssertLog(false, "bad level");
             break;
         }
@@ -682,7 +645,6 @@ void NetApp::updateSinglePlayerLevelScene(float timestep)
     }
     else if (_network->getStatus() == NetEventController::Status::INGAME)
     {
-        _singlePlayer.resetAutoStart();
         _singlePlayer.setActive(false);
         _gameplay.setActive(true);
         _status = GAME;
@@ -734,9 +696,6 @@ void NetApp::updateRebindscene(float timestep)
  */
 void NetApp::draw()
 {
-    if(!render) {
-        //return;
-    }
     switch (_status)
     {
     case LOAD:
@@ -774,29 +733,5 @@ void NetApp::draw()
         break;
     default:
         break;
-    }
-}
-
-LevelScene::Level NetApp::nextLevel(LevelScene::Level l) {
-    static const std::array<LevelScene::Level,LevelScene::Level::NONE> colors = {LevelScene::Level::L1 ,
-    LevelScene::Level::L2,
-    LevelScene::Level::L3,
-    LevelScene::Level::L4,
-    LevelScene::Level::L5,
-    LevelScene::Level::L6,
-    LevelScene::Level::L7,
-    LevelScene::Level::L8,
-    LevelScene::Level::L9,
-    LevelScene::Level::L10,
-    LevelScene::Level::L11,
-    LevelScene::Level::L12,
-    LevelScene::Level::L13,
-    LevelScene::Level::L14,
-    LevelScene::Level::L15};
-    auto it = std::find(colors.begin(), colors.end(), l);
-    if (it != colors.end() && std::next(it) != colors.end()) {
-        return *std::next(it);
-    } else {
-        throw std::out_of_range("No next color available");
     }
 }
