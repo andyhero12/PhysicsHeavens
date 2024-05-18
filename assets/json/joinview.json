@@ -178,7 +178,8 @@
                           209
                       ],
                       "visible": true,
-                      "upnode": "one"
+                      "upnode": "one",
+                      "downnode": "two"
                   },
                   "children": {
                       "one": {

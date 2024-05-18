@@ -114,15 +114,77 @@ bool ClientScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::s
     // });
     
 
-    _startgame->addListener([=](const std::string& name, bool down) {
+    // _startgame->addListener([=](const std::string& name, bool down) {
+    //     if (down) {
+    //         // This will call the _gameid listener
+    //         _gameid->releaseFocus();
+    //     }
+    // });
+
+    _zero->addListener([this](const std::string& name, bool down){
         if (down) {
-            // This will call the _gameid listener
+            _number = number::zero;
+        }
+    });
+    _one->addListener([this](const std::string& name, bool down){
+        if (down) {
+            _number = number::one;
+        }
+    });
+    _two->addListener([this](const std::string& name, bool down){
+        if (down) {
+            _number = number::two;
+        }
+    });
+    _three->addListener([this](const std::string& name, bool down){
+        if (down) {
+            _number = number::three;
+        }
+    });
+    _four->addListener([this](const std::string& name, bool down){
+        if (down) {
+            _number = number::four;
+        }
+    });
+    _five->addListener([this](const std::string& name, bool down){
+        if (down) {
+            _number = number::five;
+        }
+    });
+    _six->addListener([this](const std::string& name, bool down){
+        if (down) {
+            _number = number::six;
+        }
+    });
+    _seven->addListener([this](const std::string& name, bool down){
+        if (down) {
+            _number = number::seven;
+        }
+    });
+    _eight->addListener([this](const std::string& name, bool down){
+        if (down) {
+            _number = number::eight;
+        }
+    });
+    _nine->addListener([this](const std::string& name, bool down){
+        if (down) {
+            _number = number::nine;
+        }
+    });
+    _delete->addListener([this](const std::string& name, bool down){
+        if (down) {
+            _number = number::nine;
+        }
+    });
+
+    _startgame->addListener([this](const std::string& name, bool down){
+        if (down) {
+             // This will call the _gameid listener
             _gameid->releaseFocus();
         }
     });
 
-
-     _gameid->addExitListener([this](const std::string& name, const std::string& value) {
+    _gameid->addExitListener([this](const std::string& name, const std::string& value) {
      /**
       * TODO: Call the network controller to connect as a client (Remember to convert the string from decimal to hex)
       */
@@ -225,26 +287,69 @@ void ClientScene::update(float timestep) {
     timeSinceLastSwitch += timestep;
 
     if (timeSinceLastSwitch >= switchFreq) {
-            if (_input._updown != 0 || _input._Leftright != 0) {
-                buttonGrid[currentRow][currentCol]->setDown(false);
+        if (_input._updown != 0 || _input._Leftright != 0) {
+            buttonGrid[currentRow][currentCol]->setDown(false);
 
-                if (_input._updown == 1 && currentRow > 0) {
-                    currentRow--;
-                } else if (_input._updown == -1 && currentRow < buttonGrid.size() - 1) {
-                    currentRow++;
+            // Handle vertical movement
+            if (_input._updown == 1 && currentRow > 0) {
+                currentRow--;
+                if (currentCol >= buttonGrid[currentRow].size()) {
+                    currentCol = buttonGrid[currentRow].size() - 1;
                 }
-
-                if (_input._Leftright == 1 && currentCol < buttonGrid[currentRow].size() - 1) {
-                    currentCol++;
-                } else if (_input._Leftright == -1 && currentCol > 0) {
-                    currentCol--;
+            } else if (_input._updown == -1 && currentRow < buttonGrid.size() - 1) {
+                currentRow++;
+                if (currentCol >= buttonGrid[currentRow].size()) {
+                    currentCol = buttonGrid[currentRow].size() - 1;
                 }
-
-                buttonGrid[currentRow][currentCol]->setDown(true);
-
-                timeSinceLastSwitch = 0;
             }
+
+            // Handle horizontal movement
+            if (_input._Leftright == 1 && currentCol < buttonGrid[currentRow].size() - 1) {
+                currentCol++;
+            } else if (_input._Leftright == -1 && currentCol > 0) {
+                currentCol--;
+            }
+
+            buttonGrid[currentRow][currentCol]->setDown(true);
+
+            timeSinceLastSwitch = 0;
+        }
+
     }
+
+    switch(_number){
+        case ClientScene::number::zero:
+            _value.push_back("0");
+            break;
+        case ClientScene::number::one:
+            _value.push_back("1");
+            break;
+        case ClientScene::number::two:
+            _value.push_back("2");
+            break;
+        case ClientScene::number::three:
+            _value.push_back("3");
+            break;
+        case ClientScene::number::four:
+            _value.push_back("4");
+            break;
+        case ClientScene::number::five:
+            _value.push_back("5");
+            break;
+        case ClientScene::number::six:
+            _value.push_back("6");
+            break;
+        case ClientScene::number::seven:
+            _value.push_back("7");
+            break;
+        case ClientScene::number::eight:
+            _value.push_back("8");
+            break;
+        case ClientScene::number::nine:
+            _value.push_back("9");
+            break; 
+    }
+        
 
     if(_network->getStatus() == NetEventController::Status::CONNECTED || _network->getStatus() == NetEventController::Status::HANDSHAKE){
         //_player->setText(std::to_string(_network->getNumPlayers()));
@@ -255,7 +360,7 @@ void ClientScene::update(float timestep) {
     }
 
     if(_input.didPressBack()){
-        //_backout->setDown(true);
+        _backClicked = true;
     }
 
 }
@@ -268,18 +373,18 @@ void ClientScene::update(float timestep) {
  */
 void ClientScene::configureStartButton() {
     if (_network->getStatus() == NetEventController::Status::IDLE) {
-        _startgame->setDown(false);
-        _startgame->activate();
+        // _startgame->setDown(false);
+        // _startgame->activate();
         //updateText(_startgame, "Start Game");
     }
     else if (_network->getStatus() == NetEventController::Status::CONNECTING) {
-        _startgame->setDown(false);
-        _startgame->deactivate();
+        // _startgame->setDown(false);
+        // _startgame->deactivate();
         //updateText(_startgame, "Connecting");
     }
     else if (_network->getStatus() == NetEventController::Status::CONNECTED) {
-        _startgame->setDown(false);
-        _startgame->deactivate();
+        // _startgame->setDown(false);
+        // _startgame->deactivate();
         //updateText(_startgame, "Waiting");
     }
 }
