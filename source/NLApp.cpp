@@ -315,6 +315,7 @@ void NetApp::updateHostScene(float timestep)
     }
     else if (_network->getStatus() == NetEventController::Status::HANDSHAKE && _network->getShortUID())
     {
+        isSingle = false;
         switch (_level.getLevel())
         {
         case LevelScene::Level::L1:
