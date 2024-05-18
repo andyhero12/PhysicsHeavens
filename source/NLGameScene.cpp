@@ -1299,7 +1299,7 @@ void GameScene::initTutorial()
             
         }else {
             tutorialTiles.at(i)->setSprite(devilNormal);
-            Size box = Size(1.5f * screen.width, screen.height/2);
+            Size box = Size(1.5f * screen.width, 3*screen.height/4);
             
             
             message = scene2::Label::allocWithTextBox(box, tutorialTiles.at(i)->getText() ,_assets->get<Font>(PRIMARY_FONT));
