@@ -625,11 +625,13 @@ void OverWorld::processShootEvent(const std::shared_ptr<ShootEvent> &shootEvent)
     Vec2 center = shootEvent->getPos();
     float ang = shootEvent->getAng();
     float scale = shootEvent->getScale();
+    Dog::DogSize size = _dog->getSize();
     bool incomingHost = shootEvent->isHost();
     if (incomingHost)
     {
         if (incomingHost != _isHost){
             _dog->subAbsorb(SHOOT_COST);
+            size = _dog->getSize();
         }
         _attackPolygonSet.addShoot(center, ang, scale, _dog->getShootRadius());
         _dog->startShoot();
@@ -638,12 +640,22 @@ void OverWorld::processShootEvent(const std::shared_ptr<ShootEvent> &shootEvent)
     {
         if (incomingHost != _isHost){
             _dogClient->subAbsorb(SHOOT_COST);
+            size = _dogClient->getSize();
         }
         _clientAttackPolygonSet.addShoot(center, ang, scale, _dog->getShootRadius());
         _dogClient->startShoot();
     }
     if (incomingHost == _isHost){
-        playSound("dogBark"+ std::to_string(dogSeq), DOG_BARK);
+        if (size == Dog::DogSize::SMALL){
+            playSound("dogBark"+ std::to_string(dogSeq), SMALL_BARK);
+        }
+        else if (size == Dog::DogSize::MEDIUM){
+            playSound("dogBark"+ std::to_string(dogSeq), MED_BARK);
+        }
+        else if (size == Dog::DogSize::LARGE){
+            playSound("dogBark"+ std::to_string(dogSeq), BIG_BARK);
+        }
+//        playSound("dogBark"+ std::to_string(dogSeq), DOG_BARK);
     }
 }
 void OverWorld::processExplodeEvent(const std::shared_ptr<ExplodeEvent> &explodeEvent)
