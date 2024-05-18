@@ -1034,10 +1034,18 @@ void GameScene::updateInputController()
         // just do tile->setVisible(tutorial) to draw stuff
         if (atLocation && !tile->didPass() && spriteNode)
         {
+            if (spriteNode->getFrame() == 0 && newTrick->isVisible() ==false ){
+                _audioController->playSFX(TUTORIAL, TUTORIAL);
+            }
             if (tile->getProgress() == Tutorial::MODE::RECALLGIVE || tile->getProgress() == Tutorial::MODE::BARKGIVE || tile->getProgress() == Tutorial::MODE::BAITGIVE || tile->getProgress() == Tutorial::MODE::BOMBGIVE){
                 newTrick->setVisible(true);
+                _audioController->stopSFX(TUTORIAL);
+                
                 
                 if(newTrick->getFrame() != newTrick->getSpan()-1){
+                    if (newTrick->getFrame() == 0){
+                        _audioController->playSFX(NEW_TRICK, NEW_TRICK);
+                    }
                     newTrick->update();
                     return;
                 }
@@ -1047,6 +1055,7 @@ void GameScene::updateInputController()
                 
                 if (spriteNode->getFrame() != spriteNode->getSpan() -1){
                     if (spriteNode->getFrame() == 0){
+//                        _audioController->stopSFX(TUTORIAL);
                         _audioController->playSFX(NEW_TRICK, NEW_TRICK);
                     }
                     spriteNode->setVisible(true);
@@ -1086,6 +1095,7 @@ void GameScene::updateInputController()
                 pressA->setVisible(false);
                 tutorialIndex++;
                 newTrick->setFrame(0);
+                _audioController->stopSFX(TUTORIAL);
             }
         } else if (_input.update(tile->getProgress(), atLocation))
         {
@@ -1095,6 +1105,7 @@ void GameScene::updateInputController()
             pressA->setVisible(false);
             message->setVisible(false);
             tutorialIndex++;
+            _audioController->stopSFX(TUTORIAL);
         }
         
     }
