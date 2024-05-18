@@ -1,7 +1,7 @@
 {
 	"textures": {
         "setting_background":{
-            "file":      "textures/Setting1.png",
+            "file":      "textures/Settingnew.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },

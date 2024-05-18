@@ -645,7 +645,7 @@ void NetApp::updateSettingScene(float timestep)
         _mainmenu.setActive(true);
         _status = MAINMENU;
     }
-    else if (_setting.getLevel() == SettingScene::button::b4)
+    else if (_setting.getLevel() == SettingScene::button::b3)
     {
         _setting.setActive(false);
         _rebind.setActive(true);

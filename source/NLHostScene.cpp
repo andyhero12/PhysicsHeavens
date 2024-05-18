@@ -171,6 +171,8 @@ void HostScene::setActive(bool value) {
             // If any were pressed, reset them
             _startgame->setDown(false);
             _backout->setDown(false);
+            _player1->setColor(Color4::ORANGE);
+            _player2->setColor(Color4::ORANGE);
         }
 #pragma mark END SOLUTION
     }

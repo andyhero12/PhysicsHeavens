@@ -41,8 +41,6 @@ public:
             /** User wants to join a game */
             b3, 
 
-            b4,
-
             NONE
         };
 protected:
@@ -119,10 +117,9 @@ public:
     _backClicked(false),
     _value(0.0){
     frameTargets = {
-        {1, 4},
-        {2, 5},
-        {3, 6},
-        {4, 7}
+        {1, 3},
+        {2, 4},
+        {3, 5}
         // Add new levels and frames as needed
     };
 
@@ -182,19 +179,16 @@ public:
     }
     
     bool readyToChangeLevel(){
-        return (finAnimLevel1() || finAnimLevel2() || finAnimLevel3()||finAnimLevel4())&&readToAnim();
+        return (finAnimLevel1() || finAnimLevel2() || finAnimLevel3())&&readToAnim();
     }
     bool finAnimLevel1(){
-        return level == 1 && background->getFrame() == 4;
+        return level == 1 && background->getFrame() == 3;
     }
     bool finAnimLevel2(){
-        return level == 2 && background->getFrame() == 5;
+        return level == 2 && background->getFrame() == 4;
     }
     bool finAnimLevel3(){
-        return level == 3 && background->getFrame() == 6;
-    }
-    bool finAnimLevel4(){
-        return level == 4 && background->getFrame() == 7;
+        return level == 3 && background->getFrame() == 5;
     }
     void resetAnimCD(){
         curMoveAnim = 0;
@@ -208,7 +202,7 @@ public:
     }
     
     void updatelevelscene(){
-       if (_goright && level < 4) {
+       if (_goright && level < frameTargets.size()) {
         level += 1;
         } else if (_goleft && level > 1) {
             level -= 1;

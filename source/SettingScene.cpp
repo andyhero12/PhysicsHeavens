@@ -78,10 +78,6 @@ bool SettingScene::init(const std::shared_ptr<AssetManager> &assets)
                     _buttonselection = button::b3;
                     _button->setDown(false);
                     break;
-                case 4:
-                    _buttonselection = button::b4;
-                    CULog("Current Level: L4");
-                    break;
                 default:
                     CULog("Unknown Level");
                     break;
@@ -103,7 +99,7 @@ bool SettingScene::init(const std::shared_ptr<AssetManager> &assets)
 
     _slider1->setVisible(false);
     _slider2->setVisible(false);
-    background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("setting_background"), 1, 9);
+    background = cugl::scene2::SpriteNode::allocWithSheet(_assets->get<cugl::Texture>("setting_background"), 1, 7);
     background->setScale(4.3);
     background->setPosition(0.5 * background->getSize());
     addChild(background);
@@ -145,7 +141,6 @@ void SettingScene::update(float progress)
 {
     _input.update();
 
-    
     if (curMoveAnim <= moveCooldown){
         curMoveAnim++;
     }

@@ -225,17 +225,53 @@ void ClientScene::setActive(bool value) {
 #pragma mark BEGIN SOLUTION
         if (value) {
             _gameid->activate();
-            //_backout->activate();
-            //_player->setText("1");
+            _gameid->setText("");
             configureStartButton();
             _backClicked = false;
+            _zero->activate();
+            _one->activate();
+            _two->activate();
+            _three->activate();
+            _four->activate();
+            _five->activate();
+            _six->activate();
+            _seven->activate();
+            _eight->activate();
+            _nine->activate();
+            _delete->activate();
+            _player1->setColor(Color4::GREEN);
+            _player2->setColor(Color4::ORANGE);
+
             // Don't reset the room id
         } else {
             _gameid->deactivate();
             _startgame->deactivate();
             _network = nullptr;
+            _value = "";
             // If any were pressed, reset them
             _startgame->setDown(false);
+            _zero->setDown(false);
+            _one->setDown(false);
+            _two->setDown(false);
+            _three->setDown(false);
+            _four->setDown(false);
+            _five->setDown(false);
+            _six->setDown(false);
+            _seven->setDown(false);
+            _eight->setDown(false);
+            _nine->setDown(false);
+            _delete->setDown(false);
+            _zero->deactivate();
+            _one->deactivate();
+            _two->deactivate();
+            _three->deactivate();
+            _four->deactivate();
+            _five->deactivate();
+            _six->deactivate();
+            _seven->deactivate();
+            _eight->deactivate();
+            _nine->deactivate();
+            _delete->deactivate();
             
         }
 #pragma mark END SOLUTION

@@ -113,12 +113,12 @@ void RebindScene::update(float progress)
 {
     _input.update();
 
-    if(_input.didPressUp() && height > 0){
+    if((_input.didPressUp()||_input._updown == 1) && height > 0){
         _root->applyPan(0, -5);
         height -= 5;
     }
     
-    else if(_input.didPressDown() && height < maxHeight){
+    else if((_input.didPressDown()||_input._updown == -1) && height < maxHeight){
         _root->applyPan(0, 5);
         height += 5;
     }
