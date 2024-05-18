@@ -1128,7 +1128,6 @@ void GameScene::initTutorialThree(){
 void GameScene::initTutorial()
 {
     Size screen = computeActiveSize();
-    std::shared_ptr<SpriteAnimationNode> node;
     std::shared_ptr<scene2::Label> message;
     std::string str;
     
@@ -1155,8 +1154,13 @@ void GameScene::initTutorial()
     _tutorialnode->addChild(textBox);
     
     
-    devilNormal = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("newTrick"), 7, 5, 35, 2);
-    devilLaugh = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("newTrick"), 7, 5, 35, 2);
+    devilNormal = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("girlTalk"), 4, 5, 20, 5);
+    devilNormal->setScale(4 * SCENE_HEIGHT/devilNormal->getTexture()->getHeight());
+    devilNormal->setPosition(0.5 * devilNormal->getSize());
+    devilNormal->setVisible(false);
+    _tutorialnode->addChild(devilNormal);
+    
+    devilLaugh = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("newTrick"), 4, 5, 20, 5);
     
     for (int i = 0; i < tutorialTiles.size(); i++)
     {
@@ -1216,22 +1220,11 @@ void GameScene::initTutorial()
             pressA->setVisible(false);
             
         }else {
-            str = Tutorial::toString(tutorialTiles.at(i)->getProgress());
-            node = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("textbox"), 1, 21, 21, 5);
-            _tutorialnode->addChild(node);
-            node->setScale(4);
-            node->setAnchor(Vec2::ANCHOR_CENTER);
-            node->setPositionX(screen.width / 2);
-            node->setPositionY(node->getScaleY() * node->getTexture()->getHeight() / 2);
-            node->setVisible(false);
-            
-            tutorialTiles.at(i)->setSprite(node);
-            
-            Size box = Size(node->getTexture()->getWidth()/2, 2 * node->getScaleY() * node->getTexture()->getHeight());
+            tutorialTiles.at(i)->setSprite(devilNormal);
+            Size box = Size(1.5f * screen.width, screen.height/2);
             
             
             message = scene2::Label::allocWithTextBox(box, tutorialTiles.at(i)->getText() ,_assets->get<Font>(PRIMARY_FONT));
-            
             message->setHorizontalAlignment(HorizontalAlign::CENTER);
             message->setVerticalAlignment(VerticalAlign::MIDDLE);
             message->setWrap(true);
@@ -1239,7 +1232,7 @@ void GameScene::initTutorial()
             _tutorialnode->addChild(message);
             message->setAnchor(Vec2(0.8f , 0.5f));
             message->setPositionX(3 * screen.width / 4);
-            message->setPositionY(node->getScaleY() * node->getTexture()->getHeight() / 2);
+            message->setPositionY(0.18f * screen.height);
             message->setVisible(false);
             tutorialTiles.at(i)->setMessage(message);
             
@@ -1261,8 +1254,8 @@ void GameScene::initTutorial()
             pressA->setAnchor(Vec2::ANCHOR_CENTER);
             pressA->setScale(6);
 //            pressA->setPosition(screen/2);
-            pressA->setPositionX(screen.width * 0.80);
-            pressA->setPositionY(node->getScaleY() * node->getTexture()->getHeight() / 4 - 30);
+            pressA->setPositionX(screen.width * 0.90);
+            pressA->setPositionY(devilNormal->getTexture()->getHeight() / 8 - 40);
             _tutorialnode->addChild(pressA);
             pressA->setVisible(false);
         }

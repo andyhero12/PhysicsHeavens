@@ -1,26 +1,31 @@
 {
     "textures": {
-        "textBubble":{
+        "girlTalk": {
+            "file": "textures/tutorial/girl_tutorial_talk.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "textBubble": {
             "file": "textures/tutorial/bubble.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
-        "newTrick":{
+        "newTrick": {
             "file": "textures/newAbility/new_trick.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
-        "rightTrigger":{
+        "rightTrigger": {
             "file": "textures/tutorial/press_rightTrigger.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
-        "rightBumper":{
+        "rightBumper": {
             "file": "textures/tutorial/press_rightBumper.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
-        "textbox":{
+        "textbox": {
             "file": "textures/tutorial/textbox.png",
             "minfilter": "linear",
             "magfilter": "nearest"
