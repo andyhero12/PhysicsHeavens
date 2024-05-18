@@ -1,0 +1,14 @@
+{ "columns":15,
+ "image":"Downloads\/hk-building.png",
+ "imageheight":480,
+ "imagewidth":480,
+ "margin":0,
+ "name":"hkBuildings",
+ "spacing":0,
+ "tilecount":225,
+ "tiledversion":"1.10.2",
+ "tileheight":32,
+ "tilewidth":32,
+ "type":"tileset",
+ "version":"1.10"
+}
