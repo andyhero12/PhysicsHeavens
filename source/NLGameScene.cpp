@@ -349,6 +349,12 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _rootnode->setScale(_zoom);
     previousPan = (-delta / _zoom);
     
+    if (isActive()){
+        _audioController->playMusic(BGM, BGM);
+    }
+    else {
+        cugl::AudioEngine::get()->clear(BGM);
+    }
 
     addChildForeground();
     resetDraw();
@@ -526,12 +532,15 @@ void GameScene::preUpdate(float dt)
                 /** stop all sound and play win screen sound*/
                 AudioEngine::get()->clear();
                 _audioController->playMusic(VICTORY_SCREEN, VICTORY_SCREEN);
+                _audioController->playSFX(WIN_CASH, WIN_CASH);
+                _audioController->playSFX(KACHING, KACHING);
             }
             if (gameOverLoss){
                 loseNode->setVisible(true);
                 _pause->setPause(true);
                 _minimap->setVisible(false);
                 AudioEngine::get()->clear();
+                _audioController->playSFX(LOSS_STAMP, LOSS_STAMP);
                 _audioController->playMusic(LOSS_SCREEN, LOSS_SCREEN);
             }
             gameOverLoss = false;
@@ -669,15 +678,47 @@ void GameScene::postUpdate(float dt)
 //    }
 
     Vec2 delta;
-
+    std::shared_ptr<scene2::SceneNode> dogNode;
     if (_isHost)
     {
-        delta = overWorld.getDog()->getDogNode()->getWorldPosition();
+        dogNode = overWorld.getDog()->getDogNode();
     }
     else
     {
-        delta = overWorld.getClientDog()->getDogNode()->getWorldPosition();
+        dogNode = overWorld.getClientDog()->getDogNode();
     }
+    //delta = dogNode->getWorldPosition();
+
+
+    float h = CANVAS_TILE_HEIGHT / 2.0f / _zoom;
+    float w = h * computeActiveSize().width / computeActiveSize().height;
+
+    float bottom = dogNode->getPosition().y - h;
+    float left = dogNode->getPosition().x - w;
+    float top = dogNode->getPosition().y + h;
+    float right = dogNode->getPosition().x + w;
+
+    //this is horrible XD
+    Vec2 positionCache = dogNode->getPosition();
+
+
+    if(left < 1) {
+        dogNode->setPosition(Vec2(w + 1, dogNode->getPosition().y));
+    }
+    if(bottom < 1) {
+        dogNode->setPosition(Vec2(dogNode->getPosition().x, h + 1));
+    }
+    if(right > _backgroundWrapper->getCols() - 2) {
+        dogNode->setPosition(Vec2(_backgroundWrapper->getCols() - w - 2, dogNode->getPosition().y));
+    }
+    if(top > _backgroundWrapper->getRows() - 2) {
+        dogNode->setPosition(Vec2(dogNode->getPosition().x, _backgroundWrapper->getRows() - 2 - h));
+    }
+
+    delta = dogNode->getWorldPosition();
+    dogNode->setPosition(positionCache);
+    
+
     delta -= (computeActiveSize() / 2);
     Vec2 curr = - delta / _zoom;
     Vec2 pan;
@@ -1035,6 +1076,9 @@ void GameScene::updateInputController()
         {
             if (tile->getProgress() == Tutorial::MODE::RECALLGIVE || tile->getProgress() == Tutorial::MODE::BARKGIVE || tile->getProgress() == Tutorial::MODE::BAITGIVE || tile->getProgress() == Tutorial::MODE::BOMBGIVE){
                 if (spriteNode->getFrame() != spriteNode->getSpan() -1){
+                    if (spriteNode->getFrame() == 0){
+                        _audioController->playSFX(NEW_TRICK, NEW_TRICK);
+                    }
                     spriteNode->setVisible(true);
                     spriteNode->update();
                 } else{
@@ -1095,11 +1139,16 @@ void GameScene::updateInputController()
     if (_input.didPressPause())
     {
         _pause->togglePause();
+        _audioController->playSFX(PAUSE_SCREEN, PAUSE_SCREEN);
     }
 
     if (_input.didPressHome())
     {
         _pause->exitToMain();
+    }
+    if (_input.didChangeMode())
+    {
+        _audioController->playSFX(BUTTON_SWAP, BUTTON_SWAP);
     }
 }
 

@@ -466,7 +466,7 @@ void Dog::update(float delta)
     {
         _healTimer -= delta;
     }
-    if (_healTimer < 0)
+    if (_healTimer <= 0)
     {
         _healTimer = 0;
         // tints may be expensive, so separating out this special case may be worthwhile
@@ -479,6 +479,7 @@ void Dog::update(float delta)
         float brightness = 255 * (0.55f + ratio * 0.45f);
         _healthBar->setColor(cugl::Color4(brightness, 255, brightness));
     }
+    //CULog("heal timer %f", _healTimer);
 }
 
 void Dog::setRecallAnimation(std::shared_ptr<AnimationSceneNode> recall)

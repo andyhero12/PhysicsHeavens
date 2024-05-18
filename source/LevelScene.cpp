@@ -243,10 +243,11 @@ bool LevelScene::isPending() const
 
 void LevelScene::setActive(bool value)
 {
-    
     std::shared_ptr<SaveManager> saveFile = std::make_shared<SaveManager>();
     std::shared_ptr<JsonValue> json_root = saveFile->read();
     unlockedLevels = json_root->getInt("unlocked", 1);
+    
+    auto source = _assets->get<Sound>(SUBWAY);
     
     if (isActive() != value)
     {
@@ -257,6 +258,7 @@ void LevelScene::setActive(bool value)
             _button->activate();
             firsttime = true;
             _backClicked = false;
+            AudioEngine::get()->play(SUBWAY, source, true, source->getVolume(), true);
         }
         else
         {
@@ -264,6 +266,7 @@ void LevelScene::setActive(bool value)
             _button->setDown(false);
             firsttime = true;
             _backClicked = false;
+            AudioEngine::get()->clear(SUBWAY);
         }
     }
 }

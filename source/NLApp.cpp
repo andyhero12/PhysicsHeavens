@@ -159,6 +159,19 @@ void NetApp::preUpdate(float timestep)
         _selection.init(_assets);
         _setting.init(_assets);
         _rebind.init(_assets);
+        
+//        _audioController = AudioController::alloc(_assets);
+//        _mainmenu.setAudioController(_audioController);
+//        _menu.setAudioController(_audioController);
+//        _level.setAudioController(_audioController);
+//        _singlePlayer.setAudioController(_audioController);
+//        _hostgame.setAudioController(_audioController);
+//        _joingame.setAudioController(_audioController);
+//        _selection.setAudioController(_audioController);
+//        _setting.setAudioController(_audioController);
+//        _rebind.setAudioController(_audioController);
+//        _gameplay.setAudioController(_audioController);
+        
         _status = MAINMENU;
     }
     else if (_status == MAINMENU)
@@ -512,6 +525,7 @@ void NetApp::updateSelectionScene(float timestep)
     }
     else
     {
+        
         switch (_selection.getChoice())
         {
         case SelectionScene::Choice::PLAYER1:
@@ -536,6 +550,7 @@ void NetApp::updateSelectionScene(float timestep)
 void NetApp::updateLevelScene(float timestep)
 {
     _level.update(timestep);
+    
     if (_level.getBackclick())
     {
         _level.setActive(false);
@@ -564,6 +579,8 @@ void NetApp::updateLevelScene(float timestep)
 void NetApp::updateSinglePlayerLevelScene(float timestep)
 {
     _singlePlayer.update(timestep);
+   
+    
     if (_singlePlayer.getBackclick())
     {
         _network->disconnect();

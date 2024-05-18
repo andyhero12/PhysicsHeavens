@@ -35,6 +35,8 @@ public:
         int _framesize;
         int _framecols;
         int _freqAnimations;
+        int _attackframesize;
+        int _attackframecols;
     };
     /** Pointer to the AssetManager for texture access, etc. */
     std::shared_ptr<cugl::JsonValue> _data;
@@ -76,9 +78,24 @@ public:
         textures.push_back(_assets->get<Texture>("absorbEnemyRightWalk"));
         textures.push_back(_assets->get<Texture>("absorbEnemyRightWalk"));
         staticEnemyStruct._walkTextures  = textures;
-        staticEnemyStruct._attackTextures  = textures;
         staticEnemyStruct._framesize = _framesize;
         staticEnemyStruct._framecols = _framecols;
+
+        int _attackframecols = data->getFloat("sprite cols lick", 0);
+        int _attackframesize = data->getFloat("sprite size lick", 0);
+        std::vector<std::shared_ptr<cugl::Texture>> attacks;
+        attacks.push_back(_assets->get<Texture>("absorbEnemyRightLick"));
+        attacks.push_back(_assets->get<Texture>("absorbEnemyRightLick"));
+        attacks.push_back(_assets->get<Texture>("absorbEnemyLeftLick"));
+        attacks.push_back(_assets->get<Texture>("absorbEnemyLeftLick"));
+        attacks.push_back(_assets->get<Texture>("absorbEnemyLeftLick"));
+        attacks.push_back(_assets->get<Texture>("absorbEnemyLeftLick"));
+        attacks.push_back(_assets->get<Texture>("absorbEnemyRightLick"));
+        attacks.push_back(_assets->get<Texture>("absorbEnemyRightLick"));
+        staticEnemyStruct._attackTextures  = attacks;
+        staticEnemyStruct._attackframesize = _attackframesize;
+        staticEnemyStruct._attackframecols = _attackframecols;
+
         staticEnemyStruct._freqAnimations = 4;
     }
 

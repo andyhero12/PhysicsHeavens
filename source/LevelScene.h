@@ -16,9 +16,11 @@
 #define __NL_LEVEL_SCENE_H__
 #include <cugl/cugl.h>
 #include "GlobalConstants.h"
+#include "Constants.h"
 #include "NLInput.h"
 #include <map>
 #include "SpriteAnimationNode.h"
+#include "AudioController.h"
 #define NUM_LEVELS 14
 
 /**
@@ -62,8 +64,12 @@ protected:
     /** The asset manager for loading. */
     std::shared_ptr<cugl::AssetManager> _assets;
     
+
     /** Flag to bypass locked levels*/
     bool _godMode = false;
+
+    std::shared_ptr<AudioController> _audioController;
+
     
     // NO CONTROLLER (ALL IN SEPARATE THREAD)
     
@@ -251,8 +257,11 @@ public:
     bool getBackclick(){
         return _backClicked;
     }
-
     
+    void setAudioController(std::shared_ptr<AudioController> audioController)
+    {
+        _audioController = audioController;
+    }
 };
 
 

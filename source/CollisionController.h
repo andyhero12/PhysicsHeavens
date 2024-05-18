@@ -47,6 +47,7 @@ private:
     std::shared_ptr<AudioController> _audioController;
 
 public:
+    int enemDeathCnt;
     /**
      * Creates a new collision controller.
      *
@@ -83,6 +84,7 @@ public:
         _audioController = m_audioController;
         _network = net;
         _assets = assets;
+        enemDeathCnt = 0;
         return true;
     }
 
