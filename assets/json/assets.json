@@ -850,8 +850,8 @@
     },
     "fonts": {
         "retro": {
-            "file": "fonts/MarkerFelt.ttf",
-            "size": 108
+            "file": "fonts/Default.ttf",
+            "size": 132
         },
         "gyparody": {
             "file": "fonts/gyparody-hv.ttf",

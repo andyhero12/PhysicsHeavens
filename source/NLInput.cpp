@@ -184,6 +184,13 @@ bool InputController::readInput(Tutorial::MODE progress, bool inRange)
                 return true;
             }
         }
+        else if(progress == Tutorial::DASH){
+            if (keys->keyPressed(KeyCode::LEFT_SHIFT))
+            {
+                _didDash = true;
+                return true;
+            }
+        }
         else
         {
             if (keys->keyPressed(KeyCode::A))
