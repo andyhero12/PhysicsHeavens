@@ -62,9 +62,9 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     layer->doLayout(); // This rearranges the children to fit the screen
     _button1 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("lab_button1"));
     _button3 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("lab_button2"));
-    _button4 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("lab_button3"));
+    // _button4 = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("lab_button3"));
     
-    _buttonset = {_button1, _button3, _button4};
+    _buttonset = {_button1, _button3};
     //_Logo = assets->get<scene2::SceneNode>("Menu_startmenu_Logo");
     // Program the buttons
     _button1->addListener([this](const std::string& name, bool down) {
@@ -99,16 +99,16 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             }
         }
     });
-    _button4->addListener([this](const std::string& name, bool down) {
-        if (down) {
-            if(_input.getState()==InputController::State::CONTROLLER){
-                _isdown = Isdown::isQUIT;
-            }
-            else{
-                Application::get()->quit();
-            }
-        }
-    });
+    // _button4->addListener([this](const std::string& name, bool down) {
+    //     if (down) {
+    //         if(_input.getState()==InputController::State::CONTROLLER){
+    //             _isdown = Isdown::isQUIT;
+    //         }
+    //         else{
+    //             Application::get()->quit();
+    //         }
+    //     }
+    // });
 
     _counter = 0;
     switchFreq = 0.2;
@@ -130,7 +130,7 @@ void MainMenuScene::dispose() {
         removeAllChildren();
         _button1 = nullptr;
         _button3 = nullptr;
-        _button4 = nullptr;
+        // _button4 = nullptr;
         background = nullptr;
         _buttonset.clear();
         _active = false;
@@ -158,17 +158,17 @@ void MainMenuScene::setActive(bool value) {
             _isdown = Isdown::isNONE;
             _button1->activate();
             _button3->activate();
-            _button4->activate();
+            // _button4->activate();
             _firstset = true;
             AudioEngine::get()->play(MAIN_MENU, source, true, source->getVolume(), true);
         } else {
             _button1->deactivate();
             _button3->deactivate();
-            _button4->deactivate();
+            // _button4->deactivate();
             _button1->setDown(false);
             _button3->setDown(false);
             AudioEngine::get()->clear(MAIN_MENU);
-            _button4->setDown(false);
+            // _button4->setDown(false);
         }
     }
 }
@@ -240,8 +240,9 @@ void MainMenuScene::update(float timestep) {
     else if (_isdown == Isdown::isSETTING && _input.didPressConfirm()) {
         
         _choice = Choice::SETTING;
-    } else if (_isdown == Isdown::isQUIT && _input.didPressConfirm()) {
-        Application::get()->quit();
-    }
+    } 
+    // else if (_isdown == Isdown::isQUIT && _input.didPressConfirm()) {
+    //     Application::get()->quit();
+    // }
 }
 
