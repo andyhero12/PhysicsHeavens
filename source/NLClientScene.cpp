@@ -25,6 +25,10 @@ using namespace cugl::physics2::net;
 /** Regardless of logo, lock the height to this */
 #define SCENE_HEIGHT  800
 
+/** The key for the font reference */
+#define PRIMARY_FONT "retro"
+
+
 /**
  * Converts a decimal string to a hexadecimal string
  *
@@ -79,7 +83,8 @@ bool ClientScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::s
     
     _startgame = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("joinview_button_start"));
     //_backout = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("client_back"));
-    //_gameid = std::dynamic_pointer_cast<scene2::TextField>(_assets->get<scene2::SceneNode>("client_center_game_field_text"));
+    _gameid = scene2::TextField::allocWithText("0123012", _assets->get<Font>(PRIMARY_FONT));
+//    std::dynamic_pointer_cast<scene2::TextField>(_assets->get<scene2::SceneNode>("client_center_game_field_text"));
     //_player = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("client_center_players_field_text"));
     _zero = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("joinview_button0"));
     _one = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("joinview_button1"));
@@ -99,31 +104,36 @@ bool ClientScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::s
     //         _backClicked = true;
     //     }
     // });
+    
 
     _startgame->addListener([=](const std::string& name, bool down) {
         if (down) {
             // This will call the _gameid listener
-            //_gameid->releaseFocus();
+            _gameid->releaseFocus();
         }
     });
 
 
-
-//     _gameid->addExitListener([this](const std::string& name, const std::string& value) {
-//     /**
-//      * TODO: Call the network controller to connect as a client (Remember to convert the string from decimal to hex)
-//      */
-// #pragma mark BEGIN SOLUTION
-//         _network->connectAsClient(dec2hex(value));
-// #pragma mark END SOLUTION
-//     });
+     _gameid->addExitListener([this](const std::string& name, const std::string& value) {
+     /**
+      * TODO: Call the network controller to connect as a client (Remember to convert the string from decimal to hex)
+      */
+ #pragma mark BEGIN SOLUTION
+         _network->connectAsClient(dec2hex(value));
+ #pragma mark END SOLUTION
+     });
 
     
     // Create the server configuration
     auto json = _assets->get<JsonValue>("server");
     _config.set(json);
     
+    _gameid->setScale(0.75f);
+    cugl::Size size = 0.5 * (dimen - _gameid->getSize());
+    _gameid->setPosition(size.width, size.height + _gameid->getSize().height/10);
+    scene->addChild(_gameid);
     addChild(scene);
+//    addChild(_gameid);
     setActive(false);
     return true;
 }
@@ -156,14 +166,14 @@ void ClientScene::setActive(bool value) {
          */
 #pragma mark BEGIN SOLUTION
         if (value) {
-            //_gameid->activate();
+            _gameid->activate();
             //_backout->activate();
             //_player->setText("1");
             configureStartButton();
             _backClicked = false;
             // Don't reset the room id
         } else {
-            //_gameid->deactivate();
+            _gameid->deactivate();
             _startgame->deactivate();
             //_backout->deactivate();
             //_network = nullptr;
