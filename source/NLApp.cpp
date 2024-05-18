@@ -507,6 +507,7 @@ void NetApp::updateSelectionScene(float timestep)
     }
     else
     {
+        
         switch (_selection.getChoice())
         {
         case SelectionScene::Choice::PLAYER1:
@@ -531,6 +532,7 @@ void NetApp::updateSelectionScene(float timestep)
 void NetApp::updateLevelScene(float timestep)
 {
     _level.update(timestep);
+    
     if (_level.getBackclick())
     {
         _level.setActive(false);
@@ -559,6 +561,8 @@ void NetApp::updateLevelScene(float timestep)
 void NetApp::updateSinglePlayerLevelScene(float timestep)
 {
     _singlePlayer.update(timestep);
+   
+    
     if (_singlePlayer.getBackclick())
     {
         _network->disconnect();

@@ -82,6 +82,8 @@ public:
     
     void setAudioController(std::shared_ptr<AudioController> m_audioController){ _audioController = m_audioController;}
     
+    std::shared_ptr<AudioController> getAudioController(){return _audioController;}
+    
     bool isEmpty(){
         return _current.size() == 0 && _pending.size() == 0;
     }

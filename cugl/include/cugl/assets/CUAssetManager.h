@@ -442,6 +442,7 @@ public:
      * @return the loader progress as a percentage.
      */
     float progress() const  {
+        CULog("Waiting assets: %zu", waitCount());
         size_t size = loadCount()+waitCount();
         return (size == 0 ? 0.0f : ((float)loadCount())/size);
     }

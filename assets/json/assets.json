@@ -797,6 +797,11 @@
             "file": "sounds/Env/BGM.wav",
             "volume": 0.4
         },
+        "mainMenu": {
+            "type": "sample",
+            "file": "sounds/Env/mainMenu.wav",
+            "volume": 0.4
+        },
         "buttonPress": {
             "type": "sample",
             "file": "sounds/Env/buttonPress.wav",
@@ -815,7 +820,12 @@
         "lossScreen": {
             "type": "sample",
             "file": "sounds/Env/lossScreen.wav",
-            "volume": 0.4
+            "volume": 0.7
+        },
+        "stampHitting": {
+            "type": "sample",
+            "file": "sounds/Env/stampHitting.wav",
+            "volume": 1.0
         },
         "sizeBarMax": {
             "type": "sample",
@@ -825,16 +835,36 @@
         "subway": {
             "type": "sample",
             "file": "sounds/Env/subway.wav",
-            "volume": 0.4
+            "volume": 0.7
         },
         "victoryScreen": {
             "type": "sample",
-            "file": "sounds/Env/victoryScreen.wav",
+            "file": "sounds/Env/subway.wav",
+            "volume": 0.7
+        },
+        "winCash": {
+            "type": "sample",
+            "file": "sounds/Env/winCash.wav",
             "volume": 0.4
+        },
+        "kaching": {
+            "type": "sample",
+            "file": "sounds/Env/kaching.wav",
+            "volume": 0.4
+        },
+        "pauseScreen": {
+            "type": "sample",
+            "file": "sounds/Env/pauseScreen.wav",
+            "volume": 0.2
         },
         "tutorial": {
             "type": "sample",
             "file": "sounds/tutorial.wav",
+            "volume": 0.2
+        },
+        "newTrick": {
+            "type": "sample",
+            "file": "sounds/Env/newTrick.wav",
             "volume": 0.4
         }
     },

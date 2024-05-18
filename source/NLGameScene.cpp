@@ -345,6 +345,12 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _rootnode->setScale(_zoom);
     previousPan = (-delta / _zoom);
     
+    if (isActive()){
+        _audioController->playMusic(BGM, BGM);
+    }
+    else {
+        cugl::AudioEngine::get()->clear(BGM);
+    }
 
     addChildForeground();
     resetDraw();
@@ -518,14 +524,22 @@ void GameScene::preUpdate(float dt)
                 _minimap->setVisible(false);
                 /** stop all sound and play win screen sound*/
                 AudioEngine::get()->clear();
-                _audioController->playMusic(VICTORY_SCREEN, VICTORY_SCREEN);
+                auto source = _assets->get<cugl::Sound>(VICTORY_SCREEN);
+                cugl::AudioEngine::get()->getMusicQueue()->enqueue(source, false, source->getVolume(), false);
+                _audioController->playSFX(WIN_CASH, WIN_CASH);
+                _audioController->playSFX(KACHING, KACHING);
+//                auto source1 = _assets->get<cugl::Sound>(KACHING);
+//                cugl::AudioEngine::get()->getMusicQueue()->enqueue(source1, false, source1->getVolume(), false);
             }
             if (gameOverLoss){
                 loseNode->setVisible(true);
                 _pause->setPause(true);
                 _minimap->setVisible(false);
                 AudioEngine::get()->clear();
-                _audioController->playMusic(LOSS_SCREEN, LOSS_SCREEN);
+                _audioController->playSFX(LOSS_STAMP, LOSS_STAMP);
+                auto source = _assets->get<cugl::Sound>(LOSS_SCREEN);
+                cugl::AudioEngine::get()->getMusicQueue()->enqueue(source, false, source->getVolume(), false);
+//                _audioController->playSFX(LOSS_SCREEN, LOSS_SCREEN);
             }
             gameOverLoss = false;
             gameOverWin = false;
@@ -1017,6 +1031,9 @@ void GameScene::updateInputController()
         {
             if (tile->getProgress() == Tutorial::MODE::RECALLGIVE || tile->getProgress() == Tutorial::MODE::BARKGIVE || tile->getProgress() == Tutorial::MODE::BAITGIVE || tile->getProgress() == Tutorial::MODE::BOMBGIVE){
                 if (spriteNode->getFrame() != spriteNode->getSpan() -1){
+                    if (spriteNode->getFrame() == 0){
+                        _audioController->playSFX(NEW_TRICK, NEW_TRICK);
+                    }
                     spriteNode->setVisible(true);
                     spriteNode->update();
                 } else{
@@ -1077,11 +1094,16 @@ void GameScene::updateInputController()
     if (_input.didPressPause())
     {
         _pause->togglePause();
+        _audioController->playSFX(PAUSE_SCREEN, PAUSE_SCREEN);
     }
 
     if (_input.didPressHome())
     {
         _pause->exitToMain();
+    }
+    if (_input.didChangeMode())
+    {
+        _audioController->playSFX(BUTTON_SWAP, BUTTON_SWAP);
     }
 }
 

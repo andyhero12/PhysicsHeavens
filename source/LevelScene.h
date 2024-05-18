@@ -16,6 +16,7 @@
 #define __NL_LEVEL_SCENE_H__
 #include <cugl/cugl.h>
 #include "GlobalConstants.h"
+#include "Constants.h"
 #include "NLInput.h"
 #include <map>
 #include "SpriteAnimationNode.h"

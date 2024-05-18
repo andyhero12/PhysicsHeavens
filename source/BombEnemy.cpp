@@ -196,6 +196,19 @@ void BombEnemy::preUpdate(float dt, OverWorld& overWorld){
             CULog("Case Not Handled");
             break;
     }
+//    else if (curAction == EnemyActions::WANDER){
+//        handleWander(dt);
+//    }
+//    else if(curAction == EnemyActions::CHASE){
+////        _audioController->playSFX(BOMB_HISS, BOMB_HISS);
+//        handleChase(overWorld);
+//    }
+//    else if(curAction == EnemyActions::LOWHEALTH){
+//        handleLowHealth(overWorld);
+//    }
+//    else if(curAction == EnemyActions::ATTACK){
+//        handleAttack(overWorld);
+//    }
 }
 void BombEnemy::executeDeath(OverWorld& overWorld){
     
@@ -222,6 +235,9 @@ void BombEnemy::handleChase(OverWorld& overWorld) {
         found = setGoal(target_pos, overWorld.getWorld());
         _counter = 0;
     }
+//    if (found){
+//        _audioController->playSFX(BOMB_HISS, BOMB_HISS);
+//    }
     goToGoal();
     
     movementDirection = dist;
@@ -233,7 +249,7 @@ void BombEnemy::handleLowHealth(OverWorld& overWorld) {
 }
 
 void BombEnemy::handleAttack(OverWorld& overWorld) {
-    _audioController->playSFX(BOMB_HISS, BOMB_HISS);
+//    _audioController->playSFX(BOMB_HISS, BOMB_HISS);
 }
 
 

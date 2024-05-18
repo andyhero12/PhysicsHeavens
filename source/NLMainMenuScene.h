@@ -16,6 +16,7 @@
 #include "GlobalConstants.h"
 #include "NLInput.h"
 #include "SpriteAnimationNode.h"
+#include "Constants.h"
 
 
 /**
