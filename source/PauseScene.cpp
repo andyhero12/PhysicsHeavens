@@ -20,14 +20,12 @@ bool PauseScene::init(){
     if (!cugl::scene2::SceneNode::init()){
         return false;
     }
-<<<<<<< HEAD
+
     background =cugl::scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("pause"));
     background->setScale(_screenSize.width/background->getTexture()->getWidth());
     background->setPosition(0.5*_screenSize);
-=======
     _input.init();
->>>>>>> e3a04f2a4e061fd4dc5d6f6a3d3267404cd977ba
-    
+
     std::shared_ptr<cugl::scene2::SceneNode> resume =cugl::scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("resume"));
 
     std::shared_ptr<cugl::scene2::SceneNode> exit =cugl::scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("mainmenu"));
