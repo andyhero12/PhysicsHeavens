@@ -74,4 +74,9 @@
 /** The key for our loaded level */
 #define LEVEL_FIVE_KEY       "level5"
 
+/** The source for our level file */
+#define LEVEL_SIX_FILE      "json/levels/xShapedLevel.json"
+/** The key for our loaded level */
+#define LEVEL_SIX_KEY       "level6"
+
 #endif /* defined(__TD_LEVEL_CONSTANTS_H__) */
