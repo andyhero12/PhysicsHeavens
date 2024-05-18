@@ -39,6 +39,7 @@ private:
     
 
     /** The "pause" button */
+    std::shared_ptr<cugl::scene2::PolygonNode>  background;
     std::shared_ptr<cugl::scene2::Button>  resumeButton;
     std::shared_ptr<cugl::scene2::Button>  exitButton;
     std::shared_ptr<cugl::AssetManager> _assets;

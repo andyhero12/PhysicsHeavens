@@ -20,6 +20,10 @@ bool PauseScene::init(){
     if (!cugl::scene2::SceneNode::init()){
         return false;
     }
+    background =cugl::scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("pause"));
+    background->setScale(_screenSize.width/background->getTexture()->getWidth());
+    background->setPosition(0.5*_screenSize);
+    
     std::shared_ptr<cugl::scene2::SceneNode> resume =cugl::scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("resume"));
 
     std::shared_ptr<cugl::scene2::SceneNode> exit =cugl::scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("mainmenu"));
@@ -45,6 +49,7 @@ bool PauseScene::init(){
     resumeButton->activate();
     exitButton->activate();
     
+    addChild(background);
     addChild(resumeButton);
     addChild(exitButton);
     

@@ -1,5 +1,10 @@
 {
     "textures": {
+        "pause":{
+            "file": "textures/Menu/pause-menu.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
         "girlTalk": {
             "file": "textures/tutorial/girl_tutorial_talk.png",
             "minfilter": "linear",
