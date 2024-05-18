@@ -77,7 +77,7 @@ bool RebindScene::init(const std::shared_ptr<AssetManager> &assets)
     layer->setColor(Color4(0, 0, 0, 1));
     Application::get()->setClearColor(Color4(192, 192, 192, 255));
 
-    _root->setPosition(0, background->getTexture()->getHeight()/2);
+    _root->setPosition(0,  background->getTexture()->getHeight()/8);
     
     maxHeight = background->getTexture()->getHeight();
 
