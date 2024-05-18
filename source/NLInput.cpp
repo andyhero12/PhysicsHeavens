@@ -175,7 +175,7 @@ bool InputController::readInput(Tutorial::MODE progress, bool inRange)
                 return true;
             }
         }
-        else if (progress == Tutorial::SPECIALSONE || progress == Tutorial::SPECIALSTWO || progress == Tutorial::SPECIALSTHREE || progress == Tutorial::SPECIALSFOUR || progress == Tutorial::RECALLGIVE || progress == Tutorial::BARKGIVE || progress == Tutorial::BOMBGIVE || progress == Tutorial::BAITGIVE )
+        else if (progress == Tutorial::SPECIALSONE || progress == Tutorial::SPECIALSTWO || progress == Tutorial::SPECIALSTHREE || progress == Tutorial::SPECIALSFOUR )
         {
             if (keys->keyPressed(KeyCode::G))
             {
@@ -431,7 +431,7 @@ bool InputController::readInput_joystick(Tutorial::MODE progress, bool inRange)
                     return true;
                 }
             }
-            else if (progress == Tutorial::SPECIALSONE || progress == Tutorial::SPECIALSTWO || progress == Tutorial::SPECIALSTHREE || progress == Tutorial::SPECIALSFOUR || progress == Tutorial::RECALLGIVE || progress == Tutorial::BARKGIVE || progress == Tutorial::BOMBGIVE || progress == Tutorial::BAITGIVE)
+            else if (progress == Tutorial::SPECIALSONE || progress == Tutorial::SPECIALSTWO || progress == Tutorial::SPECIALSTHREE || progress == Tutorial::SPECIALSFOUR)
             {
                 cugl::GameController::Axis LT = cugl::GameController::Axis::TRIGGER_LEFT;
                 cugl::GameController::Axis RT = cugl::GameController::Axis::TRIGGER_RIGHT;

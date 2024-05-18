@@ -507,6 +507,8 @@ void GameScene::addInitObstacle(const std::shared_ptr<physics2::Obstacle> &obj,
 void GameScene::preUpdate(float dt)
 {
     updateInputController();
+    
+    std::cout << " finished updating input \n";
     if (gameOverLoss || gameOverWin){
         if ( gameOverDelay < 120){
             gameOverDelay++;
@@ -549,9 +551,21 @@ void GameScene::preUpdate(float dt)
     }
 
     overWorld.update(_input, computeActiveSize(), dt);
+    
     if (tutorialIndex < tutorialTiles.size()){
-        return;
+        const std::shared_ptr<Tutorial>& tile = tutorialTiles.at(tutorialIndex);
+        bool atLocation = tile->atArea(overWorld.getDog()->getX());
+        
+        // just do tile->setVisible(tutorial) to draw stuff
+        if (atLocation && !tile->didPass())
+        {
+            if (tile->getProgress() == Tutorial::MODE::RECALLGIVE || tile->getProgress() == Tutorial::MODE::BARKGIVE || tile->getProgress() == Tutorial::MODE::BAITGIVE || tile->getProgress() == Tutorial::MODE::BOMBGIVE){
+                return;
+            }
+        }
     }
+    
+    
     _spawnerController.update(_monsterController, overWorld, dt);
     _monsterController.update(dt, overWorld);
     if (!_isHost){
@@ -593,6 +607,7 @@ void GameScene::preUpdate(float dt)
             _network->pushOutEvent(LoseEvent::allocLoseEvent(overWorld.getClientDog()->getPosition(), _isHost));
         }
     }
+    std::cout << " pre update finihsed \n";
 }
 
 void GameScene::postUpdate(float dt)
@@ -606,60 +621,6 @@ void GameScene::postUpdate(float dt)
     overWorld.postUpdate();
 
     _rootnode->resetPane();
-
-
-    //_decorToHide.clear();
-
-    //CULog((std::to_string(overWorld.getDog()->getPosition().x) + " " + std::to_string(overWorld.getDog()->getPosition().y)).c_str());
-//    const std::vector<std::vector<std::shared_ptr<TileInfo>>> &currentBackground = _backgroundWrapper->getTileWorld();
-//    int originalRows = (int)currentBackground.size();
-//    int originalCols = (int)currentBackground.at(0).size();
-//    for (int j = 0; j < originalCols; j++)
-//    {
-//        for (int i = originalRows - 1; i > -1; i--)
-//        {
-//            const std::shared_ptr<TileInfo>& t = currentBackground.at(i).at(j);
-//            if (t->texture != nullptr && (t->getPos() - overWorld.getDog()->getPosition()).length() < 0.5)
-//            {
-//                CULog("Dog Pos %s, Tile Pos %s",overWorld.getDog()->getPosition().toString().data(),  t->getPos().toString().data());
-//                t->getTileSprite()->setColor(Color4f(1, 1, 1, 0.6f));
-//            }
-//        }
-//    }
-//    for (const std::shared_ptr<TileInfo>& t : _backgroundWrapper->getVisibleNodes()){
-//        for (Rect r : _transparentRects) {
-//            if((r.doesIntersect(overWorld.getDog()->getPosition(), 1) || r.doesIntersect(overWorld.getClientDog()->getPosition(), 1)) && r.contains(t->getPos())) {
-//                if(t->getIsUpperDecor()) {
-//                    _decorToHide.insert(t->getTileSprite());
-//                    //t->getTileSprite()->setColor(Color4f(1, 1, 1, 0.6f).lerp(t->getTileSprite()->getColor(), 0.98f));
-//                }
-//            }
-//        }
-//    }
-//
-//    for (auto it = _decorToHide.begin(); it != _decorToHide.end(); ) {
-//        auto t = *it;
-//        bool in = false;
-//        for (Rect r : _transparentRects) {
-//            in |= (r.doesIntersect(overWorld.getDog()->getPosition(), 1) || r.doesIntersect(overWorld.getClientDog()->getPosition(), 1)) && r.contains(t->getPosition());
-//        }
-//
-//        auto c = t->getColor();
-//        auto white = Color4f::WHITE;
-//        if(in) {
-//            t->setColor(Color4f(1, 1, 1, 0.6f).lerp(c, 0.97f));
-//        }
-//        else {
-//            c.a += 2;
-//            t->setColor(c);
-//            if(t->getColor().a > 253) {
-//                t->setColor(Color4::WHITE);
-//                _decorToHide.erase(it++);
-//                continue;
-//            }
-//        }
-//        ++it;
-//    }
 
     Vec2 delta;
 
@@ -693,6 +654,8 @@ void GameScene::postUpdate(float dt)
     if(shakeMagnitude < 0) {
         shakeMagnitude = 0;
     }
+    
+    std::cout << " post update finihsed \n";
 }
 
 void GameScene::fixedUpdate()
@@ -817,6 +780,7 @@ void GameScene::fixedUpdate()
 #pragma mark END SOLUTION
 
     _world->update(FIXED_TIMESTEP_S);
+    std::cout << " fixed update finihsed \n";
 }
 
 /**
@@ -1038,8 +1002,6 @@ void GameScene::updateInputController()
                     pressA->update();
                 }
             }
-            
-//            message->setVisible(true);
         }
         if (tutorialIndex == tutorialTiles.size() - 1){
             if (tutorialArrow != nullptr){
@@ -1067,11 +1029,6 @@ void GameScene::updateInputController()
     }
     else{
         _input.update();
-        // Process the toggled key commands
-        if (_input.didPressDebug())
-        {
-            setDebug(!isDebug());
-        }
     }
     
     
@@ -1097,19 +1054,21 @@ void GameScene::initTutorialOne(){
     _uinode->addChild(_tutorialnode);
     tutorialTiles = std::vector<std::shared_ptr<Tutorial>>();
     
-    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::GREETING, "GREETINGS jsafk sdflk ajsflja kfjsdlkj falksjf klajsd ad ds fa dasf asadsfasfasdfasfsfdsfsfafsfdsfs fsd f kaljf klj flldfj alf asfsdf afassdafasfljsd"));
-    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::MOVEMENT, " movement adf as saf "));
-    tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::MODE::DEFENDGATE, "DEFENDGATE a fdsaf asdf af adsf f "));
-    tutorialTiles.push_back(Tutorial::alloc(15, Tutorial::MODE::BITE, " BTE adf adsf"));
-    tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::GROW, " GROW adf af "));
-    tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::RECALLGIVE, "RECALL fagdga f"));
-    tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::BARKGIVE, "BARKGIVE  adf asf "));
-    tutorialTiles.push_back(Tutorial::alloc(22, Tutorial::MODE::SPECIALSONE, "SPECIAL adf asf a"));
-    tutorialTiles.push_back(Tutorial::alloc(24, Tutorial::MODE::CHANGEABILITYTWO, "CHANGE adf asdf "));
-    tutorialTiles.push_back(Tutorial::alloc(26, Tutorial::MODE::DESTROYSPAWNER, "DESOTRY afd asf af fdasf"));
-//    tutorialTiles.push_back(Tutorial::alloc(28, Tutorial::MODE::SPECIALSTWO, ""));
-//
-    std::vector<std::string> modes = {"RECALL", "SHOOT"};
+    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::GREETING, "Ready to go on our first day on the job, boy? We'd better go over your abilities again, just in case."));
+    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::MOVEMENT, "MOVE with (joystick)."));
+    tutorialTiles.push_back(Tutorial::alloc(28, Tutorial::MODE::BITE, "Look, boy, our first threat! Let's get 'em! BITE with (A)."));
+    tutorialTiles.push_back(Tutorial::alloc(35, Tutorial::MODE::GROW, "Whenever you eat an enemy, you ABSORB its power. You can store power up to a certain point. Remember, as you eat, you'll gain size, and become stronger. But don't overeat!"));
+    tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::RECALLGIVE, ""));
+    tutorialTiles.push_back(Tutorial::alloc(22, Tutorial::MODE::SPECIALSONE, "Let's try using a power. We passed the job interview so quick, I couldn't teach you everything in our arsenal yet. "));
+    tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::MODE::DEFENDGATE, "Here we are, at the most important thing of our lives!"));
+    tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::MODE::DEFENDGATE, "These gates are what lead to Heaven. We gotta protect these, boy- our paycheck depends on it!"));
+    tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::MODE::DEFENDGATE, "But protecting these gates are only one part of the job- the other essential part is to ensure these guys can't ever come back. That is, to finish a shift successfully, we gotta destroy the sources they spawn from."));
+    tutorialTiles.push_back(Tutorial::alloc(24, Tutorial::MODE::CHANGEABILITYTWO, "SWITCH ABILITIES with (trigger). ACTIVATE YOUR ABILITY with (bumper). Let's try switching abilities now, boy."));
+    tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::BARKGIVE, ""));
+    tutorialTiles.push_back(Tutorial::alloc(22, Tutorial::MODE::SPECIALSTWO, "Good job, boy! Next, let’s try using that power to take down some bad guys. Your BARK is stronger than your BITE. Remember, switch abilities first, and then unleash your power!"));
+    tutorialTiles.push_back(Tutorial::alloc(26, Tutorial::MODE::DESTROYSPAWNER, "I think that's all we can discuss right now, 'cuz I see a bunch of angry things coming at us now! Get 'em, boy!"));
+
+    std::vector<std::string> modes = {"SHOOT", "RECALL"};
     overWorld.getDog()->setAbility(modes);
     overWorld.getDog()->toggleMode();
     overWorld.getClientDog()->setAbility(modes);
@@ -1175,7 +1134,7 @@ void GameScene::initTutorial()
             
             std::shared_ptr<SpriteAnimationNode> init;
             std::shared_ptr<SpriteAnimationNode> repeat;
-            std::shared_ptr<SpriteAnimationNode> pressA = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("rightTrigger"), 1, 2, 2, 30);
+            std::shared_ptr<SpriteAnimationNode> pressA = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("pressA"), 1, 2, 2, 30);
             
             if (mode == Tutorial::MODE::RECALLGIVE){
                 init = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("recallInit"), 3, 5,  14,  2);
