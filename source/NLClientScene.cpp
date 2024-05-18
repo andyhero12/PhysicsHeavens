@@ -159,14 +159,15 @@ bool ClientScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::s
     });
     _delete->addListener([this](const std::string& name, bool down){
         if (down) {
-            _number = number::back;
+             _value.pop_back();
         }
     });
 
     _startgame->addListener([this](const std::string& name, bool down){
         if (down) {
              // This will call the _gameid listener
-            _number = number::start;
+             _gameid->releaseFocus();
+            _player2->setColor(Color4::GREEN);
         }
     });
 
@@ -339,124 +340,8 @@ void ClientScene::update(float timestep) {
 
     }
     if(_input.didPressConfirm()){
-        switch(currentRow){
-            case 0:
-                switch(currentCol){
-                    case 0:
-                        _zero->setDown(true);
-                        _zero->setDown(false);
-                        break;
-                    case 1:
-                        _one->setDown(true);
-                        _one->setDown(false);
-//                        _number = ClientScene::number::one;
-                        break;
-                    case 2:
-                        _number = ClientScene::number::two;
-                        break;
-                    default:
-                        _number = ClientScene::number::zero;
-                        break;
-                }
-            case 1:
-                switch(currentCol){
-                    case 0:
-                        _number = ClientScene::number::three;
-                        break;
-                    case 1:
-                        _number = ClientScene::number::four;
-                        break;
-                    case 2:
-                        _number = ClientScene::number::five;
-                        break;
-                    default:
-                        _number = ClientScene::number::zero;
-                        break;
-                }
-            case 2:
-                switch(currentCol){
-                    case 0:
-                        _number = ClientScene::number::six;
-                        break;
-                    case 1:
-                        _number = ClientScene::number::seven;
-                        break;
-                    case 2:
-                        _number = ClientScene::number::eight;
-                        break;
-                    default:
-                        _number = ClientScene::number::zero;
-                        break;
-                }
-            case 3:
-                switch(currentCol){
-                    case 0:
-                        _number = ClientScene::number::nine;
-                        break;
-                    case 1:
-                        _number = ClientScene::number::nine;
-                        break;
-                    case 2:
-                        _number = ClientScene::number::back;
-                        break;
-                    case 3:
-                        _number = ClientScene::number::start;
-                        break;
-                    default:
-                        _number = ClientScene::number::zero;
-                        break;
-                }
-            default:
-                _number = ClientScene::number::zero;
-                break;
-            
-        }
-        
-//        
-//        switch(_number){
-//                case ClientScene::number::zero:
-//                    _zero->setDown(true);
-//                    _zero->setDown(false);
-//                    break;
-//                case ClientScene::number::one:
-//                    _one->setDown(true);
-//                    _one->setDown(false);
-//                    break;
-//                case ClientScene::number::two:
-//                    _two->setDown(true);
-//                    _two->setDown(false);
-//                    break;
-//                case ClientScene::number::three:
-//                    _three->setDown(true);
-//                    _three->setDown(false);
-//                    break;
-//                case ClientScene::number::four:
-//                    _four->setDown(true);
-//                    _four->setDown(false);
-//                    break;
-//                case ClientScene::number::five:
-//                    _five->setDown(true);
-//                    break;
-//                case ClientScene::number::six:
-//                    _six->setDown(true);
-//                    break;
-//                case ClientScene::number::seven:
-//                    _seven->setDown(true);
-//                    break;
-//                case ClientScene::number::eight:
-//                    _eight->setDown(true);
-//                    break;
-//                case ClientScene::number::nine:
-//                    _nine->setDown(true);
-//                    break;
-//                case ClientScene::number::back:
-//                    _value.pop_back();
-//                    break;
-//                case ClientScene::number::start:
-//                    _gameid->releaseFocus();
-//                    _player2->setColor(Color4::GREEN);
-//                    break;
-//            }
+         buttonGrid[currentRow][currentCol]->setDown(true);
+          buttonGrid[currentRow][currentCol]->setDown(false);
     }
     
         
