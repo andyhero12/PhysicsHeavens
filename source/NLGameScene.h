@@ -51,8 +51,6 @@
 #include "SpriteAnimationNode.h"
 #include "NLAbsorbEvent.h"
 #include "AudioController.h"
-#include "WinScene.h"
-#include "LoseScene.h"
 
 using namespace cugl::physics2::net;
 using namespace cugl;
@@ -101,8 +99,6 @@ protected:
     std::shared_ptr<LevelModel> _level;
 
     std::shared_ptr<PauseScene> _pause;
-    std::shared_ptr<WinScene> _win;
-    std::shared_ptr<LoseScene> _lose;
 
     std::shared_ptr<World> _backgroundWrapper;
     
@@ -198,38 +194,10 @@ protected:
     void initTutorialThree();
 
 public:
-
-    enum Choice {
-        /** User wants to host a game */
-        GAME,
-        /** User wants to join a game */
-        EXIT,
-        NEXT,
-        RETRY
-    };
 #pragma mark -
 #pragma mark Constructors
 
-    Choice getStatus() {
-    if(_pause->getStatus() == PauseScene::EXIT) { 
-        //CULog("kms ps ");
-        return Choice::EXIT;
-    }
-    if(_lose->getStatus() == LoseScene::MAIN) { 
-        return Choice::EXIT;
-    }
-    if(_win->getStatus() == WinScene::MAIN) {
-        //CULog("kms cs ");
-        return Choice::EXIT;
-    }
-    if(_win->getStatus() == WinScene::NEXT) {
-        return Choice::NEXT;
-    }
-    if(_lose->getStatus() == LoseScene::RETRY) {
-        return Choice::RETRY;
-    }
-    return Choice::GAME;
-    }
+    PauseScene::Choice getStatus() { return _pause->getStatus(); }
     /**
      * Creates a new game world with the default values.
      *

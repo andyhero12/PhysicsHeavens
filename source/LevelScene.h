@@ -89,10 +89,6 @@ protected:
     // The number of the highest unlocked level
     int unlockedLevels;
 
-    std::shared_ptr<cugl::scene2::SpriteNode> winBackground;
-
-    std::shared_ptr<cugl::scene2::SpriteNode> loseBackground;
-
     Level _level;
     InputController _input;
 
@@ -115,10 +111,6 @@ protected:
     bool _goleft;
     bool firsttime;
     bool _backClicked;
-
-    bool autoStart;
-    bool showWin;
-    bool showLoss;
     /**
      * Returns the active screen size of this scene.
      *
@@ -251,7 +243,7 @@ public:
         curMoveAnim = 0;
     }
     void resetLevel(){
-        //_level = Level::NONE;
+        _level = Level::NONE;
     }
     void resetgochange(){
         _goleft = false;
@@ -269,13 +261,7 @@ public:
     void setAudioController(std::shared_ptr<AudioController> audioController)
     {
         _audioController = audioController;
-    }    
-
-    void autoStartGame(LevelScene::Level level);
-
-    void setAutoVisible(bool won);
-
-    void resetAutoStart();
+    }
 };
 
 
