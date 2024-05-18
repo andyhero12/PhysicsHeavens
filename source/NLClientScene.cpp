@@ -334,6 +334,34 @@ void ClientScene::update(float timestep) {
             }
 
             buttonGrid[currentRow][currentCol]->setColor(Color4::GRAY);
+            switch(currentRow){
+                case 0:
+                    switch(currentCol){
+                        case 0: 
+                            _number = ClientScene::number::zero;
+                        case 1:
+                        case 2:
+                    }
+                case 1:
+                    switch(currentCol){
+                        case 0: 
+                        case 1:
+                        case 2:
+                    }
+                case 2:
+                    switch(currentCol){
+                        case 0: 
+                        case 1:
+                        case 2:
+                    }
+                case 3:
+                    switch(currentCol){
+                        case 0: 
+                        case 1:
+                        case 2:
+                        case 3:
+                
+            }
             timeSinceLastSwitch = 0;
         }
 
@@ -342,18 +370,23 @@ void ClientScene::update(float timestep) {
         switch(_number){
                 case ClientScene::number::zero:
                     _zero->setDown(true);
+                    _zero->setDown(false);
                     break;
                 case ClientScene::number::one:
                     _one->setDown(true);
+                    _one->setDown(false);
                     break;
                 case ClientScene::number::two:
                     _two->setDown(true);
+                    _two->setDown(false);
                     break;
                 case ClientScene::number::three:
                     _three->setDown(true);
+                    _three->setDown(false);
                     break;
                 case ClientScene::number::four:
                     _four->setDown(true);
+                    _four->setDown(false);
                     break;
                 case ClientScene::number::five:
                     _five->setDown(true);
