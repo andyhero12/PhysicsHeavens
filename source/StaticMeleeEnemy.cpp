@@ -6,7 +6,7 @@
 //
 
 #include "StaticMeleeEnemy.h"
-#define DISTANCE_CUTOFF 6
+#define DISTANCE_CUTOFF 4
 #define SPRITE_SCALE 1.14f
 
 #define DYNAMIC_COLOR   Color4::YELLOW

@@ -10,6 +10,11 @@
             "minfilter": "linear",
             "magfilter": "nearest"
         },
+        "girlLaugh": {
+            "file": "textures/tutorial/girl_tutorial_laugh.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
         "textBubble": {
             "file": "textures/tutorial/bubble.png",
             "minfilter": "linear",

@@ -1144,7 +1144,7 @@ void GameScene::initTutorialOne(){
     tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::GREETING, "Ready for our first day? Let's review your abilities."));
      tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::MOVEMENT, "MOVE with (joystick)."));
      tutorialTiles.push_back(Tutorial::alloc(15, Tutorial::MODE::DASH, "Dash with (x)"));
-     tutorialTiles.push_back(Tutorial::alloc(25, Tutorial::MODE::BITE, "First threat! BITE with (A)."));
+     tutorialTiles.push_back(Tutorial::alloc(26, Tutorial::MODE::BITE, "First threat! BITE with (A)."));
      tutorialTiles.push_back(Tutorial::alloc(35, Tutorial::MODE::GROW, "Eat enemies to ABSORB power, grow, and get stronger. But don't overeat!"));
      tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::RECALLGIVE, ""));
      tutorialTiles.push_back(Tutorial::alloc(22, Tutorial::MODE::SPECIALSONE, "Try using a power. Let's cover more arsenal."));
@@ -1242,8 +1242,8 @@ void GameScene::initTutorial()
     devilNormal->setVisible(false);
     _tutorialnode->addChild(devilNormal);
     
-    devilLaugh = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("girlTalk"), 4, 5, 20, 5);
-    devilLaugh->setScale(4 * SCENE_HEIGHT/devilLaugh->getTexture()->getHeight());
+    devilLaugh = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("girlLaugh"), 7, 5, 32, 5);
+    devilLaugh->setScale(7 * SCENE_HEIGHT/devilLaugh->getTexture()->getHeight());
     devilLaugh->setPosition(0.5 * devilLaugh->getSize());
     devilLaugh->setVisible(false);
     _tutorialnode->addChild(devilLaugh);
