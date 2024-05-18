@@ -332,16 +332,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 
     _pause->setContentSize(dimen);
     _pause->doLayout();
-    _win = std::make_shared<WinScene>();
-    _win->init(_assets, computeActiveSize());
-
-    _win->setContentSize(dimen);
-    _win->doLayout();
-    _lose = std::make_shared<LoseScene>();
-    _lose->init(_assets, computeActiveSize());
-
-    _lose->setContentSize(dimen);
-    _lose->doLayout();
 
     _zoom = ROOT_NODE_SCALE;
     
@@ -386,8 +376,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
         initTutorialThree();
     }
     _uinode->addChild(_pause);
-    _uinode->addChild(_win);
-    _uinode->addChild(_lose);
     return true;
 }
 void GameScene::resetDraw()
@@ -422,8 +410,6 @@ void GameScene::dispose()
     {
         _audioController = nullptr;
         _pause->dispose();
-        _win->dispose();
-        _lose->dispose();
         tutorialTiles.clear();
         _world = nullptr;
         _worldnode = nullptr;
@@ -433,8 +419,6 @@ void GameScene::dispose()
         _decorToHide.clear();
         _transparentRects.clear();
         _pause = nullptr;
-        _win = nullptr;
-        _lose = nullptr;
         _level = nullptr;
         winNode = nullptr;
         loseNode = nullptr;
@@ -542,7 +526,7 @@ void GameScene::preUpdate(float dt)
             if (gameOverWin){
                 
                 winNode->setVisible(true);
-                _win->setActive(true);
+                _pause->setPause(true);
                 _minimap->setVisible(false);
                 
                 
@@ -554,7 +538,7 @@ void GameScene::preUpdate(float dt)
             }
             if (gameOverLoss){
                 loseNode->setVisible(true);
-                _lose->setActive(true);
+                _pause->setPause(true);
                 _minimap->setVisible(false);
                 AudioEngine::get()->clear();
                 _audioController->playSFX(LOSS_STAMP, LOSS_STAMP);
