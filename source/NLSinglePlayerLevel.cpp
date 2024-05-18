@@ -6,6 +6,7 @@
 //
 
 #include "NLSinglePlayerLevel.h"
+#include "SaveManager.h"
 
 using namespace cugl;
 
@@ -28,18 +29,12 @@ using namespace cugl;
  */
 bool SinglePlayerLevelScene::init(const std::shared_ptr<AssetManager> &assets, std::shared_ptr<cugl::physics2::net::NetEventController> network)
 {
-    std::string root_path = cugl::Application::get()->getSaveDirectory();
-    std::string path = cugl::filetool::join_path({root_path,"save.json"});
+    std::shared_ptr<SaveManager> saveFile = std::make_shared<SaveManager>();
     
-    //Initialize the save file
-    initSaveFile();
-    std::shared_ptr<JsonValue> json_root = _reader->readJson();
-    _reader->close();
+    std::shared_ptr<JsonValue> json_root = saveFile->read();
     CULog("Highest unlocked Level: %d",  json_root->getInt("unlocked", 1));
-    CULog("Highest unlocked Level: %d",  json_root->getInt("unlocked", 1));
-    
+  
     unlockedLevels = json_root->getInt("unlocked", 1);
-    CULog("Highest unlocked Level: %d",  unlockedLevels);
     
     // Initialize the scene to a locked width
     Size dimen = Application::get()->getDisplaySize();

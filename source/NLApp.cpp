@@ -11,6 +11,7 @@
 //  Version: 1/10/17
 //
 #include "NLApp.h"
+#include "SaveManager.h"
 
 using namespace cugl;
 
@@ -31,6 +32,10 @@ void NetApp::onStartup()
 {
     _assets = AssetManager::alloc();
     _batch = SpriteBatch::alloc();
+    
+    // Initialize save file
+    std::shared_ptr<SaveManager> saveFile = make_shared<SaveManager>();
+    saveFile->init();
 
     // Start-up basic input
 #ifdef CU_TOUCH_SCREEN
