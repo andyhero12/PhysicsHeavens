@@ -50,42 +50,6 @@ cugl::Size LevelScene::computeActiveSize() const
     return dimen;
 }
 
-void LevelScene::initSaveFile(){
-    
-    // Get path to save file
-    std::string root_path = cugl::Application::get()->getSaveDirectory();
-    std::string path = cugl::filetool::join_path({root_path,"save.json"});
-    
-    // Create the save file if it doesn't exist
-    if(!cugl::filetool::file_exists(path)){
-        CULog("NO SAVE FILE FOUND, CREATING SAVE FILE");
-        
-        cugl::filetool::file_create(path);
-        
-        // Write initial save root
-        std::shared_ptr<JsonValue> root = std::make_shared<JsonValue>();
-        root->init(JsonValue::Type::ObjectType);
-    
-        _writer = JsonWriter::alloc(path);
-        _writer->writeJson(root);
-        _writer->close();
-    }
-    
-    // Initialize json reader/writer
-    _reader = JsonReader::alloc(path);
-    std::shared_ptr<JsonValue> json_root = _reader->readJson();
-    
-    // Initialize values that don't exist
-    if(!json_root->has("unlocked")){
-        json_root->appendValue("unlocked", (long) 1);
-    }
-    
-    _writer = JsonWriter::alloc(path);
-    _writer->writeJson(json_root);
-    _writer->close();
-    _reader->reset();
-}
-
 //void LevelScene::writeSaveFile(){
 //    
 //}
@@ -287,7 +251,11 @@ bool LevelScene::isPending() const
 
 void LevelScene::setActive(bool value)
 {
-
+    
+    std::shared_ptr<SaveManager> saveFile = std::make_shared<SaveManager>();
+    std::shared_ptr<JsonValue> json_root = saveFile->read();
+    unlockedLevels = json_root->getInt("unlocked", 1);
+    
     if (isActive() != value)
     {
         Scene2::setActive(value);

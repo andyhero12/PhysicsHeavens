@@ -115,12 +115,17 @@ protected:
     bool gameOverLoss;
     int gameOverDelay;
     bool _todoReset;
+    
     /** Whether or not debug mode is active */
     bool _debug;
     Vec2 olddogPos;
     std::shared_ptr<NetEventController> _network;
     cugl::Affine2 _transform;
 
+    
+    /** The current level */
+    int _levelNum;
+    
     float _zoom;
     std::vector<std::shared_ptr<Tutorial>> tutorialTiles;
     std::shared_ptr<SpriteAnimationNode> tutorialArrow;
@@ -222,7 +227,7 @@ public:
      *
      * @return true if the controller is initialized properly, false otherwise.
      */
-    bool init(const std::shared_ptr<cugl::AssetManager> &assets, const std::shared_ptr<NetEventController> network, bool isHost, std::string level);
+    bool init(const std::shared_ptr<cugl::AssetManager> &assets, const std::shared_ptr<NetEventController> network, bool isHost, std::string level, int levelNum);
 
     /**
      * Initializes the controller contents, and starts the game
@@ -240,7 +245,7 @@ public:
      *
      * @return  true if the controller is initialized properly, false otherwise.
      */
-    bool init(const std::shared_ptr<cugl::AssetManager> &assets, const cugl::Rect rect, const std::shared_ptr<NetEventController> network, bool isHost, std::string level);
+    bool init(const std::shared_ptr<cugl::AssetManager> &assets, const cugl::Rect rect, const std::shared_ptr<NetEventController> network, bool isHost, std::string level, int levelNum);
 
     /**
      * Initializes the controller contents, and starts the game
@@ -259,7 +264,7 @@ public:
      *
      * @return  true if the controller is initialized properly, false otherwise.
      */
-    bool init(const std::shared_ptr<cugl::AssetManager> &assets, const cugl::Rect rect, const cugl::Vec2 gravity, const std::shared_ptr<NetEventController> network, bool isHost, std::string level_string);
+    bool init(const std::shared_ptr<cugl::AssetManager> &assets, const cugl::Rect rect, const cugl::Vec2 gravity, const std::shared_ptr<NetEventController> network, bool isHost, std::string level_string, int levelNum);
 
 #pragma mark -
 #pragma mark State Access
