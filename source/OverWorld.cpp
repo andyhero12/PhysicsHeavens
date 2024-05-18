@@ -401,8 +401,8 @@ bool OverWorld::initDogModel()
     std::shared_ptr<scene2::SceneNode> _clientUINode = scene2::SceneNode::alloc();
     _uinode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     std::shared_ptr<UIController> _clientUIController = std::make_shared<UIController>();
-    _uiController->init(_clientUINode, _assets, _activeSize);
-    _dogClient->setUIController(_uiController);
+    _clientUIController->init(_clientUINode, _assets, _activeSize);
+    _dogClient->setUIController(_clientUIController);
 
     return true;
 }

@@ -268,10 +268,12 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     if (isHost)
     {
         _uinode->addChild(overWorld.getDog()->getUINode());
+        overWorld.getClientDog()->getUINode()->setVisible(false);
     }
     else
     {
         _uinode->addChild(overWorld.getClientDog()->getUINode());
+        overWorld.getDog()->getUINode()->setVisible(false);
     }
     
     _uinode->addChild(overWorld.getGateUIController()->getUINode());

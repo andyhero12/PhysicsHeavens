@@ -148,7 +148,7 @@ void MeleeEnemy::preUpdate(float dt, OverWorld& overWorld){
         }
         curAction = dist.lengthSquared() <= defaultLength ? EnemyActions::ATTACK : EnemyActions::CHASE;
         if(_health < _maxHealth/3.0){
-            curAction = AbstractEnemy::EnemyActions::LOWHEALTH;
+            //curAction = AbstractEnemy::EnemyActions::LOWHEALTH;
         }
     }
     switch (curAction){
