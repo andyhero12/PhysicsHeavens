@@ -1,5 +1,35 @@
 {
     "textures": {
+        "girlTalk": {
+            "file": "textures/tutorial/girl_tutorial_talk.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "textBubble": {
+            "file": "textures/tutorial/bubble.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "newTrick": {
+            "file": "textures/newAbility/new_trick.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "rightTrigger": {
+            "file": "textures/tutorial/press_rightTrigger.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "rightBumper": {
+            "file": "textures/tutorial/press_rightBumper.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "textbox": {
+            "file": "textures/tutorial/textbox.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
         "pressA": {
             "file": "textures/press_a.png",
             "minfilter": "linear",
@@ -62,66 +92,6 @@
         },
         "arrow": {
             "file": "textures/tutorial/arrow.png",
-            "minfilter": "linear",
-            "magfilter": "nearest"
-        },
-        "GREETING": {
-            "file": "textures/tutorial/greeting.png",
-            "minfilter": "linear",
-            "magfilter": "nearest"
-        },
-        "GROW": {
-            "file": "textures/tutorial/grow.png",
-            "minfilter": "linear",
-            "magfilter": "nearest"
-        },
-        "SPECIALSONE": {
-            "file": "textures/tutorial/trigger.png",
-            "minfilter": "linear",
-            "magfilter": "nearest"
-        },
-        "CHANGEABILITYTWO": {
-            "file": "textures/tutorial/swap.png",
-            "minfilter": "linear",
-            "magfilter": "nearest"
-        },
-        "SPECIALSTWO": {
-            "file": "textures/tutorial/trigger.png",
-            "minfilter": "linear",
-            "magfilter": "nearest"
-        },
-        "CHANGEABILITYTHREE": {
-            "file": "textures/tutorial/greeting.png",
-            "minfilter": "linear",
-            "magfilter": "nearest"
-        },
-        "SPECIALSTHREE": {
-            "file": "textures/tutorial/greeting.png",
-            "minfilter": "linear",
-            "magfilter": "nearest"
-        },
-        "CHANGEABILITYFOUR": {
-            "file": "textures/tutorial/greeting.png",
-            "minfilter": "linear",
-            "magfilter": "nearest"
-        },
-        "MOVEMENT": {
-            "file": "textures/tutorial/move.png",
-            "minfilter": "linear",
-            "magfilter": "nearest"
-        },
-        "BITE": {
-            "file": "textures/tutorial/bite.png",
-            "minfilter": "linear",
-            "magfilter": "nearest"
-        },
-        "DEFENDGATE": {
-            "file": "textures/tutorial/gate.png",
-            "minfilter": "linear",
-            "magfilter": "nearest"
-        },
-        "DESTROYSPAWNER": {
-            "file": "textures/tutorial/spawners.png",
             "minfilter": "linear",
             "magfilter": "nearest"
         },
@@ -497,6 +467,16 @@
             "minfilter": "linear",
             "magfilter": "nearest"
         },
+        "absorbEnemyLeftLick": {
+            "file": "textures/absorbEnemy/cat_lick_left.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "absorbEnemyRightLick": {
+            "file": "textures/absorbEnemy/cat_lick_right.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
         "basicLeftAttack": {
             "file": "textures/basicEnemy/basicDevil-front-left-swipe.png",
             "minfilter": "linear",
@@ -775,7 +755,7 @@
         "enemyDeath": {
             "type": "sample",
             "file": "sounds/Enemies/enemyDeath.wav",
-            "volume": 0.4
+            "volume": 0.2
         },
         "spawnerDeath": {
             "type": "sample",
@@ -797,6 +777,11 @@
             "file": "sounds/Env/BGM.wav",
             "volume": 0.4
         },
+        "mainMenu": {
+            "type": "sample",
+            "file": "sounds/Env/mainMenu.wav",
+            "volume": 0.4
+        },
         "buttonPress": {
             "type": "sample",
             "file": "sounds/Env/buttonPress.wav",
@@ -815,7 +800,12 @@
         "lossScreen": {
             "type": "sample",
             "file": "sounds/Env/lossScreen.wav",
-            "volume": 0.4
+            "volume": 0.7
+        },
+        "stampHitting": {
+            "type": "sample",
+            "file": "sounds/Env/stampHitting.wav",
+            "volume": 1.0
         },
         "sizeBarMax": {
             "type": "sample",
@@ -825,16 +815,36 @@
         "subway": {
             "type": "sample",
             "file": "sounds/Env/subway.wav",
-            "volume": 0.4
+            "volume": 0.7
         },
         "victoryScreen": {
             "type": "sample",
-            "file": "sounds/Env/victoryScreen.wav",
+            "file": "sounds/Env/subway.wav",
+            "volume": 0.7
+        },
+        "winCash": {
+            "type": "sample",
+            "file": "sounds/Env/winCash.wav",
             "volume": 0.4
+        },
+        "kaching": {
+            "type": "sample",
+            "file": "sounds/Env/kaching.wav",
+            "volume": 0.4
+        },
+        "pauseScreen": {
+            "type": "sample",
+            "file": "sounds/Env/pauseScreen.wav",
+            "volume": 0.2
         },
         "tutorial": {
             "type": "sample",
             "file": "sounds/tutorial.wav",
+            "volume": 0.2
+        },
+        "newTrick": {
+            "type": "sample",
+            "file": "sounds/Env/newTrick.wav",
             "volume": 0.4
         }
     },

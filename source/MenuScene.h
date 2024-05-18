@@ -15,6 +15,7 @@
 #include <chrono>
 #include "GlobalConstants.h"
 #include "NLInput.h"
+#include "AudioController.h"
 
 
 /**
@@ -56,6 +57,9 @@ public:
 protected:
     /** The asset manager for this scene. */
     std::shared_ptr<cugl::AssetManager> _assets;
+    
+    std::shared_ptr<AudioController> _audioController;
+    
     /** The menu button for hosting a game */
     std::shared_ptr<cugl::scene2::Button> _hostbutton;
     /** The menu button for joining a game */
@@ -142,6 +146,11 @@ public:
     bool getBackclick(){ return _backclicked;}
 
     virtual void update(float timestep) override;
+    
+    void setAudioController(std::shared_ptr<AudioController> audioController)
+    {
+        _audioController = audioController;
+    }
 };
 
 #endif /* __NL_MENU_SCENE_H__ */

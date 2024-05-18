@@ -28,6 +28,7 @@
 #include "NLSinglePlayerLevel.h"
 #include "Rebind.h"
 #include "AudioController.h"
+#include "Constants.h"
 
 using namespace cugl::physics2::net;
 
@@ -59,6 +60,8 @@ protected:
     std::shared_ptr<cugl::AssetManager> _assets;
 
     std::shared_ptr<NetEventController> _network;
+    
+    std::shared_ptr<AudioController> _audioController;
 
     // Player modes
     /** The primary controller for the game world */

@@ -18,6 +18,7 @@
 #include "GlobalConstants.h"
 #include "NLInput.h"
 #include <map>
+#include "AudioController.h"
 
 
 /**
@@ -35,6 +36,9 @@ class RebindScene : public cugl::Scene2 {
 protected:
     /** The asset manager for loading. */
     std::shared_ptr<cugl::AssetManager> _assets;
+    
+    std::shared_ptr<AudioController> _audioController;
+    
     
     // NO CONTROLLER (ALL IN SEPARATE THREAD)
     std::shared_ptr<cugl::scene2::ScrollPane> _root;
@@ -124,6 +128,11 @@ public:
 
     bool getBackclick(){
         return _backClicked;
+    }
+    
+    void setAudioController(std::shared_ptr<AudioController> audioController)
+    {
+        _audioController = audioController;
     }
     
 };

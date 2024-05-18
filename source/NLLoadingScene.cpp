@@ -48,18 +48,18 @@ bool LoadingScene::init(const std::shared_ptr<AssetManager>& assets) {
     // IMMEDIATELY load the splash screen assets
     _assets = assets;
     _assets->loadDirectory("json/loading.json");
-    std::shared_ptr<cugl::scene2::SceneNode> layer = assets->get<scene2::SceneNode>("load");
-    layer->setContentSize(dimen);
-    layer->doLayout(); // This rearranges the children to fit the screen
-    
-    _bar = std::dynamic_pointer_cast<scene2::ProgressBar>(assets->get<scene2::SceneNode>("load_bar"));
-    background = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("backgroundl"), 1, 6, 6, 8);
+    _brand = cugl::scene2::PolygonNode::allocWithTexture(_assets->get<cugl::Texture>("logo"));
+    background = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("backgroundl"), 1, 4, 4, 20);
     background->setScale(SCENE_HEIGHT/background->getTexture()->getHeight());
     background->setPosition(0.5 * background->getSize());
+    
+    _brand->setScale(3.25);
+    _brand->setPosition(0.5f*background->getSize().width, 0.75f*background->getSize().height);
     addChild(background);
-    layer->setColor(Color4(0,0,0,1));
+    addChild(_brand);
+//    layer->setColor(Color4(0,0,0,1));
     Application::get()->setClearColor(Color4(192,192,192,255));
-    addChild(layer);
+//    addChild(layer);
     return true;
 }
 
@@ -67,7 +67,7 @@ bool LoadingScene::init(const std::shared_ptr<AssetManager>& assets) {
  * Disposes of all (non-static) resources allocated to this mode.
  */
 void LoadingScene::dispose() {
-    _bar->removeFromParent();
+//    _bar->removeFromParent();
     _bar = nullptr;
     _assets = nullptr;
     _progress = 0.0f;
@@ -87,15 +87,18 @@ void LoadingScene::update(float progress) {
     background->update();
     if (_progress < 1) {
         _progress = _assets->progress();
-        if (_progress >= 1) {
-            _progress = 1.0f;
-            _bar->setVisible(false);
-        }
-        _bar->setProgress(_progress);
+        CULog("Progress: %f", _progress);
+//        if (_progress >= 1) {
+//            _progress = 1.0f;
+//            _bar->setVisible(false);
+//        }
+//        _bar->setProgress(_progress);
     }
 }
 
 
 bool LoadingScene::doneLoading() const {
+//    CULog("Done Loading: %d", _progress >= 1.0f);
+//    CULog("Loading: %f", _progress);
     return _progress >= 1.0f;
 }

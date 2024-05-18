@@ -29,11 +29,14 @@
 #define ENEMY_DEATH "enemyDeath"
 #define SPAWNER_DEATH "spawnerDeath"
 #define BOMB_HISS "bombHiss"
+#define ABSORB_SOUND "absorbEnemyAbsoring"
 #define SIZE_BAR_MAX "sizeBarMax"
+
+#define LOSS_STAMP "stampHitting"
+#define NEW_TRICK "newTrick"
 
 // need to add
 
-#define ABSORB_ENEMY_ABSORBING "absorbEnemyAbsoring"
 
 #define SPAWNER_HIT "spawnerHit"
 #define SPAWNING "spawning"
@@ -55,5 +58,9 @@
 #define BGM "BGM" // background music need to add
 #define LOSS_SCREEN "lossScreen"
 #define VICTORY_SCREEN "victoryScreen"
+#define WIN_CASH "winCash"
+#define KACHING "kaching"
+#define PAUSE_SCREEN "pauseScreen"
+#define MAIN_MENU "mainMenu"
 
 #endif /* Constants_hpp */

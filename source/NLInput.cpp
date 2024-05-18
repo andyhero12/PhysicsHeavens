@@ -175,7 +175,7 @@ bool InputController::readInput(Tutorial::MODE progress, bool inRange)
                 return true;
             }
         }
-        else if (progress == Tutorial::SPECIALSONE || progress == Tutorial::SPECIALSTWO || progress == Tutorial::SPECIALSTHREE || progress == Tutorial::SPECIALSFOUR)
+        else if (progress == Tutorial::SPECIALSONE || progress == Tutorial::SPECIALSTWO || progress == Tutorial::SPECIALSTHREE || progress == Tutorial::SPECIALSFOUR )
         {
             if (keys->keyPressed(KeyCode::G))
             {

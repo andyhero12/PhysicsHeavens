@@ -69,10 +69,16 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     // Program the buttons
     _button1->addListener([this](const std::string& name, bool down) {
         if (down) {
+//            _audioController->playSFX(BUTTON_PRESS, BUTTON_PRESS);
             if(_input.getState()==InputController::State::CONTROLLER){
+                auto source = _assets->get<Sound>(BUTTON_PRESS);
+                AudioEngine::get()->play(BUTTON_PRESS, source, false , source->getVolume());
                 _isdown = Isdown::isSINGLE;
+
             }
             else{
+                auto source = _assets->get<Sound>(BUTTON_PRESS);
+                AudioEngine::get()->play(BUTTON_PRESS, source, false , source->getVolume());
                 _choice = Choice::SINGLE;
             }
             
@@ -80,10 +86,15 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     });
     _button3->addListener([this](const std::string& name, bool down) {
         if (down) {
+//            _audioController->playSFX(BUTTON_PRESS, BUTTON_PRESS);
             if(_input.getState()==InputController::State::CONTROLLER){
+                auto source = _assets->get<Sound>(BUTTON_PRESS);
+                AudioEngine::get()->play(BUTTON_PRESS, source, false , source->getVolume());
                 _isdown = Isdown::isSETTING;
             }
             else{
+                auto source = _assets->get<Sound>(BUTTON_PRESS);
+                AudioEngine::get()->play(BUTTON_PRESS, source, false , source->getVolume());
                 _choice = Choice::SETTING;
             }
         }
@@ -139,6 +150,7 @@ void MainMenuScene::dispose() {
 void MainMenuScene::setActive(bool value) {
     AudioEngine::get()->clear();
     // NEW SOUNDS
+    auto source = _assets->get<Sound>(MAIN_MENU);
     if (isActive() != value) {
         Scene2::setActive(value);
         if (value) {
@@ -148,12 +160,14 @@ void MainMenuScene::setActive(bool value) {
             _button3->activate();
             _button4->activate();
             _firstset = true;
+            AudioEngine::get()->play(MAIN_MENU, source, true, source->getVolume(), true);
         } else {
             _button1->deactivate();
             _button3->deactivate();
             _button4->deactivate();
             _button1->setDown(false);
             _button3->setDown(false);
+            AudioEngine::get()->clear(MAIN_MENU);
             _button4->setDown(false);
         }
     }
@@ -222,9 +236,12 @@ void MainMenuScene::update(float timestep) {
     }
     if (_isdown == Isdown::isSINGLE && _input.didPressConfirm()) {
         _choice = Choice::SINGLE;
-    } else if (_isdown == Isdown::isSETTING && _input.didPressConfirm()) {
+    }
+    else if (_isdown == Isdown::isSETTING && _input.didPressConfirm()) {
+        
         _choice = Choice::SETTING;
     } else if (_isdown == Isdown::isQUIT && _input.didPressConfirm()) {
         Application::get()->quit();
     }
 }
+

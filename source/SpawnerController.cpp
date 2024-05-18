@@ -58,6 +58,7 @@ void SpawnerController::update(MonsterController& monsterController, OverWorld& 
             spawnAnim->setPosition(spawner->getPos());
             _curAnimations.emplace(spawnAnim);
             animSpawnerNode->addChild(spawnAnim);
+            _audioController->playSFX(SPAWNING, SPAWNING);
         }
     }
     for (auto& spawner : animationNodes){

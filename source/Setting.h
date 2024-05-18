@@ -18,6 +18,7 @@
 #include "GlobalConstants.h"
 #include "NLInput.h"
 #include <map>
+#include "AudioController.h"
 
 
 /**
@@ -46,6 +47,8 @@ public:
 protected:
     /** The asset manager for loading. */
     std::shared_ptr<cugl::AssetManager> _assets;
+    
+    std::shared_ptr<AudioController> _audioController;
     
     // NO CONTROLLER (ALL IN SEPARATE THREAD)
     
@@ -215,8 +218,11 @@ public:
     bool getBackclick(){
         return _backClicked;
     }
-
     
+    void setAudioController(std::shared_ptr<AudioController> audioController)
+    {
+        _audioController = audioController;
+    }
 };
 
 

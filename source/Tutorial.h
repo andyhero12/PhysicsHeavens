@@ -25,19 +25,21 @@ public:
         DEFENDGATE = 2,
         BITE = 3,
         GROW = 4,
-        DESTROYSPAWNER = 5,
-        DASH = 6,
-        SPECIALSONE = 7,
-        CHANGEABILITYTWO = 8,
-        SPECIALSTWO = 9,
-        CHANGEABILITYTHREE = 10,
-        SPECIALSTHREE = 11,
-        CHANGEABILITYFOUR = 12,
-        SPECIALSFOUR = 13,
-        RECALLGIVE = 14,
-        BARKGIVE = 15,
-        BAITGIVE = 16,
-        BOMBGIVE = 17
+        SPECIALSONE = 5,
+        DESTROYSPAWNER = 6,
+        DASH = 7,
+        RECALLGIVE = 8,
+        CHANGEABILITYTWO = 9,
+        SPECIALSTWO = 10,
+        BARKGIVE = 11,
+        CHANGEABILITYTHREE = 12,
+        SPECIALSTHREE = 13,
+        BAITGIVE = 14,
+        CHANGEABILITYFOUR = 15,
+        BOMBGIVE = 16,
+        SPECIALSFOUR = 17,
+        SPEECH = 18
+
     };
 
     static std::string toString(MODE mode)
@@ -148,6 +150,7 @@ protected:
     std::shared_ptr<SpriteAnimationNode> sprite;
     std::shared_ptr<SpriteAnimationNode> spriteRepeat;
     std::shared_ptr<SpriteAnimationNode> pressA;
+    std::shared_ptr<cugl::scene2::PolygonNode> textBox;
     std::shared_ptr<cugl::scene2::Label> message;
     std::string text;
 
@@ -169,6 +172,11 @@ public:
     void setSprite(std::shared_ptr<SpriteAnimationNode> node)
     {
         sprite = node;
+    }
+    
+    void setTextBox(std::shared_ptr<cugl::scene2::PolygonNode> node)
+    {
+        textBox = node;
     }
     
     void setSpriteRepeat(std::shared_ptr<SpriteAnimationNode> node)

@@ -44,6 +44,8 @@ public:
 
     void playSFX(std::string key, std::string sound);
     
+    void stopSFX(std::string key);
+    
     void dispose(){
         cugl::AudioEngine::get()->clearEffects();
         cugl::AudioEngine::get()->clear();
@@ -51,6 +53,7 @@ public:
     }
     
     void playMusic(std::string key, std::string sound);
+    
 };
 
 
