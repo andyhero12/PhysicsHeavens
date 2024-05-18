@@ -42,107 +42,9 @@ public:
 
     };
 
-    static std::string toString(MODE mode)
-    {
-        switch (mode)
-        {
-        case GREETING:
-            return "GREETING";
-        case MOVEMENT:
-            return "MOVEMENT";
-        case BITE:
-            return "BITE";
-        case DEFENDGATE:
-            return "DEFENDGATE";
-        case GROW:
-            return "GROW";
-        case DASH:
-            return "DASH";
-        case SPECIALSONE:
-            return "SPECIALSONE";
-        case DESTROYSPAWNER:
-            return "DESTROYSPAWNER";
-        case CHANGEABILITYTWO:
-            return "CHANGEABILITYTWO";
-        case SPECIALSTWO:
-            return "SPECIALSTWO";
-        case CHANGEABILITYTHREE:
-            return "CHANGEABILITYTHREE";
-        case SPECIALSTHREE:
-            return "SPECIALSTHREE";
-        case CHANGEABILITYFOUR:
-            return "CHANGEABILITYFOUR";
-        case SPECIALSFOUR:
-            return "SPECIALSFOUR";
-        default:
-            return "Unknown Progress";
-        }
-    }
-    static MODE fromString(const std::string &progressString)
-    {
-        if (progressString == "GREETING")
-        {
-            return GREETING;
-        }
-        else if (progressString == "MOVEMENT")
-        {
-            return MOVEMENT;
-        }
-        else if (progressString == "BITE")
-        {
-            return BITE;
-        }
-        else if (progressString == "DEFENDGATE")
-        {
-            return DEFENDGATE;
-        }
-        else if (progressString == "GROW")
-        {
-            return GROW;
-        }
-        else if (progressString == "DASH")
-        {
-            return DASH;
-        }
-        else if (progressString == "SPECIALSONE")
-        {
-            return SPECIALSONE;
-        }
-        else if (progressString == "DESTROYSPAWNER")
-        {
-            return DESTROYSPAWNER;
-        }
-        else if (progressString == "CHANGEABILITYTWO")
-        {
-            return CHANGEABILITYTWO;
-        }
-        else if (progressString == "SPECIALSTWO")
-        {
-            return SPECIALSTWO;
-        }
-        else if (progressString == "CHANGEABILITYTHREE")
-        {
-            return CHANGEABILITYTHREE;
-        }
-        else if (progressString == "SPECIALSTHREE")
-        {
-            return SPECIALSTHREE;
-        }
-        else if (progressString == "CHANGEABILITYFOUR")
-        {
-            return CHANGEABILITYFOUR;
-        }
-        else if (progressString == "SPECIALSFOUR")
-        {
-            return SPECIALSFOUR;
-        }
-        else
-        {
-            throw std::invalid_argument("Invalid progress string: " + progressString);
-        }
-    }
 
 protected:
+    bool laugh;
     int tileX;
     bool passed;
     MODE progress;
@@ -156,12 +58,20 @@ protected:
 
 public:
     Tutorial() {}
-    bool init(int tile, MODE progress, std::string m_text);
+    bool init(int tile, MODE m_progress, std::string m_text, bool val);
+    bool getLaughing(){return laugh;}
     static std::shared_ptr<Tutorial> alloc(int tile, MODE progress, std::string text)
     {
         std::shared_ptr<Tutorial> node = std::make_shared<Tutorial>();
-        return (node->init(tile, progress, text) ? node : nullptr);
+        return (node->init(tile, progress, text, false) ? node : nullptr);
     }
+    
+    static std::shared_ptr<Tutorial> alloc(int tile, MODE progress, std::string text, bool val)
+    {
+        std::shared_ptr<Tutorial> node = std::make_shared<Tutorial>();
+        return (node->init(tile, progress, text, val) ? node : nullptr);
+    }
+    
     int getX() const { return tileX; }
     bool didPass() const { return passed; }
     MODE getProgress() const { return progress; }

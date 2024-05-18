@@ -1164,7 +1164,9 @@ void GameScene::initTutorialOne(){
     tutorialTiles.push_back(Tutorial::alloc(35, Tutorial::MODE::GROW, "Whenever you eat an enemy, you ABSORB its power. You can store power up to a certain point. Remember, as you eat, you'll gain size, and become stronger. But don't overeat!"));
     tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::RECALLGIVE, ""));
     tutorialTiles.push_back(Tutorial::alloc(22, Tutorial::MODE::SPECIALSONE, "Let's try using a power. We passed the job interview so quick, I couldn't teach you everything in our arsenal yet. "));
+    tutorialTiles.push_back(Tutorial::alloc(22, Tutorial::MODE::DEFENDGATE, "Frankly, I didn't even expect to pass that interview... anyway! ", true));
     tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::MODE::DEFENDGATE, "Here we are, at the most important thing of our lives!"));
+    tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::MODE::DEFENDGATE, "Well, from 9 to 5, at least. ", true));
     tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::MODE::DEFENDGATE, "These gates are what lead to Heaven. We gotta protect these, boy- our paycheck depends on it!"));
     tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::MODE::DEFENDGATE, "But protecting these gates are only one part of the job- the other essential part is to ensure these guys can't ever come back. That is, to finish a shift successfully, we gotta destroy the sources they spawn from."));
     tutorialTiles.push_back(Tutorial::alloc(24, Tutorial::MODE::CHANGEABILITYTWO, "SWITCH ABILITIES with (bumper). ACTIVATE YOUR ABILITY with (trigger). Let's try switching abilities now, boy."));
@@ -1256,8 +1258,8 @@ void GameScene::initTutorial()
     _tutorialnode->addChild(devilNormal);
     
     devilLaugh = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("girlTalk"), 4, 5, 20, 5);
-    devilLaugh->setScale(4 * SCENE_HEIGHT/devilNormal->getTexture()->getHeight());
-    devilLaugh->setPosition(0.5 * devilNormal->getSize());
+    devilLaugh->setScale(4 * SCENE_HEIGHT/devilLaugh->getTexture()->getHeight());
+    devilLaugh->setPosition(0.5 * devilLaugh->getSize());
     devilLaugh->setVisible(false);
     _tutorialnode->addChild(devilLaugh);
     
@@ -1319,7 +1321,12 @@ void GameScene::initTutorial()
             pressA->setVisible(false);
             
         }else {
-            tutorialTiles.at(i)->setSprite(devilNormal);
+            if(tutorialTiles.at(i)->getLaughing()){
+                tutorialTiles.at(i)->setSprite(devilLaugh);
+            }
+            else{
+                tutorialTiles.at(i)->setSprite(devilNormal);
+            }
             Size box = Size(1.5f * screen.width, 3*screen.height/4);
             
             
