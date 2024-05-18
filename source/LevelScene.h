@@ -75,9 +75,10 @@ protected:
     std::shared_ptr<cugl::scene2::SpriteNode> background;
     
     std::shared_ptr<cugl::JsonWriter> _writer;
+    std::shared_ptr<cugl::JsonReader> _reader;
     
     // The number of the highest unlocked level
-    int unlockedLevels = 1;
+    int unlockedLevels;
 
     Level _level;
     InputController _input;
@@ -108,6 +109,8 @@ protected:
      * ratios
      */
     cugl::Size computeActiveSize() const;
+    
+    void initSaveFile();
         
 public:
 #pragma mark -
@@ -137,7 +140,7 @@ public:
 //        {5, 26}
 //        // Add new levels and frames as needed
 //    };
-
+        CULog("Initializing");
         for (int i =0 ; i< NUM_LEVELS; i++){
             frameTargets.insert({i+1, 2 + 6* i});
         }
@@ -238,13 +241,7 @@ public:
         _goright = false;
     }
     
-    void updatelevelscene(){
-       if (_goright && level < unlockedLevels) {
-        level += 1;
-        } else if (_goleft && level > 1) {
-            level -= 1;
-        }
-    }
+    void updatelevelscene();
 
     void adjustFrame(int level);
 

@@ -48,6 +48,43 @@ cugl::Size LevelScene::computeActiveSize() const
     }
     return dimen;
 }
+
+void LevelScene::initSaveFile(){
+    
+    // Get path to save file
+    std::string root_path = cugl::Application::get()->getSaveDirectory();
+    std::string path = cugl::filetool::join_path({root_path,"save.json"});
+    
+    // Create the save file if it doesn't exist
+    if(!cugl::filetool::file_exists(path)){
+        CULog("NO SAVE FILE FOUND, CREATING SAVE FILE");
+        
+        cugl::filetool::file_create(path);
+        
+        // Write initial save root
+        std::shared_ptr<JsonValue> root = std::make_shared<JsonValue>();
+        root->init(JsonValue::Type::ObjectType);
+    
+        _writer = JsonWriter::alloc(path);
+        _writer->writeJson(root);
+        _writer->close();
+    }
+    
+    // Initialize json reader/writer
+    _reader = JsonReader::alloc(path);
+    std::shared_ptr<JsonValue> json_root = _reader->readJson();
+    
+    // Initialize values that don't exist
+    if(!json_root->has("unlocked")){
+        json_root->appendValue("unlocked", (long) 1);
+    }
+    
+    _writer = JsonWriter::alloc(path);
+    _writer->writeJson(json_root);
+    _writer->close();
+    _reader->reset();
+}
+
 /**
  * Initializes the controller contents, making it ready for loading
  *
@@ -61,11 +98,18 @@ cugl::Size LevelScene::computeActiveSize() const
  */
 bool LevelScene::init(const std::shared_ptr<AssetManager> &assets)
 {
+    std::string root_path = cugl::Application::get()->getSaveDirectory();
+    std::string path = cugl::filetool::join_path({root_path,"save.json"});
     
-    // Initialize json writer
-    std::string root = cugl::Application::get()->getSaveDirectory();
-    std::string path = cugl::filetool::join_path({root,"save.json"});
-    _writer = JsonWriter::alloc(path);
+    //Initialize the save file
+    initSaveFile();
+    std::shared_ptr<JsonValue> json_root = _reader->readJson();
+    _reader->close();
+    CULog("Highest unlocked Level: %d",  json_root->getInt("unlocked", 1));
+    CULog("Highest unlocked Level: %d",  json_root->getInt("unlocked", 1));
+    
+    unlockedLevels = json_root->getInt("unlocked", 1);
+    CULog("Highest unlocked Level: %d",  unlockedLevels);
     
     // Initialize the scene to a locked width
     Size dimen = computeActiveSize();
@@ -256,6 +300,15 @@ void LevelScene::setActive(bool value)
             firsttime = true;
             _backClicked = false;
         }
+    }
+}
+
+void LevelScene::updatelevelscene(){
+    CULog("True Unlocked Levels: %d", unlockedLevels);
+   if (_goright && level < unlockedLevels) {
+    level += 1;
+    } else if (_goleft && level > 1) {
+        level -= 1;
     }
 }
 
