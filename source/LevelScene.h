@@ -21,7 +21,7 @@
 #include <map>
 #include "SpriteAnimationNode.h"
 #include "AudioController.h"
-#define NUM_LEVELS 14
+#define NUM_LEVELS 15
 
 /**
  * This class is a simple loading screen for asychronous asset loading.
@@ -65,7 +65,7 @@ protected:
     std::shared_ptr<cugl::AssetManager> _assets;
 
     /** Flag to bypass locked levels*/
-    bool _godMode = false;
+    bool _godMode = true;
 
     std::shared_ptr<AudioController> _audioController;
     

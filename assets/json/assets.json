@@ -578,6 +578,14 @@
             "file": "textures/tile/buildings.png",
             "magfilter": "nearest"
         },
+        "envStuff": {
+            "file": "textures/tile/env-tiles.png",
+            "magfilter": "nearest"
+        },
+        "hkBuildings": {
+            "file": "textures/tile/hk-building.png",
+            "magfilter": "nearest"
+        },
         "streets": {
             "file": "textures/tile/streets.png",
             "magfilter": "nearest"
@@ -689,7 +697,9 @@
         "buildings": "json/assetsJson/buildings.json",
         "server": "json/server.json",
         "constants": "json/constants.json",
-        "mainmenu": "json/mainmenuassets.json"
+        "mainmenu": "json/mainmenuassets.json",
+        "envStuff": "json/assetsJson/envStuff.json",
+        "hkBuildings": "json/assetsJson/hkBuildings.json"
     },
     "sounds": {
         "dogBark": {
