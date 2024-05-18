@@ -2,7 +2,7 @@
 {
     "textures": {
       "join_background": {
-          "file": "textures/joinview/host_background.png"
+          "file": "textures/joinview/join_screen.png"
       },
       "zero": {
           "file": "textures/joinview/zero.png"

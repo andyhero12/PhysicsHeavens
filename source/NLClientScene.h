@@ -42,7 +42,9 @@ public:
             six,
             seven,
             eight,
-            nine
+            nine,
+            back,
+            start
      };   
 
 protected:
@@ -101,7 +103,7 @@ public:
      * This constructor does not allocate any objects or start the game.
      * This allows us to use the object without a heap pointer.
      */
-    ClientScene() : cugl::Scene2(), _backClicked(false),timeSinceLastSwitch(0.0), switchFreq(0.1),currentRow(0),currentCol(0),_number(zero), _value(){}
+    ClientScene() : cugl::Scene2(), _backClicked(false),timeSinceLastSwitch(0.0), switchFreq(0.1),currentRow(0),currentCol(0),_number(zero), _value(""){}
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.

@@ -175,14 +175,14 @@ bool ClientScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::s
     });
     _delete->addListener([this](const std::string& name, bool down){
         if (down) {
-            _number = number::nine;
+            _number = number::back;
         }
     });
 
     _startgame->addListener([this](const std::string& name, bool down){
         if (down) {
              // This will call the _gameid listener
-            _gameid->releaseFocus();
+            _number = number::start;
         }
     });
 
@@ -320,50 +320,49 @@ void ClientScene::update(float timestep) {
         }
 
     }
-
-    switch(_number){
-        case ClientScene::number::zero:
-            _value+="0";
-            break;
-        case ClientScene::number::one:
-            _value+="1";
-            break;
-        case ClientScene::number::two:
-            _value+="2";
-            break;
-        case ClientScene::number::three:
-            _value+="3";
-            break;
-        case ClientScene::number::four:
-            _value+="4";
-            break;
-        case ClientScene::number::five:
-            _value+="5";
-            break;
-        case ClientScene::number::six:
-            _value+="6";
-            break;
-        case ClientScene::number::seven:
-            _value+="7";
-            break;
-        case ClientScene::number::eight:
-            _value+="8";
-            break;
-        case ClientScene::number::nine:
-            _value+="9";
-            break; 
-    }
-        
-    // _gameid->setText(_value);
-    updateText(_value);
-
-    if(_network->getStatus() == NetEventController::Status::CONNECTED || _network->getStatus() == NetEventController::Status::HANDSHAKE){
-        //_player->setText(std::to_string(_network->getNumPlayers()));
-    }
-
     if(_input.didPressConfirm()){
-        _startgame->setDown(true);
+        switch(_number){
+                case ClientScene::number::zero:
+                    _value+="0";
+                    break;
+                case ClientScene::number::one:
+                    _value+="1";
+                    break;
+                case ClientScene::number::two:
+                    _value+="2";
+                    break;
+                case ClientScene::number::three:
+                    _value+="3";
+                    break;
+                case ClientScene::number::four:
+                    _value+="4";
+                    break;
+                case ClientScene::number::five:
+                    _value+="5";
+                    break;
+                case ClientScene::number::six:
+                    _value+="6";
+                    break;
+                case ClientScene::number::seven:
+                    _value+="7";
+                    break;
+                case ClientScene::number::eight:
+                    _value+="8";
+                    break;
+                case ClientScene::number::nine:
+                    _value+="9";
+                    break; 
+                case ClientScene::number::back:
+                    _value.pop_back();
+                    break;
+                case ClientScene::number::start:
+                    _gameid->releaseFocus();
+                    break;
+            }
     }
+    
+        
+    _gameid->setText(_value);
 
     if(_input.didPressBack()){
         _backClicked = true;
