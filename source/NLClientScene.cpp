@@ -164,7 +164,7 @@ bool ClientScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::s
     });
 
     _startgame->addListener([this](const std::string& name, bool down){
-        if (down) {
+        if (down && !_value.empty()) {
 
              // This will call the _gameid listener
              _network->connectAsClient(dec2hex(_value));
