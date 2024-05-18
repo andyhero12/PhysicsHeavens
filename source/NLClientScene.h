@@ -17,6 +17,7 @@
 #include "GlobalConstants.h"
 #include "NLInput.h"
 
+
 using namespace cugl::physics2::net;
 
 /**
@@ -56,12 +57,7 @@ protected:
     std::shared_ptr<cugl::scene2::Button> _player1;
     std::shared_ptr<cugl::scene2::Button> _player2;
 
-    std::vector<std::vector<std::shared_ptr<cugl::scene2::Button>>> buttonGrid = {
-    {_zero, _one, _two},
-    {_three, _four, _five},
-    {_six, _seven, _eight},
-    {_nine, _delete, _startgame}   // 'START' is central
-};
+    std::vector<std::vector<std::shared_ptr<cugl::scene2::Button>>> buttonGrid;
     InputController _input;
 
     float timeSinceLastSwitch;
@@ -86,7 +82,7 @@ public:
      * This constructor does not allocate any objects or start the game.
      * This allows us to use the object without a heap pointer.
      */
-    ClientScene() : cugl::Scene2(), _backClicked(false),timeSinceLastSwitch(0.0), switchFreq(0.20),currentRow(0),currentCol(0){}
+    ClientScene() : cugl::Scene2(), _backClicked(false),timeSinceLastSwitch(0.0), switchFreq(0.1),currentRow(0),currentCol(0){}
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.
@@ -163,6 +159,8 @@ private:
      * networking.
      */
     void configureStartButton();
+
+  
 };
 
 #endif /* __NL_GAME_SCENE_H__ */

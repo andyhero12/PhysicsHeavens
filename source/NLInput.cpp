@@ -585,11 +585,11 @@ void InputController::readInput_joystick(int value)
                 else if (UD > 0.4) {
                     _updown = -1; //down
                 }
-                if (LR < -0.2)
+                if (LR < -0.4)
                 {
                     _Leftright = -1; // Left
                 }
-                else if (LR > 0.2)
+                else if (LR > 0.4)
                 {
                     _Leftright = 1; // Right
                 }

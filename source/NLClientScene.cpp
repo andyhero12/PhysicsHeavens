@@ -99,6 +99,13 @@ bool ClientScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::s
     _player1 = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("joinview_button_player1"));
     _player2 = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("joinview_button_player2"));
     _delete = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("joinview_button_back"));
+
+    buttonGrid = {
+        {_zero, _one, _two},
+        {_three, _four, _five},
+        {_six, _seven, _eight},
+        {_nine,_nine, _delete, _startgame}
+    };
     // _backout->addListener([this](const std::string& name, bool down) {
     //     if (down) {
     //         _network->disconnect();
@@ -215,29 +222,30 @@ void ClientScene::update(float timestep) {
     configureStartButton();
     _input.update();
 
-//     timeSinceLastSwitch += timestep;
+    timeSinceLastSwitch += timestep;
 
-//   if (timeSinceLastSwitch >= switchFreq) {
-//     if (_input._updown != 0) {  // Handling up/down navigation
-//         buttonGrid[currentRow][currentCol]->setDown(false); // Deselect current button
-//         if (_input._updown == 1 && currentRow > 0) { // Moving up
-//             currentRow--;
-//         } else if (_input._updown == -1 && currentRow < buttonGrid.size() - 1) { // Moving down
-//             currentRow++;
-//         }
-//         buttonGrid[currentRow][currentCol]->setDown(true); // Select new button
-//     } else if (_input._Leftright != 0) {  // Handling left/right navigation
-//         buttonGrid[currentRow][currentCol]->setDown(false); // Deselect current button
-//         if (_input._Leftright == -1 && currentCol > 0) { // Moving left
-//             currentCol--;
-//         } else if (_input._Leftright == 1 && currentCol < buttonGrid[currentRow].size() - 1) { // Moving right
-//             currentCol++;
-//         }
-//         buttonGrid[currentRow][currentCol]->setDown(true); // Select new button
-//     }
-//     timeSinceLastSwitch = 0; // Reset the timer
-// }
-    
+    if (timeSinceLastSwitch >= switchFreq) {
+            if (_input._updown != 0 || _input._Leftright != 0) {
+                buttonGrid[currentRow][currentCol]->setDown(false);
+
+                if (_input._updown == 1 && currentRow > 0) {
+                    currentRow--;
+                } else if (_input._updown == -1 && currentRow < buttonGrid.size() - 1) {
+                    currentRow++;
+                }
+
+                if (_input._Leftright == 1 && currentCol < buttonGrid[currentRow].size() - 1) {
+                    currentCol++;
+                } else if (_input._Leftright == -1 && currentCol > 0) {
+                    currentCol--;
+                }
+
+                buttonGrid[currentRow][currentCol]->setDown(true);
+
+                timeSinceLastSwitch = 0;
+            }
+    }
+
     if(_network->getStatus() == NetEventController::Status::CONNECTED || _network->getStatus() == NetEventController::Status::HANDSHAKE){
         //_player->setText(std::to_string(_network->getNumPlayers()));
     }
