@@ -26,6 +26,9 @@ using namespace std;
 /** Regardless of logo, lock the height to this */
 #define SCENE_HEIGHT  800
 
+/** The key for the font reference */
+#define PRIMARY_FONT "retro"
+
 /**
  * Converts a hexadecimal string to a decimal string
  *
@@ -84,16 +87,20 @@ bool HostScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::sha
     // Start up the input handler
     _assets = assets;
     
+    _assets->loadDirectory("json/hostview.json");
+    
+    
+    
     // Acquire the scene built by the asset loader and resize it the scene
-    std::shared_ptr<scene2::SceneNode> scene = _assets->get<scene2::SceneNode>("host");
+    std::shared_ptr<scene2::SceneNode> scene = _assets->get<scene2::SceneNode>("hostview");
     scene->setContentSize(dimen);
     scene->doLayout(); // Repositions the HUD
     _input.init();
-    _startgame = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("host_center_start"));
-    _backout = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("host_back"));
-    _gameid = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("host_center_game_field_text"));
-    _player = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("host_center_players_field_text"));
-    
+    _startgame = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("hostview_button_start"));
+
+    _backout = scene2::Button::alloc(scene2::PolygonNode::allocWithTexture(_assets->get<cugl::Texture>("")));
+    _gameid = scene2::TextField::allocWithText("999999", _assets->get<Font>(PRIMARY_FONT));
+
     // Program the buttons
     _backout->addListener([this](const std::string& name, bool down) {
         if (down) {
@@ -107,6 +114,12 @@ bool HostScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::sha
             startGame();
         }
     });
+    
+    _gameid->setText("");
+    _gameid->setScale(0.75f);
+    cugl::Size size = 0.5 * (dimen - _gameid->getSize());
+    _gameid->setPosition(size.width, size.height + _gameid->getSize().height/10);
+    scene->addChild(_gameid);
     
     // Create the server configuration
     auto json = _assets->get<JsonValue>("server");
@@ -151,7 +164,7 @@ void HostScene::setActive(bool value) {
         } else {
             _gameid->setText("");
             _startgame->deactivate();
-            updateText(_startgame, "INACTIVE");
+//            updateText(_startgame, "INACTIVE");
             _backout->deactivate();
             // If any were pressed, reset them
             _startgame->setDown(false);
@@ -197,7 +210,7 @@ void HostScene::update(float timestep) {
 #pragma mark BEGIN SOLUTION
     if(_network->getStatus() == NetEventController::Status::CONNECTED){
         if (!_startGameClicked) {
-            updateText(_startgame, "Start Game");
+//            updateText(_startgame, "Start Game");
             _startgame->activate();
             if(_input.didPressConfirm()){
                 _startgame->setDown(true);
@@ -207,11 +220,11 @@ void HostScene::update(float timestep) {
             }     
         }
         else {
-            updateText(_startgame, "Starting");
+//            updateText(_startgame, "Starting");
             _startgame->deactivate();
         }
+        std::cout << (hex2dec(_network->getRoomID())) << std::endl;
 		_gameid->setText(hex2dec(_network->getRoomID()));
-        _player->setText(std::to_string(_network->getNumPlayers()));
         
 	}
 
