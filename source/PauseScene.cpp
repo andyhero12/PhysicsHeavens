@@ -29,12 +29,14 @@ bool PauseScene::init(){
 
     std::shared_ptr<cugl::scene2::SceneNode> exit =cugl::scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("mainmenu"));
     
-    resumeButton = cugl::scene2::Button::alloc(resume, Color4::GRAY);
-    exitButton = cugl::scene2::Button::alloc(exit, Color4::GRAY);
+    resumeButton = cugl::scene2::Button::alloc(resume, Color4::WHITE);
+    exitButton = cugl::scene2::Button::alloc(exit, Color4::WHITE);
     _buttonset.push_back(resumeButton);
     _buttonset.push_back(exitButton);
     resumeButton->setScale(PAUSE_SCALE);
     exitButton->setScale(PAUSE_SCALE);
+
+    exitButton->setColor(Color4::GRAY);
     
     resumeButton->addListener([=](const std::string& name, bool down){
         if(down){
@@ -71,6 +73,7 @@ bool PauseScene::init(){
     setPause(false);
     status = Choice::GAME;
     constatus = ContorllerChoice::isNONE;
+    _counter = 0;
     return true;
 }
 
@@ -83,7 +86,7 @@ void PauseScene::setPause(bool value) {
     setVisible(getPause());
 }
 
-void PauseScene::setFinGame(bool value, bool isTwoPlayer) {
+void PauseScene::setFinGame(bool value, bool isTwoPlayer, bool didWin) {
     _paused = value;
     if(value){
         status = Choice::GAME;
@@ -92,7 +95,14 @@ void PauseScene::setFinGame(bool value, bool isTwoPlayer) {
     float centerY = _screenSize.height/2;
     background->setVisible(false);
     resumeButton->setVisible(false);
-    exitButton->setPosition(centerX, centerY);
+    _counter=1;
+    if(didWin){
+    exitButton->setPosition( centerX, 100);
+    }
+    else{
+    exitButton->setPosition( centerX*2-200, 100);
+    }
+    exitButton->setColor(Color4::GRAY);
     if (isTwoPlayer){
         resumeButton->setVisible(false);
     }
@@ -114,6 +124,7 @@ void PauseScene::dispose(){
     exitButton->deactivate();
     resumeButton = nullptr;
     exitButton = nullptr;
+    _counter = 0;
 }
 
 void PauseScene::exitToMain(){
@@ -127,12 +138,12 @@ void PauseScene::update(float timestep, int leftright, bool confirm){
 
     if (timeSinceLastSwitch >= switchFreq) {
         if (leftright != 0) {
-            if (leftright== -1 && _counter > 0) {
+            if (leftright== -1 && _counter > 0 && _buttonset.at(_counter-1)->isVisible()) {
                  _buttonset.at(_counter)->setColor(Color4::WHITE);
                 _counter--;
                 _buttonset.at(_counter)->setColor(Color4::GRAY);
             }
-            else if (leftright == 1 && _counter < _buttonset.size() - 1) {
+            else if (leftright == 1 && _counter < _buttonset.size() - 1 && _buttonset.at(_counter+1)->isVisible()) {
                 _buttonset.at(_counter)->setColor(Color4::WHITE);
                 _counter++;
                 _buttonset.at(_counter)->setColor(Color4::GRAY);
@@ -141,6 +152,7 @@ void PauseScene::update(float timestep, int leftright, bool confirm){
 
         }
     }
+
 
     if(confirm){
         _buttonset.at(_counter)->setDown(true);

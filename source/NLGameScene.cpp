@@ -527,7 +527,7 @@ void GameScene::preUpdate(float dt)
             if (gameOverWin){
                 
                 winNode->setVisible(true);
-                _pause->setFinGame(true, _network->getNumPlayers() == 2);
+                _pause->setFinGame(true, _network->getNumPlayers() == 2, true);
                 _minimap->setVisible(false);
                 
                 
@@ -539,7 +539,7 @@ void GameScene::preUpdate(float dt)
             }
             if (gameOverLoss){
                 loseNode->setVisible(true);
-                _pause->setFinGame(true, _network->getNumPlayers() == 2);
+                _pause->setFinGame(true, _network->getNumPlayers() == 2, false);
                 _minimap->setVisible(false);
                 AudioEngine::get()->clear();
                 _audioController->playSFX(LOSS_STAMP, LOSS_STAMP);
@@ -1158,7 +1158,7 @@ void GameScene::updateInputController()
     {
         Application::get()->quit();
     }
-    if (_input.didPressPause())
+    if (_input.didPressPause() && !gameOverLoss && !gameOverWin)
     {
         _pause->togglePause();
         _audioController->playSFX(PAUSE_SCREEN, PAUSE_SCREEN);
