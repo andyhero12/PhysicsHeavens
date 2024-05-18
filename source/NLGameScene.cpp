@@ -507,8 +507,7 @@ void GameScene::addInitObstacle(const std::shared_ptr<physics2::Obstacle> &obj,
 void GameScene::preUpdate(float dt)
 {
     updateInputController();
-    
-    std::cout << " finished updating input \n";
+
     if (gameOverLoss || gameOverWin){
         if ( gameOverDelay < 120){
             gameOverDelay++;
@@ -607,7 +606,6 @@ void GameScene::preUpdate(float dt)
             _network->pushOutEvent(LoseEvent::allocLoseEvent(overWorld.getClientDog()->getPosition(), _isHost));
         }
     }
-    std::cout << " pre update finihsed \n";
 }
 
 void GameScene::postUpdate(float dt)
@@ -655,7 +653,6 @@ void GameScene::postUpdate(float dt)
         shakeMagnitude = 0;
     }
     
-    std::cout << " post update finihsed \n";
 }
 
 void GameScene::fixedUpdate()
@@ -780,7 +777,6 @@ void GameScene::fixedUpdate()
 #pragma mark END SOLUTION
 
     _world->update(FIXED_TIMESTEP_S);
-    std::cout << " fixed update finihsed \n";
 }
 
 /**
@@ -1056,7 +1052,7 @@ void GameScene::initTutorialOne(){
     
     tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::GREETING, "Ready to go on our first day on the job, boy? We'd better go over your abilities again, just in case."));
     tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::MOVEMENT, "MOVE with (joystick)."));
-    tutorialTiles.push_back(Tutorial::alloc(28, Tutorial::MODE::BITE, "Look, boy, our first threat! Let's get 'em! BITE with (A)."));
+    tutorialTiles.push_back(Tutorial::alloc(27, Tutorial::MODE::BITE, "Look, boy, our first threat! Let's get 'em! BITE with (A)."));
     tutorialTiles.push_back(Tutorial::alloc(35, Tutorial::MODE::GROW, "Whenever you eat an enemy, you ABSORB its power. You can store power up to a certain point. Remember, as you eat, you'll gain size, and become stronger. But don't overeat!"));
     tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::RECALLGIVE, ""));
     tutorialTiles.push_back(Tutorial::alloc(22, Tutorial::MODE::SPECIALSONE, "Let's try using a power. We passed the job interview so quick, I couldn't teach you everything in our arsenal yet. "));
@@ -1066,7 +1062,7 @@ void GameScene::initTutorialOne(){
     tutorialTiles.push_back(Tutorial::alloc(24, Tutorial::MODE::CHANGEABILITYTWO, "SWITCH ABILITIES with (trigger). ACTIVATE YOUR ABILITY with (bumper). Let's try switching abilities now, boy."));
     tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::BARKGIVE, ""));
     tutorialTiles.push_back(Tutorial::alloc(22, Tutorial::MODE::SPECIALSTWO, "Good job, boy! Next, let’s try using that power to take down some bad guys. Your BARK is stronger than your BITE. Remember, switch abilities first, and then unleash your power!"));
-    tutorialTiles.push_back(Tutorial::alloc(26, Tutorial::MODE::DESTROYSPAWNER, "I think that's all we can discuss right now, 'cuz I see a bunch of angry things coming at us now! Get 'em, boy!"));
+    tutorialTiles.push_back(Tutorial::alloc(50, Tutorial::MODE::DESTROYSPAWNER, "I think that's all we can discuss right now, 'cuz I see a bunch of angry things coming at us now! Get 'em, boy!"));
 
     std::vector<std::string> modes = {"SHOOT", "RECALL"};
     overWorld.getDog()->setAbility(modes);
