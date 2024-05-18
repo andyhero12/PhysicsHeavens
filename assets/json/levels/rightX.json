@@ -580,26 +580,8 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":299.145586620108,
-                 "y":1141.36734625686
-                }, 
-                {
-                 "height":0,
-                 "id":36,
-                 "name":"Base",
-                 "point":true,
-                 "properties":[
-                        {
-                         "name":"HP",
-                         "type":"int",
-                         "value":600
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":63.9132626813461,
-                 "y":1440.14456219776
+                 "x":325.915366513029,
+                 "y":1067.0068465543
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -614,18 +596,6 @@
          "objects":[
                 {
                  "height":0,
-                 "id":7,
-                 "name":"PlayerSpawn",
-                 "point":true,
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":66.702934326228,
-                 "y":1516.30816943149
-                }, 
-                {
-                 "height":0,
                  "id":38,
                  "name":"PlayerSpawn",
                  "point":true,
@@ -633,8 +603,8 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":300.416418798334,
-                 "y":1200.17846519929
+                 "x":301.903628792385,
+                 "y":1170.43426531826
                 }],
          "opacity":1,
          "type":"objectgroup",

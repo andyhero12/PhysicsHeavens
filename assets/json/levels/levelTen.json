@@ -465,8 +465,8 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":297.823829155062,
-                 "y":612.024952718254
+                 "x":898.903894898194,
+                 "y":1351.63518986312
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -488,8 +488,8 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":295.753782383604,
-                 "y":675.999038042616
+                 "x":892.137910113118,
+                 "y":1441.43693426239
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -522,8 +522,8 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":1217.36968928345,
-                 "y":942.718241386599
+                 "x":1562.52113328439,
+                 "y":1290.21765439435
                 }, 
                 {
                  "height":0,
@@ -545,8 +545,31 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":895.252853999816,
-                 "y":489.810910606233
+                 "x":334.088261372439,
+                 "y":1400.82288524817
+                }, 
+                {
+                 "height":0,
+                 "id":31,
+                 "name":"Med",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"enemyType",
+                         "type":"string",
+                         "value":"basic"
+                        }, 
+                        {
+                         "name":"numSpawn",
+                         "type":"int",
+                         "value":6
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":887.532284573844,
+                 "y":457.853956327776
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -599,8 +622,8 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":1529.79543267495,
-                 "y":1281.29331779686
+                 "x":1548.57918472942,
+                 "y":957.273594857203
                 }, 
                 {
                  "height":0,
@@ -685,8 +708,8 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":320.928823543988,
-                 "y":1447.68117345903
+                 "x":297.449133475897,
+                 "y":621.196083062223
                 }, 
                 {
                  "height":0,
@@ -772,7 +795,50 @@
                  "visible":true,
                  "width":0,
                  "x":905.687288286682,
-                 "y":927.081476198966
+                 "y":942.651737000834
+                }, 
+                {
+                 "height":0,
+                 "id":30,
+                 "name":"Spawner",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"HP",
+                         "type":"int",
+                         "value":175
+                        }, 
+                        {
+                         "name":"InitDelay",
+                         "type":"int",
+                         "value":1
+                        }, 
+                        {
+                         "name":"PrimaryEnemy",
+                         "type":"string",
+                         "value":"spawner"
+                        }, 
+                        {
+                         "name":"RegDelay",
+                         "type":"int",
+                         "value":10
+                        }, 
+                        {
+                         "name":"SecondaryEnemy",
+                         "type":"string",
+                         "value":"eating"
+                        }, 
+                        {
+                         "name":"TertiaryEnemy",
+                         "type":"string",
+                         "value":"Basic"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":307.583939891993,
+                 "y":1152.85278234327
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -891,7 +957,7 @@
          "y":0
         }],
  "nextlayerid":17,
- "nextobjectid":30,
+ "nextobjectid":32,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.2",

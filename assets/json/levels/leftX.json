@@ -744,17 +744,6 @@
          "name":"TransparentLocs",
          "objects":[
                 {
-                 "height":131.316314738943,
-                 "id":23,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":295.199075533144,
-                 "x":941.275344048745,
-                 "y":1555.835697027
-                }, 
-                {
                  "height":117.659418006093,
                  "id":27,
                  "name":"",

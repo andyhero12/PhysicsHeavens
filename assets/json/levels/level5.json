@@ -684,7 +684,7 @@
         {
          "draworder":"topdown",
          "id":14,
-         "name":"Transparent Locs",
+         "name":"TransparentLocs",
          "objects":[
                 {
                  "height":104,
@@ -693,9 +693,9 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":198.666666666667,
-                 "x":210.666666666667,
-                 "y":1069.33333333333
+                 "width":198.667,
+                 "x":210.667,
+                 "y":1069.33
                 }, 
                 {
                  "height":64,
