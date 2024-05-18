@@ -70,7 +70,7 @@
 #define LEVEL_FOUR_KEY       "level4"
 
 /** The source for our level file */
-#define LEVEL_FIVE_FILE      "json/levels/level1.json"
+#define LEVEL_FIVE_FILE      "json/levels/level5.json"
 /** The key for our loaded level */
 #define LEVEL_FIVE_KEY       "level5"
 
@@ -85,7 +85,7 @@
 #define LEVEL_SEVEN_KEY       "level7"
 
 /** The source for our level file */
-#define LEVEL_EIGHT_FILE      "json/levels/level1.json"
+#define LEVEL_EIGHT_FILE      "json/levels/leftX.json"
 /** The key for our loaded level */
 #define LEVEL_EIGHT_KEY       "level8"
 

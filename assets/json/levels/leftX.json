@@ -2,17 +2,53 @@
  "height":62,
  "infinite":false,
  "layers":[
-        {
-         "draworder":"topdown",
-         "id":7,
-         "name":"numDecor",
-         "objects":[],
-         "opacity":1,
-         "type":"objectgroup",
-         "visible":true,
-         "x":0,
-         "y":0
-        }, 
+     {
+      "draworder":"topdown",
+      "id":7,
+      "name":"numDecor",
+      "objects":[
+             {
+              "height":0,
+              "id":1,
+              "name":"upper",
+              "point":true,
+              "properties":[
+                     {
+                      "name":"value",
+                      "type":"int",
+                      "value":2
+                     }],
+              "rotation":0,
+              "type":"",
+              "visible":true,
+              "width":0,
+              "x":502,
+              "y":554
+             },
+             {
+              "height":0,
+              "id":2,
+              "name":"lower",
+              "point":true,
+              "properties":[
+                     {
+                      "name":"value",
+                      "type":"int",
+                      "value":3
+                     }],
+              "rotation":0,
+              "type":"",
+              "visible":true,
+              "width":0,
+              "x":612,
+              "y":564
+             }],
+      "opacity":1,
+      "type":"objectgroup",
+      "visible":true,
+      "x":0,
+      "y":0
+     }, 
         {
          "data":[6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
