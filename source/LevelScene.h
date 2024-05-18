@@ -38,7 +38,7 @@ class LevelScene : public cugl::Scene2 {
 public:
     enum Level {
             /** User has not yet made a choice */
-            L1 ,
+            L1,
             /** User wants to host a game */
             L2,
             /** User wants to join a game */
@@ -47,23 +47,29 @@ public:
             L4,
 
             L5,
-        L6,
-        L7,
-        L8,
-        L9,
-        L10,
-        L11,
-        L12,
-        L13,
-        L14,
-        L15,
+            L6,
+            L7,
+            L8,
+            L9,
+            L10,
+            L11,
+            L12,
+            L13,
+            L14,
+            L15,
             NONE
         };
+    
 protected:
     /** The asset manager for loading. */
     std::shared_ptr<cugl::AssetManager> _assets;
     
+
+    /** Flag to bypass locked levels*/
+    bool _godMode = false;
+
     std::shared_ptr<AudioController> _audioController;
+
     
     // NO CONTROLLER (ALL IN SEPARATE THREAD)
     
@@ -76,6 +82,12 @@ protected:
     std::shared_ptr<cugl::scene2::Button>    _button;
 
     std::shared_ptr<cugl::scene2::SpriteNode> background;
+    
+    std::shared_ptr<cugl::JsonWriter> _writer;
+    std::shared_ptr<cugl::JsonReader> _reader;
+    
+    // The number of the highest unlocked level
+    int unlockedLevels;
 
     Level _level;
     InputController _input;
@@ -94,11 +106,7 @@ protected:
     int moveCooldown;
 
     int level;
-
-    bool level1;
-    bool level2;
-    bool level3;
-
+    
     bool _goright;
     bool _goleft;
     bool firsttime;
@@ -110,6 +118,8 @@ protected:
      * ratios
      */
     cugl::Size computeActiveSize() const;
+    
+    void initSaveFile();
         
 public:
 #pragma mark -
@@ -124,10 +134,7 @@ public:
     _progress(0.0f), 
     frame(0.0f), 
     curMoveAnim(6), 
-    moveCooldown(6), 
-    level1(true), 
-    level2(false), 
-    level3(false), 
+    moveCooldown(6),
     _goleft(false), 
     _goright(false), 
     _level(NONE), 
@@ -142,7 +149,7 @@ public:
 //        {5, 26}
 //        // Add new levels and frames as needed
 //    };
-
+        CULog("Initializing");
         for (int i =0 ; i< NUM_LEVELS; i++){
             frameTargets.insert({i+1, 2 + 6* i});
         }
@@ -243,13 +250,7 @@ public:
         _goright = false;
     }
     
-    void updatelevelscene(){
-       if (_goright && level < frameTargets.size()) {
-        level += 1;
-        } else if (_goleft && level > 1) {
-            level -= 1;
-        }
-    }
+    void updatelevelscene();
 
     void adjustFrame(int level);
 
