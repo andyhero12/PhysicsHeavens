@@ -77,7 +77,9 @@ protected:
 
     std::shared_ptr<cugl::scene2::SpriteNode> background;
 
-    std::shared_ptr<cugl::scene2::SpriteNode> autoBackground;
+    std::shared_ptr<cugl::scene2::SpriteNode> winBackground;
+
+    std::shared_ptr<cugl::scene2::SpriteNode> loseBackground;
 
     Level _level;
     InputController _input;
@@ -107,6 +109,8 @@ protected:
     bool _backClicked;
 
     bool autoStart;
+    bool showWin;
+    bool showLoss;
     /**
      * Returns the active screen size of this scene.
      *
@@ -268,7 +272,7 @@ public:
 
     void autoStartGame(LevelScene::Level level);
 
-    void setAutoVisible(bool b);
+    void setAutoVisible(bool won);
 
     void resetAutoStart();
 };

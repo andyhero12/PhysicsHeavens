@@ -513,6 +513,7 @@ void NetApp::updateGameScene(float timestep)
             _status = SINGLEPLAYER;
             _singlePlayer.resetLevel();
             _singlePlayer.autoStartGame(l);
+            _singlePlayer.setAutoVisible(isNext);
             isHosting = true;
         }
     }
@@ -675,7 +676,6 @@ void NetApp::updateSinglePlayerLevelScene(float timestep)
     }
     else if (_network->getStatus() == NetEventController::Status::INGAME)
     {
-        _singlePlayer.setAutoVisible(false);
         _singlePlayer.resetAutoStart();
         _singlePlayer.setActive(false);
         _gameplay.setActive(true);
