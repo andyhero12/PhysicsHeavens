@@ -55,8 +55,8 @@ bool WinScene::init(){
     mainButton->setAnchor(Vec2::ANCHOR_CENTER);
     nextButton->setAnchor(Vec2::ANCHOR_CENTER);
     
-    mainButton->setPosition(centerX - 100, centerY);
-    nextButton->setPosition(centerX + 100,centerY);
+    mainButton->setPosition(centerX + 100, centerY);
+    nextButton->setPosition(centerX - 100,centerY);
 
     setActive(false);
     status = Choice::NONE;
