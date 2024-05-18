@@ -15,6 +15,9 @@
 
 // Sound Effects
 #define DOG_BARK "dogBark"
+#define SMALL_BARK "smallBark"
+#define MED_BARK "medBark"
+#define BIG_BARK "bigBark"
 #define DOG_BITE_SMALL "dogBiteSmall"
 #define DOG_BITE_MEDIUM "dogBiteMedium"
 #define DOG_BITE_LARGE "dogBiteLarge"

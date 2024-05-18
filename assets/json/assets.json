@@ -697,6 +697,21 @@
             "file": "sounds/Player/dogBark.wav",
             "volume": 0.4
         },
+        "smallBark": {
+            "type": "sample",
+            "file": "sounds/Player/smallBark.wav",
+            "volume": 0.8
+        },
+        "medBark": {
+            "type": "sample",
+            "file": "sounds/Player/medBark.wav",
+            "volume": 0.8
+        },
+        "bigBark": {
+            "type": "sample",
+            "file": "sounds/Player/bigBark.wav",
+            "volume": 0.8
+        },
         "dogBiteSmall": {
             "type": "sample",
             "file": "sounds/Player/dogBiteLittle.wav",
