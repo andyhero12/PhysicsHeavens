@@ -72,14 +72,6 @@ cugl::Size LevelScene::computeActiveSize() const
 bool LevelScene::init(const std::shared_ptr<AssetManager> &assets)
 {
     
-    
-    std::shared_ptr<SaveManager> saveFile = std::make_shared<SaveManager>();
-    
-    std::shared_ptr<JsonValue> json_root = saveFile->read();
-    CULog("Highest unlocked Level: %d",  json_root->getInt("unlocked", 1));
-  
-    unlockedLevels = json_root->getInt("unlocked", 1);
-    
     // Initialize the scene to a locked width
     Size dimen = computeActiveSize();
 

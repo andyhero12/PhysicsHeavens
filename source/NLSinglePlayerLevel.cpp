@@ -29,10 +29,6 @@ using namespace cugl;
  */
 bool SinglePlayerLevelScene::init(const std::shared_ptr<AssetManager> &assets, std::shared_ptr<cugl::physics2::net::NetEventController> network)
 {
-    std::shared_ptr<SaveManager> saveFile = std::make_shared<SaveManager>();
-    std::shared_ptr<JsonValue> json_root = saveFile->read();
-    unlockedLevels = json_root->getInt("unlocked", 1);
-    
     // Initialize the scene to a locked width
     Size dimen = Application::get()->getDisplaySize();
     dimen *= SCENE_SIZE/dimen.height;

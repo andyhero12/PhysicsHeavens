@@ -795,6 +795,8 @@ void GameScene::fixedUpdate()
                 }
                 if (auto winEvent = std::dynamic_pointer_cast<WinEvent>(e))
                 {
+                    
+                    // Unlock new levels by writing to save file
                     shared_ptr<SaveManager> saveFile = make_shared<SaveManager>();
                     std::shared_ptr<JsonValue> json_root = saveFile->read();
                     int unlockedLevels = json_root->getInt("unlocked", 1);
@@ -803,6 +805,7 @@ void GameScene::fixedUpdate()
                         json_root->get("unlocked")->set((long) unlockedLevels + 1);
                         saveFile->write(json_root);
                     }
+                    
                     gameOverWin = true;
                 }
                 if (auto loseEvent = std::dynamic_pointer_cast<LoseEvent>(e))
