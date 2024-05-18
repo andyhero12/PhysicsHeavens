@@ -118,9 +118,9 @@ bool HostScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::sha
     _player2->setColor(Color4::ORANGE);
     _startgame->setColor(Color4::GRAY);
     _gameid->setText("");
-    _gameid->setScale(0.75f);
+    _gameid->setScale(0.65f);
     cugl::Size size = 0.5 * (dimen - _gameid->getSize());
-    _gameid->setPosition(size.width, size.height + _gameid->getSize().height/10);
+    _gameid->setPosition(size.width + 10, size.height + _gameid->getSize().height/10);
     scene->addChild(_gameid);
     
     // Create the server configuration
@@ -159,6 +159,7 @@ void HostScene::setActive(bool value) {
          */
 #pragma mark BEGIN SOLUTION
         if (value) {
+            _startgame->activate();
             _backout->activate();
             _network->disconnect();
             _network->connectAsHost();

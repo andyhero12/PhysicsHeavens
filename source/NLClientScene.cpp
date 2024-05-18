@@ -165,7 +165,7 @@ bool ClientScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::s
 
     _startgame->addListener([this](const std::string& name, bool down){
         if (down && !_value.empty()) {
-
+            std::cout << "fdajfadks;fl " << std::endl;
              // This will call the _gameid listener
              _network->connectAsClient(dec2hex(_value));
         }
@@ -189,9 +189,9 @@ bool ClientScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::s
     _player1->setColor(Color4::GREEN);
     _player2->setColor(Color4::ORANGE);
     _gameid->setText("");
-    _gameid->setScale(0.75f);
+    _gameid->setScale(0.65f);
     cugl::Size size = 0.5 * (dimen - _gameid->getSize());
-    _gameid->setPosition(size.width, size.height + _gameid->getSize().height/10);
+    _gameid->setPosition(size.width  + 20, size.height + _gameid->getSize().height/10);
     scene->addChild(_gameid);
     addChild(scene);
 //    addChild(_gameid);
@@ -227,6 +227,7 @@ void ClientScene::setActive(bool value) {
          */
 #pragma mark BEGIN SOLUTION
         if (value) {
+            _startgame->activate();
             _gameid->deactivate();
             _gameid->setText("");
             configureStartButton();
