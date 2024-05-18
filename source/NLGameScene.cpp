@@ -1088,7 +1088,7 @@ void GameScene::updateInputController()
         }
         
         if (tile->getProgress() == Tutorial::MODE::RECALLGIVE || tile->getProgress() == Tutorial::MODE::BARKGIVE || tile->getProgress() == Tutorial::MODE::BAITGIVE || tile->getProgress() == Tutorial::MODE::BOMBGIVE){
-            if (_input.update(tile->getProgress(), atLocation)){
+            if (_input.update(tile->getProgress(), atLocation) && spriteNode->getFrame() == spriteNode->getSpan() -1){
                 tile->setPass(true);
                 spriteNode->setVisible(false);
                 spriteNodeRepeat->setVisible(false);
@@ -1148,11 +1148,11 @@ void GameScene::initTutorialOne(){
     tutorialTiles.push_back(Tutorial::alloc(35, Tutorial::MODE::GROW, "Whenever you eat an enemy, you ABSORB its power. You can store power up to a certain point. Remember, as you eat, you'll gain size, and become stronger. But don't overeat!"));
     tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::RECALLGIVE, ""));
     tutorialTiles.push_back(Tutorial::alloc(22, Tutorial::MODE::SPECIALSONE, "Let's try using a power. We passed the job interview so quick, I couldn't teach you everything in our arsenal yet. "));
-    tutorialTiles.push_back(Tutorial::alloc(22, Tutorial::MODE::DEFENDGATE, "Frankly, I didn't even expect to pass that interview... anyway! ", true));
-    tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::MODE::DEFENDGATE, "Here we are, at the most important thing of our lives!"));
-    tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::MODE::DEFENDGATE, "Well, from 9 to 5, at least. ", true));
-    tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::MODE::DEFENDGATE, "These gates are what lead to Heaven. We gotta protect these, boy- our paycheck depends on it!"));
-    tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::MODE::DEFENDGATE, "But protecting these gates are only one part of the job- the other essential part is to ensure these guys can't ever come back. That is, to finish a shift successfully, we gotta destroy the sources they spawn from."));
+    tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::MODE::DEFENDGATE, "Frankly, I didn't even expect to pass that interview... anyway! ", true));
+    tutorialTiles.push_back(Tutorial::alloc(12, Tutorial::MODE::DEFENDGATE, "Here we are, at the most important thing of our lives!"));
+    tutorialTiles.push_back(Tutorial::alloc(12, Tutorial::MODE::DEFENDGATE, "Well, from 9 to 5, at least. ", true));
+    tutorialTiles.push_back(Tutorial::alloc(12, Tutorial::MODE::DEFENDGATE, "These gates are what lead to Heaven. We gotta protect these, boy- our paycheck depends on it!"));
+    tutorialTiles.push_back(Tutorial::alloc(12, Tutorial::MODE::DEFENDGATE, "But protecting these gates are only one part of the job- the other essential part is to ensure these guys can't ever come back. That is, to finish a shift successfully, we gotta destroy the sources they spawn from."));
     tutorialTiles.push_back(Tutorial::alloc(24, Tutorial::MODE::CHANGEABILITYTWO, "SWITCH ABILITIES with (bumper). ACTIVATE YOUR ABILITY with (trigger). Let's try switching abilities now, boy."));
     tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::BARKGIVE, ""));
     tutorialTiles.push_back(Tutorial::alloc(22, Tutorial::MODE::SPECIALSTWO, "Good job, boy! Next, let’s try using that power to take down some bad guys. Your BARK is stronger than your BITE. Remember, switch abilities first, and then unleash your power!"));
@@ -1318,7 +1318,7 @@ void GameScene::initTutorial()
             message->setHorizontalAlignment(HorizontalAlign::CENTER);
             message->setVerticalAlignment(VerticalAlign::MIDDLE);
             message->setWrap(true);
-            message->setScale(.25);
+            message->setScale(.3);
             _tutorialnode->addChild(message);
             message->setAnchor(Vec2(0.8f , 0.5f));
             message->setPositionX(3 * screen.width / 4);
