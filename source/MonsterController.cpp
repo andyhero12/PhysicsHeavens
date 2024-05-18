@@ -77,7 +77,7 @@ void MonsterController::postUpdate(){
     for (std::shared_ptr<AbstractEnemy> curEnemy: _current){
         curEnemy->postUpdate();
     }
-    CULog("%d", _current.size());
+    //CULog("%d", _current.size());
 }
 
 void MonsterController::retargetToDecoy( OverWorld& overWorld){
@@ -135,6 +135,7 @@ void MonsterController::update(float timestep, OverWorld& overWorld){
         if (std::shared_ptr<SpawnerEnemy> spawnerEnemy = std::dynamic_pointer_cast<SpawnerEnemy>(curEnemy)){
             if (spawnerEnemy->canAttack()){
                 spawnerEnemy->resetAttack();
+                // using this function is necessary for enforcing enemy count limit
                 spawnEnemyFromString("basic", spawnerEnemy->getPosition() - Vec2(0.2,0.2), overWorld, 1);
             }
         }

@@ -587,6 +587,9 @@ bool CollisionController::absorbEnemMonsterCollision(MonsterController& monsterC
             _network->pushOutEvent(AbsorbEvent::allocAbsorbEvent(absEnemy->getDimension().width,objNum));
             absEnemy->resetAttack();
         }
+        else {
+            //CULog("absorb lack %f", closestDistance);
+        }
     }
     return collision;
 }
