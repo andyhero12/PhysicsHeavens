@@ -7,9 +7,12 @@
 
 #include "GateUIController.h"
 #include "BaseSet.h"
+#include "cmath"
 
 using namespace cugl;
 #define ANIM_FREQ 5
+#define WARNING_THRESHOLD 0.35
+#define WARNING_FREQ 3
 
 bool GateUIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const std::shared_ptr<cugl::AssetManager>& assets, cugl::Size screenSize, std::shared_ptr<BaseSet> gates){
 
@@ -60,9 +63,8 @@ bool GateUIController::init(std::shared_ptr<cugl::scene2::SceneNode> node, const
 
 void GateUIController::setGateBarTexture(std::shared_ptr<SubTextureNode> fill, float percentage){
     CUAssert(0 <= percentage <= 1);
-    // The percentage of the size bar that is empty space, needed to adjust how fast the health bar decreases
-    GLfloat emptyPercent = 0;
-    
+    // im changing this
+    GLfloat emptyPercent = 0.2;
     GLfloat minS = emptyPercent + (1.0 - emptyPercent) * (1.0 - percentage);
     GLfloat maxS = 1;
     GLfloat minT = 0;
@@ -75,7 +77,13 @@ void GateUIController::setGateBarTexture(std::shared_ptr<SubTextureNode> fill, f
 
     fill->setAnchor(Vec2::ANCHOR_CENTER);
     fill->setPosition(gatefillx, gatey);
-    
+
+    if(percentage < WARNING_THRESHOLD) {
+        fill->setColor(calculateTint());
+    }
+    else {
+        fill->setColor(Color4::WHITE);
+    }
 }
 
 void GateUIController::updateHealthTexture(){
@@ -83,12 +91,30 @@ void GateUIController::updateHealthTexture(){
     
     std::shared_ptr<Base> firstGate = _gates->getBases().at(0);
     setGateBarTexture(_gatefill, fmax(0.0,static_cast<double>(firstGate->getHealth())/firstGate->getMaxHealth()));
-    CULog("Gate 1 Health: %d", firstGate->getHealth());
+
+    bool low = static_cast<double>(firstGate->getHealth())/firstGate->getMaxHealth() < WARNING_THRESHOLD;
     
     if(_gates->getBases().size() == 2){
         std::shared_ptr<Base> secondGate = _gates->getBases().at(1);
         setGateBarTexture(_gatefill2, fmax(0.0,static_cast<double>(secondGate->getHealth())/secondGate->getMaxHealth()));
-        CULog("Gate 2 Health: %d", secondGate->getHealth());
+        low |= static_cast<double>(secondGate->getHealth())/secondGate->getMaxHealth() < WARNING_THRESHOLD;
+    }
+
+    if(low) {
+        _gateframe->setColor(calculateTint());
+    }
+    else {
+        _gateframe->setColor(Color4::WHITE);
     }
 };
+
+Color4 GateUIController::calculateTint() {
+    float ratio = (std::sin(timer * WARNING_FREQ) + 1) / 2 * 0.65 + 0.35;
+    return Color4(255, ratio * 255, ratio * 255);
+}
+
+void GateUIController::update(float dt) {
+    timer += dt;
+    updateHealthTexture();
+}
 

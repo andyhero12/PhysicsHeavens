@@ -12,6 +12,7 @@
 #include "NLInput.h"
 #include "LevelScene.h"
 #include <map>
+#include "AudioController.h"
 
 
 /**
@@ -31,6 +32,8 @@ class SinglePlayerLevelScene : public LevelScene {
 protected:
     /** The network connection (as made by this scene) */
     std::shared_ptr<cugl::physics2::net::NetEventController> _network;
+    
+    std::shared_ptr<AudioController> _audioController;
     
     /** Whether the startGame button had been pressed. */
     bool _startGameClicked;
@@ -73,6 +76,11 @@ public:
      * @return true if the controller is initialized properly, false otherwise.
      */
     virtual bool init(const std::shared_ptr<cugl::AssetManager>& assets, std::shared_ptr<cugl::physics2::net::NetEventController> network);
+    
+    void setAudioController(std::shared_ptr<AudioController> audioController)
+    {
+        _audioController = audioController;
+    }
     
     
 #pragma mark -

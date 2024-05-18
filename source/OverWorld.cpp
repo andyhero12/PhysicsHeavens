@@ -528,11 +528,11 @@ void OverWorld::processDashEvent(const std::shared_ptr<DashEvent> &dashEvent)
 void OverWorld::processDecoyEvent(const std::shared_ptr<DecoyEvent>& decoyEvent){
     getDecoys()->addNewDecoy(Vec2(decoyEvent->getPos().x, decoyEvent->getPos().y));
     playSound("dogGate"+ std::to_string(dogSeq), DUMMY_GATE_PLACEMENT);
-
 }
 void OverWorld::processClientHealthEvent(const std::shared_ptr<ClientHealthEvent>& clientHealthEvent){
     bool incomingHost = clientHealthEvent->isHostDog();
     int health = 0;
+    bool deathCnt = true;
     if (incomingHost){
         health = _dog->getHealth() - clientHealthEvent->getHealthLost();
         _dog->setHealth(health);
@@ -541,7 +541,11 @@ void OverWorld::processClientHealthEvent(const std::shared_ptr<ClientHealthEvent
         _dogClient->setHealth(health);
     }
     if(health <= 0){
-        playSound("death" + std::to_string(dogSeq), DOG_DIE);
+        if (deathCnt){
+            auto source = _assets->get<Sound>(DOG_DIE);
+            AudioEngine::get()->play(DOG_DIE, source, false , source->getVolume());
+            deathCnt = false;
+        }
     }
     else{
         playSound("heal" + std::to_string(dogSeq), DOG_DAMAGE);
@@ -558,7 +562,7 @@ void OverWorld::processSizeEvent(const std::shared_ptr<SizeEvent> &sizeEvent)
         maxSize = _dogClient->addAbsorb(sizeEvent->getSize());
     }
     if (incomingHost == _isHost && maxSize){
-        playSound("death" + std::to_string(dogSeq), SIZE_BAR_MAX);
+        playSound("max size" + std::to_string(dogSeq), SIZE_BAR_MAX);
     }
 }
 void OverWorld::processBiteEvent(const std::shared_ptr<BiteEvent> &biteEvent)
@@ -664,7 +668,7 @@ void OverWorld::processExplodeEvent(const std::shared_ptr<ExplodeEvent> &explode
         _dogClient->startShoot();
     }
     if (incomingHost == _isHost){
-        playSound("dogBomb"+ std::to_string(dogSeq), DOG_BOMB);
+        playSound("dogBomb"+ std::to_string(dogSeq), DUMMY_GATE_EXPLOSION);
     }
 }
 
@@ -672,6 +676,8 @@ void OverWorld::processBaseHealthEvent(const std::shared_ptr<BaseHealthEvent>& b
     for (std::shared_ptr<Base> base : getBaseSet()->_bases){
         if (base->getPos() == basEvent->getPos()){
             base->reduceHealth(basEvent->getDamage());
+            playSound("gateTakesDamage"+ std::to_string(dogSeq), GATE_TAKES_DAMAGE);
+            
         }
     }
 }
@@ -755,7 +761,7 @@ void OverWorld::update(InputController &_input, cugl::Size totalSize, float time
     _decoys->update(timestep);
     _attackPolygonSet.update();
     _clientAttackPolygonSet.update();
-    _gateUIController->updateHealthTexture();
+    _gateUIController->update(timestep);
 }
 
 void OverWorld::postUpdate()

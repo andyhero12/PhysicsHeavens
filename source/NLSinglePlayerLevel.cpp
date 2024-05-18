@@ -6,6 +6,7 @@
 //
 
 #include "NLSinglePlayerLevel.h"
+#include "SaveManager.h"
 
 using namespace cugl;
 
@@ -49,6 +50,7 @@ bool SinglePlayerLevelScene::init(const std::shared_ptr<AssetManager> &assets, s
     _button = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("single_player_level_play"));
     _button->addListener([this](const std::string &name, bool down){
     if(down) { // Check if the button is pressed down
+        cugl::AudioEngine::get()->clear(SUBWAY);
         startGame();
         switch (level) { // Use the current level stored in _level
             case 1:
@@ -193,6 +195,11 @@ void SinglePlayerLevelScene::update(float progress)
 
 void SinglePlayerLevelScene::setActive(bool value)
 {
+    std::shared_ptr<SaveManager> saveFile = std::make_shared<SaveManager>();
+    std::shared_ptr<JsonValue> json_root = saveFile->read();
+    unlockedLevels = json_root->getInt("unlocked", 1);
+    
+    auto source = _assets->get<Sound>(SUBWAY);
 
     if (isActive() != value)
     {
@@ -205,6 +212,7 @@ void SinglePlayerLevelScene::setActive(bool value)
             _network->connectAsHost();
             _backClicked = false;
             _startGameClicked = false;
+            AudioEngine::get()->play(SUBWAY, source, true, source->getVolume(), true);
         }
         else
         {
@@ -213,6 +221,7 @@ void SinglePlayerLevelScene::setActive(bool value)
             firsttime = true;
             _backClicked = false;
             _startGameClicked = false;
+            AudioEngine::get()->clear(SUBWAY);
         }
     }
 }
