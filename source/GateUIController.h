@@ -29,6 +29,9 @@ private:
     std::shared_ptr<cugl::scene2::PolygonNode> _gateframe;
     std::shared_ptr<SubTextureNode> _gatefill;
     std::shared_ptr<SubTextureNode> _gatefill2;
+    float timer = 0;
+
+    Color4 calculateTint();
     
 public:
         
@@ -50,6 +53,8 @@ public:
     void setGateBarTexture(std::shared_ptr<SubTextureNode> fill, float percentage);
     
     void updateHealthTexture();
+
+    void update(float dt);
   
 };
 

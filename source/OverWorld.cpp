@@ -755,7 +755,7 @@ void OverWorld::update(InputController &_input, cugl::Size totalSize, float time
     _decoys->update(timestep);
     _attackPolygonSet.update();
     _clientAttackPolygonSet.update();
-    _gateUIController->updateHealthTexture();
+    _gateUIController->update(timestep);
 }
 
 void OverWorld::postUpdate()
