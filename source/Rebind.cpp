@@ -79,7 +79,7 @@ bool RebindScene::init(const std::shared_ptr<AssetManager> &assets)
 
     _root->setPosition(0,  background->getTexture()->getHeight()/8);
     
-    maxHeight = background->getTexture()->getHeight();
+    maxHeight = 4*background->getTexture()->getHeight()/7 ;
 
     height = 0;
     return true;
