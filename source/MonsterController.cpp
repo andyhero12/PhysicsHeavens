@@ -11,6 +11,9 @@
 
 
 #define DYNAMIC_COLOR   Color4::YELLOW
+
+#define ENEMY_LIMIT 140
+
 int generateRandomInclusiveHighLow(int low, int high)
 {
     // Static used for the seed to ensure it's only seeded once
@@ -74,6 +77,7 @@ void MonsterController::postUpdate(){
     for (std::shared_ptr<AbstractEnemy> curEnemy: _current){
         curEnemy->postUpdate();
     }
+    //CULog("%d", _current.size());
 }
 
 void MonsterController::retargetToDecoy( OverWorld& overWorld){
@@ -131,7 +135,8 @@ void MonsterController::update(float timestep, OverWorld& overWorld){
         if (std::shared_ptr<SpawnerEnemy> spawnerEnemy = std::dynamic_pointer_cast<SpawnerEnemy>(curEnemy)){
             if (spawnerEnemy->canAttack()){
                 spawnerEnemy->resetAttack();
-                spawnBasicEnemy(spawnerEnemy->getPosition() - Vec2(0.2,0.2), overWorld, 1);
+                // using this function is necessary for enforcing enemy count limit
+                spawnEnemyFromString("basic", spawnerEnemy->getPosition() - Vec2(0.2,0.2), overWorld, 1);
             }
         }
     }
@@ -169,7 +174,10 @@ float MonsterController::powerHealth(float power, int hp) {
     return (int)(hp * power * power);
 }
 
-void MonsterController::spawnEnemyFromString(std::string enemyType, cugl::Vec2 pos, OverWorld& overWorld, float power) {
+void MonsterController::spawnEnemyFromStringForce(std::string enemyType, cugl::Vec2 pos, OverWorld& overWorld, float power, bool force) {
+    if(!force && _current.size() > ENEMY_LIMIT) {
+        return;
+    }
     toLowerCase(enemyType);
     if (enemyType == "basic") {
         spawnBasicEnemy(pos, overWorld, power);

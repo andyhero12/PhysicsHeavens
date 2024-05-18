@@ -35,7 +35,8 @@
 #define KNOCKBACK_FORCE 45
 #define LINEAR_DAMPING 0.0f
 #define KNOCKBACK_TIME 0.25f
-#define KNOCKBACK_LIMIT 14
+#define KNOCKBACK_LIMIT 10
+#define KNOCKBACK_DECAY 0.8f
 
 #define MAX_ESCAPE_TIME 25
 
@@ -135,7 +136,12 @@ public:
         Obstacle::update(delta);
         
         _knockbackTimer -= delta;
-        if(_knockbackTimer < 0) {
+        if(_knockbackTimer > 0) {
+            CapsuleObstacle::setVX(getVX() * KNOCKBACK_DECAY);
+            CapsuleObstacle::setVY(getVY() * KNOCKBACK_DECAY);
+            //CULog("vx %f", getVX());
+        }
+        else if(_knockbackTimer < 0) {
             _knockbackTimer = 0;
         }
 
@@ -227,8 +233,8 @@ public:
     }
     void applyDamage(int dmg, Vec2 direction) {
         direction.normalize();
-//        float velocity = KNOCKBACK_FORCE / getMass();
-        float velocity = KNOCKBACK_FORCE / 15;
+        float velocity = KNOCKBACK_FORCE / getMass();
+        //float velocity = KNOCKBACK_FORCE / 15;
         velocity = velocity > KNOCKBACK_LIMIT ? KNOCKBACK_LIMIT : velocity;
         setLinearVelocity(direction.x * velocity, direction.y * velocity);
         setHealth(getHealth() - dmg);

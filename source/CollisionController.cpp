@@ -546,7 +546,6 @@ bool CollisionController::absorbEnemMonsterCollision(MonsterController& monsterC
     std::unordered_set<std::shared_ptr<AbstractEnemy>>& monsterEnemies = monsterController.getEnemies();
     
     auto itAbs = absorbCurEnemies.begin();
-    auto itMon = monsterEnemies.begin();
     while (itAbs != absorbCurEnemies.end()){
         bool absorbAte = false;
         const std::shared_ptr<AbsorbEnemy>& absEnemy = *itAbs;
@@ -554,13 +553,14 @@ bool CollisionController::absorbEnemMonsterCollision(MonsterController& monsterC
         float closestDistance = FLT_MAX;
         std::shared_ptr<AbstractEnemy> closestEnemy = nullptr;
         itAbs++;
+        auto itMon = monsterEnemies.begin();
         while(itMon != monsterEnemies.end()){
             const std::shared_ptr<AbstractEnemy>& curEnemy = *itMon;
             auto curMon = itMon;
             itMon++;
             Vec2 norm = (absEnemy)->getPosition() - (curEnemy)->getPosition();
             float distance = norm.length();
-            float impactDistance = 1 + fmax(curEnemy->getWidth(), curEnemy->getHeight())/2 + 
+            float impactDistance = 1 + fmax(curEnemy->getWidth(), curEnemy->getHeight())/2.0f + 
             fmax(absEnemy->getWidth(), absEnemy->getHeight())/1.4f;
             if (distance < impactDistance && distance < closestDistance){
                 std::shared_ptr<AbsorbEnemy> isAbsorb = std::dynamic_pointer_cast<AbsorbEnemy>(curEnemy);
@@ -578,6 +578,7 @@ bool CollisionController::absorbEnemMonsterCollision(MonsterController& monsterC
                     */
                 }
             }
+            //closestDistance = min(closestDistance, distance);
         }
         if (absorbAte){
             Uint64 objNum = _network->getPhysController()->getPhysicsWorld()->getObstacleId(absEnemy);
@@ -586,6 +587,9 @@ bool CollisionController::absorbEnemMonsterCollision(MonsterController& monsterC
             absEnemy->increaseHealth(closestEnemy->getHealth());
             _network->pushOutEvent(AbsorbEvent::allocAbsorbEvent(absEnemy->getDimension().width,objNum));
             absEnemy->resetAttack();
+        }
+        else {
+            //CULog("absorb lack %f", closestDistance);
         }
     }
     return collision;

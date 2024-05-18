@@ -115,7 +115,8 @@ protected:
     std::shared_ptr<AnimationSceneNode> belowPenta;
     std::shared_ptr<UIController> _uiController;
 
-    
+    std::shared_ptr<cugl::scene2::ProgressBar>  _healthBar;
+
     bool _startDash;
     bool _startBite;
     bool _startShoot;
@@ -229,7 +230,7 @@ public:
     
     void updateDogSize(int absorbValue);
     void addEffects(std::shared_ptr<cugl::scene2::SceneNode> fnode, std::shared_ptr<cugl::scene2::SceneNode> bnode);
-    
+    void setHealthBar(std::shared_ptr<cugl::scene2::ProgressBar> bar);
     
     DogSize getSize(){
         return _size;
@@ -340,7 +341,20 @@ public:
      *
      * @return the amount of thrust that this rocket has.
      */
-    float getThrust() const { return DEFAULT_THRUST; }
+    float getThrust() const { 
+        switch (_size)
+        {
+        case DogSize::SMALL:
+            return DEFAULT_THRUST; 
+        case DogSize::MEDIUM:
+            return DEFAULT_THRUST * 1.25f; 
+        case DogSize::LARGE:
+            return DEFAULT_THRUST * 1.5f; 
+        default:
+            CULog("ASSERTION FAILURE getThrust");
+            return DEFAULT_THRUST; 
+        }
+    }
     /**
      * Returns the current ship health.
      *
