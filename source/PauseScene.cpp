@@ -10,7 +10,8 @@
 
 using namespace cugl;
 
-bool PauseScene::init(std::shared_ptr<cugl::AssetManager> &assets, cugl::Size screenSize){
+bool PauseScene::init(std::shared_ptr<cugl::AssetManager> &assets, cugl::Size screenSize, InputController input){
+    _input = input;
     _assets = assets;
     _screenSize = screenSize;
     return init();
@@ -24,7 +25,7 @@ bool PauseScene::init(){
     background =cugl::scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("pause"));
     background->setScale(_screenSize.width/background->getTexture()->getWidth());
     background->setPosition(0.5*_screenSize);
-    _input.init();
+//    _input.init();
 
     std::shared_ptr<cugl::scene2::SceneNode> resume =cugl::scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("resume"));
 

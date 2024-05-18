@@ -328,7 +328,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     repeatWinNode->setScale(2* SCENE_HEIGHT/repeatWinNode->getTexture()->getHeight());
     repeatWinNode->setPosition(0.5 * repeatWinNode->getSize());
     _pause = std::make_shared<PauseScene>();
-    _pause->init(_assets, computeActiveSize());
+    _pause->init(_assets, computeActiveSize(), _input);
 
     _pause->setContentSize(dimen);
     _pause->doLayout();

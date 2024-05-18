@@ -65,7 +65,7 @@ public:
     
     PauseScene(): _counter(1), timeSinceLastSwitch(0.0),switchFreq(0.20),_buttonset(){};
     
-    bool init(std::shared_ptr<cugl::AssetManager> &assets, cugl::Size screenSize);
+    bool init(std::shared_ptr<cugl::AssetManager> &assets, cugl::Size screenSize, InputController input);
     bool init() override;
     
     void dispose() override;
