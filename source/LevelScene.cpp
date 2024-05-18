@@ -157,9 +157,22 @@ bool LevelScene::init(const std::shared_ptr<AssetManager> &assets)
     background = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("LongBackground"), 15, 6, 80, 5);
     background->setScale(4.3);
     background->setPosition(0.5 * background->getSize());
+    winBackground = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("repeat_win"), 2, 5, 8, 8);
+    winBackground->setScale(2* 800/winBackground->getTexture()->getHeight());
+    winBackground->setPosition(0.5 * winBackground->getSize());
+    loseBackground = SpriteAnimationNode::allocWithSheet(_assets->get<cugl::Texture>("lose_screen"), 4, 5, 18, 4);
+    loseBackground->setFrame(loseBackground->getSpan() - 1);
+    loseBackground->setScale(4* 800/loseBackground->getTexture()->getHeight());
+    loseBackground->setPosition(0.5 * loseBackground->getSize());
+    
     
     addChild(_uinode);
     _uinode->addChild(background);
+    _uinode->addChild(loseBackground);
+    _uinode->addChild(winBackground);
+    
+    winBackground->setVisible(false);
+    loseBackground->setVisible(false);
     layer->setColor(Color4(0, 0, 0, 1));
     Application::get()->setClearColor(Color4(192, 192, 192, 255));
     addChild(layer);
@@ -290,5 +303,26 @@ void LevelScene::adjustFrame(int level){
                     background->setFrame(background->getFrame() - 1);
                 }
             }
+    }
+}
+
+void LevelScene::autoStartGame(LevelScene::Level level){
+    autoStart = true;
+    _level = level;
+}
+
+void LevelScene::resetAutoStart() {
+    autoStart = false;
+    winBackground->setVisible(false);
+    loseBackground->setVisible(false);
+}
+
+
+void LevelScene::setAutoVisible(bool won){
+    if(won) {
+        winBackground->setVisible(true);
+    }
+    else {
+        loseBackground->setVisible(true);
     }
 }

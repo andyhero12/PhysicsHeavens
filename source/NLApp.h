@@ -96,6 +96,10 @@ protected:
 
     float switchFreq;
 
+    bool render;
+    LevelScene::Level currLevel;
+    bool isSingle;
+
 public:
 #pragma mark Constructors
     /**
@@ -107,7 +111,11 @@ public:
      * of initialization from the constructor allows main.cpp to perform
      * advanced configuration of the application before it starts.
      */
-    NetApp() : cugl::Application(), _loaded(false), isHosting(false) {}
+    NetApp() : cugl::Application(), _loaded(false), isHosting(false) {
+        render = true;
+        currLevel = LevelScene::Level::L1;
+        isSingle = true;
+    }
 
     /**
      * Disposes of this application, releasing all resources.
@@ -245,5 +253,7 @@ public:
      * at all. The default implmentation does nothing.
      */
     virtual void draw() override;
+
+    LevelScene::Level nextLevel(LevelScene::Level l);
 };
 #endif /* __NL_APP_H__ */
