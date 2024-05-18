@@ -87,6 +87,7 @@ void LoadingScene::update(float progress) {
     background->update();
     if (_progress < 1) {
         _progress = _assets->progress();
+        CULog("Progress: %f", _progress);
         if (_progress >= 1) {
             _progress = 1.0f;
             _bar->setVisible(false);
@@ -97,5 +98,7 @@ void LoadingScene::update(float progress) {
 
 
 bool LoadingScene::doneLoading() const {
+//    CULog("Done Loading: %d", _progress >= 1.0f);
+//    CULog("Loading: %f", _progress);
     return _progress >= 1.0f;
 }

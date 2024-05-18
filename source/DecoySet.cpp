@@ -24,7 +24,6 @@ void DecoySet::update(float timestep){
         std::shared_ptr<Decoy> curDecoy = *itD;
         curDecoy->update(timestep);
         if (curDecoy->destroyed()){
-            
             std::shared_ptr<SpriteAnimationNode> explodeAnim = SpriteAnimationNode::allocWithSheet(_explodeTexture, 4, 5, 20, 1);
             explodeAnim->setScale(DECOY_SIZE/64);
             explodeAnim->setAnchor(Vec2::ANCHOR_CENTER);
@@ -36,8 +35,8 @@ void DecoySet::update(float timestep){
             _removedDecoys.emplace_back(curDecoy);
             itD = _currentDecoys.erase(itD);
             
-            auto source = _assets->get<Sound>(DUMMY_GATE_EXPLOSION);
-            AudioEngine::get()->play(DUMMY_GATE_EXPLOSION, source, false , source->getVolume());
+//            auto source = _assets->get<Sound>(DUMMY_GATE_EXPLOSION);
+//            AudioEngine::get()->play(DUMMY_GATE_EXPLOSION + std::to_string(_removedDecoys.size()), source, false , source->getVolume());
         }else {
             ++itD;
         }
@@ -48,6 +47,10 @@ void DecoySet::update(float timestep){
         auto curA = itAnim;
         curAnim->update();
         itAnim++;
+        if (curAnim->getFrame() == 0){
+            auto source = _assets->get<Sound>(DUMMY_GATE_EXPLOSION);
+            AudioEngine::get()->play(DUMMY_GATE_EXPLOSION + std::to_string(_currentDecoys.size()), source, false , source->getVolume());
+        }
         if (curAnim->getFrame() == curAnim->getSpan()-1){
             _curAnimations.erase(curA);
             decoySetNode->removeChild(curAnim);

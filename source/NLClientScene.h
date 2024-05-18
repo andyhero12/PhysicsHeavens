@@ -16,6 +16,7 @@
 #include <vector>
 #include "GlobalConstants.h"
 #include "NLInput.h"
+#include "AudioController.h"
 
 using namespace cugl::physics2::net;
 
@@ -30,6 +31,9 @@ class ClientScene : public cugl::Scene2 {
 protected:
     /** The asset manager for this scene. */
     std::shared_ptr<cugl::AssetManager> _assets;
+    
+    std::shared_ptr<AudioController> _audioController;
+    
     /** The network connection (as made by this scene) */
     std::shared_ptr<NetEventController> _network;
 
@@ -114,7 +118,11 @@ public:
      * Returns whether the back button has been clicked
      */
     bool getBackClicked() { return _backClicked; }
-
+    
+    void setAudioController(std::shared_ptr<AudioController> audioController)
+    {
+        _audioController = audioController;
+    }
 private:
     /**
      * Updates the text in the given button.

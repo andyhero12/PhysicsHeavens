@@ -16,6 +16,7 @@
 #include "GlobalConstants.h"
 #include "NLInput.h"
 #include "SpriteAnimationNode.h"
+#include "AudioController.h"
 
 
 /**
@@ -53,6 +54,9 @@ public:
 protected:
     /** The asset manager for this scene. */
     std::shared_ptr<cugl::AssetManager> _assets;
+    
+    std::shared_ptr<AudioController> _audioController;
+    
     /** The menu button for hosting a game */
     /** The player menu choice */
     Choice _choice;
@@ -147,6 +151,11 @@ public:
 
     bool getBackclick(){
         return _backClicked;
+    }
+    
+    void setAudioController(std::shared_ptr<AudioController> audioController)
+    {
+        _audioController = audioController;
     }
 };
 

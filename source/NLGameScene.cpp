@@ -33,6 +33,7 @@
 #include <sstream>
 #include <algorithm>
 #include <cmath>
+#include "SaveManager.h"
 
 using namespace cugl;
 using namespace cugl::physics2::net;
@@ -134,9 +135,9 @@ gameOverDelay(0)
  *
  * @return true if the controller is initialized properly, false otherwise.
  */
-bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const std::shared_ptr<cugl::physics2::net::NetEventController> network, bool isHost, std::string level)
+bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const std::shared_ptr<cugl::physics2::net::NetEventController> network, bool isHost, std::string level, int levelNum)
 {
-    return init(assets, Rect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT), Vec2(0, DEFAULT_GRAVITY), network, isHost, level);
+    return init(assets, Rect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT), Vec2(0, DEFAULT_GRAVITY), network, isHost, level, levelNum);
 }
 
 /**
@@ -155,9 +156,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const std::sha
  *
  * @return  true if the controller is initialized properly, false otherwise.
  */
-bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rect, const std::shared_ptr<NetEventController> network, bool isHost, std::string level)
+bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rect, const std::shared_ptr<NetEventController> network, bool isHost, std::string level, int levelNum)
 {
-    return init(assets, rect, Vec2(0, DEFAULT_GRAVITY), network, isHost, level);
+    return init(assets, rect, Vec2(0, DEFAULT_GRAVITY), network, isHost, level, levelNum);
 }
 
 /**
@@ -177,7 +178,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
  *
  * @return  true if the controller is initialized properly, false otherwise.
  */
-bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rect, const Vec2 gravity, const std::shared_ptr<NetEventController> network, bool isHost, std::string level_string)
+bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rect, const Vec2 gravity, const std::shared_ptr<NetEventController> network, bool isHost, std::string level_string, int levelNum)
 {
     Size dimen = computeActiveSize();
 
@@ -192,6 +193,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
 
     _audioController = AudioController::alloc(assets);
     
+    _levelNum = levelNum;
     _isHost = isHost;
     gameOverLoss = false;
     gameOverWin = false;
@@ -268,10 +270,12 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     if (isHost)
     {
         _uinode->addChild(overWorld.getDog()->getUINode());
+        overWorld.getClientDog()->getUINode()->setVisible(false);
     }
     else
     {
         _uinode->addChild(overWorld.getClientDog()->getUINode());
+        overWorld.getDog()->getUINode()->setVisible(false);
     }
     
     _uinode->addChild(overWorld.getGateUIController()->getUINode());
@@ -345,6 +349,12 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     _rootnode->setScale(_zoom);
     previousPan = (-delta / _zoom);
     
+    if (isActive()){
+        _audioController->playMusic(BGM, BGM);
+    }
+    else {
+        cugl::AudioEngine::get()->clear(BGM);
+    }
 
     addChildForeground();
     resetDraw();
@@ -514,18 +524,24 @@ void GameScene::preUpdate(float dt)
         }
         if (gameOverDelay >= 120 ){
             if (gameOverWin){
+                
                 winNode->setVisible(true);
                 _pause->setPause(true);
                 _minimap->setVisible(false);
+                
+                
                 /** stop all sound and play win screen sound*/
                 AudioEngine::get()->clear();
                 _audioController->playMusic(VICTORY_SCREEN, VICTORY_SCREEN);
+                _audioController->playSFX(WIN_CASH, WIN_CASH);
+                _audioController->playSFX(KACHING, KACHING);
             }
             if (gameOverLoss){
                 loseNode->setVisible(true);
                 _pause->setPause(true);
                 _minimap->setVisible(false);
                 AudioEngine::get()->clear();
+                _audioController->playSFX(LOSS_STAMP, LOSS_STAMP);
                 _audioController->playMusic(LOSS_SCREEN, LOSS_SCREEN);
             }
             gameOverLoss = false;
@@ -621,15 +637,47 @@ void GameScene::postUpdate(float dt)
     _rootnode->resetPane();
 
     Vec2 delta;
-
+    std::shared_ptr<scene2::SceneNode> dogNode;
     if (_isHost)
     {
-        delta = overWorld.getDog()->getDogNode()->getWorldPosition();
+        dogNode = overWorld.getDog()->getDogNode();
     }
     else
     {
-        delta = overWorld.getClientDog()->getDogNode()->getWorldPosition();
+        dogNode = overWorld.getClientDog()->getDogNode();
     }
+    //delta = dogNode->getWorldPosition();
+
+
+    float h = CANVAS_TILE_HEIGHT / 2.0f / _zoom;
+    float w = h * computeActiveSize().width / computeActiveSize().height;
+
+    float bottom = dogNode->getPosition().y - h;
+    float left = dogNode->getPosition().x - w;
+    float top = dogNode->getPosition().y + h;
+    float right = dogNode->getPosition().x + w;
+
+    //this is horrible XD
+    Vec2 positionCache = dogNode->getPosition();
+
+
+    if(left < 1) {
+        dogNode->setPosition(Vec2(w + 1, dogNode->getPosition().y));
+    }
+    if(bottom < 1) {
+        dogNode->setPosition(Vec2(dogNode->getPosition().x, h + 1));
+    }
+    if(right > _backgroundWrapper->getCols() - 2) {
+        dogNode->setPosition(Vec2(_backgroundWrapper->getCols() - w - 2, dogNode->getPosition().y));
+    }
+    if(top > _backgroundWrapper->getRows() - 2) {
+        dogNode->setPosition(Vec2(dogNode->getPosition().x, _backgroundWrapper->getRows() - 2 - h));
+    }
+
+    delta = dogNode->getWorldPosition();
+    dogNode->setPosition(positionCache);
+    
+
     delta -= (computeActiveSize() / 2);
     Vec2 curr = - delta / _zoom;
     Vec2 pan;
@@ -750,6 +798,17 @@ void GameScene::fixedUpdate()
                 }
                 if (auto winEvent = std::dynamic_pointer_cast<WinEvent>(e))
                 {
+                    
+                    // Unlock new levels by writing to save file
+                    shared_ptr<SaveManager> saveFile = make_shared<SaveManager>();
+                    std::shared_ptr<JsonValue> json_root = saveFile->read();
+                    int unlockedLevels = json_root->getInt("unlocked", 1);
+    
+                    if(_levelNum == unlockedLevels){
+                        json_root->get("unlocked")->set((long) unlockedLevels + 1);
+                        saveFile->write(json_root);
+                    }
+                    
                     gameOverWin = true;
                 }
                 if (auto loseEvent = std::dynamic_pointer_cast<LoseEvent>(e))
@@ -987,6 +1046,9 @@ void GameScene::updateInputController()
                 }
                 
                 if (spriteNode->getFrame() != spriteNode->getSpan() -1){
+                    if (spriteNode->getFrame() == 0){
+                        _audioController->playSFX(NEW_TRICK, NEW_TRICK);
+                    }
                     spriteNode->setVisible(true);
                     spriteNode->update();
                 } else{
@@ -1049,11 +1111,16 @@ void GameScene::updateInputController()
     if (_input.didPressPause())
     {
         _pause->togglePause();
+        _audioController->playSFX(PAUSE_SCREEN, PAUSE_SCREEN);
     }
 
     if (_input.didPressHome())
     {
         _pause->exitToMain();
+    }
+    if (_input.didChangeMode())
+    {
+        _audioController->playSFX(BUTTON_SWAP, BUTTON_SWAP);
     }
 }
 
