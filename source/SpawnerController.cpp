@@ -80,17 +80,17 @@ void SpawnerController::update(MonsterController& monsterController, OverWorld& 
             std::shared_ptr<SimpleSpawner> simpleSpawner = std::dynamic_pointer_cast<SimpleSpawner>(spawner);
 
             if (simpleSpawner) {
-                monsterController.spawnEnemyFromString(simpleSpawner->getSpawnType1(), 
+                monsterController.spawnEnemyFromStringForce(simpleSpawner->getSpawnType1(), 
                 spawner->getPos().add(Vec2(generateRandomFloat(-0.1, 0.1), generateRandomFloat(-0.1, 0.1))),
-                overWorld, power * 1.5f);
+                overWorld, power * 1.5f, true);
 
-                monsterController.spawnEnemyFromString(simpleSpawner->getSpawnType2(), 
+                monsterController.spawnEnemyFromStringForce(simpleSpawner->getSpawnType2(), 
                 spawner->getPos().add(Vec2(generateRandomFloat(-0.1, 0.1), generateRandomFloat(-0.1, 0.1))),
-                overWorld, power * 1.5f);
+                overWorld, power * 1.5f, true);
 
-                monsterController.spawnEnemyFromString(simpleSpawner->getSpawnType3(), 
+                monsterController.spawnEnemyFromStringForce(simpleSpawner->getSpawnType3(), 
                 spawner->getPos().add(Vec2(generateRandomFloat(-0.1, 0.1), generateRandomFloat(-0.1, 0.1))),
-                overWorld, power * 1.5f);
+                overWorld, power * 1.5f, true);
             }
         }
         else{
