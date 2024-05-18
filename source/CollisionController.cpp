@@ -24,6 +24,7 @@
 #include "CollisionController.h"
 #include <cfloat>
 #include <algorithm>
+#include "AbstractEnemy.h"
 
 /** Impulse for giving collisions a slight bounce. */
 #define COLLISION_COEFF     0.1f
@@ -587,6 +588,7 @@ bool CollisionController::absorbEnemMonsterCollision(MonsterController& monsterC
             absEnemy->increaseHealth(closestEnemy->getHealth());
             _network->pushOutEvent(AbsorbEvent::allocAbsorbEvent(absEnemy->getDimension().width,objNum));
             absEnemy->resetAttack();
+            absEnemy->setCurAction(AbstractEnemy::EnemyActions::ATTACK);
         }
         else {
             //CULog("absorb lack %f", closestDistance);

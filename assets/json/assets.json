@@ -497,6 +497,16 @@
             "minfilter": "linear",
             "magfilter": "nearest"
         },
+        "absorbEnemyLeftLick": {
+            "file": "textures/absorbEnemy/cat_lick_left.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
+        "absorbEnemyRightLick": {
+            "file": "textures/absorbEnemy/cat_lick_right.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
         "basicLeftAttack": {
             "file": "textures/basicEnemy/basicDevil-front-left-swipe.png",
             "minfilter": "linear",
