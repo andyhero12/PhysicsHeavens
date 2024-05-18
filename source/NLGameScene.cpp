@@ -558,7 +558,7 @@ void GameScene::preUpdate(float dt)
         // just do tile->setVisible(tutorial) to draw stuff
         if (atLocation && !tile->didPass())
         {
-            if (tile->getProgress() == Tutorial::MODE::RECALLGIVE || tile->getProgress() == Tutorial::MODE::BARKGIVE || tile->getProgress() == Tutorial::MODE::BAITGIVE || tile->getProgress() == Tutorial::MODE::BOMBGIVE){
+            if (tile->getProgress() == Tutorial::MODE::RECALLGIVE || tile->getProgress() == Tutorial::MODE::BARKGIVE || tile->getProgress() == Tutorial::MODE::BAITGIVE || tile->getProgress() == Tutorial::MODE::BOMBGIVE || tile->getProgress() == Tutorial::CHANGEABILITYTWO || tile->getProgress() == Tutorial::CHANGEABILITYTHREE || tile->getProgress() == Tutorial::CHANGEABILITYFOUR || tile->getProgress() == Tutorial::SPECIALSONE || tile->getProgress() == Tutorial::SPECIALSTWO || tile->getProgress() == Tutorial::SPECIALSTHREE || tile->getProgress() == Tutorial::SPECIALSFOUR){
                 return;
             }
         }
@@ -997,6 +997,7 @@ void GameScene::updateInputController()
                     pressA->update();
                 }
             }else{
+                textBox->setVisible(true);
                 spriteNode->setVisible(true);
                 spriteNode->update();
                 message->setVisible(true);
@@ -1026,6 +1027,7 @@ void GameScene::updateInputController()
             }
         } else if (_input.update(tile->getProgress(), atLocation))
         {
+            textBox->setVisible(false);
             tile->setPass(true);
             node->setVisible(false);
             pressA->setVisible(false);
@@ -1092,9 +1094,11 @@ void GameScene::initTutorialTwo(){
     _tutorialnode = scene2::SceneNode::alloc();
     _uinode->addChild(_tutorialnode);
     tutorialTiles = std::vector<std::shared_ptr<Tutorial>>();
-    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::BAITGIVE, ""));
+    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::CHANGEABILITYTWO, "Day two, boy! Good work yesterday. Since we got a bit of time again, let's go over how to set up a BAIT gate."));
+    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::BOMBGIVE, ""));
+    tutorialTiles.push_back(Tutorial::alloc(22, Tutorial::MODE::SPECIALSTHREE, "You can use energy to set up fake gates that will fool the baddies. They disappear after a while, so don’t try to rely on them forever. Let’s try it now!"));
     std::vector<int> frame = {21};
-    std::vector<std::string> modes = {"SHOOT", "BAIT", "RECALL"};
+    std::vector<std::string> modes = {"SHOOT", "RECALL", "BOMB"};
     overWorld.getDog()->setAbility(modes);
     overWorld.getDog()->toggleMode();
     overWorld.getClientDog()->setAbility(modes);
@@ -1108,7 +1112,9 @@ void GameScene::initTutorialThree(){
     _tutorialnode = scene2::SceneNode::alloc();
     _uinode->addChild(_tutorialnode);
     tutorialTiles = std::vector<std::shared_ptr<Tutorial>>();
-    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::BOMBGIVE, ""));
+    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::CHANGEABILITYFOUR, "Good job! The final ability is BOMB. You can use your stored power to BOMB an area. This is great for a concentrated burst of power around you if you find yourself surrounded. Let’s try it now!"));
+    tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::BAITGIVE, ""));
+    tutorialTiles.push_back(Tutorial::alloc(22, Tutorial::MODE::SPECIALSFOUR, "Attaboy! That’s all we got- but it’s more than enough to take down these lil devils. Let’s get them!"));
     std::vector<int> frame = {21};
     std::vector<std::string> modes = {"BAIT", "BOMB", "RECALL", "SHOOT"};
     overWorld.getDog()->setAbility(modes);
@@ -1141,12 +1147,16 @@ void GameScene::initTutorial()
     newTrick->setVisible(false);
     _tutorialnode->addChild(newTrick);
     
-//    
-//    textBox = cugl::scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("textBubble"));
-//    textBox->setScale(SCENE_HEIGHT/textBox->getTexture()->getHeight());
     
-//    devilNormal = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("newTrick"), 7, 5, 35, 2);
-//    devilLaugh = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("newTrick"), 7, 5, 35, 2);
+    textBox = cugl::scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("textBubble"));
+    textBox->setScale(SCENE_HEIGHT/textBox->getTexture()->getHeight());
+    textBox->setPosition(0.5 * textBox->getSize());
+    textBox->setVisible(false);
+    _tutorialnode->addChild(textBox);
+    
+    
+    devilNormal = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("newTrick"), 7, 5, 35, 2);
+    devilLaugh = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("newTrick"), 7, 5, 35, 2);
     
     for (int i = 0; i < tutorialTiles.size(); i++)
     {
@@ -1213,8 +1223,6 @@ void GameScene::initTutorial()
             node->setAnchor(Vec2::ANCHOR_CENTER);
             node->setPositionX(screen.width / 2);
             node->setPositionY(node->getScaleY() * node->getTexture()->getHeight() / 2);
-            node->setVisible(false);
-            
             node->setVisible(false);
             
             tutorialTiles.at(i)->setSprite(node);

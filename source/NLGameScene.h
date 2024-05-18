@@ -125,11 +125,11 @@ protected:
     std::vector<std::shared_ptr<Tutorial>> tutorialTiles;
     std::shared_ptr<SpriteAnimationNode> tutorialArrow;
     std::shared_ptr<SpriteAnimationNode> newTrick;
-//    
-//    
-//    std::shared_ptr<cugl::scene2::PolygonNode> textBox;
-//    std::shared_ptr<SpriteAnimationNode> devilNormal;
-//    std::shared_ptr<SpriteAnimationNode> devilLaugh;
+    
+    
+    std::shared_ptr<cugl::scene2::PolygonNode> textBox;
+    std::shared_ptr<SpriteAnimationNode> devilNormal;
+    std::shared_ptr<SpriteAnimationNode> devilLaugh;
     int tutorialIndex;
     
     Vec2 previousPan;

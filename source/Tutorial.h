@@ -37,7 +37,8 @@ public:
         BAITGIVE = 14,
         CHANGEABILITYFOUR = 15,
         BOMBGIVE = 16,
-        SPECIALSFOUR = 17
+        SPECIALSFOUR = 17,
+        SPEECH = 18
 
     };
 
