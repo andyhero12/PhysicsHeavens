@@ -354,8 +354,8 @@ void ClientScene::update(float timestep) {
             break; 
     }
         
-    // _gameid->setText(_value);
-    updateText(_value);
+     _gameid->setText(_value);
+//    updateText(_value);
 
     if(_network->getStatus() == NetEventController::Status::CONNECTED || _network->getStatus() == NetEventController::Status::HANDSHAKE){
         //_player->setText(std::to_string(_network->getNumPlayers()));
