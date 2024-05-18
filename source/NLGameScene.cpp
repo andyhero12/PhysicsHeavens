@@ -520,10 +520,10 @@ void GameScene::preUpdate(float dt)
     _pause->update(dt, _input._Leftright, _input.didPressConfirm());
 
     if (gameOverLoss || gameOverWin){
-        if ( gameOverDelay < 120){
+        if ( gameOverDelay < 10){
             gameOverDelay++;
         }
-        if (gameOverDelay >= 120 ){
+        if (gameOverDelay >= 10 ){
             if (gameOverWin){
                 
                 winNode->setVisible(true);
@@ -605,7 +605,7 @@ void GameScene::preUpdate(float dt)
             //            winNode->setVisible(true);
             _network->pushOutEvent(WinEvent::allocWinEvent(overWorld.getDog()->getPosition(), _isHost));
         }
-        else if ((overWorld.getDog()->getHealth() == 0 || overWorld.getBaseSet()->baseLost()) && !loseNode->isVisible())
+        else if ((overWorld.getDog()->getHealth() <= 0 || overWorld.getBaseSet()->baseLost()) && !loseNode->isVisible())
         {
             //            loseNode->setVisible(true);
             _network->pushOutEvent(LoseEvent::allocLoseEvent(overWorld.getDog()->getPosition(), _isHost));
