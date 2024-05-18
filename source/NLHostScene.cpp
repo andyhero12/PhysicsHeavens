@@ -89,15 +89,14 @@ bool HostScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::sha
     
     _assets->loadDirectory("json/hostview.json");
     
-    
-    
     // Acquire the scene built by the asset loader and resize it the scene
     std::shared_ptr<scene2::SceneNode> scene = _assets->get<scene2::SceneNode>("hostview");
     scene->setContentSize(dimen);
     scene->doLayout(); // Repositions the HUD
     _input.init();
     _startgame = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("hostview_button_start"));
-
+    _player1 = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("hostview_button_player1"));
+    _player2 = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("hostview_button_player2"));
     _backout = scene2::Button::alloc(scene2::PolygonNode::allocWithTexture(_assets->get<cugl::Texture>("")));
     _gameid = scene2::TextField::allocWithText("999999", _assets->get<Font>(PRIMARY_FONT));
 
@@ -115,6 +114,9 @@ bool HostScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::sha
         }
     });
     
+    _player1->setColor(Color4::ORANGE);
+    _player2->setColor(Color4::ORANGE);
+    _startgame->setColor(Color4::GRAY);
     _gameid->setText("");
     _gameid->setScale(0.75f);
     cugl::Size size = 0.5 * (dimen - _gameid->getSize());
@@ -206,24 +208,31 @@ void HostScene::update(float timestep) {
      * TODO: check for the status of `_network` (The NetworkController). If it is CONNECTED, you would need to update the scene nodes so that _gameId displays the id of the room (converted from hex to decimal) and _player displays the number of players. Additionally, you should check whether the `_startgame` button has been pressed and update its text. If it is not pressed yet, then its should display "Start Game" and be activated, otherwise, it should be deactivated and show "Starting".
      */
 
-     _input.update();
+    _input.update();
 #pragma mark BEGIN SOLUTION
     if(_network->getStatus() == NetEventController::Status::CONNECTED){
         if (!_startGameClicked) {
-//            updateText(_startgame, "Start Game");
-            _startgame->activate();
-            if(_input.didPressConfirm()){
-                _startgame->setDown(true);
-            } 
+            _player1->setColor(Color4::GREEN);
+            if(_network->getNumPlayers() == 2){
+                _startgame->setColor(Color4::GREEN);
+                _player2->setColor(Color4::GREEN);
+                _startgame->activate();
+                if(_input.didPressConfirm()){
+                    _startgame->setDown(true);
+                }
+            }else{
+                _startgame->setColor(Color4::GRAY);
+                _startgame->deactivate();
+            }
+
             if(_input.didPressBack()){
                 _backout->setDown(true);
             }     
         }
         else {
-//            updateText(_startgame, "Starting");
             _startgame->deactivate();
+
         }
-        std::cout << (hex2dec(_network->getRoomID())) << std::endl;
 		_gameid->setText(hex2dec(_network->getRoomID()));
         
 	}

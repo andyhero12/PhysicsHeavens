@@ -43,6 +43,10 @@ protected:
     /** The game id label (for updating) */
     std::shared_ptr<cugl::scene2::Label> _gameid;
 
+    std::shared_ptr<cugl::scene2::Button> _player1;
+
+    std::shared_ptr<cugl::scene2::Button> _player2;
+
     InputController _input;
 
     /** Whether the startGame button had been pressed. */

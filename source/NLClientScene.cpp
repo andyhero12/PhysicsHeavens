@@ -100,28 +100,12 @@ bool ClientScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::s
     _player2 = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("joinview_button_player2"));
     _delete = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("joinview_button_back"));
 
-    _player1->setColor(Color4::GREEN);
-    _player2->setColor(Color4::GREEN);
     buttonGrid = {
         {_zero, _one, _two},
         {_three, _four, _five},
         {_six, _seven, _eight},
         {_nine,_nine, _delete, _startgame}
     };
-    // _backout->addListener([this](const std::string& name, bool down) {
-    //     if (down) {
-    //         _network->disconnect();
-    //         _backClicked = true;
-    //     }
-    // });
-    
-
-    // _startgame->addListener([=](const std::string& name, bool down) {
-    //     if (down) {
-    //         // This will call the _gameid listener
-    //         _gameid->releaseFocus();
-    //     }
-    // });
 
     _zero->addListener([this](const std::string& name, bool down){
         if (down) {
@@ -199,7 +183,8 @@ bool ClientScene::init(const std::shared_ptr<cugl::AssetManager>& assets, std::s
     // Create the server configuration
     auto json = _assets->get<JsonValue>("server");
     _config.set(json);
-    
+    _player1->setColor(Color4::GREEN);
+    _player2->setColor(Color4::ORANGE);
     _gameid->setText("");
     _gameid->setScale(0.75f);
     cugl::Size size = 0.5 * (dimen - _gameid->getSize());
@@ -248,11 +233,9 @@ void ClientScene::setActive(bool value) {
         } else {
             _gameid->deactivate();
             _startgame->deactivate();
-            //_backout->deactivate();
-            //_network = nullptr;
+            _network = nullptr;
             // If any were pressed, reset them
             _startgame->setDown(false);
-            //_backout->setDown(false);
             
         }
 #pragma mark END SOLUTION
@@ -313,9 +296,6 @@ void ClientScene::update(float timestep) {
             }
 
             buttonGrid[currentRow][currentCol]->setDown(true);
-
-           
-
             timeSinceLastSwitch = 0;
         }
 
@@ -357,6 +337,7 @@ void ClientScene::update(float timestep) {
                     break;
                 case ClientScene::number::start:
                     _gameid->releaseFocus();
+                    _player2->setColor(Color4::GREEN);
                     break;
             }
     }
