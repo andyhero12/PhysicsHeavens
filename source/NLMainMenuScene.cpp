@@ -66,14 +66,18 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     // Program the buttons
     _button1->addListener([this](const std::string& name, bool down) {
         if (down) {
+            _audioController->playSFX(BUTTON_PRESS, BUTTON_PRESS);
             if(_input.getState()==InputController::State::CONTROLLER){
-                auto source = _assets->get<Sound>(BUTTON_PRESS);
-                AudioEngine::get()->play(BUTTON_PRESS, source, false , source->getVolume());
+//                auto source = _assets->get<Sound>(BUTTON_PRESS);
+//                AudioEngine::get()->play(BUTTON_PRESS, source, false , source->getVolume());
+//                _audioController->playSFX(BUTTON_PRESS, BUTTON_PRESS);
                 _isdown = Isdown::isSINGLE;
+
             }
             else{
-                auto source = _assets->get<Sound>(BUTTON_PRESS);
-                AudioEngine::get()->play(BUTTON_PRESS, source, false , source->getVolume());
+//                auto source = _assets->get<Sound>(BUTTON_PRESS);
+//                AudioEngine::get()->play(BUTTON_PRESS, source, false , source->getVolume());
+//                _audioController->playSFX(BUTTON_PRESS, BUTTON_PRESS);
                 _choice = Choice::SINGLE;
             }
             
@@ -81,14 +85,15 @@ bool MainMenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     });
     _button3->addListener([this](const std::string& name, bool down) {
         if (down) {
+            _audioController->playSFX(BUTTON_PRESS, BUTTON_PRESS);
             if(_input.getState()==InputController::State::CONTROLLER){
-                auto source = _assets->get<Sound>(BUTTON_PRESS);
-                AudioEngine::get()->play(BUTTON_PRESS, source, false , source->getVolume());
+//                auto source = _assets->get<Sound>(BUTTON_PRESS);
+//                AudioEngine::get()->play(BUTTON_PRESS, source, false , source->getVolume());
                 _isdown = Isdown::isSETTING;
             }
             else{
-                auto source = _assets->get<Sound>(BUTTON_PRESS);
-                AudioEngine::get()->play(BUTTON_PRESS, source, false , source->getVolume());
+//                auto source = _assets->get<Sound>(BUTTON_PRESS);
+//                AudioEngine::get()->play(BUTTON_PRESS, source, false , source->getVolume());
                 _choice = Choice::SETTING;
             }
         }

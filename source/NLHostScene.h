@@ -16,6 +16,7 @@
 #include <vector>
 #include "GlobalConstants.h"
 #include "NLInput.h"
+#include "AudioController.h"
 
 #define PING_TEST_COUNT 5
 
@@ -33,6 +34,9 @@ class HostScene : public cugl::Scene2 {
 protected:
     /** The asset manager for this scene. */
     std::shared_ptr<cugl::AssetManager> _assets;
+    
+    std::shared_ptr<AudioController> _audioController;
+    
     /** The network connection (as made by this scene) */
     std::shared_ptr<NetEventController> _network;
 
@@ -122,6 +126,11 @@ public:
     
     
     void endGame();
+    
+    void setAudioController(std::shared_ptr<AudioController> audioController)
+    {
+        _audioController = audioController;
+    }
 
 private:
     /**
