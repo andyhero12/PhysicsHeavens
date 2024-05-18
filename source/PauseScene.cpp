@@ -10,8 +10,7 @@
 
 using namespace cugl;
 
-bool PauseScene::init(std::shared_ptr<cugl::AssetManager> &assets, cugl::Size screenSize, InputController input){
-    _input = input;
+bool PauseScene::init(std::shared_ptr<cugl::AssetManager> &assets, cugl::Size screenSize){
     _assets = assets;
     _screenSize = screenSize;
     return init();
@@ -25,7 +24,6 @@ bool PauseScene::init(){
     background =cugl::scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("pause"));
     background->setScale(_screenSize.width/background->getTexture()->getWidth());
     background->setPosition(0.5*_screenSize);
-//    _input.init();
 
     std::shared_ptr<cugl::scene2::SceneNode> resume =cugl::scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("resume"));
 
@@ -40,11 +38,7 @@ bool PauseScene::init(){
     
     resumeButton->addListener([=](const std::string& name, bool down){
         if(down){
-            if(_input.getState()==InputController::State::CONTROLLER){
-                if(getPause()){
-                    constatus = ContorllerChoice::isGAME;
-                }
-            }else if(getPause()){
+            if(getPause()){
                 setPause(false);
             }
         }
@@ -52,11 +46,7 @@ bool PauseScene::init(){
     
     exitButton->addListener([=](const std::string& name, bool down) {
         if(down){
-            if(_input.getState()==InputController::State::CONTROLLER){
-                if(getPause()){
-                    constatus = ContorllerChoice::isEXIT;
-                }
-            }else if(getPause()){
+            if(getPause()){
                 status = Choice::EXIT;
             }
         }
@@ -133,32 +123,35 @@ void PauseScene::exitToMain(){
 }
 
 void PauseScene::update(float timestep, int leftright, bool confirm){
-    
     timeSinceLastSwitch += timestep;
 
     if (timeSinceLastSwitch >= switchFreq) {
-        //std::cout<<_input._updown<<std::endl;
         if (leftright != 0) {
             if (leftright== -1 && _counter > 0) {
-                _buttonset.at(_counter)->setDown(false);
+                 _buttonset.at(_counter)->setColor(Color4::WHITE);
                 _counter--;
-                _buttonset.at(_counter)->setDown(true);
+                _buttonset.at(_counter)->setColor(Color4::GRAY);
             }
             else if (leftright == 1 && _counter < _buttonset.size() - 1) {
-                _buttonset.at(_counter)->setDown(false);
+                _buttonset.at(_counter)->setColor(Color4::WHITE);
                 _counter++;
-                _buttonset.at(_counter)->setDown(true);
+                _buttonset.at(_counter)->setColor(Color4::GRAY);
             }
             timeSinceLastSwitch = 0;
 
         }
     }
 
-    if(getControlStatus()==ContorllerChoice::isGAME && confirm){
-        setPause(false);
-    }else if(getControlStatus()==ContorllerChoice::isEXIT && confirm){
-        status = Choice::EXIT;
+    if(confirm){
+        _buttonset.at(_counter)->setDown(true);
+        _buttonset.at(_counter)->setDown(false);
     }
+    // if(getControlStatus()==ContorllerChoice::isGAME && confirm){
+        
+    //     setPause(false);
+    // }else if(getControlStatus()==ContorllerChoice::isEXIT && confirm){
+    //     status = Choice::EXIT;
+    // }
 
 
 }

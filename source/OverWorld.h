@@ -71,7 +71,7 @@ public:
     bool setRootNode(const std::shared_ptr<scene2::SceneNode> &_worldNode, const std::shared_ptr<scene2::SceneNode> &_debugNode, std::shared_ptr<cugl::physics2::net::NetWorld> _world);
     // will add Obstacle nodes too
     void dogUpdate(InputController &_input, cugl::Size totalSize);
-    void update(InputController &input, cugl::Size totalSize, float timestep);
+    void update(InputController &input, cugl::Size totalSize, float timestep, bool b);
     void postUpdate();
     void ownedDogUpdate(InputController &_input, cugl::Size, std::shared_ptr<Dog> _curDog);
     void processShootEvent(const std::shared_ptr<ShootEvent> &shootEvent);

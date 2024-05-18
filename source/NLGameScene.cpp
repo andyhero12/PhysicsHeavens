@@ -328,7 +328,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
     repeatWinNode->setScale(2* SCENE_HEIGHT/repeatWinNode->getTexture()->getHeight());
     repeatWinNode->setPosition(0.5 * repeatWinNode->getSize());
     _pause = std::make_shared<PauseScene>();
-    _pause->init(_assets, computeActiveSize(), _input);
+    _pause->init(_assets, computeActiveSize());
 
     _pause->setContentSize(dimen);
     _pause->doLayout();
@@ -517,6 +517,7 @@ void GameScene::addInitObstacle(const std::shared_ptr<physics2::Obstacle> &obj,
 void GameScene::preUpdate(float dt)
 {
     updateInputController();
+    _pause->update(dt, _input._Leftright, _input.didPressConfirm());
 
     if (gameOverLoss || gameOverWin){
         if ( gameOverDelay < 120){
@@ -565,7 +566,7 @@ void GameScene::preUpdate(float dt)
         _rootnode->setScale(_zoom);
     }
 
-    overWorld.update(_input, computeActiveSize(), dt);
+    overWorld.update(_input, computeActiveSize(), dt, !_pause->getPause());
     
     if (tutorialIndex < tutorialTiles.size()){
         const std::shared_ptr<Tutorial>& tile = tutorialTiles.at(tutorialIndex);

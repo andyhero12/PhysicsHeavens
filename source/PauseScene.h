@@ -56,7 +56,6 @@ private:
     std::shared_ptr<cugl::AssetManager> _assets;
     cugl::Size _screenSize;
     std::vector<std::shared_ptr<cugl::scene2::Button>> _buttonset;
-    InputController _input;
     float timeSinceLastSwitch;
     float switchFreq;
     int _counter;
@@ -65,7 +64,7 @@ public:
     
     PauseScene(): _counter(1), timeSinceLastSwitch(0.0),switchFreq(0.20),_buttonset(){};
     
-    bool init(std::shared_ptr<cugl::AssetManager> &assets, cugl::Size screenSize, InputController input);
+    bool init(std::shared_ptr<cugl::AssetManager> &assets, cugl::Size screenSize);
     bool init() override;
     
     void dispose() override;

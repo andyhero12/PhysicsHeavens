@@ -766,9 +766,11 @@ void OverWorld::dogUpdate(InputController &_input, cugl::Size totalSize)
     ownedDogUpdate(_input, totalSize, otherDog);
 }
 
-void OverWorld::update(InputController &_input, cugl::Size totalSize, float timestep)
+void OverWorld::update(InputController &_input, cugl::Size totalSize, float timestep, bool dogActive)
 {
-    dogUpdate(_input, totalSize);
+    if(dogActive) {
+        dogUpdate(_input, totalSize);
+    }
     _bases->update();
     _decoys->update(timestep);
     _attackPolygonSet.update();
