@@ -1145,6 +1145,7 @@ void GameScene::initTutorialOne(){
     tutorialTiles.push_back(Tutorial::alloc(0, Tutorial::MODE::MOVEMENT, "MOVE with (joystick)."));
     tutorialTiles.push_back(Tutorial::alloc(27, Tutorial::MODE::BITE, "Look, boy, our first threat! Let's get 'em! BITE with (A)."));
     tutorialTiles.push_back(Tutorial::alloc(35, Tutorial::MODE::GROW, "Whenever you eat an enemy, you ABSORB its power. You can store power up to a certain point. Remember, as you eat, you'll gain size, and become stronger. But don't overeat!"));
+    tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::DASH, "Dash with (x)"));
     tutorialTiles.push_back(Tutorial::alloc(20, Tutorial::MODE::RECALLGIVE, ""));
     tutorialTiles.push_back(Tutorial::alloc(22, Tutorial::MODE::SPECIALSONE, "Let's try using a power. We passed the job interview so quick, I couldn't teach you everything in our arsenal yet. "));
     tutorialTiles.push_back(Tutorial::alloc(10, Tutorial::MODE::DEFENDGATE, "Here we are, at the most important thing of our lives!"));
@@ -1238,7 +1239,11 @@ void GameScene::initTutorial()
     devilNormal->setVisible(false);
     _tutorialnode->addChild(devilNormal);
     
-    devilLaugh = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("newTrick"), 4, 5, 20, 5);
+    devilLaugh = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("girlTalk"), 4, 5, 20, 5);
+    devilLaugh->setScale(4 * SCENE_HEIGHT/devilNormal->getTexture()->getHeight());
+    devilLaugh->setPosition(0.5 * devilNormal->getSize());
+    devilLaugh->setVisible(false);
+    _tutorialnode->addChild(devilLaugh);
     
     for (int i = 0; i < tutorialTiles.size(); i++)
     {
