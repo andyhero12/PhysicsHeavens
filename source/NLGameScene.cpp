@@ -1141,6 +1141,13 @@ void GameScene::initTutorial()
     newTrick->setVisible(false);
     _tutorialnode->addChild(newTrick);
     
+//    
+//    textBox = cugl::scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("textBubble"));
+//    textBox->setScale(SCENE_HEIGHT/textBox->getTexture()->getHeight());
+    
+//    devilNormal = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("newTrick"), 7, 5, 35, 2);
+//    devilLaugh = SpriteAnimationNode::allocWithSheet(_assets->get<Texture>("newTrick"), 7, 5, 35, 2);
+    
     for (int i = 0; i < tutorialTiles.size(); i++)
     {
         

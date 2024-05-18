@@ -1,5 +1,10 @@
 {
     "textures": {
+        "textBubble":{
+            "file": "textures/tutorial/bubble.png",
+            "minfilter": "linear",
+            "magfilter": "nearest"
+        },
         "newTrick":{
             "file": "textures/newAbility/new_trick.png",
             "minfilter": "linear",

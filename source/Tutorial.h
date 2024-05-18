@@ -149,6 +149,7 @@ protected:
     std::shared_ptr<SpriteAnimationNode> sprite;
     std::shared_ptr<SpriteAnimationNode> spriteRepeat;
     std::shared_ptr<SpriteAnimationNode> pressA;
+    std::shared_ptr<cugl::scene2::PolygonNode> textBox;
     std::shared_ptr<cugl::scene2::Label> message;
     std::string text;
 
@@ -170,6 +171,11 @@ public:
     void setSprite(std::shared_ptr<SpriteAnimationNode> node)
     {
         sprite = node;
+    }
+    
+    void setTextBox(std::shared_ptr<cugl::scene2::PolygonNode> node)
+    {
+        textBox = node;
     }
     
     void setSpriteRepeat(std::shared_ptr<SpriteAnimationNode> node)
