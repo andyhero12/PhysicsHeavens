@@ -98,7 +98,11 @@ void PauseScene::setFinGame(bool value, bool isTwoPlayer) {
     if(value){
         status = Choice::GAME;
     }
+    float centerX = _screenSize.width/2;
+    float centerY = _screenSize.height/2;
     background->setVisible(false);
+    resumeButton->setVisible(false);
+    exitButton->setPosition(centerX, centerY);
     if (isTwoPlayer){
         resumeButton->setVisible(false);
     }
