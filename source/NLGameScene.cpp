@@ -190,7 +190,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager> &assets, const Rect rec
         return false;
     }
 
-//    _audioController = AudioController::alloc(assets);
+    _audioController = AudioController::alloc(assets);
     
     _isHost = isHost;
     gameOverLoss = false;

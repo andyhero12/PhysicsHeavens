@@ -785,7 +785,7 @@
         "enemyDeath": {
             "type": "sample",
             "file": "sounds/Enemies/enemyDeath.wav",
-            "volume": 0.4
+            "volume": 0.2
         },
         "spawnerDeath": {
             "type": "sample",

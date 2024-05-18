@@ -155,17 +155,17 @@ void NetApp::preUpdate(float timestep)
         _setting.init(_assets);
         _rebind.init(_assets);
         
-        _audioController = AudioController::alloc(_assets);
-        _mainmenu.setAudioController(_audioController);
-        _menu.setAudioController(_audioController);
-        _level.setAudioController(_audioController);
-        _singlePlayer.setAudioController(_audioController);
-        _hostgame.setAudioController(_audioController);
-        _joingame.setAudioController(_audioController);
-        _selection.setAudioController(_audioController);
-        _setting.setAudioController(_audioController);
-        _rebind.setAudioController(_audioController);
-        _gameplay.setAudioController(_audioController);
+//        _audioController = AudioController::alloc(_assets);
+//        _mainmenu.setAudioController(_audioController);
+//        _menu.setAudioController(_audioController);
+//        _level.setAudioController(_audioController);
+//        _singlePlayer.setAudioController(_audioController);
+//        _hostgame.setAudioController(_audioController);
+//        _joingame.setAudioController(_audioController);
+//        _selection.setAudioController(_audioController);
+//        _setting.setAudioController(_audioController);
+//        _rebind.setAudioController(_audioController);
+//        _gameplay.setAudioController(_audioController);
         
         _status = MAINMENU;
     }
